@@ -301,7 +301,7 @@
 
                         <!-- Footer Card Action (Teks MC & Notula) -->
                         @if($isJumat || !empty($item['notula']) || !empty($item['youtube_url']))
-                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end gap-2 mt-auto">
                                 <div>
                                     @if($isJumat)
                                         <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"

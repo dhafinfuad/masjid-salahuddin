@@ -353,7 +353,7 @@
                                                 </div>
                 
                                                 @if($kajian->type === 'jumat' || !empty($kajian->notula) || !empty($kajian->youtube_url))
-                                                    <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                                                    <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end gap-2 mt-auto">
                                                         <div>
                                                             @if($kajian->type === 'jumat')
                                                                 <a href="{{ route('admin.kajian.teks-mc', $kajian->id) }}" target="_blank"
