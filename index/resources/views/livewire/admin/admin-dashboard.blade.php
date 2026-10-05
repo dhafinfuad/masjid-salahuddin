@@ -324,6 +324,7 @@
             status: 'Direncanakan',
             committee_members: '',
             report_summary: '',
+            report_pdf_path: '',
             youtube_url: '',
         },
         openCreateAgenda() {
@@ -337,6 +338,7 @@
                 status: 'Direncanakan',
                 committee_members: '',
                 report_summary: '',
+                report_pdf_path: '',
                 youtube_url: '',
             };
             if (window.Livewire) {
@@ -355,6 +357,7 @@
                 status: data.status || 'Direncanakan',
                 committee_members: data.committee_members || '',
                 report_summary: data.report_summary || '',
+                report_pdf_path: data.report_pdf_path || '',
                 youtube_url: data.youtube_url || '',
             };
             if (window.Livewire) {

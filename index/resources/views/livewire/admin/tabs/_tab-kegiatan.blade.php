@@ -1336,7 +1336,7 @@
                                                         <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" target="_blank"
                                                             @click="openMenu = false"
                                                             class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
-                                                            <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                                                            <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                                                             <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Cetak Berkas LPJ</div>
                                                         </a>
                                                     </div>

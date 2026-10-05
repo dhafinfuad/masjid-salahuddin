@@ -111,6 +111,15 @@
       </div>
     </header>
 
+    @if(empty($agenda->report_pdf_path))
+      <div class="no-print bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2.5 text-amber-900 text-xs flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0"></i>
+          <span><strong>Informasi:</strong> Dokumen berkas LPJ (.pdf) belum diunggah untuk kegiatan ini. Tampilan di bawah ini adalah ringkasan sistem. Anda dapat mengunggah berkas PDF resmi melalui menu <strong>Edit Agenda</strong>.</span>
+        </div>
+      </div>
+    @endif
+
     <main id="contentContainer" class="p-6 sm:p-9 md:p-10 space-y-6 leading-relaxed text-slate-700 transition-all text-sm">
       
       <!-- Kop Surat Formal -->

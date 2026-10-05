@@ -3110,7 +3110,8 @@ class AdminDashboard extends Component
             'agendaTitle.required' => 'Judul agenda kegiatan wajib diisi.',
             'agendaDate.required' => 'Tanggal kegiatan wajib diisi.',
             'agendaStatus.required' => 'Status kegiatan wajib dipilih.',
-            'agendaReportPdf.mimes' => 'File LPJ harus berupa dokumen berformat PDF.',
+            'agendaReportPdf.file' => 'Berkas LPJ harus berupa file yang valid.',
+            'agendaReportPdf.mimes' => 'Dokumen LPJ harus berformat PDF (.pdf).',
             'agendaReportPdf.max' => 'Ukuran file LPJ maksimal 10 MB.',
         ]);
 
@@ -3123,13 +3124,26 @@ class AdminDashboard extends Component
             'committee_members' => $this->agendaCommitteeMembers,
             'budget' => $cleanBudget,
             'status' => $this->agendaStatus,
-            'report_summary' => $this->agendaReportSummary,
             'youtube_url' => !empty($this->agendaYoutubeUrl) ? trim($this->agendaYoutubeUrl) : null,
         ];
+
+        if (!empty($this->agendaReportSummary)) {
+            $payload['report_summary'] = $this->agendaReportSummary;
+        }
 
         if ($this->agendaReportPdf) {
             $pdfPath = $this->agendaReportPdf->store('lpj', 'public');
             $payload['report_pdf_path'] = $pdfPath;
+
+            // Jika sedang mengedit dan sebelumnya sudah ada berkas PDF lama, hapus berkas lama
+            if ($this->isEditingAgenda && $this->editingAgendaId) {
+                $oldAgenda = Agenda::find($this->editingAgendaId);
+                if ($oldAgenda && $oldAgenda->report_pdf_path && $oldAgenda->report_pdf_path !== $pdfPath) {
+                    if (Storage::disk('public')->exists($oldAgenda->report_pdf_path)) {
+                        Storage::disk('public')->delete($oldAgenda->report_pdf_path);
+                    }
+                }
+            }
         }
 
         if ($this->isEditingAgenda && $this->editingAgendaId) {
@@ -3148,6 +3162,17 @@ class AdminDashboard extends Component
         $this->dispatch('close-agenda-modal');
     }
 
+    public function updatedAgendaReportPdf(): void
+    {
+        $this->validateOnly('agendaReportPdf', [
+            'agendaReportPdf' => 'nullable|file|mimes:pdf|max:10240',
+        ], [
+            'agendaReportPdf.file' => 'Berkas LPJ harus berupa file yang valid.',
+            'agendaReportPdf.mimes' => 'Dokumen LPJ harus berformat PDF (.pdf).',
+            'agendaReportPdf.max' => 'Ukuran file LPJ maksimal 10 MB.',
+        ]);
+    }
+
     public function deleteAgenda(int $id): void
     {
         if (! Auth::user()->canManage()) {
@@ -3159,6 +3184,10 @@ class AdminDashboard extends Component
         if (! $agenda) {
             $this->notify('Agenda kegiatan telah dihapus.');
             return;
+        }
+
+        if ($agenda->report_pdf_path && Storage::disk('public')->exists($agenda->report_pdf_path)) {
+            Storage::disk('public')->delete($agenda->report_pdf_path);
         }
 
         $agenda->delete();

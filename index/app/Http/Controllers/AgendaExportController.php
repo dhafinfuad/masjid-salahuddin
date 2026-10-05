@@ -6,6 +6,8 @@ use App\Models\Agenda;
 use App\Models\MasjidSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AgendaExportController extends Controller
@@ -101,11 +103,37 @@ class AgendaExportController extends Controller
     }
 
     /**
-     * Print single Agenda LPJ
+     * Print single Agenda LPJ / View uploaded PDF document
      */
     public function printLpj(int $id)
     {
         $agenda = Agenda::findOrFail($id);
+
+        if (!empty($agenda->report_pdf_path)) {
+            // Cek di disk public Storage
+            if (Storage::disk('public')->exists($agenda->report_pdf_path)) {
+                $filePath = Storage::disk('public')->path($agenda->report_pdf_path);
+                $mimeType = Storage::disk('public')->mimeType($agenda->report_pdf_path) ?: 'application/pdf';
+                $safeName = 'LPJ_' . Str::slug($agenda->title) . '.pdf';
+
+                return response()->file($filePath, [
+                    'Content-Type' => $mimeType,
+                    'Content-Disposition' => 'inline; filename="' . $safeName . '"',
+                ]);
+            }
+
+            // Cek jika path tersimpan langsung di public/storage
+            $directPath = public_path('storage/' . $agenda->report_pdf_path);
+            if (file_exists($directPath)) {
+                $safeName = 'LPJ_' . Str::slug($agenda->title) . '.pdf';
+
+                return response()->file($directPath, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="' . $safeName . '"',
+                ]);
+            }
+        }
+
         $settings = MasjidSetting::first();
         $printDate = Carbon::now()->translatedFormat('d F Y');
 

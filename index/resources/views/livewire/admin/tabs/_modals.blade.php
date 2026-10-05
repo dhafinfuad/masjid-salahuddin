@@ -1058,7 +1058,7 @@
                     <h3 class="text-base font-bold text-gov-textMain tracking-tight"
                         x-text="isEditingAgenda ? 'Edit Perencanaan Kegiatan' : 'Buat Perencanaan Kegiatan'"></h3>
                     <p class="text-xs text-slate-500 mt-0.5">Lengkapi parameter kegiatan, susunan panitia, estimasi
-                        anggaran, dan draf laporan.</p>
+                        anggaran, dan berkas LPJ.</p>
                 </div>
                 <button type="button" @click="showAgendaModal = false"
                     class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
@@ -1141,21 +1141,52 @@
                         </div>
 
                         <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Draft Laporan / Kesimpulan
-                                (LPJ)</label>
-                            <textarea x-model="agendaForm.report_summary" rows="3"
-                                placeholder="Ringkasan pelaksanaan, evaluasi realisasi kegiatan, dan catatan DKM..."
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Lampiran Berkas LPJ (PDF
-                                Opsional)</label>
-                            <input type="file" wire:model="agendaReportPdf" accept=".pdf"
+                            <label class="block font-semibold text-slate-700 mb-1">
+                                <span>Lampiran Berkas LPJ (PDF Opsional)</span>
+                                <span class="text-[10px] text-slate-400 font-normal ml-1">(.pdf maks 10MB)</span>
+                            </label>
+                            <input type="file" wire:model="agendaReportPdf" accept=".pdf,application/pdf"
                                 class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
-                            @error('agendaReportPdf') <span
-                                class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
+                            @error('agendaReportPdf')
+                                <span class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
                             @enderror
+
+                            <!-- Indikator Loading Saat File PDF Diunggah -->
+                            <div wire:loading.inline-flex wire:target="agendaReportPdf" style="display: none;"
+                                class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap mt-1.5">
+                                <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="whitespace-nowrap leading-none">Mengunggah file PDF...</span>
+                            </div>
+
+                            <!-- Preview / Link Berkas yang Sudah Pernah Diupload -->
+                            <template x-if="agendaForm.report_pdf_path">
+                                <div class="mt-2.5 p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                                    <div class="flex items-center gap-2 text-slate-700 min-w-0">
+                                        <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <path d="M10 12v6"></path>
+                                            <path d="M14 12v6"></path>
+                                        </svg>
+                                        <div class="truncate">
+                                            <span class="font-medium text-slate-800">Dokumen LPJ Tersimpan</span>
+                                            <span class="text-[10px] text-slate-400 block truncate">Pilih file baru di atas jika ingin mengganti.</span>
+                                        </div>
+                                    </div>
+                                    <a :href="'/admin/agenda/lpj/' + agendaForm.id" target="_blank"
+                                        class="text-gov-navy hover:text-gov-navyHover font-semibold underline underline-offset-2 shrink-0 ml-2 inline-flex items-center gap-1">
+                                        <span>Buka Dokumen</span>
+                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>

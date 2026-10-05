@@ -9,6 +9,8 @@ use App\Models\OdojEntry;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -242,6 +244,69 @@ class AgendaAndOdojTest extends TestCase
         $lpjResponse->assertSee('LAPORAN REALISASI AGENDA KEGIATAN');
         $lpjResponse->assertSee('Peringatan Nuzulul Quran');
         $lpjResponse->assertSee('Fahmi (Ketua)');
+    }
+
+    public function test_admin_can_view_uploaded_pdf_lpj(): void
+    {
+        $this->actingAs($this->admin);
+        Storage::fake('public');
+
+        $fakePdf = UploadedFile::fake()->create('laporan_kegiatan.pdf', 500, 'application/pdf');
+        $storedPath = $fakePdf->store('lpj', 'public');
+
+        $agenda = Agenda::create([
+            'title' => 'Peringatan Nuzulul Quran Akbar',
+            'event_date' => '2026-04-15',
+            'budget' => 7500000,
+            'status' => 'SELESAI',
+            'report_pdf_path' => $storedPath,
+        ]);
+
+        $response = $this->get("/admin/agenda/lpj/{$agenda->id}");
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringContainsString('inline', $response->headers->get('Content-Disposition') ?? '');
+    }
+
+    public function test_uploading_non_pdf_file_for_agenda_lpj_is_rejected(): void
+    {
+        $this->actingAs($this->admin);
+        Storage::fake('public');
+
+        $fakeDoc = UploadedFile::fake()->create('document.docx', 500, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+
+        Livewire::test(AdminDashboard::class)
+            ->set('agendaReportPdf', $fakeDoc)
+            ->call('saveAgenda', [
+                'title' => 'Kegiatan Uji Coba Dokumen',
+                'event_date' => '2026-11-20',
+                'budget' => '1000000',
+                'status' => 'Direncanakan',
+            ])
+            ->assertHasErrors(['agendaReportPdf']);
+    }
+
+    public function test_admin_can_upload_pdf_lpj_when_saving_agenda(): void
+    {
+        $this->actingAs($this->admin);
+        Storage::fake('public');
+
+        $fakePdf = UploadedFile::fake()->create('berkas_resmi_lpj.pdf', 300, 'application/pdf');
+
+        Livewire::test(AdminDashboard::class)
+            ->set('agendaReportPdf', $fakePdf)
+            ->call('saveAgenda', [
+                'title' => 'Kegiatan Syiar Akbar',
+                'event_date' => '2026-12-01',
+                'budget' => '5000000',
+                'status' => 'SELESAI',
+            ])
+            ->assertHasNoErrors();
+
+        $agenda = Agenda::where('title', 'Kegiatan Syiar Akbar')->first();
+        $this->assertNotNull($agenda);
+        $this->assertNotNull($agenda->report_pdf_path);
+        Storage::disk('public')->assertExists($agenda->report_pdf_path);
     }
 
     public function test_admin_can_toggle_odoj_status(): void
