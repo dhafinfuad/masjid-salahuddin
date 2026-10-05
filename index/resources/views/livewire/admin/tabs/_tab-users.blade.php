@@ -20,9 +20,18 @@
                 </div>
             </div>
             @if(Auth::user()->canManage())
-                <div>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="openEmployeeStatusModal()"
+                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <polyline points="16 11 18 13 22 9"/>
+                        </svg>
+                        <span>Status Pegawai</span>
+                    </button>
                     <button type="button" @click="openCreateUser()"
-                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition flex items-center space-x-2 cursor-pointer">
+                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
                         <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
                         <span>Tambah Pengguna</span>
                     </button>

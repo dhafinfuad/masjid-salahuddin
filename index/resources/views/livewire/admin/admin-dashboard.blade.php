@@ -379,6 +379,13 @@
             $wire.set('assignPegawai1', this.assignPegawai1, false);
             $wire.set('assignPegawai2', this.assignPegawai2, false);
         },
+        showEmployeeStatusModal: false,
+        openEmployeeStatusModal() {
+            this.showEmployeeStatusModal = true;
+            if (window.Livewire) {
+                @this.call('openEmployeeStatusModal');
+            }
+        },
         showUserModal: false,
         isEditingUser: false,
         userForm: {
@@ -780,6 +787,8 @@
     @open-assign-odoj-modal.window="showAssignOdojModal = true"
     @close-assign-odoj-modal.window="showAssignOdojModal = false" @open-user-modal.window="showUserModal = true"
     @close-user-modal.window="showUserModal = false"
+    @open-employee-status-modal.window="showEmployeeStatusModal = true"
+    @close-employee-status-modal.window="showEmployeeStatusModal = false"
     @open-upload-doc-modal.window="showUploadDocModal = true"
     @close-upload-doc-modal.window="showUploadDocModal = false" @open-finance-modal.window="showFinanceModal = true"
     @close-finance-modal.window="showFinanceModal = false"

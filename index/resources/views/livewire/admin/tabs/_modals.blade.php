@@ -1424,6 +1424,161 @@
     </div>
 
     <!-- ======================================================== -->
+    <!-- MODAL: SINKRONISASI STATUS PEGAWAI (STATUS PEGAWAI AKTIF) -->
+    <!-- ======================================================== -->
+    <div x-show="showEmployeeStatusModal" x-cloak wire:ignore.self
+        @click="if (window.isBackdropClick($event, $el)) showEmployeeStatusModal = false"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        style="display: none;" @keydown.escape.window="showEmployeeStatusModal = false">
+        <div
+            class="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <polyline points="16 11 18 13 22 9"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gov-textMain tracking-tight">Status Pegawai Aktif</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Sinkronkan daftar pegawai yang masih aktif bertugas di KPP Madya Malang.</p>
+                    </div>
+                </div>
+                <button type="button" @click="showEmployeeStatusModal = false"
+                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Tab Pemilihan Metode Input -->
+            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg border border-slate-200 text-xs">
+                <button type="button"
+                    wire:click="$set('employeeStatusInputMode', 'text')"
+                    class="flex-1 py-1.5 px-3 rounded-md font-semibold transition text-center cursor-pointer {{ $employeeStatusInputMode === 'text' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                    Salin-Tempel (Copy-Paste)
+                </button>
+                <button type="button"
+                    wire:click="$set('employeeStatusInputMode', 'file')"
+                    class="flex-1 py-1.5 px-3 rounded-md font-semibold transition text-center cursor-pointer {{ $employeeStatusInputMode === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-slate-900' }}">
+                    Unggah File Excel (.xlsx / .csv)
+                </button>
+            </div>
+
+            <!-- Konten Mode 1: Textarea Copy-Paste -->
+            @if($employeeStatusInputMode === 'text')
+                <div class="space-y-2">
+                    <label class="block font-semibold text-slate-700 text-xs">
+                        <span>Daftar Nama / NIP Pegawai Aktif</span>
+                        <span class="text-[10px] text-slate-400 font-normal ml-1">(Dapat langsung di-copy dari tabel Excel)</span>
+                    </label>
+                    <textarea wire:model="employeeStatusText" rows="6"
+                        placeholder="Contoh format per baris:&#10;817931806	198501152010121001	Deril Amrizal Kholid&#10;Bimo Heriyanto&#10;060098765	Ichtiar Rachmatullah"
+                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-mono text-xs text-gov-textMain"></textarea>
+                    @error('employeeStatusText')
+                        <span class="text-rose-600 text-[11px] font-semibold block">{{ $message }}</span>
+                    @enderror
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        Sistem otomatis mengenali <strong>Nama Pegawai</strong>, <strong>NIP Pendek</strong> (9 digit), atau <strong>NIP Panjang</strong> (18 digit) yang terpisah oleh spasi, tab, maupun koma.
+                    </p>
+                </div>
+            @else
+                <!-- Konten Mode 2: File Upload Excel -->
+                <div class="space-y-2">
+                    <label class="block font-semibold text-slate-700 text-xs">
+                        <span>Pilih Berkas Spreadsheet Excel / CSV</span>
+                        <span class="text-[10px] text-slate-400 font-normal ml-1">(.xlsx, .xls, .csv maks 10MB)</span>
+                    </label>
+                    <input type="file" wire:model="employeeStatusFile" accept=".xlsx,.xls,.csv"
+                        class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
+                    @error('employeeStatusFile')
+                        <span class="text-rose-600 text-[11px] font-semibold block">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Loading File Upload -->
+                    <div wire:loading.inline-flex wire:target="employeeStatusFile" style="display: none;"
+                        class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap mt-1">
+                        <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap leading-none">Membaca berkas spreadsheet...</span>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        Sistem akan memindai seluruh kolom pada sheet pertama berkas Excel untuk menemukan kolom nama dan/atau NIP pegawai.
+                    </p>
+                </div>
+            @endif
+
+            <!-- Opsi Deaktivasi Akun yang Tidak Terdaftar -->
+            <div class="pt-1">
+                <label class="flex items-start gap-2.5 p-3 rounded-lg bg-amber-50/70 border border-amber-200/80 cursor-pointer select-none">
+                    <input type="checkbox" wire:model="deactivateMissingEmployees"
+                        class="mt-0.5 rounded text-gov-navy focus:ring-gov-navy border-slate-300">
+                    <div class="text-xs">
+                        <span class="font-bold text-slate-800 block">Nonaktifkan akun pegawai yang tidak tercantum dalam daftar ini</span>
+                        <span class="text-slate-600 text-[11px] block mt-0.5 leading-relaxed">
+                            Pegawai yang akunnya dinonaktifkan tidak akan bisa login lagi ke aplikasi dengan pemberitahuan: <strong class="text-rose-700">"Anda sudah bukan lagi pegawai KPP Madya Malang"</strong>. Akun admin Anda yang sedang digunakan saat ini tidak akan terdampak.
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Hasil Ringkasan Sinkronisasi (Jika Selesai Diproses) -->
+            @if($employeeStatusSyncResult)
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-gov-navy">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span>Hasil Sinkronisasi Terakhir</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                        <div class="p-2 bg-white rounded-lg border border-slate-200">
+                            <span class="text-[10px] text-slate-500 block">Total Baris</span>
+                            <span class="font-bold text-slate-800 text-sm">{{ $employeeStatusSyncResult['total_input_rows'] }}</span>
+                        </div>
+                        <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-200">
+                            <span class="text-[10px] text-emerald-700 block">Pegawai Aktif</span>
+                            <span class="font-bold text-emerald-800 text-sm">{{ $employeeStatusSyncResult['activated_count'] }}</span>
+                        </div>
+                        <div class="p-2 bg-rose-50 rounded-lg border border-rose-200">
+                            <span class="text-[10px] text-rose-700 block">Dinonaktifkan</span>
+                            <span class="font-bold text-rose-800 text-sm">{{ $employeeStatusSyncResult['deactivated_count'] }}</span>
+                        </div>
+                    </div>
+                    @if($employeeStatusSyncResult['unmatched_input_count'] > 0)
+                        <p class="text-[11px] text-slate-500 italic mt-1">
+                            Catatan: {{ $employeeStatusSyncResult['unmatched_input_count'] }} nama/NIP di daftar belum pernah membuat akun di aplikasi.
+                        </p>
+                    @endif
+                </div>
+            @endif
+
+            <!-- Footer Tombol Aksi -->
+            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200">
+                <button type="button" @click="showEmployeeStatusModal = false"
+                    class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium text-xs transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" wire:click="syncEmployeeStatus" wire:loading.attr="disabled"
+                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                    <span wire:loading.remove wire:target="syncEmployeeStatus">Terapkan Status Pegawai</span>
+                    <span wire:loading.inline-flex wire:target="syncEmployeeStatus" class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span class="whitespace-nowrap">Memproses...</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT PENGGUNA (MILESTONE 4) -->
     <!-- ======================================================== -->
     <div x-show="showUserModal" x-cloak wire:ignore.self

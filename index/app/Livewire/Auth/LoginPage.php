@@ -39,6 +39,13 @@ class LoginPage extends Component
         ];
     }
 
+    public function mount(): void
+    {
+        if (session()->has('error')) {
+            $this->errorMessage = (string) session('error');
+        }
+    }
+
     public function login(): void
     {
         $this->errorMessage = '';
@@ -78,6 +85,13 @@ class LoginPage extends Component
             return;
         }
 
+        // Cek status keaktifan pegawai
+        if (strtoupper($user->status ?? 'AKTIF') !== 'AKTIF') {
+            RateLimiter::hit($throttleKey, 60);
+            $this->errorMessage = 'Anda sudah bukan lagi pegawai KPP Madya Malang.';
+            return;
+        }
+
         // Cek apakah akun hasil migrasi lama yang belum memiliki password (password NULL atau kosong)
         if (is_null($user->password) || blank($user->password)) {
             $this->isMigrationAccount = true;
@@ -88,6 +102,14 @@ class LoginPage extends Component
 
         // Coba autentikasi jika akun memiliki password
         if (Auth::attempt(['email' => $resolvedEmail, 'password' => $this->password], $this->remember)) {
+            if (strtoupper(Auth::user()->status ?? 'AKTIF') !== 'AKTIF') {
+                Auth::logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                $this->errorMessage = 'Anda sudah bukan lagi pegawai KPP Madya Malang.';
+                return;
+            }
+
             RateLimiter::clear($throttleKey);
             session()->regenerate();
             $this->redirectIntended(route('admin.dashboard'), navigate: true);
@@ -119,6 +141,10 @@ class LoginPage extends Component
         $targetRoles = $roleMap[strtolower($role)] ?? [$role];
         $user = User::whereIn('role', $targetRoles)->first();
         if ($user) {
+            if (strtoupper($user->status ?? 'AKTIF') !== 'AKTIF') {
+                $this->errorMessage = 'Anda sudah bukan lagi pegawai KPP Madya Malang.';
+                return;
+            }
             Auth::login($user, true);
             session()->regenerate();
             $this->redirectIntended(route('admin.dashboard'), navigate: true);

@@ -285,6 +285,16 @@ class AdminDashboard extends Component
     public string $userFilterRole = 'all';
 
     // ==========================================
+    // Employee Status Sync State
+    // ==========================================
+    public bool $showEmployeeStatusModal = false;
+    public string $employeeStatusInputMode = 'text'; // 'text' | 'file'
+    public string $employeeStatusText = '';
+    public $employeeStatusFile = null;
+    public bool $deactivateMissingEmployees = true;
+    public ?array $employeeStatusSyncResult = null;
+
+    // ==========================================
     // Takmir & Kepengurusan State (Subtab under /admin/users)
     // ==========================================
     public string $userSubTab = 'pengguna'; // 'pengguna' | 'kepengurusan'
@@ -464,6 +474,15 @@ class AdminDashboard extends Component
 
     public function mount(?string $tab = null): void
     {
+        if (Auth::check() && strtoupper(Auth::user()->status ?? 'AKTIF') !== 'AKTIF') {
+            Auth::logout();
+            session()->invalidate();
+            session()->regenerateToken();
+            session()->flash('error', 'Anda sudah bukan lagi pegawai KPP Madya Malang.');
+            $this->redirect(route('login'), navigate: true);
+            return;
+        }
+
         $tab = $tab ?: request()->query('tab');
         if ($tab && in_array($tab, ['events', 'categories', 'registrants', 'materials'])) {
             $tab = 'kegiatan';
@@ -3673,6 +3692,80 @@ class AdminDashboard extends Component
         $user->status = ($user->status === 'AKTIF') ? 'NONAKTIF' : 'AKTIF';
         $user->save();
         $this->notify("Status {$user->name} diubah menjadi {$user->status}.");
+    }
+
+    public function openEmployeeStatusModal(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
+            return;
+        }
+
+        $this->resetEmployeeStatusModal();
+        $this->showEmployeeStatusModal = true;
+        $this->dispatch('open-employee-status-modal');
+    }
+
+    public function resetEmployeeStatusModal(): void
+    {
+        $this->employeeStatusText = '';
+        $this->employeeStatusFile = null;
+        $this->employeeStatusInputMode = 'text';
+        $this->deactivateMissingEmployees = true;
+        $this->employeeStatusSyncResult = null;
+        $this->resetValidation([
+            'employeeStatusText',
+            'employeeStatusFile',
+        ]);
+    }
+
+    public function syncEmployeeStatus(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
+            return;
+        }
+
+        $entries = [];
+
+        if ($this->employeeStatusInputMode === 'text') {
+            $this->validate([
+                'employeeStatusText' => 'required|string|min:3',
+            ], [
+                'employeeStatusText.required' => 'Daftar nama atau NIP pegawai wajib diisi.',
+                'employeeStatusText.min' => 'Daftar nama atau NIP pegawai minimal 3 karakter.',
+            ]);
+
+            $entries = \App\Services\EmployeeStatusSyncService::parseText($this->employeeStatusText);
+        } else {
+            $this->validate([
+                'employeeStatusFile' => 'required|file|mimes:xlsx,xls,csv,txt|max:10240',
+            ], [
+                'employeeStatusFile.required' => 'Silakan pilih berkas Excel atau CSV terlebih dahulu.',
+                'employeeStatusFile.mimes' => 'Berkas harus berformat .xlsx, .xls, atau .csv.',
+                'employeeStatusFile.max' => 'Ukuran berkas maksimal 10 MB.',
+            ]);
+
+            $tempPath = $this->employeeStatusFile->getRealPath();
+            $entries = \App\Services\EmployeeStatusSyncService::parseFile($tempPath);
+        }
+
+        if (empty($entries)) {
+            $this->addError(
+                $this->employeeStatusInputMode === 'text' ? 'employeeStatusText' : 'employeeStatusFile',
+                'Tidak ditemukan data nama atau NIP yang valid pada input yang diberikan. Pastikan format sudah sesuai.'
+            );
+            return;
+        }
+
+        $result = \App\Services\EmployeeStatusSyncService::sync(
+            $entries,
+            $this->deactivateMissingEmployees,
+            Auth::id()
+        );
+
+        $this->employeeStatusSyncResult = $result;
+        $this->notify("Status pegawai berhasil disinkronkan: {$result['activated_count']} aktif, {$result['deactivated_count']} dinonaktifkan.");
     }
 
     public function logout(): void

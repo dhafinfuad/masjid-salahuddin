@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-#[Fillable(['name', 'email', 'password', 'role', 'status'])]
+#[Fillable(['name', 'email', 'password', 'role', 'status', 'nip'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -23,12 +23,24 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Pastikan nama pengguna selalu berformat Capitalized / Title Case (misal: "Deril Amrizal Kholid").
+     * Menjaga huruf kapital pada gelar akademik seperti S.Kom, S.T., M.Si, Ph.D.
      */
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value) => $value ? Str::title($value) : $value,
-            set: fn (?string $value) => $value ? Str::title(trim($value)) : $value,
+            get: fn (?string $value) => $value,
+            set: function (?string $value) {
+                if (! $value) {
+                    return $value;
+                }
+                $trimmed = trim($value);
+                if (strtolower($trimmed) === $trimmed || strtoupper($trimmed) === $trimmed) {
+                    $titled = Str::title($trimmed);
+                    return preg_replace_callback('/\b(s|m)\.(kom|pd|e|t|si|ag|sn|sos)\b/i', fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])), $titled);
+                }
+
+                return preg_replace_callback('/\b([a-z])/i', fn ($m) => strtoupper($m[1]), $trimmed);
+            },
         );
     }
 
