@@ -1,0 +1,79 @@
+# Environment & Secret files (SANGAT KRUSIAL: JANGAN PERNAH DI-COMMIT)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.pfx
+*.cer
+auth.json
+
+# 1Panel Logs & Web Server Logs
+log/
+logs/
+*.log
+
+# 1Panel SSL Certificates & Keys
+ssl/
+ssl/*
+
+# Dependencies (Installed via Composer & NPM)
+vendor/
+**/vendor/
+node_modules/
+**/node_modules/
+
+# Laravel Storage & Framework Cache
+**/storage/framework/cache/*
+!**/storage/framework/cache/.gitignore
+**/storage/framework/sessions/*
+!**/storage/framework/sessions/.gitignore
+**/storage/framework/views/*
+!**/storage/framework/views/.gitignore
+**/storage/framework/testing/*
+!**/storage/framework/testing/.gitignore
+**/storage/logs/*
+!**/storage/logs/.gitignore
+**/storage/app/backups/
+**/storage/app/backups/*
+**/storage/app/public/*
+!**/storage/app/public/.gitignore
+**/storage/app/*.json
+!**/storage/app/.gitignore
+**/storage/*.key
+**/storage/pail
+
+# Laravel Public Build & Hot Reload
+**/public/build/
+**/public/hot
+**/public/storage
+**/public/fonts-manifest.dev.json
+
+# PHPUnit & Testing Caches
+.phpunit.cache/
+.phpunit.result.cache
+**/.phpunit.result.cache
+**/.phpunit.cache
+
+# IDE & Editor Specific Files
+.vscode/
+.idea/
+.cursor/
+.zed/
+.codex/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Bundles, Scratch, & Spreadsheet Data (Finances/Sensitive)
+**/scratch/
+index/index-bundle.js
+*.xlsx
+*.xls
+*.csv

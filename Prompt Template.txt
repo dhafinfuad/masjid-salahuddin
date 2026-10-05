@@ -1,0 +1,1 @@
+Sebelum mengeksekusi kode, selalu gunakan panduan AGENTS.md, UI_GUIDELINES.md, dan PANDUAN_ARSITEKTUR_DAN_PERFORMA.md, serta LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md

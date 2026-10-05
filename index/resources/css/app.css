@@ -1,0 +1,399 @@
+@import 'tailwindcss';
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Ensure SVGs inside button loading states are shrink-0 and vertically aligned */
+button [wire\:loading] svg,
+button [wire\:loading\.inline-flex] svg,
+button [wire\:loading\.flex] svg {
+    display: inline-block;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-arabic: 'Amiri', 'Traditional Arabic', serif;
+    --font-serifTitle: 'Playfair Display', Georgia, serif;
+    --font-plusJakarta: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+    --color-gov-navy: #0B2B54;
+    --color-gov-navyDark: #081D38;
+    --color-gov-navyLight: #E8F0FE;
+    --color-gov-navyHover: #13396B;
+    --color-gov-canvas: #F8FAFC;
+    --color-gov-surface: #FFFFFF;
+    --color-gov-border: #B8C4D4;
+    --color-gov-textMain: #0F172A;
+    --color-gov-textMuted: #64748B;
+    --color-gov-textSubtle: #94A3B8;
+    --color-gov-gold: #F59E0B;
+    --color-gov-goldLight: #FEF3C7;
+    --color-gov-goldDark: #D97706;
+
+    --color-gov-50: #f0f4f9;
+    --color-gov-100: #dde6f2;
+    --color-gov-200: #c0d0e6;
+    --color-gov-300: #94b2d5;
+    --color-gov-600: #1f4e79;
+    --color-gov-700: #173d61;
+    --color-gov-800: #133250;
+    --color-gov-900: #0f243a;
+    --color-gov-950: #0a1726;
+
+    --color-navy-800: #111c34;
+    --color-navy-900: #0d1527;
+    --color-navy-950: #080d19;
+
+    --color-masjid-50: #f0fdf4;
+    --color-masjid-100: #dcfce7;
+    --color-masjid-200: #bbf7d0;
+    --color-masjid-300: #86efac;
+    --color-masjid-400: #4ade80;
+    --color-masjid-500: #22c55e;
+    --color-masjid-600: #16a34a;
+    --color-masjid-700: #15803d;
+    --color-masjid-800: #166534;
+    --color-masjid-850: #0f532b;
+    --color-masjid-900: #0b4222;
+    --color-masjid-950: #052914;
+
+    --color-masjid-gold: #eab308;
+    --color-masjid-amber: #d97706;
+    --color-masjid-darkgold: #b45309;
+}
+
+/* Typography & Legibility Optimization */
+html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: var(--font-sans);
+    letter-spacing: -0.011em;
+}
+
+/* Universal Monospace to Inter / System-UI Font Standard */
+code, kbd, samp, pre, .font-mono {
+    font-family: var(--font-sans) !important;
+}
+
+/* Studio Poster Dedicated Fonts */
+.font-serifTitle {
+    font-family: 'Playfair Display', Georgia, serif !important;
+}
+
+.font-plusJakarta {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+}
+
+/* Guaranteed Status Badge Height & Typography Standard */
+.h-\[20px\] {
+    height: 20px !important;
+}
+
+.text-\[11px\] {
+    font-size: 11px !important;
+}
+
+/* Subtle corporate grid watermark */
+.bg-gov-pattern {
+    background-image: 
+        radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0, rgba(255, 255, 255, 0.015) 1px, transparent 0, transparent 20px);
+}
+
+/* Executive Slate TV Display Background */
+.bg-gov-tv {
+    background-color: #071526;
+    background-image: 
+        radial-gradient(circle at 50% 20%, rgba(26, 68, 117, 0.22) 0%, transparent 60%),
+        linear-gradient(to bottom, #08192E 0%, #050E1A 100%);
+}
+
+/* Tabular figures for clocks & numbers */
+.tnum {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+/* Islamic Geometric Pattern Background */
+.bg-islamic-pattern {
+    background-color: #063929;
+    background-image: radial-gradient(rgba(217, 119, 6, 0.12) 1px, transparent 0), radial-gradient(rgba(34, 197, 94, 0.08) 1px, transparent 0);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+}
+
+/* Islamic Stars TV Display Background */
+.bg-islamic-stars {
+    background-color: #03251a;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(20, 83, 45, 0.4) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, rgba(234, 179, 8, 0.03) 0, rgba(234, 179, 8, 0.03) 1px, transparent 0, transparent 32px),
+        repeating-linear-gradient(-45deg, rgba(234, 179, 8, 0.03) 0, rgba(234, 179, 8, 0.03) 1px, transparent 0, transparent 32px);
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+@keyframes marqueeScroll {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marqueeScroll 32s linear infinite;
+}
+
+.animate-marquee:hover {
+    animation-play-state: paused;
+}
+
+/* Smooth Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a10;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0B2B5440;
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0B2B5480;
+}
+
+/* Seamless & Silky-Smooth Fixed Admin Sidebar Drawer */
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 16rem;
+    z-index: 40;
+    transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateX(0);
+}
+
+.admin-sidebar.sidebar-closed {
+    transform: translateX(-100%);
+}
+
+.admin-workspace {
+    transition: margin-left 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: margin-left;
+}
+
+@media (min-width: 768px) {
+    .admin-workspace {
+        margin-left: 16rem;
+    }
+    .admin-workspace.sidebar-closed {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .admin-sidebar {
+        z-index: 50;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .admin-workspace {
+        margin-left: 0 !important;
+    }
+}
+
+/* Guaranteed Select Option Reset & Modern Chevron Styling Across All Browsers & iOS WebKit */
+/* Guaranteed Select Option Reset & Modern Chevron Styling Across All Browsers & iOS WebKit */
+select:not(.sr-only) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-weight: 500;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.625rem center;
+    background-size: 14px 14px;
+    padding-right: 2rem !important;
+}
+
+select option {
+    font-weight: 500;
+    color: var(--color-gov-textMain);
+    background-color: #ffffff;
+}
+
+/* Guaranteed Date, Time, and DateTime Input Reset Across All Browsers & iOS WebKit */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-family: var(--font-sans);
+    color: var(--color-gov-textMain);
+    font-weight: 500;
+}
+
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value,
+input[type="datetime-local"]::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.25rem;
+    display: block;
+    width: 100%;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+    padding: 0;
+    margin: 0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Full-Width Modal & Form Date Inputs Matching Standard Inputs (38px Height) */
+input[type="date"].w-full,
+input[type="time"].w-full,
+input[type="datetime-local"].w-full {
+    height: 38px;
+    min-height: 38px;
+    font-size: 0.75rem; /* text-xs */
+    line-height: 1.25rem;
+}
+
+/* Standard Form Select (Modals & Full-Width Form Inputs) */
+select.w-full:not(.sr-only) {
+    border: 1px solid var(--color-gov-border);
+    color: var(--color-gov-textMain);
+    background-color: rgba(248, 250, 252, 0.5);
+    border-radius: 0.5rem;
+    font-size: 0.75rem; /* text-xs */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+select.w-full:not(.sr-only):hover {
+    background-color: rgba(241, 245, 249, 0.7);
+}
+
+select.w-full:not(.sr-only):focus {
+    background-color: #ffffff;
+    outline: none;
+    border-color: var(--color-gov-navy);
+    box-shadow: 0 0 0 1px var(--color-gov-navy);
+}
+
+/* Compact Toolbar Filter Select */
+select.p-1\.5:not(.sr-only) {
+    height: 32px;
+    min-height: 32px;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-gov-border);
+    background-color: rgba(248, 250, 252, 0.5);
+    background-position: right 0.5rem center;
+    background-size: 12px 12px;
+    padding-right: 1.75rem !important;
+}
+
+/* Table Inline Selects */
+select.table-select,
+table select:not(.w-full) {
+    min-height: 26px !important;
+    height: 26px !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+    padding-right: 1.5rem !important;
+    background-position: right 0.375rem center !important;
+    background-size: 11px 11px !important;
+}
+
+/* Guaranteed Table Row Border Contrast Standard (1px slate-300 = #cbd5e1) */
+table > tbody.divide-y > tr,
+table > tbody.divide-slate-300 > tr,
+table > tbody.divide-y > :not(:last-child),
+table > tbody.divide-slate-300 > :not(:last-child) {
+    border-top-color: #cbd5e1 !important;
+    border-bottom-color: #cbd5e1 !important;
+}
+
+/* Ensure amber left border highlight works with high specificity */
+tr.border-l-amber-500,
+.border-l-amber-500 {
+    border-left-color: #f59e0b !important;
+}
+
+/* Guaranteed bg-amber-100/40 highlight styling standard */
+.bg-amber-100\/40 {
+    background-color: #fef3c666;
+    background-color: color-mix(in oklab, var(--color-amber-100, #fef3c7) 40%, transparent);
+}
+
+/* Guaranteed Portal Desktop Layout Container */
+.portal-container {
+    width: 100%;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Dedicated Notula Document Scrollbar */
+.notula-scrollable {
+    scrollbar-width: thin !important;
+    scrollbar-color: #94a3b8 #f1f5f9 !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+.notula-scrollable::-webkit-scrollbar {
+    display: block !important;
+    width: 8px !important;
+    height: 8px !important;
+}
+.notula-scrollable::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+    border-radius: 9999px !important;
+}
+.notula-scrollable::-webkit-scrollbar-thumb {
+    background-color: #94a3b8 !important;
+    border-radius: 9999px !important;
+    border: 2px solid #f1f5f9 !important;
+}
+.notula-scrollable::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b !important;
+}
