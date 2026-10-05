@@ -67,9 +67,9 @@
 
                                                 @if($isJumat)
                                                     <a href="{{ route('admin.kajian.teks-mc', $kj->id) }}" target="_blank"
-                                                        class="inline-flex items-center justify-center p-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 shadow-2xs transition cursor-pointer shrink-0 ml-auto"
+                                                        class="inline-flex items-center justify-center p-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border shadow-2xs transition cursor-pointer shrink-0 ml-auto"
                                                         title="Buka & Cetak Teks MC Shalat Jumat">
-                                                        <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
+                                                        <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy"></i>
                                                     </a>
                                                 @endif
                                             </div>
@@ -257,9 +257,9 @@
                                         @if($isFridayDzuhurWidget && $fridayKajianWidget)
                                             <div class="flex items-center gap-1.5 shrink-0 pl-2">
                                                 <a href="{{ route('admin.kajian.teks-mc', $fridayKajianWidget->id) }}" target="_blank"
-                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                     title="Buka & Cetak Teks MC Shalat Jumat">
-                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
+                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
                                                     <span>Teks MC</span>
                                                 </a>
                                             </div>

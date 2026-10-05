@@ -301,13 +301,13 @@
 
                         <!-- Footer Card Action (Teks MC & Notula) -->
                         @if($isJumat || !empty($item['notula']) || !empty($item['youtube_url']))
-                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end gap-2 mt-auto">
+                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end mt-auto">
                                 <div>
                                     @if($isJumat)
                                         <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
-                                           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                            title="Download & Cetak Teks MC Sholat Jumat (PDF)">
-                                            <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
+                                            <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
                                             <span>Teks MC</span>
                                         </a>
                                     @endif
