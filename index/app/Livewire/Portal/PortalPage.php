@@ -290,21 +290,14 @@ class PortalPage extends Component
         // Catatan: Jika sedang memuat jadwal Jumat H+1 (misal dibuka Kamis malam), tetap tampilkan Khutbah Jumat.
         $isFridayAsharDuty = ($isFridayToday && $dutyDate->isSameDay($now) && $currentTime >= '14:00' && !$isAfterAshar);
 
-        // Penyesuaian title dinamis kartu Petugas Shalat: Dhuhur / Ashar / Jumat
+        // Penyesuaian title kartu Petugas Shalat: Sholat (Dzuhur/Ashar) atau Sholat Jumat
         if ($isFridayDuty && !$isFridayAsharDuty) {
             $prayerDutyTypeTitle = 'Jumat';
-        } elseif ($isFridayDuty && $isFridayAsharDuty) {
-            $prayerDutyTypeTitle = 'Ashar';
+            $dutyTitle = 'Petugas Sholat Jumat';
         } else {
-            // Hari Senin - Kamis:
-            // Jika hari ini dan sudah masuk waktu Ashar (pukul 14.00 s.d. maghrib): Ashar
-            // Selain itu (pagi / sebelum 14.00, atau preview H+1): Dhuhur
-            $prayerDutyTypeTitle = (!$dutyDate->isFriday() && $dutyDate->isSameDay($now) && $currentTime >= '14:00' && !$isAfterAshar)
-                ? 'Ashar'
-                : 'Dhuhur';
+            $prayerDutyTypeTitle = 'Sholat';
+            $dutyTitle = 'Petugas Sholat';
         }
-
-        $dutyTitle = 'Petugas ' . $prayerDutyTypeTitle;
 
         $dayMap = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat'];
         $dutyDayName = $dayMap[$dutyDate->dayOfWeekIso] ?? 'Senin';

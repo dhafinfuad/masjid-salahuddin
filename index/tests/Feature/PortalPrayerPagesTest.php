@@ -274,7 +274,11 @@ class PortalPrayerPagesTest extends TestCase
             ->assertViewHas('asharPrayerTime', $ashar);
 
         if (!now()->isFriday()) {
-            $component->assertSee($dzuhur . ' WIB')
+            $component->assertSee('Petugas Sholat')
+                ->assertDontSee('Petugas Ashar')
+                ->assertDontSee('Petugas Dzuhur')
+                ->assertDontSee('Petugas Dhuhur')
+                ->assertSee($dzuhur . ' WIB')
                 ->assertSee($ashar . ' WIB');
         }
     }
