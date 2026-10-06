@@ -251,7 +251,7 @@ class AgendaAndOdojTest extends TestCase
         $this->actingAs($this->admin);
         Storage::fake('public');
 
-        $fakePdf = UploadedFile::fake()->create('laporan_kegiatan.pdf', 500, 'application/pdf');
+        $fakePdf = UploadedFile::fake()->createWithContent('laporan_kegiatan.pdf', '%PDF-1.4 sample content');
         $storedPath = $fakePdf->store('lpj', 'public');
 
         $agenda = Agenda::create([
@@ -273,7 +273,7 @@ class AgendaAndOdojTest extends TestCase
         $this->actingAs($this->admin);
         Storage::fake('public');
 
-        $fakeDoc = UploadedFile::fake()->create('document.docx', 500, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        $fakeDoc = UploadedFile::fake()->createWithContent('document.docx', 'fake docx content');
 
         Livewire::test(AdminDashboard::class)
             ->set('agendaReportPdf', $fakeDoc)
@@ -291,7 +291,7 @@ class AgendaAndOdojTest extends TestCase
         $this->actingAs($this->admin);
         Storage::fake('public');
 
-        $fakePdf = UploadedFile::fake()->create('berkas_resmi_lpj.pdf', 300, 'application/pdf');
+        $fakePdf = UploadedFile::fake()->createWithContent('berkas_resmi_lpj.pdf', '%PDF-1.4 sample content');
 
         Livewire::test(AdminDashboard::class)
             ->set('agendaReportPdf', $fakePdf)
@@ -503,6 +503,43 @@ class AgendaAndOdojTest extends TestCase
         // Status for new day should be 'Belum'
         $this->assertEquals('Belum', $rotatedEntries[1]->status);
         $this->assertEquals('Belum', $rotatedEntries[30]->status);
+    }
+
+    public function test_admin_open_edit_agenda_modal_state_and_save_workflow(): void
+    {
+        $this->actingAs($this->admin);
+
+        $agenda = Agenda::create([
+            'title' => 'Rapat Pleno Ramadhan',
+            'event_date' => '2026-03-01',
+            'budget' => 2000000,
+            'status' => 'Direncanakan',
+            'youtube_url' => 'https://youtube.com/watch?v=sample123',
+        ]);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('editAgenda', $agenda->id)
+            ->assertSet('showAgendaModal', true)
+            ->assertSet('isEditingAgenda', true)
+            ->assertSet('editingAgendaId', $agenda->id)
+            ->assertDispatched('open-agenda-modal')
+            ->call('saveAgenda', [
+                'id' => $agenda->id,
+                'title' => 'Rapat Pleno Ramadhan Terbuka',
+                'event_date' => '2026-03-02',
+                'budget' => 3500000,
+                'status' => 'Berjalan',
+                'youtube_url' => 'https://youtube.com/watch?v=sampleUpdated',
+            ])
+            ->assertSet('showAgendaModal', false)
+            ->assertDispatched('close-agenda-modal');
+
+        $updatedAgenda = $agenda->fresh();
+        $this->assertEquals('Rapat Pleno Ramadhan Terbuka', $updatedAgenda->title);
+        $this->assertEquals('2026-03-02', $updatedAgenda->event_date->format('Y-m-d'));
+        $this->assertEquals(3500000, (int) $updatedAgenda->budget);
+        $this->assertEquals('Berjalan', $updatedAgenda->status);
+        $this->assertEquals('https://youtube.com/watch?v=sampleUpdated', $updatedAgenda->youtube_url);
     }
 }
 

@@ -1048,9 +1048,9 @@
     <!-- MODAL: BUAT / EDIT PERENCANAAN KEGIATAN (MILESTONE 3) -->
     <!-- ======================================================== -->
     <div x-show="showAgendaModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showAgendaModal = false"
+        @click="if (window.isBackdropClick($event, $el)) { showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); } }"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showAgendaModal = false">
+        style="display: none;" @keydown.escape.window="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }">
         <div
             class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
@@ -1060,7 +1060,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">Lengkapi parameter kegiatan, susunan panitia, estimasi
                         anggaran, dan berkas LPJ.</p>
                 </div>
-                <button type="button" @click="showAgendaModal = false"
+                <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
                     class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -1145,7 +1145,7 @@
                                 <span>Lampiran Berkas LPJ (PDF Opsional)</span>
                                 <span class="text-[10px] text-slate-400 font-normal ml-1">(.pdf maks 10MB)</span>
                             </label>
-                            <input type="file" wire:model="agendaReportPdf" accept=".pdf,application/pdf"
+                            <input id="agendaReportPdfInput" type="file" wire:model="agendaReportPdf" accept=".pdf,application/pdf"
                                 class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
                             @error('agendaReportPdf')
                                 <span class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
@@ -1167,7 +1167,7 @@
                                     <div class="flex items-center gap-2 text-slate-700 min-w-0">
                                         <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                             <polyline points="14 2 14 8 20 8"></polyline>
                                             <path d="M10 12v6"></path>
                                             <path d="M14 12v6"></path>
                                         </svg>
@@ -1192,7 +1192,7 @@
                 </div>
 
                 <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showAgendaModal = false"
+                    <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">
                         Batal
                     </button>

@@ -311,7 +311,7 @@
          },
         agendaSubTab: '{{ $agendaSubTab }}',
         agendaViewMode: 'grid',
-        showAgendaModal: false,
+        showAgendaModal: {{ $showAgendaModal ? 'true' : 'false' }},
         showImportAgendaModal: false,
         importAgendaTab: 'paste',
         isEditingAgenda: false,
@@ -341,10 +341,15 @@
                 report_pdf_path: '',
                 youtube_url: '',
             };
-            if (window.Livewire) {
-                @this.set('agendaYoutubeUrl', null);
-            }
+            const pdfInput = document.getElementById('agendaReportPdfInput');
+            if (pdfInput) pdfInput.value = '';
             this.showAgendaModal = true;
+            if (window.Livewire) {
+                $wire.set('showAgendaModal', true, false);
+            }
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
         },
         openEditAgenda(data) {
             this.isEditingAgenda = true;
@@ -360,10 +365,15 @@
                 report_pdf_path: data.report_pdf_path || '',
                 youtube_url: data.youtube_url || '',
             };
-            if (window.Livewire) {
-                @this.set('agendaYoutubeUrl', data.youtube_url || null);
-            }
+            const pdfInput = document.getElementById('agendaReportPdfInput');
+            if (pdfInput) pdfInput.value = '';
             this.showAgendaModal = true;
+            if (window.Livewire) {
+                $wire.set('showAgendaModal', true, false);
+            }
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
         },
         showAssignOdojModal: false,
         assignJuzNumber: 1,

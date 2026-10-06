@@ -3183,6 +3183,7 @@ class AdminDashboard extends Component
 
     public function updatedAgendaReportPdf(): void
     {
+        $this->showAgendaModal = true;
         $this->validateOnly('agendaReportPdf', [
             'agendaReportPdf' => 'nullable|file|mimes:pdf|max:10240',
         ], [
