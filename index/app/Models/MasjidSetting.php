@@ -4,6 +4,35 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $address
+ * @property string|null $phone
+ * @property string|null $email
+ * @property float|null $latitude
+ * @property float|null $longitude
+ * @property float|null $qibla_angle
+ * @property string|null $calculation_method
+ * @property string|null $city_id
+ * @property string|null $city_name
+ * @property int|null $subuh_offset
+ * @property int|null $dzuhur_offset
+ * @property int|null $ashar_offset
+ * @property int|null $maghrib_offset
+ * @property int|null $isya_offset
+ * @property int|null $iqamah_delay_minutes
+ * @property array|null $tv_announcements
+ * @property array|null $friday_prayer_info
+ * @property array|null $bank_accounts
+ * @property array|null $takmir_documents
+ * @property array|null $takmir_structure
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * 
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class MasjidSetting extends Model
 {
     protected $fillable = [

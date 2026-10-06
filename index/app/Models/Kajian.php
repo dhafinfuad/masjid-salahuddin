@@ -6,6 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
+/**
+ * @property int $id
+ * @property string $type
+ * @property \Carbon\Carbon|null $date
+ * @property string|null $time_display
+ * @property string|null $title
+ * @property string|null $speaker_name
+ * @property string|null $speaker_phone
+ * @property bool $is_holiday_disabled
+ * @property string|null $khatib_name
+ * @property string|null $mc_name
+ * @property string|null $muadzin_name
+ * @property string|null $khatib_phone
+ * @property string|null $mc_notes
+ * @property string|null $speaker_photo
+ * @property string|null $notula
+ * @property string|null $youtube_url
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * 
+ * @method static \Illuminate\Database\Eloquent\Builder whereDate(string $column, mixed $operator = null, mixed $value = null, string $boolean = 'and')
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class Kajian extends Model
 {
     protected $guarded = ['id'];

@@ -334,7 +334,7 @@
                         <input x-model="kajianForm.date" type="date"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
                         @error('kajianDate') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Waktu Pelaksanaan</label>
@@ -351,7 +351,7 @@
                         :placeholder="kajianForm.type === 'jumat' ? 'Contoh: Meneladani Karakter Pemimpin Berintegritas' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
                     @error('kajianTitle') <span
-                    class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                    class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Khusus Kajian Pekanan & Tematik -->
@@ -424,7 +424,7 @@
                             </div>
                         </div>
                         @error('kajianSpeakerName') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp</label>
@@ -770,7 +770,7 @@
                     <input id="importKajianFile" type="file" wire:model="importKajianFile" accept=".xlsx,.xls,.csv,.txt"
                         class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer rounded-lg border border-gov-border bg-slate-50/50 p-2 focus:outline-none focus:ring-1 focus:ring-gov-navy transition">
                     @error('importKajianFile') <span
-                    class="text-xs font-medium text-rose-600 font-semibold block">{{ $message }}</span> @enderror
+                    class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
@@ -827,7 +827,7 @@
                             <option value="Jumat">Jumat</option>
                         </select>
                         @error('dutyDayName') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
@@ -838,7 +838,7 @@
                             <option value="ashar">Shalat Ashar</option>
                         </select>
                         @error('dutyPrayerTime') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
@@ -846,7 +846,7 @@
                         <input x-model="dutyForm.tahun" type="number" min="2020" max="2099" placeholder="2026"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                         @error('dutyTahun') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -864,7 +864,7 @@
                         <option value="pekan_2_4">Pekan Genap (Pekan 2 dan 4)</option>
                     </select>
                     @error('dutyWeekPattern') <span
-                    class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                    class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
 
                     <div class="mt-2 p-2.5 bg-blue-50/70 rounded-lg border border-blue-200 text-blue-900 text-xs flex items-start gap-2">
                         <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
@@ -881,7 +881,7 @@
                         <input x-model="dutyForm.imam_name" type="text" placeholder="Contoh: Ust. Pujo Santoso"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                         @error('dutyImamName') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
@@ -889,7 +889,7 @@
                         <input x-model="dutyForm.muadzin_name" type="text" placeholder="Contoh: Mas Zulhaq"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                         @error('dutyMuadzinName') <span
-                        class="text-xs font-medium text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -1017,7 +1017,7 @@
                     <input id="importDutyFile" type="file" wire:model="importDutyFile" accept=".xlsx,.xls,.csv,.txt"
                         class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer rounded-lg border border-gov-border bg-slate-50/50 p-2 focus:outline-none focus:ring-1 focus:ring-gov-navy transition">
                     @error('importDutyFile') <span
-                    class="text-xs font-medium text-rose-600 font-semibold block">{{ $message }}</span> @enderror
+                    class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
@@ -1318,7 +1318,7 @@
                     <input id="importAgendaFile" type="file" wire:model="importAgendaFile" accept=".csv,.txt"
                         class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer">
                     @error('importAgendaFile') <span
-                    class="text-xs font-medium text-rose-600 font-semibold block">{{ $message }}</span> @enderror
+                    class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
@@ -1375,7 +1375,7 @@
                         @endfor
                     </select>
                     @error('assignJuzNumber') <span
-                        class="text-xs font-medium text-rose-600 font-semibold block mt-1">{{ $message }}</span>
+                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -1384,7 +1384,7 @@
                     <input type="text" wire:model="assignPegawai1" placeholder="Contoh: Ahmad Fauzi" required
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                     @error('assignPegawai1') <span
-                        class="text-xs font-medium text-rose-600 font-semibold block mt-1">{{ $message }}</span>
+                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -1395,7 +1395,7 @@
                     <span class="text-[11px] text-slate-400 mt-1 block">1 Juz dapat ditugaskan ke maksimal 2
                         pegawai.</span>
                     @error('assignPegawai2') <span
-                        class="text-xs font-medium text-rose-600 font-semibold block mt-1">{{ $message }}</span>
+                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 

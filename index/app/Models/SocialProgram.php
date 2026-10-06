@@ -7,6 +7,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string $category
+ * @property string|null $description
+ * @property float $target_amount
+ * @property string $period_type
+ * @property string $status
+ * @property string|null $icon
+ * @property string|null $color
+ * @property int $active_participants_count
+ * @property float $monthly_commitment_total
+ * @property float $total_collected
+ * @property float $total_disbursed
+ * @property float $current_balance
+ * @property float $target_progress_percentage
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * 
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class SocialProgram extends Model
 {
     use HasFactory;

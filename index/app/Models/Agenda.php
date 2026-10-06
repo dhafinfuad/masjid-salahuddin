@@ -6,6 +6,23 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string|null $description
+ * @property \Carbon\Carbon|null $event_date
+ * @property float $budget
+ * @property string $status
+ * @property string|null $committee_members
+ * @property string|null $report_summary
+ * @property string|null $report_pdf_path
+ * @property string|null $youtube_url
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * 
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin \Illuminate\Database\Query\Builder
+ */
 class Agenda extends Model
 {
     protected $guarded = ['id'];
