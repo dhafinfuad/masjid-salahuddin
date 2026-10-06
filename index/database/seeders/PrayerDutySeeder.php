@@ -17,7 +17,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Pujo Santoso',
                 'muadzin_name' => 'Mas Zulhaq',
-                'notes' => 'Petugas rutin Senin siang',
             ],
             [
                 'day_name' => 'Senin',
@@ -25,7 +24,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Ridwan Kamil',
                 'muadzin_name' => 'Lukman Hakim',
-                'notes' => null,
             ],
 
             // SELASA
@@ -35,7 +33,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'H. Aris Setianto',
                 'muadzin_name' => 'Khudori',
-                'notes' => null,
             ],
             [
                 'day_name' => 'Selasa',
@@ -43,7 +40,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Sol Djoni Risandy',
                 'muadzin_name' => 'Deril Amrizal Kholid',
-                'notes' => null,
             ],
 
             // RABU
@@ -53,7 +49,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'pekan_1_3_5',
                 'imam_name' => 'Ust. Rahman Hakim',
                 'muadzin_name' => 'Alan Irfansyah',
-                'notes' => 'Pekan Ganjil',
             ],
             [
                 'day_name' => 'Rabu',
@@ -61,7 +56,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'pekan_2_4',
                 'imam_name' => 'Ust. Farhan Maulana',
                 'muadzin_name' => 'Alan Irfansyah',
-                'notes' => 'Pekan Genap',
             ],
             [
                 'day_name' => 'Rabu',
@@ -69,7 +63,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Yoni Ramadhani',
                 'muadzin_name' => 'Mochammad Dzul Hilmi',
-                'notes' => null,
             ],
 
             // KAMIS
@@ -79,7 +72,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Mahmud Hidayat',
                 'muadzin_name' => 'Ugik Endrar Viana',
-                'notes' => null,
             ],
             [
                 'day_name' => 'Kamis',
@@ -87,7 +79,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Budi Prakoso',
                 'muadzin_name' => 'Fathur Rahman',
-                'notes' => null,
             ],
 
             // JUMAT (Ashar - Jumat Dzuhur otomatis disinkronkan dari Kajian Jumat)
@@ -97,7 +88,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Cadangan Dzuhur Jumat',
                 'muadzin_name' => 'Muadzin Cadangan',
-                'notes' => 'Otomatis diisi oleh Khatib & Muadzin Kajian Jumat',
             ],
             [
                 'day_name' => 'Jumat',
@@ -105,7 +95,6 @@ class PrayerDutySeeder extends Seeder
                 'week_pattern' => 'semua',
                 'imam_name' => 'Ust. Hilman Pratama',
                 'muadzin_name' => 'Danang Wijaya',
-                'notes' => 'Shalat Ashar setelah Shalat Jumat',
             ],
         ];
 
