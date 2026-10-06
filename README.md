@@ -1,89 +1,102 @@
-# 🕌 Masjid Salahuddin - Sistem Informasi Terpadu
+# 🕌 Masjid Salahuddin — Sistem Informasi Terpadu
 
-[![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white)](https://www.php.net)
-[![License](https://img.shields.io/badge/License-Proprietary-blue.svg)](#lisensi)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)](#)
+[![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net)
+[![Livewire](https://img.shields.io/badge/Livewire-3-4E56A6?style=for-the-badge&logo=livewire&logoColor=white)](https://livewire.laravel.com)
+[![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
+[![License](https://img.shields.io/badge/License-Proprietary-blue?style=for-the-badge)](#lisensi)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)](#)
 
-Sistem informasi terpadu yang dirancang khusus untuk mendukung pengelolaan operasional, administrasi, dan layanan digital di Masjid Salahuddin. Aplikasi ini mengintegrasikan berbagai aspek manajemen masjid dalam satu platform yang mudah digunakan dan responsif.
+Sistem informasi terpadu yang dirancang khusus untuk mendukung pengelolaan operasional, administrasi, dan layanan digital di **Masjid Salahuddin**. Aplikasi ini mengintegrasikan berbagai aspek manajemen jamaah, jadwal sholat, petugas ibadah, keuangan, hingga komunikasi dua arah dengan jamaah.
+
+**[📱 Mulai Setup](#-panduan-setup) • [✨ Fitur](#-fitur-utama) • [🛠️ Tech Stack](#️-tech-stack) • [📸 Screenshots](#-screenshots) • [📖 Dokumentasi](#-dokumentasi)**
 
 ---
 
 ## 📋 Daftar Isi
 
-- [📸 Tangkapan Layar (Screenshots)](#-tangkapan-layar-screenshots)
+- [📌 Tentang Proyek](#-tentang-proyek)
+- [📸 Screenshots](#-screenshots)
 - [✨ Fitur Utama](#-fitur-utama)
-- [🛠️ Teknologi & Stack](#️-teknologi--stack)
+- [🛠️ Tech Stack](#️-tech-stack)
 - [📁 Struktur Proyek](#-struktur-proyek)
 - [🚀 Panduan Setup](#-panduan-setup)
+- [🧪 Testing](#-testing)
+- [🔐 Keamanan](#-keamanan)
+- [📦 Deployment](#-deployment)
 - [📖 Dokumentasi](#-dokumentasi)
 - [🤝 Kontribusi](#-kontribusi)
 - [📄 Lisensi](#-lisensi)
 
 ---
 
-## 📸 Tangkapan Layar (Screenshots)
+## 📌 Tentang Proyek
 
-Berikut adalah galeri antarmuka sistem informasi terpadu Masjid Salahuddin:
+**Masjid Salahuddin** adalah aplikasi web enterprise yang menggabungkan **portal publik untuk jamaah** dan **dashboard administratif untuk takmir**. Dengan teknologi **Progressive Web App (PWA)**, aplikasi ini dapat:
 
-### 🌐 1. Portal Jamaah & Tampilan Responsif (PWA)
-Portal publik yang dapat diakses oleh jamaah melalui peramban web desktop maupun smartphone secara responsif sebagai Progressive Web App (PWA).
+- ✅ Diakses dari desktop & mobile (responsive design)
+- ✅ Diinstal langsung ke homescreen smartphone
+- ✅ Berfungsi offline dengan service worker
+- ✅ Memberikan notifikasi push untuk reminder penting
 
-| Portal Beranda Jamaah (Desktop) | Tampilan Responsif Smartphone & PWA |
-|:---:|:---:|
+Sistem ini membantu Masjid Salahuddin dalam:
+1. **Manajemen Jadwal**: Perhitungan waktu sholat otomatis (metode Kemenag RI)
+2. **Penugasan Petugas**: Roster imam, muadzin, khotib berbasis sistem roster
+3. **Layanan Jamaah**: Informasi profil masjid, agenda kegiatan, kotak saran dua arah
+4. **Laporan Keuangan**: Pencatatan infaq & transparansi kas masjid
+5. **Digital Signage**: Tampilan khusus untuk monitor TV masjid
+
+---
+
+## 📸 Screenshots
+
+### 🌐 Portal Jamaah & PWA Responsif
+Halaman publik yang dapat diakses jamaah dari desktop dan mobile dengan instalasi PWA.
+
+| Portal Beranda (Desktop) | Tampilan Mobile & PWA |
+| :---: | :---: |
 | ![Portal Beranda Jamaah](index/docs/screenshots/01-portal-beranda.png) | ![Portal Mobile & PWA](index/docs/screenshots/09-portal-mobile.png) |
 
----
+### ⏰ Jadwal Sholat & Roster Petugas
+Perhitungan otomatis waktu sholat dan penugasan petugas imam, muadzin, dan khotib harian.
 
-### ⏰ 2. Jadwal Shalat Bulanan & Roster Petugas
-Perhitungan waktu sholat otomatis dengan metode hisab Kemenag RI untuk wilayah Kota Malang, serta penugasan petugas imam & muadzin harian dan khotib Shalat Jumat.
+| Jadwal Waktu Sholat | Roster Petugas |
+| :---: | :---: |
+| ![Jadwal Sholat](index/docs/screenshots/02-jadwal-sholat.png) | ![Roster Petugas](index/docs/screenshots/03-petugas-sholat.png) |
 
-| Jadwal Waktu Shalat Bulanan | Roster Petugas Shalat Bulanan |
-|:---:|:---:|
-| ![Jadwal Shalat Bulanan](index/docs/screenshots/02-jadwal-sholat.png) | ![Roster Petugas Shalat](index/docs/screenshots/03-petugas-sholat.png) |
+### 📅 Kalender Kegiatan & Kotak Saran
+Daftar kegiatan, kajian, dan sistem aspirasi dengan transparansi tindak lanjut.
 
----
+| Kalender Kegiatan | Kotak Saran & Aspirasi |
+| :---: | :---: |
+| ![Kalender Kegiatan](index/docs/screenshots/04-kegiatan-masjid.png) | ![Kotak Saran](index/docs/screenshots/06-kotak-saran.png) |
 
-### 📅 3. Kalender Kegiatan & Kotak Saran Aspirasi
-Daftar kegiatan rutin, kajian pekanan/tematik, dan Shalat Jumat, dilengkapi kotak aspirasi dua arah dengan transparansi tindak lanjut resmi dari Takmir DKM.
+### 🏛️ Profil Masjid & Struktur Kepengurusan
+Informasi identitas masjid, dokumen SK resmi, dan galeri kegiatan.
 
-| Kalender Kegiatan & Kajian Masjid | Kotak Saran & Tindak Lanjut Aspirasi |
-|:---:|:---:|
-| ![Kalender Kegiatan](index/docs/screenshots/04-kegiatan-masjid.png) | ![Kotak Saran & Aspirasi](index/docs/screenshots/06-kotak-saran.png) |
-
----
-
-### 🏛️ 4. Profil Masjid, Legalitas SK & Galeri Kegiatan
-Informasi profil identitas masjid, struktur pengurus berdasarkan Surat Keputusan (SK) resmi, serta galeri dokumentasi foto kegiatan peribadatan dan sosial.
-
-| Profil Masjid & Visi-Misi | Struktur Pengurus & Dokumen SK Resmi |
-|:---:|:---:|
+| Profil Masjid | Struktur Pengurus |
+| :---: | :---: |
 | ![Profil Masjid](index/docs/screenshots/05-profil-masjid.png) | ![Struktur Kepengurusan](index/docs/screenshots/05c-struktur-pengurus.png) |
 
-| Dokumentasi Galeri Kegiatan Masjid |
-|:---:|
+| Galeri Kegiatan |
+| :---: |
 | ![Galeri Kegiatan](index/docs/screenshots/05b-galeri-kegiatan.png) |
 
----
-
-### 📺 5. Digital Signage — Layar TV Display Masjid
-Tampilan khusus monitor TV masjid (Full HD 1080p landscape) dengan jam digital hisab akurat, hitung mundur menuju adzan & iqomah, running text pengumuman, serta parameter cuaca BMKG.
+### 📺 Digital Signage — TV Display Masjid
+Tampilan khusus monitor TV (Full HD 1080p) dengan jam hisab, countdown adzan, dan running text.
 
 ![TV Display Digital Signage](index/docs/screenshots/07-tv-display.png)
 
----
+### 🔐 Autentikasi & Registrasi Pengurus
+Keamanan akses modul admin dengan verifikasi email kedinasan.
 
-### 🔐 6. Autentikasi & Registrasi Pengurus DKM
-Keamanan akses modul administratif khusus takmir dengan integrasi verifikasi alamat email kedinasan resmi Direktorat Jenderal Pajak (`@pajak.go.id`).
-
-| Masuk Pengurus DKM | Pendaftaran Akun Email Kedinasan |
-|:---:|:---:|
-| ![Login Pengurus DKM](index/docs/screenshots/08-login-pengurus.png) | ![Pendaftaran Pengurus](index/docs/screenshots/08b-register.png) |
+| Login Pengurus | Pendaftaran |
+| :---: | :---: |
+| ![Login Pengurus](index/docs/screenshots/08-login-pengurus.png) | ![Pendaftaran](index/docs/screenshots/08b-register.png) |
 
 ---
 
 ## ✨ Fitur Utama
-
 
 ### 👥 Portal Jamaah
 - Informasi profil dan identitas masjid
@@ -92,7 +105,7 @@ Keamanan akses modul administratif khusus takmir dengan integrasi verifikasi ala
 - Berita dan artikel informatif
 
 ### ⏰ Manajemen Jadwal Sholat
-- Perhitungan waktu sholat otomatis dan akurat
+- Perhitungan waktu sholat otomatis (metode Kemenag RI)
 - Waktu imsak untuk puasa
 - Pemberitahuan adzan terintegrasi
 - Countdown iqomah real-time
@@ -135,58 +148,58 @@ Keamanan akses modul administratif khusus takmir dengan integrasi verifikasi ala
 
 ---
 
-## 🛠️ Teknologi & Stack
+## 🛠️ Tech Stack
 
-| Komponen | Teknologi | Versi |
-|----------|-----------|-------|
-| **Backend Framework** | [Laravel](https://laravel.com/) | 11.x |
-| **Language** | PHP | 8.2+ |
-| **Frontend Reactivity** | [Livewire](https://livewire.laravel.com/) & [Alpine.js](https://alpinejs.dev/) | Latest |
-| **Build Tool** | [Vite](https://vitejs.dev/) | 8.x |
-| **Styling** | Blade + Tailwind CSS | - |
-| **Database** | MySQL / MariaDB | 8.0+ / 10.5+ |
-| **Web Server** | Nginx + OpenResty | Latest |
-| **Control Panel** | 1Panel | - |
+| Layer | Teknologi | Versi | Deskripsi |
+| :--- | :--- | :--- | :--- |
+| **Backend Framework** | [Laravel](https://laravel.com/) | 11.x | Framework PHP modern dengan Eloquent ORM |
+| **Language** | PHP | 8.2+ | Bahasa server-side dengan type hints |
+| **Frontend Reactivity** | [Livewire](https://livewire.laravel.com/) | 3.x | Komponen reaktif tanpa reload halaman |
+| **Frontend Helper** | [Alpine.js](https://alpinejs.dev/) | v3 | Reaktivitas sisi klien untuk modal & animasi |
+| **Styling** | [Tailwind CSS](https://tailwindcss.com/) | v3 | Utility-first CSS framework |
+| **Build Tool** | [Vite](https://vitejs.dev/) | 8.x | Bundler & dev server super cepat |
+| **Database** | MySQL / MariaDB | 8.0+ / 10.5+ | Penyimpanan data terstruktur |
+| **Web Server** | Nginx + OpenResty | Latest | High-performance web server |
+| **PWA & Offline** | Service Worker | Standard | Offline support & installable app |
 
 ---
 
 ## 📁 Struktur Proyek
 
-```
+```text
 masjid-salahuddin/
-├── index/                          # 📂 Aplikasi Laravel Utama
+├── index/                              # 📂 Aplikasi Laravel Utama
 │   ├── app/
-│   │   ├── Http/Controllers/      # Controller untuk setiap fitur
-│   │   ├── Livewire/              # Komponen Livewire reaktif
-│   │   ├── Models/                # Model database (Eloquent ORM)
-│   │   └── Services/              # Business logic & services
-│   ├── config/                     # Konfigurasi aplikasi
+│   │   ├── Http/Controllers/          # Controller untuk setiap fitur
+│   │   ├── Livewire/                  # Komponen Livewire reaktif
+│   │   ├── Models/                    # Model database (Eloquent ORM)
+│   │   └── Services/                  # Business logic & services
+│   ├── config/                         # Konfigurasi aplikasi
 │   ├── database/
-│   │   ├── migrations/            # Schema database
-│   │   ├── seeders/               # Data awal
-│   │   └── factories/             # Test data factory
-│   ├── docs/                       # 📚 Dokumentasi & Aset Pendukung
-│   │   ├── ARCHITECTURE.md        # Panduan arsitektur sistem
-│   │   ├── SETUP.md               # Panduan setup & instalasi
-│   │   ├── LIVEWIRE_ALPINE_...    # Panduan sinkronisasi state
-│   │   └── screenshots/           # 📸 Tangkapan layar antarmuka sistem
-│   ├── public/                     # Public web root
-│   │   ├── manifest.json          # PWA manifest
-│   │   ├── sw.js                  # Service worker
-│   │   └── assets/                # CSS, JS, images
+│   │   ├── migrations/                # Schema database
+│   │   ├── seeders/                   # Data awal
+│   │   └── factories/                 # Test data factory
+│   ├── docs/                           # 📚 Dokumentasi & Screenshots
+│   │   ├── ARCHITECTURE.md            # Panduan arsitektur sistem
+│   │   ├── SETUP.md                   # Panduan setup & instalasi
+│   │   └── screenshots/               # 📸 Tangkapan layar
+│   ├── public/                         # Public web root
+│   │   ├── manifest.json              # PWA manifest
+│   │   ├── sw.js                      # Service worker
+│   │   └── assets/                    # CSS, JS, images
 │   ├── resources/
-│   │   ├── views/                 # Blade template views
-│   │   ├── css/                   # Stylesheet
-│   │   └── js/                    # JavaScript
+│   │   ├── views/                     # Blade template views
+│   │   ├── css/                       # Stylesheet
+│   │   └── js/                        # JavaScript
 │   ├── routes/
-│   │   ├── web.php                # Web routes
-│   │   └── api.php                # API routes
-│   ├── tests/                     # Feature & Unit tests
-│   ├── .env.example               # Environment template
-│   ├── composer.json              # PHP dependencies
-│   └── package.json               # Node dependencies
-├── .gitignore                      # Aturan filter file Git
-└── README.md                      # Dokumentasi utama proyek
+│   │   ├── web.php                    # Web routes
+│   │   └── api.php                    # API routes
+│   ├── tests/                         # Feature & Unit tests
+│   ├── .env.example                   # Environment template
+│   ├── composer.json                  # PHP dependencies
+│   └── package.json                   # Node dependencies
+├── .gitignore
+└── README.md                          # Dokumentasi utama
 ```
 
 ---
@@ -203,8 +216,8 @@ Pastikan sudah terinstal:
 - **Git** untuk version control
 
 **Rekomendasi Setup Lokal:**
-- [Laragon](https://laragon.org/) (Windows - All-in-one)
-- [Herd](https://herd.laravel.com/) (macOS - Laravel optimized)
+- [Laragon](https://laragon.org/) (Windows)
+- [Herd](https://herd.laravel.com/) (macOS)
 - [Docker](https://www.docker.com/) (Cross-platform)
 
 ---
@@ -219,15 +232,12 @@ cd masjid-salahuddin/index
 
 #### 2️⃣ Instalasi Backend Dependencies
 ```bash
-# Salin environment file
 cp .env.example .env
-
-# Instalasi PHP dependencies
 composer install
 ```
 
 #### 3️⃣ Konfigurasi Database
-Edit file `.env` dan atur koneksi database:
+Edit file `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -239,23 +249,14 @@ DB_PASSWORD=
 
 #### 4️⃣ Setup Application
 ```bash
-# Generate application key
 php artisan key:generate
-
-# Jalankan database migration & seeding
 php artisan migrate --seed
 ```
 
 #### 5️⃣ Instalasi Frontend Dependencies
 ```bash
-# Instalasi Node packages
 npm install
-
-# Build assets (development)
 npm run dev
-
-# Atau build production
-npm run build
 ```
 
 #### 6️⃣ Jalankan Development Server
@@ -263,33 +264,21 @@ npm run build
 php artisan serve
 ```
 
-Aplikasi akan berjalan di **`http://localhost:8000`**
+Akses aplikasi di: **`http://localhost:8000`**
 
 ---
 
-### 🔑 Credentials Default (Setelah Seeding)
+### 🔑 Kredensial Default
 
-Untuk login pertama kali ke dashboard admin:
-- **Email**: `admin@masjid-salahuddin.local`
-- **Password**: `password`
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| Admin Takmir | `admin@masjid-salahuddin.local` | `password` |
 
-⚠️ **Penting**: Ganti password setelah login pertama kali!
-
----
-
-## 📖 Dokumentasi
-
-### Panduan Pengembang
-- [Setup Lokal & Development](./index/docs/SETUP.md) - Panduan detail setup
-- [Arsitektur Sistem](./index/docs/ARCHITECTURE.md) - Panduan arsitektur sistem
-- [Sinkronisasi Livewire & Alpine](./index/docs/LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md) - Panduan sinkronisasi state
-
+⚠️ **Penting**: Ubah password setelah login pertama kali!
 
 ---
 
 ## 🧪 Testing
-
-Jalankan test suite untuk memastikan kualitas kode:
 
 ```bash
 # Jalankan semua test
@@ -311,40 +300,38 @@ php artisan test tests/Feature/ScheduleTest.php
 - ✅ SQL injection prevention (Eloquent ORM)
 - ✅ CSRF protection (Laravel CSRF token)
 - ✅ Password hashing (bcrypt)
-- ✅ Rate limiting untuk API
+- ✅ Rate limiting untuk API & login
 - ✅ Environment variable untuk secrets
 
 ### Melaporkan Vulnerability
-Jika menemukan kerentanan keamanan, mohon hubungi secara private kepada tim development. **Jangan** share di issue publik.
+Jika menemukan kerentanan keamanan, hubungi secara private. **Jangan** share di issue publik.
 
 ---
 
 ## 📦 Deployment
 
-### Deploy ke Server Production
+### Build Production
+```bash
+npm run build
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+```
 
-1. **Persiapan**:
-   ```bash
-   # Build assets production
-   npm run build
-   
-   # Optimize untuk production
-   php artisan optimize
-   php artisan config:cache
-   php artisan route:cache
-   ```
+### Deploy ke Server
+1. Upload ke server menggunakan FTP, SSH, atau CI/CD
+2. Konfigurasi `.env` production
+3. Jalankan: `composer install --no-dev && php artisan migrate --force`
 
-2. **Upload ke Server**:
-   - Gunakan FTP, SSH, atau CI/CD pipeline
-   - Pastikan `.env` production sudah dikonfigurasi dengan benar
+Untuk panduan deploy detail, lihat [DEPLOYMENT.md](./index/docs/DEPLOYMENT.md).
 
-3. **Setup di Server**:
-   ```bash
-   composer install --no-dev
-   php artisan migrate --force
-   ```
+---
 
-Untuk panduan deploy detail, lihat [Deployment Guide](./docs/DEPLOYMENT.md).
+## 📖 Dokumentasi
+
+- [📚 Setup Lokal & Development](./index/docs/SETUP.md)
+- [🏗️ Arsitektur Sistem](./index/docs/ARCHITECTURE.md)
+- [🔄 Sinkronisasi Livewire & Alpine](./index/docs/LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md)
 
 ---
 
@@ -364,48 +351,14 @@ Pastikan:
 - ✅ Dokumentasi sudah diupdate
 - ✅ Commit messages jelas dan deskriptif
 
-Lihat [CONTRIBUTING.md](./CONTRIBUTING.md) untuk detail lebih lanjut.
-
----
-
-## 📋 Roadmap
-
-- [ ] Mobile app native (React Native / Flutter)
-- [ ] Multi-language support (Inggris, Arab)
-- [ ] Integrasi dengan sistem pembayaran infaq
-- [ ] Analytics dashboard untuk takmir
-- [ ] Video streaming untuk khutbah Jumat
-- [ ] WhatsApp Bot integration
-- [ ] Calendar sync (Google Calendar, iCal)
-
----
-
-## 📞 Kontak & Support
-
-- **Issue & Bug Report**: Buat [GitHub Issue](https://github.com/dhafinfuad/masjid-salahuddin/issues)
-- **Diskusi & Tanya Jawab**: Gunakan [GitHub Discussions](https://github.com/dhafinfuad/masjid-salahuddin/discussions)
-- **Email**: [hubungi via repository]
-
 ---
 
 ## 📄 Lisensi
 
 Hak Cipta © 2026 Masjid Salahuddin. Semua hak dilindungi.
 
-Proyek ini adalah **proprietary software** yang khusus dikembangkan untuk Masjid Salahuddin. Penggunaan, distribusi, atau modifikasi tanpa izin resmi dilarang.
-
----
-
-## 🙏 Ucapan Terima Kasih
-
-Terima kasih kepada:
-- Tim takmir Masjid Salahuddin atas visi dan dukungannya
-- [Laravel](https://laravel.com/) community
-- [Livewire](https://livewire.laravel.com/) & [Alpine.js](https://alpinejs.dev/) developers
-- Semua kontributor yang telah membantu project ini
+Proyek ini adalah **proprietary software** khusus untuk Masjid Salahuddin. Penggunaan, distribusi, atau modifikasi tanpa izin resmi dilarang.
 
 ---
 
 **Dibuat dengan ❤️ untuk kemakmuran Masjid Salahuddin**
-
-> "Sebaik-baik kalian adalah yang terbaik terhadap keluarganya, dan aku adalah yang terbaik terhadap keluargaku." - HR. At-Tirmidzi
