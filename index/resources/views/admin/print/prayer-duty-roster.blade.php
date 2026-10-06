@@ -208,7 +208,7 @@
     @if(request()->has('tte') || request()->has('hash'))
       <!-- Banner Verifikasi Dokumen TTE saat discan -->
       <div class="no-print mx-4 sm:mx-6 mt-4 p-3 bg-emerald-50 border border-emerald-300 rounded-lg flex items-center gap-3 text-emerald-900 text-xs shadow-xs">
-        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 font-bold">
+        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 font-bold">
           <i data-lucide="check-circle" class="w-5 h-5"></i>
         </div>
         <div>
@@ -334,11 +334,11 @@
                 </td>
                 <td class="p-2 border-r border-slate-200 text-center whitespace-nowrap">
                   @if($row['is_friday'])
-                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-100 text-emerald-800 border-emerald-300">
+                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-100 text-emerald-800 border-emerald-300">
                       Jumat (P.{{ $row['week_number'] }})
                     </span>
                   @else
-                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">
+                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">
                       {{ $row['week_label'] }}
                     </span>
                   @endif
@@ -348,16 +348,16 @@
                     <div class="space-y-0.5 font-medium text-slate-700">
                       <div>
                         <span>Khotib :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $khatib }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $khatib }}</span>
                       </div>
                       <div>
                         <span>Muadzin :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $muadzin }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $muadzin }}</span>
                       </div>
                       @if($mc && $mc !== '-')
                         <div>
                           <span>MC :</span>
-                          <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $mc }}</span>
+                          <span class="font-semibold text-slate-900 ml-1">{{ $mc }}</span>
                         </div>
                       @endif
                     </div>
@@ -365,11 +365,11 @@
                     <div class="space-y-0.5 font-medium text-slate-700">
                       <div>
                         <span>Imam :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $dzImam }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $dzImam }}</span>
                       </div>
                       <div>
                         <span>Muadzin :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $dzMuadzin }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $dzMuadzin }}</span>
                       </div>
                     </div>
                   @else
@@ -381,16 +381,16 @@
                     <div class="space-y-0.5 font-medium text-slate-700">
                       <div>
                         <span>Imam :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $asharImam }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $asharImam }}</span>
                       </div>
                       <div>
                         <span>Muadzin :</span>
-                        <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $asharMuadzin }}</span>
+                        <span class="font-semibold text-slate-900 ml-1">{{ $asharMuadzin }}</span>
                       </div>
                       @if(!empty($asharKajianTitle))
                         <div>
                           <span>Kajian :</span>
-                          <span class="font-semibold text-slate-900 text-gov-textMain ml-1">{{ $asharKajianTitle }}</span>
+                          <span class="font-semibold text-slate-900 ml-1">{{ $asharKajianTitle }}</span>
                         </div>
                       @endif
                     </div>

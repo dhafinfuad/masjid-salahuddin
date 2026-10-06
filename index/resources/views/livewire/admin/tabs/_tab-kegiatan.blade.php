@@ -178,8 +178,8 @@
                         }
                     }">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-[32px] w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-[32px] w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                         <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                             <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -279,7 +279,7 @@
                                         </td>
                                         <td class="p-3.5 whitespace-nowrap">
                                             <span
-                                                class="h-[20px] flex items-center text-[11px] font-semibold text-slate-700">
+                                                class="h-5 flex items-center text-[11px] font-semibold text-slate-700">
                                                 {{ $k->time_display }}
                                             </span>
                                         </td>
@@ -309,7 +309,7 @@
                                             <div class="line-clamp-2 leading-relaxed">{{ $k->title }}</div>
                                         </td>
                                         <td
-                                            class="p-3.5 font-normal min-w-[150px] whitespace-normal break-words [overflow-wrap:break-word]">
+                                            class="p-3.5 font-normal min-w-[150px] whitespace-normal break-words">
                                             <div class="flex items-center gap-2 text-gov-navy font-normal">
                                                 @if($k->valid_speaker_photo_url)
                                                     <img src="{{ $k->valid_speaker_photo_url }}" alt="{{ $k->speaker_name }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200 shadow-2xs">
@@ -495,19 +495,19 @@
                                 <div class="flex items-center justify-between relative">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         @if($k->type === 'tematik')
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-amber-100 text-amber-800 border-amber-300">Tematik</span>
+                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-amber-100 text-amber-800 border-amber-300">Tematik</span>
                                         @else
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekanan</span>
+                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekanan</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula kajian tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula kajian tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
                                         @endif
                                         @if(!empty($k->youtube_url))
                                             <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
+                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
                                                 <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                 </svg>
@@ -655,7 +655,7 @@
                                     <div class="font-bold text-gov-textMain text-sm">
                                         {{ Carbon\Carbon::parse($k->date)->translatedFormat('l, d M Y') }}
                                     </div>
-                                    <span class="h-[20px] flex items-center text-[11px] font-semibold text-slate-700">
+                                    <span class="h-5 flex items-center text-[11px] font-semibold text-slate-700">
                                         {{ $k->time_display }}
                                     </span>
                                 </div>
@@ -751,7 +751,7 @@
                                             <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
                                                 @if(Auth::user()->canManage())
                                                     <button type="button" wire:click="toggleHolidayDisabled({{ $k->id }})"
-                                                        class="inline-flex items-center gap-1 h-[20px] px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none shrink-0 whitespace-nowrap {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' }}"
+                                                        class="inline-flex items-center gap-1 h-5 px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none shrink-0 whitespace-nowrap {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' }}"
                                                         title="Klik untuk mengubah status hari libur">
                                                         @if($k->is_holiday_disabled)
                                                             <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0 inline-block"></i>
@@ -763,20 +763,20 @@
                                                     </button>
                                                 @else
                                                     <span
-                                                        class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' }}">
+                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' }}">
                                                         {{ $k->is_holiday_disabled ? 'Libur' : 'Aktif' }}
                                                     </span>
                                                 @endif
 
                                                 @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0" title="Notula khutbah tersimpan">
+                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0" title="Notula khutbah tersimpan">
                                                         <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                         Notula Ada
                                                     </span>
                                                 @endif
                                                 @if(!empty($k->youtube_url))
                                                     <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                        class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none shrink-0 transition" title="Buka siaran YouTube">
+                                                        class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none shrink-0 transition" title="Buka siaran YouTube">
                                                         <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
                                                             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                         </svg>
@@ -964,7 +964,7 @@
                                 $isToday = ($kDate === $todayDate);
                             @endphp
                             <div wire:key="jumat-card-{{ $k->id }}"
-                                class="rounded-xl border p-4 shadow-2xs space-y-3 transition {{ $isHighlight ? 'bg-amber-100/40 border-l-[3px] border-amber-300' : ($k->is_holiday_disabled ? 'border-rose-200 bg-rose-50/20 bg-white' : 'bg-white border-gov-border') }}"
+                                class="rounded-xl border p-4 shadow-2xs space-y-3 transition {{ $isHighlight ? 'bg-amber-100/40 border-l-[3px] border-amber-300' : ($k->is_holiday_disabled ? 'border-rose-200 bg-rose-50/20' : 'bg-white border-gov-border') }}"
                                 x-data="{ openMenu: false }">
                                 <div class="flex items-start justify-between gap-2 relative">
                                     <div>
@@ -978,20 +978,20 @@
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         @if($k->is_holiday_disabled)
                                             <span
-                                                class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 leading-none">Diliburkan</span>
+                                                class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 leading-none">Diliburkan</span>
                                         @else
                                             <span
-                                                class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">Aktif</span>
+                                                class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">Aktif</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula khutbah tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula khutbah tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
                                         @endif
                                         @if(!empty($k->youtube_url))
                                             <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
+                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
                                                 <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                 </svg>
@@ -1175,7 +1175,7 @@
                                 class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                             <input wire:key="agenda-search-input" wire:model.live.debounce.300ms="agendaSearch" type="text"
                                 placeholder="Cari agenda kegiatan..."
-                                class="h-[32px] w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                                class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                             <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                                 <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1299,7 +1299,7 @@
                                                 </select>
                                             @else
                                                 <span
-                                                    class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold
+                                                    class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
                                                     {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800') }}">
                                                     {{ $agenda->status }}
                                                 </span>
@@ -1410,13 +1410,13 @@
                                     </div>
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <span
-                                            class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold
+                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
                                             {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800') }}">
                                             {{ $agenda->status }}
                                         </span>
                                         @if(!empty($agenda->youtube_url))
                                             <a href="{{ $agenda->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-[20px] px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
+                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
                                                 <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                 </svg>

@@ -393,7 +393,7 @@
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="opacity-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-[280px] max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
+                                class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
                                 style="display: none;">
                                 <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
                                     <span>Pilih dari Database Ustadz</span>
@@ -418,7 +418,7 @@
                                                 <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
                                     </button>
                                 </template>
                             </div>
@@ -523,7 +523,7 @@
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" x-model="kajianForm.is_holiday_disabled" class="sr-only peer">
                             <div
-                                class="w-10 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gov-navy">
+                                class="w-10 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gov-navy">
                             </div>
                         </label>
                     </div>
@@ -566,7 +566,7 @@
                                     x-transition:leave="transition ease-in duration-75"
                                     x-transition:leave-start="opacity-100 translate-y-0"
                                     x-transition:leave-end="opacity-0 translate-y-1"
-                                    class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-[280px] max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
+                                    class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
                                     style="display: none;">
                                     <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
                                         <span>Pilih dari Database Ustadz</span>
@@ -591,7 +591,7 @@
                                                     <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
                                                 </div>
                                             </div>
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
                                         </button>
                                     </template>
                                 </div>
@@ -1698,7 +1698,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-gov-textMain">Unggah Dokumen Resmi</h3>
-                        <p class="text-xs text-slate-500 font-medium truncate max-w-[280px] sm:max-w-none">
+                        <p class="text-xs text-slate-500 font-medium truncate max-w-70 sm:max-w-none">
                             {{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}
                         </p>
                     </div>
@@ -1907,7 +1907,7 @@
             <!-- Transaction Details Summary Card -->
             <div class="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none"
+                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none"
                           :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-rose-100 text-rose-800 border-rose-300'"
                           x-text="receiptPreviewModal.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'"></span>
                     <span class="text-slate-500 font-medium" x-text="receiptPreviewModal.date"></span>
@@ -1916,7 +1916,7 @@
             </div>
 
             <!-- Preview Body Container / Carousel Viewport -->
-            <div class="flex-1 overflow-hidden min-h-[260px] max-h-[54vh] bg-slate-950/90 rounded-xl border border-slate-800 p-2 flex items-center justify-center relative select-none">
+            <div class="flex-1 overflow-hidden min-h-65 max-h-[54vh] bg-slate-950/90 rounded-xl border border-slate-800 p-2 flex items-center justify-center relative select-none">
                 <!-- If Image -->
                 <template x-if="!receiptPreviewModal.isPdf && receiptPreviewModal.currentUrl">
                     <img :src="receiptPreviewModal.currentUrl" :alt="'Bukti Transaksi ' + (receiptPreviewModal.currentIndex + 1)"
@@ -3900,7 +3900,7 @@
          @keydown.escape.window="if (galleryLightboxModal.show) closeGalleryLightbox()"
          @keydown.arrow-left.window="if (galleryLightboxModal.show) galleryLightboxModal.prev()"
          @keydown.arrow-right.window="if (galleryLightboxModal.show) galleryLightboxModal.next()"
-         class="fixed inset-0 z-[70] flex flex-col bg-slate-950/95 backdrop-blur-md select-none"
+         class="fixed inset-0 z-70 flex flex-col bg-slate-950/95 backdrop-blur-md select-none"
          style="display: none;">
          
         <!-- Header Bar (Title, Meta, Counter & Close) -->

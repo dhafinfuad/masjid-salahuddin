@@ -248,7 +248,7 @@
                         <div class="space-y-2.5">
                             <!-- Badge & Date Row -->
                             <div class="flex items-center justify-between gap-2">
-                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}">
+                                <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}">
                                     {{ $badgeText }}
                                 </span>
                                 <span class="text-xs {{ $isHighlight ? 'font-bold text-amber-900' : 'font-semibold text-slate-600' }} whitespace-nowrap shrink-0">

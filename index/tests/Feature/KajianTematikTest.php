@@ -221,7 +221,7 @@ class KajianTematikTest extends TestCase
             'speaker_name' => 'Ust. Hasil Edit Excel',
             'speaker_phone' => '081299998888',
         ]);
-        $this->assertTrue(Kajian::whereDate('date', $date1)->where('speaker_name', 'Ust. Hasil Edit Excel')->exists());
+        $this->assertTrue(Kajian::query()->whereDate('date', $date1)->where('speaker_name', 'Ust. Hasil Edit Excel')->exists());
 
         // Verify new record was created
         $this->assertDatabaseHas('kajians', [
@@ -229,7 +229,7 @@ class KajianTematikTest extends TestCase
             'title' => 'Kajian Akbar Hijrah',
             'speaker_name' => 'Ust. Pembicara Baru',
         ]);
-        $this->assertTrue(Kajian::whereDate('date', $date2)->where('speaker_name', 'Ust. Pembicara Baru')->exists());
+        $this->assertTrue(Kajian::query()->whereDate('date', $date2)->where('speaker_name', 'Ust. Pembicara Baru')->exists());
     }
 
     /** @test */
@@ -287,7 +287,7 @@ class KajianTematikTest extends TestCase
             'mc_name' => 'MC Baru',
             'muadzin_name' => 'Muadzin Baru',
         ]);
-        $this->assertTrue(Kajian::whereDate('date', $jumatDate)->where('khatib_name', 'Ust. Khatib Terupdate')->exists());
+        $this->assertTrue(Kajian::query()->whereDate('date', $jumatDate)->where('khatib_name', 'Ust. Khatib Terupdate')->exists());
     }
 
     /** @test */
@@ -310,7 +310,7 @@ class KajianTematikTest extends TestCase
             'title' => 'Adab Menuntut Ilmu',
             'speaker_name' => 'Ust. Hamdan',
         ]);
-        $this->assertTrue(Kajian::whereDate('date', $dateStr)->where('speaker_name', 'Ust. Hamdan')->exists());
+        $this->assertTrue(Kajian::query()->whereDate('date', $dateStr)->where('speaker_name', 'Ust. Hamdan')->exists());
     }
 
     /** @test */

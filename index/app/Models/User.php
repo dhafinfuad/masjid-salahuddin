@@ -14,6 +14,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
+#[Fillable(['name', 'email', 'password', 'role', 'status', 'nip'])]
+#[Hidden(['password', 'remember_token'])]
 /**
  * @property int $id
  * @property string $name
@@ -29,8 +31,6 @@ use Illuminate\Support\Str;
  * @mixin \Illuminate\Database\Eloquent\Builder
  * @mixin \Illuminate\Database\Query\Builder
  */
-#[Fillable(['name', 'email', 'password', 'role', 'status', 'nip'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */

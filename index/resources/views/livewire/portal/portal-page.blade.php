@@ -275,7 +275,7 @@
                                                     x-model="searchQuery"
                                                     id="activity-search"
                                                     placeholder="Cari kegiatan masjid..." 
-                                                    class="h-[32px] w-full pl-8 pr-8 py-1 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"
+                                                    class="h-8 w-full pl-8 pr-8 py-1 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"
                                                 >
                                                 <button x-show="searchQuery.length > 0" 
                                                         @click="searchQuery = ''" 
@@ -323,7 +323,7 @@
                                                  data-title="{{ strtolower($kajian->title) }}">
                                                 <div class="space-y-2">
                                                     <div class="flex items-center justify-between gap-2">
-                                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $kajian->type === 'jumat' ? 'bg-amber-50 text-amber-800 border-amber-200' : ($kajian->type === 'tematik' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200') }}">
+                                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $kajian->type === 'jumat' ? 'bg-amber-50 text-amber-800 border-amber-200' : ($kajian->type === 'tematik' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200') }}">
                                                             {{ $kajian->type === 'jumat' ? 'Khutbah Jumat' : ($kajian->type === 'tematik' ? 'Tematik' : 'Pekanan') }}
                                                         </span>
                                                         <span class="text-xs font-semibold text-slate-600 whitespace-nowrap shrink-0">
@@ -408,7 +408,7 @@
                                                  data-category="akbar"
                                                  data-title="{{ strtolower($agenda->title . ' ' . ($agenda->description ?? '')) }}">
                                                 <div class="flex items-center justify-between gap-2">
-                                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $agenda->status === 'SELESAI' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
+                                                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $agenda->status === 'SELESAI' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
                                                         {{ ucfirst(strtolower($agenda->status ?: 'Aktif')) }}
                                                     </span>
                                                     <span class="text-xs font-semibold text-slate-600">
@@ -549,7 +549,7 @@
                                             <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
                                             <h3 class="text-xs font-bold uppercase tracking-wider text-white leading-snug">{{ $dutyTitle }}</h3>
                                         </div>
-                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-white/10 text-amber-300 border border-white/20 leading-none whitespace-nowrap">
+                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-white/10 text-amber-300 border border-white/20 leading-none whitespace-nowrap">
                                             {{ $dutyDate->translatedFormat('l, d F Y') }}
                                         </span>
                                     </div>
@@ -660,7 +660,7 @@
                                                     <span class="text-xs font-bold uppercase text-gov-textMain tracking-wide">QRIS Infaq Digital</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full max-w-[200px] sm:max-w-[220px] mx-auto bg-white p-2 rounded-lg border border-gov-border shadow-2xs">
+                                            <div class="w-full max-w-50 sm:max-w-55 mx-auto bg-white p-2 rounded-lg border border-gov-border shadow-2xs">
                                                 <img 
                                                     src="{{ asset('images/QRIS.webp') }}" 
                                                     alt="QRIS Infaq Masjid Salahuddin" 
@@ -686,7 +686,7 @@
                                                     <button 
                                                         type="button"
                                                         @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)" 
-                                                        class="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-gov-border hover:bg-slate-50 text-slate-700 text-xs inline-flex items-center justify-center gap-1.5 font-semibold transition shadow-2xs cursor-pointer select-none whitespace-nowrap min-w-[82px]"
+                                                        class="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-gov-border hover:bg-slate-50 text-slate-700 text-xs inline-flex items-center justify-center gap-1.5 font-semibold transition shadow-2xs cursor-pointer select-none whitespace-nowrap min-w-20.5"
                                                         title="Salin Rekening"
                                                     >
                                                         <span x-show="!copied" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap">
@@ -868,7 +868,7 @@
                             :class="selectedCityId == city.id ? 'bg-blue-50 text-gov-navy border-blue-200 font-bold' : 'hover:bg-slate-50 text-slate-700 border-transparent font-medium'" 
                             class="w-full text-left px-3.5 py-2.5 rounded-lg border text-sm flex items-center justify-between transition cursor-pointer">
                         <span x-text="formatCity(city.lokasi)"></span>
-                        <span x-show="selectedCityId == city.id" class="inline-flex items-center px-2.5 h-[20px] rounded-full text-[11px] font-semibold bg-gov-navy text-white leading-none">
+                        <span x-show="selectedCityId == city.id" class="inline-flex items-center px-2.5 h-5 rounded-full text-[11px] font-semibold bg-gov-navy text-white leading-none">
                             Aktif ✓
                         </span>
                     </button>

@@ -140,15 +140,15 @@
           <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Status Agenda</span>
           <div class="mt-1">
             @if($agenda->status === 'Direncanakan')
-              <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-200">
+              <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-200">
                 Direncanakan
               </span>
             @elseif($agenda->status === 'Berjalan')
-              <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-amber-50 text-amber-700 border-amber-200">
+              <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-amber-50 text-amber-700 border-amber-200">
                 Berjalan
               </span>
             @else
-              <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">
+              <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">
                 Selesai
               </span>
             @endif

@@ -977,7 +977,7 @@
                     class="items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
                     :class="sidebarDrawerOpen ? 'md:opacity-0 md:w-0 md:p-0 md:pointer-events-none md:overflow-hidden flex' : 'opacity-100 w-8 flex'"
                     title="Buka/Tutup Menu Drawer">
-                    <i data-lucide="menu" class="w-4 h-4 text-[#13396B] shrink-0"></i>
+                    <i data-lucide="menu" class="w-4 h-4 text-gov-navyHover shrink-0"></i>
                 </button>
 
                 <div class="flex items-center text-xs text-gov-textMuted font-medium">
@@ -994,7 +994,7 @@
 
         <!-- Top Micro Progress Bar for Livewire Background Sync -->
         <div wire:loading wire:target="switchTab, gotoPage, nextPage, previousPage" class="h-0.5 w-full bg-slate-100 overflow-hidden relative z-30">
-            <div class="h-full bg-gradient-to-r from-amber-400 via-gov-navy to-amber-400 w-full animate-pulse"></div>
+            <div class="h-full bg-linear-to-r from-amber-400 via-gov-navy to-amber-400 w-full animate-pulse"></div>
         </div>
 
         <!-- Floating Auto-Dismiss Toast Notification -->

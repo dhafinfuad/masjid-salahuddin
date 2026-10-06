@@ -974,7 +974,7 @@ class AdminDashboard extends Component
         $this->eventCategoryId = $event->category_id;
         $this->eventSpeakerName = $event->speaker_name;
         $this->eventSpeakerRole = $event->speaker_role ?? '';
-        $this->eventDate = $event->event_date->format('Y-m-d');
+        $this->eventDate = Carbon::parse($event->event_date)->format('Y-m-d');
         $this->eventTimeDisplay = $event->time_display ?? '';
         $this->eventLocation = $event->location;
         $this->eventCapacity = $event->capacity;
@@ -1353,7 +1353,7 @@ class AdminDashboard extends Component
         $currentYear = (int) $now->year;
 
         // Cek apakah masih ada jadwal kajian di bulan berjalan pada atau setelah hari ini
-        $hasRemainingThisMonth = Kajian::whereDate('date', '>=', $now->toDateString())
+        $hasRemainingThisMonth = Kajian::query()->whereDate('date', '>=', $now->toDateString())
             ->whereMonth('date', $currentMonth)
             ->whereYear('date', $currentYear)
             ->exists();
@@ -1458,7 +1458,7 @@ class AdminDashboard extends Component
 
     public function getAvailableParticipantPeriods(): array
     {
-        $periods = \App\Models\ProgramParticipant::distinct()->pluck('period')->filter()->values();
+        $periods = ProgramParticipant::distinct()->pluck('period')->filter()->values();
         return $periods->sort(function ($a, $b) {
             preg_match('/(\d+)\/(\d+)/', (string) $a, $mA);
             preg_match('/(\d+)\/(\d+)/', (string) $b, $mB);
@@ -2093,7 +2093,7 @@ class AdminDashboard extends Component
         $this->editingGalleryId = $gallery->id;
         $this->isEditingGallery = true;
         $this->galleryTitle = $gallery->title;
-        $this->galleryDate = $gallery->event_date ? $gallery->event_date->format('Y-m-d') : '';
+        $this->galleryDate = $gallery->event_date ? Carbon::parse($gallery->event_date)->format('Y-m-d') : '';
         $this->galleryLocation = $gallery->location ?: 'Masjid Salahuddin, KPP Madya Malang';
         $this->galleryExistingPhotos = $gallery->photos ?: [];
         $this->galleryUploadedPhotos = [];
@@ -2619,7 +2619,9 @@ class AdminDashboard extends Component
                 $isHoliday = stripos($rawHoliday, 'libur') !== false;
 
                 // Look for existing Friday on this date
-                $existing = Kajian::where('type', 'jumat')
+                /** @var Kajian|null $existing */
+                $existing = Kajian::query()
+                    ->where('type', 'jumat')
                     ->whereDate('date', $parsedDate)
                     ->first();
 
@@ -2654,7 +2656,9 @@ class AdminDashboard extends Component
                 $phone = $cleanPhone($rawPhone);
 
                 // Look for existing kajian on this date and type
-                $existing = Kajian::whereDate('date', $parsedDate)
+                /** @var Kajian|null $existing */
+                $existing = Kajian::query()
+                    ->whereDate('date', $parsedDate)
                     ->where('type', $type)
                     ->first();
 
@@ -4112,7 +4116,7 @@ class AdminDashboard extends Component
         $this->financeAgendaId = $fin->agenda_id;
         $this->financeProgramName = $fin->program_name ?: 'Kas Umum';
         $this->financeAmount = (string) (int) $fin->amount;
-        $this->financeDate = $fin->transaction_date ? $fin->transaction_date->format('Y-m-d') : Carbon::today()->format('Y-m-d');
+        $this->financeDate = $fin->transaction_date ? Carbon::parse($fin->transaction_date)->format('Y-m-d') : Carbon::today()->format('Y-m-d');
         $this->financeDescription = $fin->description;
         $this->financeReceiptFile = null;
         $this->financeReceiptFiles = [];
@@ -4552,7 +4556,7 @@ class AdminDashboard extends Component
             foreach ($finances as $f) {
                 fputcsv($file, [
                     $f->id,
-                    $f->transaction_date ? $f->transaction_date->format('Y-m-d') : '',
+                    $f->transaction_date ? Carbon::parse($f->transaction_date)->format('Y-m-d') : '',
                     ucfirst($f->type),
                     $f->category?->name ?? 'Kas Umum',
                     $f->program_name ?? 'Kas Umum',
@@ -6058,7 +6062,7 @@ class AdminDashboard extends Component
             'galleryYearsList' => (function() {
                 try {
                     if (\Illuminate\Support\Facades\Schema::hasTable('activity_galleries')) {
-                        $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+                        $driver = DB::connection()->getDriverName();
                         $rawYear = $driver === 'sqlite' ? "strftime('%Y', event_date) as year" : "YEAR(event_date) as year";
                         return ActivityGallery::query()
                             ->selectRaw($rawYear)

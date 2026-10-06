@@ -587,7 +587,7 @@ class PrayerDutyTest extends TestCase
         ]);
 
         // Buat Kajian Jumat untuk Pekan 1 (2 Oktober 2026)
-        \App\Models\Kajian::create([
+        Kajian::create([
             'title' => 'Khutbah Jumat',
             'type' => 'jumat',
             'date' => '2026-10-02',

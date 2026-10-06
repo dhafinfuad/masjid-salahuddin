@@ -133,7 +133,7 @@
                         class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input wire:model.live.debounce.300ms="search" type="text"
                         placeholder="Cari nama, email..."
-                        class="h-[32px] w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                     <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                         <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -226,7 +226,7 @@
                                 <td class="py-3 px-4">
                                     <div class="space-y-1">
                                         <span
-                                            class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $badgeColor }}">
+                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $badgeColor }}">
                                             {{ $u->role }}
                                         </span>
                                         <span class="block text-[10px] text-slate-400 font-medium">
@@ -239,13 +239,13 @@
                                 <td class="py-3 px-4 text-center">
                                     @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                         <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
-                                            class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
                                             title="Klik untuk mengubah status">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     @else
                                         <span
-                                            class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     @endif
@@ -337,12 +337,12 @@
                         <div>
                             @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                 <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
-                                    class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                    class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
                                     title="Klik untuk mengubah status">
                                     {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
                                 </button>
                             @else
-                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
                                     {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             @endif
@@ -351,7 +351,7 @@
 
                     <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-100">
                         <div class="flex items-center gap-1.5">
-                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $badgeColor }}">
+                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $badgeColor }}">
                                 {{ $u->role }}
                             </span>
                             <span class="text-[11px] text-slate-400">({{ $accessLevel }})</span>
