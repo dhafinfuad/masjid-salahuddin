@@ -39,6 +39,15 @@ Route::get('/resources/QRIS.webp', fn() => response()->file(public_path('images/
 Route::get('/masjid-salahuddin/resources/QRIS.webp', fn() => response()->file(public_path('images/QRIS.webp'), ['Content-Type' => 'image/webp']));
 
 // Authentication
+if (app()->environment('local')) {
+    Route::get('/auth/dev-login/{id?}', function ($id = 1) {
+        $user = \App\Models\User::find($id) ?? \App\Models\User::first();
+        if ($user) {
+            \Illuminate\Support\Facades\Auth::login($user);
+        }
+        return redirect()->route('admin.dashboard');
+    })->name('dev.login');
+}
 Route::get('/auth/login', LoginPage::class)->name('login');
 Route::get('/auth/register', RegisterPage::class)->name('register');
 Route::get('/auth/set-password', SetPasswordPage::class)->name('password.set');

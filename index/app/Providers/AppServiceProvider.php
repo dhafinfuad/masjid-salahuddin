@@ -16,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        URL::forceScheme('https');
+        if (! app()->isLocal()) {
+            URL::forceScheme('https');
+        }
 
         Mail::extend('resend', function (array $config = []) {
             $key = env('RESEND_KEY') ?? env('RESEND_API_KEY') ?? config('services.resend.key', '');
