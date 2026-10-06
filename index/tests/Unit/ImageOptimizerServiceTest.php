@@ -19,7 +19,7 @@ class ImageOptimizerServiceTest extends TestCase
         $blue = imagecolorallocate($img, 10, 45, 90);
         imagefilledrectangle($img, 0, 0, 800, 600, $blue);
         imagejpeg($img, $tmpFile, 95);
-        imagedestroy($img);
+        unset($img);
 
         $uploaded = new UploadedFile($tmpFile, 'test.jpg', 'image/jpeg', null, true);
 
@@ -47,7 +47,7 @@ class ImageOptimizerServiceTest extends TestCase
         $tmpFile = tempnam(sys_get_temp_dir(), 'test_img_large_') . '.jpg';
         $img = imagecreatetruecolor(2400, 1200);
         imagejpeg($img, $tmpFile, 90);
-        imagedestroy($img);
+        unset($img);
 
         $uploaded = new UploadedFile($tmpFile, 'large.jpg', 'image/jpeg', null, true);
 

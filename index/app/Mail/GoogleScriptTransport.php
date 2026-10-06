@@ -49,7 +49,7 @@ class GoogleScriptTransport extends AbstractTransport
         $res = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
-        curl_close($ch);
+        unset($ch);
 
         if ($code < 200 || $code >= 400 || $curlError) {
             throw new \RuntimeException('Google Script Mailer Error (' . $code . '): ' . ($curlError ?: $res));

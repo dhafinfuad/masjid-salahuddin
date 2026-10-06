@@ -102,8 +102,7 @@ class ImageOptimizerService
             $webpBinary = ob_get_clean();
 
             // Bebaskan resource memori GD
-            imagedestroy($sourceImage);
-            imagedestroy($optimizedImage);
+            unset($sourceImage, $optimizedImage);
 
             if (! $webpBinary) {
                 throw new \RuntimeException('Gagal melakukan kompresi WebP.');

@@ -49,6 +49,7 @@ class PortalPage extends Component
 
     public function mount(PrayerTimeService $prayerService): void
     {
+        /** @var MasjidSetting $settings */
         $settings = MasjidSetting::getActive();
         $this->cityId = $settings->city_id ?: '1634';
         $this->cityName = $settings->city_name ? ucwords(strtolower($settings->city_name)) : 'Kota Malang';

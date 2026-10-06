@@ -23,6 +23,10 @@ use Carbon\Carbon;
  * @property string|null $speaker_photo
  * @property string|null $notula
  * @property string|null $youtube_url
+ * @property-read string|null $youtube_id
+ * @property-read string|null $youtube_embed_url
+ * @property-read string $whatsapp_broadcast_text
+ * @property-read string $formatted_date
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * 

@@ -168,7 +168,7 @@ class AdminDashboard extends Component
     public string $kajianTitle = '';
     public string $kajianSpeakerName = '';
     public string $kajianSpeakerPhone = '';
-    public $kajianSpeakerPhoto = null;
+    public mixed $kajianSpeakerPhoto = null;
     public ?string $kajianExistingPhoto = null;
     public bool $kajianIsHolidayDisabled = false;
     public string $kajianKhatibName = '';
@@ -206,7 +206,7 @@ class AdminDashboard extends Component
     public string $ustadzName = '';
     public string $ustadzTitle = '';
     public string $ustadzPhone = '';
-    public $ustadzPhoto = null;
+    public mixed $ustadzPhoto = null;
     public ?string $ustadzExistingPhoto = null;
 
     // Import Kajian State (Copypaste Excel & CSV Upload)
@@ -214,7 +214,7 @@ class AdminDashboard extends Component
     public string $importKajianTab = 'paste'; // 'paste' | 'file'
     public string $importKajianType = 'pekanan';
     public string $importKajianPasteText = '';
-    public $importKajianFile = null;
+    public mixed $importKajianFile = null;
 
     // Prayer Duty / Penugasan Ibadah State (Milestone 2)
     public string $prayerDutyFilterWeek = 'all'; // 'all', '1', '2', '3', '4', '5'
@@ -236,7 +236,7 @@ class AdminDashboard extends Component
     public bool $showImportDutyModal = false;
     public string $importDutyTab = 'paste'; // 'paste' | 'file'
     public string $importDutyPasteText = '';
-    public $importDutyFile = null;
+    public mixed $importDutyFile = null;
 
     // ==========================================
     // Agenda & ODOJ State (Milestone 3)
@@ -251,7 +251,7 @@ class AdminDashboard extends Component
     public string $agendaBudget = '0';
     public string $agendaStatus = 'Direncanakan';
     public string $agendaReportSummary = '';
-    public $agendaReportPdf = null;
+    public mixed $agendaReportPdf = null;
     public string $agendaYoutubeUrl = '';
 
     public string $agendaFilterStatus = 'all'; // 'all', 'Direncanakan', 'Berjalan', 'SELESAI'
@@ -263,7 +263,7 @@ class AdminDashboard extends Component
     public bool $showImportAgendaModal = false;
     public string $importAgendaTab = 'paste'; // 'paste' | 'file'
     public string $importAgendaPasteText = '';
-    public $importAgendaFile = null;
+    public mixed $importAgendaFile = null;
 
     // ODOJ State
     public string $odojDate = '';
@@ -290,7 +290,7 @@ class AdminDashboard extends Component
     public bool $showEmployeeStatusModal = false;
     public string $employeeStatusInputMode = 'text'; // 'text' | 'file'
     public string $employeeStatusText = '';
-    public $employeeStatusFile = null;
+    public mixed $employeeStatusFile = null;
     public bool $deactivateMissingEmployees = true;
     public ?array $employeeStatusSyncResult = null;
 
@@ -304,7 +304,7 @@ class AdminDashboard extends Component
     public bool $showUploadDocModal = false;
     public string $uploadDocTarget = 'sk'; // 'sk' | 'lampiran1' | 'lampiran2'
     public string $uploadDocTitle = '';
-    public $uploadDocFile = null;
+    public mixed $uploadDocFile = null;
     public string $uploadDocNumber = '';
     public string $uploadDocDate = '';
     public string $uploadDocPages = '';
@@ -383,7 +383,7 @@ class AdminDashboard extends Component
     public string $financeAmount = '';
     public string $financeDate = '';
     public string $financeDescription = '';
-    public $financeReceiptFile = null;
+    public mixed $financeReceiptFile = null;
     public $financeReceiptFiles = [];
     public array $existingFinanceReceiptPaths = [];
     public ?string $currentFinanceReceiptPath = null;
@@ -401,7 +401,7 @@ class AdminDashboard extends Component
     public bool $showFinanceImportModal = false;
     public string $importFinanceTab = 'paste'; // 'paste' | 'file'
     public string $importFinancePasteText = '';
-    public $importFinanceFile = null;
+    public mixed $importFinanceFile = null;
 
     // Cetak Laporan PDF Modal (Kas Bulanan & LPJ Program Tematik)
     public bool $showPrintFinanceModal = false;
@@ -428,7 +428,7 @@ class AdminDashboard extends Component
 
     // Import & Sinkronisasi Potongan Bulanan
     public bool $showImportPotonganModal = false;
-    public $potonganFile = null;
+    public mixed $potonganFile = null;
     public ?array $importPotonganPreview = null;
     public string $importPotonganError = '';
 
@@ -507,6 +507,7 @@ class AdminDashboard extends Component
         $this->agendaDate = Carbon::now()->addDays(7)->format('Y-m-d');
         $this->odojDate = Carbon::today()->format('Y-m-d');
 
+        /** @var MasjidSetting $settings */
         $settings = MasjidSetting::getActive();
         $this->settingsName = $settings->name;
         $this->settingsAddress = $settings->address ?? '';
@@ -565,22 +566,22 @@ class AdminDashboard extends Component
         $this->toastMessage = '';
     }
 
-    public function updatedSocialProgramTarget($val): void
+    public function updatedSocialProgramTarget(mixed $val): void
     {
         $this->socialProgramTarget = preg_replace('/\D/', '', (string) $val);
     }
 
-    public function updatedFinanceAmount($val): void
+    public function updatedFinanceAmount(mixed $val): void
     {
         $this->financeAmount = preg_replace('/\D/', '', (string) $val);
     }
 
-    public function updatedLumpSumAmount($val): void
+    public function updatedLumpSumAmount(mixed $val): void
     {
         $this->lumpSumAmount = preg_replace('/\D/', '', (string) $val);
     }
 
-    public function updatedParticipantAmount($val): void
+    public function updatedParticipantAmount(mixed $val): void
     {
         $this->participantAmount = preg_replace('/\D/', '', (string) $val);
     }
@@ -4086,7 +4087,7 @@ class AdminDashboard extends Component
         $this->syncFinanceCategoryIdForType($this->financeType);
     }
 
-    public function updatedFinanceType($value): void
+    public function updatedFinanceType(mixed $value): void
     {
         $this->syncFinanceCategoryIdForType((string) $value);
     }
@@ -4971,9 +4972,10 @@ class AdminDashboard extends Component
         }
     }
 
-    public function render(PrayerTimeService $prayerService)
+    public function render(PrayerTimeService $prayerService): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
     {
         $tab = $this->currentTab;
+        /** @var MasjidSetting $settings */
         $settings = MasjidSetting::getActive();
         $today = Carbon::today();
         $now = Carbon::now('Asia/Jakarta');

@@ -25,6 +25,7 @@ class TvDisplayPage extends Component
 
     public function refreshPrayers(PrayerTimeService $prayerService): void
     {
+        /** @var MasjidSetting $settings */
         $settings = MasjidSetting::getActive();
         $now = Carbon::now('Asia/Jakarta');
         $cityId = $settings->city_id ?: '1634';
