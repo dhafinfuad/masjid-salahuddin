@@ -1,58 +1,325 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🕌 Masjid Salahuddin - Sistem Informasi Terpadu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php&logoColor=white)](https://www.php.net)
+[![License](https://img.shields.io/badge/License-Proprietary-blue.svg)](#lisensi)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)](#)
 
-## About Laravel
+Sistem informasi terpadu yang dirancang khusus untuk mendukung pengelolaan operasional, administrasi, dan layanan digital di Masjid Salahuddin. Aplikasi ini mengintegrasikan berbagai aspek manajemen masjid dalam satu platform yang mudah digunakan dan responsif.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📋 Daftar Isi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [📸 Tangkapan Layar (Screenshots)](#-tangkapan-layar-screenshots)
+- [✨ Fitur Utama](#-fitur-utama)
+- [🛠️ Teknologi & Stack](#️-teknologi--stack)
+- [📁 Struktur Proyek](#-struktur-proyek)
+- [🚀 Panduan Setup](#-panduan-setup)
+- [📖 Dokumentasi](#-dokumentasi)
+- [🤝 Kontribusi](#-kontribusi)
+- [📄 Lisensi](#-lisensi)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📸 Tangkapan Layar (Screenshots)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Berikut adalah galeri antarmuka sistem informasi terpadu Masjid Salahuddin:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 🌐 1. Portal Jamaah & Tampilan Responsif (PWA)
+Portal publik yang dapat diakses oleh jamaah melalui peramban web desktop maupun smartphone secara responsif sebagai Progressive Web App (PWA).
 
-## Agentic Development
+| Portal Beranda Jamaah (Desktop) | Tampilan Responsif Smartphone & PWA |
+|:---:|:---:|
+| ![Portal Beranda Jamaah](docs/screenshots/01-portal-beranda.png) | ![Portal Mobile & PWA](docs/screenshots/09-portal-mobile.png) |
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+### ⏰ 2. Jadwal Shalat Bulanan & Roster Petugas
+Perhitungan waktu sholat otomatis dengan metode hisab Kemenag RI untuk wilayah Kota Malang, serta penugasan petugas imam & muadzin harian dan khotib Shalat Jumat.
 
-php artisan boost:install
+| Jadwal Waktu Shalat Bulanan | Roster Petugas Shalat Bulanan |
+|:---:|:---:|
+| ![Jadwal Shalat Bulanan](docs/screenshots/02-jadwal-sholat.png) | ![Roster Petugas Shalat](docs/screenshots/03-petugas-sholat.png) |
+
+---
+
+### 📅 3. Kalender Kegiatan & Kotak Saran Aspirasi
+Daftar kegiatan rutin, kajian pekanan/tematik, dan Shalat Jumat, dilengkapi kotak aspirasi dua arah dengan transparansi tindak lanjut resmi dari Takmir DKM.
+
+| Kalender Kegiatan & Kajian Masjid | Kotak Saran & Tindak Lanjut Aspirasi |
+|:---:|:---:|
+| ![Kalender Kegiatan](docs/screenshots/04-kegiatan-masjid.png) | ![Kotak Saran & Aspirasi](docs/screenshots/06-kotak-saran.png) |
+
+---
+
+### 🏛️ 4. Profil Masjid, Legalitas SK & Galeri Kegiatan
+Informasi profil identitas masjid, struktur pengurus berdasarkan Surat Keputusan (SK) resmi, serta galeri dokumentasi foto kegiatan peribadatan dan sosial.
+
+| Profil Masjid & Visi-Misi | Struktur Pengurus & Dokumen SK Resmi |
+|:---:|:---:|
+| ![Profil Masjid](docs/screenshots/05-profil-masjid.png) | ![Struktur Kepengurusan](docs/screenshots/05c-struktur-pengurus.png) |
+
+| Dokumentasi Galeri Kegiatan Masjid |
+|:---:|
+| ![Galeri Kegiatan](docs/screenshots/05b-galeri-kegiatan.png) |
+
+---
+
+### 📺 5. Digital Signage — Layar TV Display Masjid
+Tampilan khusus monitor TV masjid (Full HD 1080p landscape) dengan jam digital hisab akurat, hitung mundur menuju adzan & iqomah, running text pengumuman, serta parameter cuaca BMKG.
+
+![TV Display Digital Signage](docs/screenshots/07-tv-display.png)
+
+---
+
+### 🔐 6. Autentikasi & Registrasi Pengurus DKM
+Keamanan akses modul administratif khusus takmir dengan integrasi verifikasi alamat email kedinasan resmi Direktorat Jenderal Pajak (`@pajak.go.id`).
+
+| Masuk Pengurus DKM | Pendaftaran Akun Email Kedinasan |
+|:---:|:---:|
+| ![Login Pengurus DKM](docs/screenshots/08-login-pengurus.png) | ![Pendaftaran Pengurus](docs/screenshots/08b-register.png) |
+
+---
+
+## ✨ Fitur Utama
+
+### 👥 Portal Jamaah
+- Informasi profil dan identitas masjid
+- Jadwal dan agenda kegiatan terbaru
+- Katalog kajian dan penceramah
+- Berita dan artikel informatif
+
+### ⏰ Manajemen Jadwal Sholat
+- Perhitungan waktu sholat otomatis dan akurat
+- Waktu imsak untuk puasa
+- Pemberitahuan adzan terintegrasi
+- Countdown iqomah real-time
+
+### 👔 Manajemen Petugas Sholat
+- Roster jadwal imam, muadzin, dan khotib
+- Pengaturan giliran petugas sholat
+- Riwayat dan notifikasi tugas
+- Manajemen kontak petugas
+
+### 📺 TV Display (Digital Signage)
+- Tampilan khusus untuk monitor/TV masjid
+- Jam digital dengan desain modern
+- Countdown adzan dan iqomah
+- Slide otomatis untuk kegiatan dan pengumuman
+
+### 💰 Pelaporan Keuangan & Infaq
+- Pencatatan transaksi kas masuk dan keluar
+- Laporan keuangan terstruktur
+- Export laporan dalam format PDF
+- Dashboard transparansi keuangan
+
+### 📱 Progressive Web App (PWA)
+- Instalasi langsung di smartphone tanpa app store
+- Akses cepat dan offline-capable
+- Interface native-like experience
+- Notifikasi push untuk reminder penting
+
+### 💭 Kotak Saran & Aspirasi
+- Saluran komunikasi jamaah dengan takmir
+- Manajemen feedback dan pengaduan
+- Prioritas dan status follow-up
+- Transparansi respon takmir
+
+### 🔐 Dashboard Admin Takmir
+- Panel kontrol manajemen terpusat
+- Kelola semua konten dan data
+- Manajemen pengguna dan akses
+- Pengaturan sistem dan konfigurasi
+
+---
+
+## 🛠️ Teknologi & Stack
+
+| Komponen | Teknologi | Versi |
+|----------|-----------|-------|
+| **Backend Framework** | [Laravel](https://laravel.com/) | 11.x |
+| **Language** | PHP | 8.2+ |
+| **Frontend Reactivity** | [Livewire](https://livewire.laravel.com/) & [Alpine.js](https://alpinejs.dev/) | Latest |
+| **Build Tool** | [Vite](https://vitejs.dev/) | 8.x |
+| **Styling** | Blade + Tailwind CSS | - |
+| **Database** | MySQL / MariaDB | 8.0+ / 10.5+ |
+| **Web Server** | Nginx + OpenResty | Latest |
+| **Control Panel** | 1Panel | - |
+
+---
+
+## 📁 Struktur Proyek
+
+```
+.
+├── app/
+│   ├── Http/Controllers/          # Controller untuk setiap fitur
+│   ├── Livewire/                  # Komponen Livewire reaktif
+│   ├── Models/                    # Model database (Eloquent ORM)
+│   └── Services/                  # Business logic & services
+├── config/                         # Konfigurasi aplikasi
+├── database/
+│   ├── migrations/                # Schema database
+│   ├── seeders/                   # Data awal
+│   └── factories/                 # Test data factory
+├── docs/                           # 📚 Dokumentasi & Aset Pendukung
+│   ├── ARCHITECTURE.md            # Panduan arsitektur sistem
+│   ├── SETUP.md                   # Panduan setup & instalasi
+│   ├── LIVEWIRE_ALPINE_...        # Panduan sinkronisasi state
+│   └── screenshots/               # 📸 Tangkapan layar antarmuka sistem
+├── public/                         # Public web root
+│   ├── manifest.json              # PWA manifest
+│   ├── sw.js                      # Service worker
+│   └── assets/                    # CSS, JS, images
+├── resources/
+│   ├── views/                     # Blade template views
+│   ├── css/                       # Stylesheet
+│   └── js/                        # JavaScript
+├── routes/
+│   ├── web.php                    # Web routes
+│   └── api.php                    # API routes
+├── tests/                         # Feature & Unit tests
+├── .env.example                   # Environment template
+├── composer.json                  # PHP dependencies
+└── package.json                   # Node dependencies
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 🚀 Panduan Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 📋 Prasyarat
 
-## Code of Conduct
+Pastikan sudah terinstal:
+- **PHP** >= 8.2 dengan ekstensi: `pdo_mysql`, `mbstring`, `openssl`, `gd`/`imagick`, `fileinfo`
+- **Composer** (PHP dependency manager)
+- **Node.js** >= 18 & **NPM**
+- **MySQL** atau **MariaDB** (versi 8.0+ / 10.5+)
+- **Git** untuk version control
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Rekomendasi Setup Lokal:**
+- [Laragon](https://laragon.org/) (Windows - All-in-one)
+- [Herd](https://herd.laravel.com/) (macOS - Laravel optimized)
+- [Docker](https://www.docker.com/) (Cross-platform)
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### ⚡ Langkah Instalasi
 
-## License
+#### 1️⃣ Clone Repository
+```bash
+git clone https://github.com/dhafinfuad/masjid-salahuddin.git
+cd masjid-salahuddin/index
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### 2️⃣ Instalasi Backend Dependencies
+```bash
+# Salin environment file
+cp .env.example .env
+
+# Instalasi PHP dependencies
+composer install
+```
+
+#### 3️⃣ Konfigurasi Database
+Edit file `.env` dan atur koneksi database:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=masjid_salahuddin
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+#### 4️⃣ Setup Application
+```bash
+# Generate application key
+php artisan key:generate
+
+# Jalankan database migration & seeding
+php artisan migrate --seed
+```
+
+#### 5️⃣ Instalasi Frontend Dependencies
+```bash
+# Instalasi Node packages
+npm install
+
+# Build assets (development)
+npm run dev
+
+# Atau build production
+npm run build
+```
+
+#### 6️⃣ Jalankan Development Server
+```bash
+php artisan serve
+```
+
+Aplikasi akan berjalan di **`http://localhost:8000`**
+
+---
+
+### 🔑 Credentials Default (Setelah Seeding)
+
+Untuk login pertama kali ke dashboard admin:
+- **Email**: `admin@masjidsalahuddin.id`
+- **Password**: `password`
+
+⚠️ **Penting**: Ganti password setelah login pertama kali!
+
+---
+
+## 📖 Dokumentasi
+
+### Panduan Pengembang
+- [Setup Lokal & Development](./docs/SETUP.md) - Panduan detail setup
+- [Arsitektur Sistem](./docs/ARCHITECTURE.md) - Panduan arsitektur sistem
+- [Sinkronisasi Livewire & Alpine](./docs/LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md) - Panduan sinkronisasi reaktif
+
+---
+
+## 🧪 Testing
+
+Jalankan test suite untuk memastikan kualitas kode:
+
+```bash
+# Jalankan semua test
+php artisan test
+
+# Test dengan coverage report
+php artisan test --coverage
+```
+
+---
+
+## 🔐 Keamanan
+
+### Best Practices yang Diterapkan
+- ✅ Input validation & sanitization
+- ✅ SQL injection prevention (Eloquent ORM)
+- ✅ CSRF protection (Laravel CSRF token)
+- ✅ Password hashing (bcrypt)
+- ✅ Rate limiting untuk API & login
+- ✅ Environment variable untuk secrets
+
+---
+
+## 🤝 Kontribusi
+
+Kami menerima kontribusi dari komunitas! Silakan buat Pull Request atau ajukan Issue jika menemukan kendala.
+
+---
+
+## 📄 Lisensi
+
+Hak Cipta © 2026 Masjid Salahuddin. Semua hak dilindungi.
+
+Proyek ini adalah **proprietary software** yang khusus dikembangkan untuk Masjid Salahuddin. Penggunaan, distribusi, atau modifikasi tanpa izin resmi dilarang.
+
+---
+
+**Dibuat dengan ❤️ untuk kemakmuran Masjid Salahuddin**

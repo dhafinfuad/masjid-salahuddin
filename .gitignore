@@ -77,3 +77,15 @@ index/index-bundle.js
 *.xlsx
 *.xls
 *.csv
+
+# Berkas Root & Direktori Lokal (Hanya folder index yang tampil di GitHub)
+/README.md
+/GEMINI.md
+/Prompt Template.txt
+Things Left to Do.txt
+/.agents/
+/rewrite/
+
+# Dokumentasi Deployment Internal
+SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md
+
