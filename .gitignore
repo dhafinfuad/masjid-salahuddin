@@ -78,8 +78,7 @@ index/index-bundle.js
 *.xls
 *.csv
 
-# Berkas Root & Direktori Lokal (Hanya folder index yang tampil di GitHub)
-/README.md
+# Berkas Root & Direktori Lokal
 /GEMINI.md
 /Prompt Template.txt
 Things Left to Do.txt
