@@ -338,6 +338,20 @@ class PortalPage extends Component
         $fridayMc = $currentFridayKajian ? ($currentFridayKajian->mc_name ?: ($currentFridayKajian->speaker_name ?: 'Alan Irfansyah')) : ($settings->friday_prayer_info['mc'] ?? 'Alan Irfansyah');
         $fridayMuadzin = $currentFridayKajian ? ($currentFridayKajian->muadzin_name ?: ($currentFridayKajian->description ?: 'Khodori')) : ($settings->friday_prayer_info['muadzin'] ?? 'Khodori');
 
+        // Waktu Sholat Dzuhur & Ashar hari ini untuk card Petugas Sholat
+        $dzuhurPrayerTime = '11:45';
+        $asharPrayerTime = '15:00';
+        if (!empty($this->prayers)) {
+            foreach ($this->prayers as $p) {
+                if (($p['key'] ?? '') === 'dzuhur' && !empty($p['adzan'])) {
+                    $dzuhurPrayerTime = $p['adzan'];
+                }
+                if (($p['key'] ?? '') === 'ashar' && !empty($p['adzan'])) {
+                    $asharPrayerTime = $p['adzan'];
+                }
+            }
+        }
+
         return view('livewire.portal.portal-page', [
             'settings' => $settings,
             'kajians' => $kajians,
@@ -352,6 +366,8 @@ class PortalPage extends Component
             'isFridayAsharDuty' => $isFridayAsharDuty,
             'dzuhurDuty' => $dzuhurDuty,
             'asharDuty' => $asharDuty,
+            'dzuhurPrayerTime' => $dzuhurPrayerTime,
+            'asharPrayerTime' => $asharPrayerTime,
             'fridayKhatib' => $fridayKhatib,
             'fridayMc' => $fridayMc,
             'fridayMuadzin' => $fridayMuadzin,

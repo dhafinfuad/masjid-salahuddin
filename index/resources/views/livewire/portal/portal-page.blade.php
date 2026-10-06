@@ -595,7 +595,7 @@
                                             <div class="bg-white/10 backdrop-blur-xs rounded-lg p-2.5 border border-white/15">
                                                 <div class="flex items-center justify-between pb-1 border-b border-white/10">
                                                     <span class="text-[10px] font-bold tracking-wider uppercase text-amber-300">SHOLAT DZUHUR</span>
-                                                    <span class="text-[10px] text-amber-200/70">11:45 WIB</span>
+                                                    <span class="text-[10px] text-amber-200/70">{{ $dzuhurPrayerTime ?? '11:45' }} WIB</span>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-2 mt-1.5">
                                                     <div>
@@ -613,7 +613,7 @@
                                             <div class="bg-white/10 backdrop-blur-xs rounded-lg p-2.5 border border-white/15">
                                                 <div class="flex items-center justify-between pb-1 border-b border-white/10">
                                                     <span class="text-[10px] font-bold tracking-wider uppercase text-amber-300">SHOLAT ASHAR</span>
-                                                    <span class="text-[10px] text-slate-300/70">15:00 WIB</span>
+                                                    <span class="text-[10px] text-slate-300/70">{{ $asharPrayerTime ?? '15:00' }} WIB</span>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-2 mt-1.5">
                                                     <div>

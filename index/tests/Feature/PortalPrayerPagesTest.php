@@ -261,6 +261,23 @@ class PortalPrayerPagesTest extends TestCase
         $response->assertSee('Kartu kuning menandakan jadwal kajian selanjutnya atau kegiatan pada pekan berjalan.');
         $response->assertDontSee('Hari Ini');
     }
+
+    public function test_portal_home_duty_card_renders_dynamic_prayer_times_for_dzuhur_and_ashar(): void
+    {
+        $prayerService = app(\App\Services\PrayerTimeService::class);
+        $prayers = $prayerService->getPrayerTimes();
+        $dzuhur = collect($prayers)->firstWhere('key', 'dzuhur')['adzan'] ?? '11:45';
+        $ashar = collect($prayers)->firstWhere('key', 'ashar')['adzan'] ?? '15:00';
+
+        $component = Livewire::test(\App\Livewire\Portal\PortalPage::class);
+        $component->assertViewHas('dzuhurPrayerTime', $dzuhur)
+            ->assertViewHas('asharPrayerTime', $ashar);
+
+        if (!now()->isFriday()) {
+            $component->assertSee($dzuhur . ' WIB')
+                ->assertSee($ashar . ' WIB');
+        }
+    }
 }
 
 
