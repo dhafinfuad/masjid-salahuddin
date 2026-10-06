@@ -1824,7 +1824,7 @@
             <template x-if="confirmDeleteModal.itemName">
                 <div class="p-3 rounded-xl bg-rose-50/70 border border-rose-200/70 flex items-start gap-2.5 text-xs">
                     <i data-lucide="trash-2" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
-                    <span class="font-bold text-rose-900 line-clamp-3 break-words whitespace-pre-line leading-relaxed" x-text="confirmDeleteModal.itemName"></span>
+                    <span class="font-bold text-rose-900 line-clamp-3 wrap-break-word whitespace-pre-line leading-relaxed" x-text="confirmDeleteModal.itemName"></span>
                 </div>
             </template>
 

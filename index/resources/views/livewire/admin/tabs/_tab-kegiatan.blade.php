@@ -247,7 +247,7 @@
                                             <x-sort-icon field="title" table="pekanan" />
                                         </div>
                                     </th>
-                                    <th wire:click="sortBy('speaker_name', 'pekanan')" class="p-3.5 min-w-[150px] whitespace-normal cursor-pointer hover:bg-slate-100 transition-colors group select-none">
+                                    <th wire:click="sortBy('speaker_name', 'pekanan')" class="p-3.5 min-w-37.5 whitespace-normal cursor-pointer hover:bg-slate-100 transition-colors group select-none">
                                         <div class="flex items-center gap-1">
                                             <span>Narasumber</span>
                                             <x-sort-icon field="speaker_name" table="pekanan" />
@@ -309,7 +309,7 @@
                                             <div class="line-clamp-2 leading-relaxed">{{ $k->title }}</div>
                                         </td>
                                         <td
-                                            class="p-3.5 font-normal min-w-[150px] whitespace-normal break-words">
+                                            class="p-3.5 font-normal min-w-37.5 whitespace-normal wrap-break-word">
                                             <div class="flex items-center gap-2 text-gov-navy font-normal">
                                                 @if($k->valid_speaker_photo_url)
                                                     <img src="{{ $k->valid_speaker_photo_url }}" alt="{{ $k->speaker_name }}" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200 shadow-2xs">
@@ -318,7 +318,7 @@
                                                         class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
                                                 @endif
                                                 <span
-                                                    class="break-words whitespace-normal font-normal">{{ $k->speaker_name ?: '-' }}</span>
+                                                    class="wrap-break-word whitespace-normal font-normal">{{ $k->speaker_name ?: '-' }}</span>
                                             </div>
                                         </td>
                                         <td class="p-3.5 text-center whitespace-nowrap relative" x-data="{ openMenu: false }">

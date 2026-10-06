@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ProgramParticipant;
 use App\Models\SocialProgram;
 use App\Services\PotonganMasjidSyncService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,6 +16,7 @@ class SyncPotonganMasjidTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Carbon::setTestNow(Carbon::create(2026, 9, 15, 12, 0, 0, 'Asia/Jakarta'));
 
         // Seed social programs
         SocialProgram::create([
@@ -139,5 +141,11 @@ class SyncPotonganMasjidTest extends TestCase
 
         $this->assertEquals(1606, ProgramParticipant::count());
         $this->assertEquals(130, ProgramParticipant::where('period', $currentPeriod)->count());
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 }
