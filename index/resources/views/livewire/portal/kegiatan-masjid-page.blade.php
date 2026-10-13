@@ -203,152 +203,356 @@
 
         </div>
 
-        <!-- Activities Card Grid (Desktop: 2 Columns, Large: 3 Columns) -->
+        <!-- Activities List (Desktop: Clean Table, Mobile: Card Grid) -->
         @if($items->isNotEmpty())
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach($items as $item)
-                    @php
-                        $isJumat = ($item['type'] === 'jumat');
-                        $isTematik = ($item['type'] === 'tematik');
-                        $isPekanan = ($item['type'] === 'pekanan');
-                        $isAkbar = ($item['type'] === 'akbar');
+            <!-- Mode Desktop: Tabel Kegiatan Masjid -->
+            <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50/80 border-b border-slate-300 text-gov-textMuted uppercase font-bold text-[11px] tracking-wider">
+                            <th class="p-3.5 pl-4 text-center w-12">Tgl</th>
+                            <th class="p-3.5 w-48">Hari & Tanggal</th>
+                            <th class="p-3.5 text-center w-36">Kategori</th>
+                            <th class="p-3.5 min-w-[200px]">Kegiatan & Tema</th>
+                            <th class="p-3.5 w-60">Narasumber / Petugas</th>
+                            <th class="p-3.5 text-center w-44">Dokumen & Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody wire:loading.class="opacity-50 pointer-events-none" class="divide-y divide-slate-200 font-medium text-slate-700 transition-opacity duration-150">
+                        @foreach($items as $item)
+                            @php
+                                $isJumat = ($item['type'] === 'jumat');
+                                $isTematik = ($item['type'] === 'tematik');
+                                $isPekanan = ($item['type'] === 'pekanan');
+                                $isAkbar = ($item['type'] === 'akbar');
 
-                        $badgeText = 'Pekanan';
-                        $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-                        if ($isJumat) {
-                            $badgeText = 'Khutbah Jumat';
-                            $badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
-                        } elseif ($isTematik) {
-                            $badgeText = 'Tematik';
-                            $badgeStyle = 'bg-blue-50 text-blue-700 border-blue-200';
-                        } elseif ($isAkbar) {
-                            $badgeText = 'Kegiatan Akbar';
-                            $badgeStyle = 'bg-indigo-50 text-indigo-700 border-indigo-200';
-                        }
+                                $badgeText = 'Pekanan';
+                                $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                                if ($isJumat) {
+                                    $badgeText = 'Khutbah Jumat';
+                                    $badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
+                                } elseif ($isTematik) {
+                                    $badgeText = 'Tematik';
+                                    $badgeStyle = 'bg-blue-50 text-blue-700 border-blue-200';
+                                } elseif ($isAkbar) {
+                                    $badgeText = 'Kegiatan Akbar';
+                                    $badgeStyle = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                                }
 
-                        $itemDateStr = $item['date'] ? Carbon\Carbon::parse($item['date'])->format('Y-m-d') : '';
+                                $itemDateStr = $item['date'] ? Carbon\Carbon::parse($item['date'])->format('Y-m-d') : '';
 
-                        $isNext = false;
-                        if ($item['source'] === 'kajian') {
-                            if ($isJumat) {
-                                $isNext = ($nextJumatKajianId && $item['id'] === $nextJumatKajianId);
-                            } else {
-                                $isNext = ($nextPekananKajianId && $item['id'] === $nextPekananKajianId);
-                            }
-                        } elseif ($item['source'] === 'agenda') {
-                            $isNext = ($nextAgendaId && $item['id'] === $nextAgendaId);
-                        }
+                                $isNext = false;
+                                if ($item['source'] === 'kajian') {
+                                    if ($isJumat) {
+                                        $isNext = ($nextJumatKajianId && $item['id'] === $nextJumatKajianId);
+                                    } else {
+                                        $isNext = ($nextPekananKajianId && $item['id'] === $nextPekananKajianId);
+                                    }
+                                } elseif ($item['source'] === 'agenda') {
+                                    $isNext = ($nextAgendaId && $item['id'] === $nextAgendaId);
+                                }
 
-                        $isCurrentActiveWeek = ($itemDateStr >= $todayDate && $itemDateStr <= $kajianCurrentWeekEnd);
-                        $isHighlight = ($isNext || $isCurrentActiveWeek);
-                    @endphp
+                                $isCurrentActiveWeek = ($itemDateStr >= $todayDate && $itemDateStr <= $kajianCurrentWeekEnd);
+                                $isHighlight = ($isNext || $isCurrentActiveWeek);
+                            @endphp
+                            <tr wire:key="desktop-activity-row-{{ $item['source'] }}-{{ $item['id'] }}"
+                                class="transition {{ $isHighlight ? 'bg-amber-50/90 hover:bg-amber-100/80 border-l-4 border-l-amber-500 font-semibold' : 'hover:bg-slate-50/80' }}">
+                                
+                                <!-- 1. Tgl -->
+                                <td class="p-3 pl-4 text-center font-bold {{ $isHighlight ? 'text-amber-700' : 'text-slate-600' }}">
+                                    {{ $item['date'] ? Carbon\Carbon::parse($item['date'])->format('d') : '-' }}
+                                </td>
 
-                    <div class="border rounded-xl p-4 transition space-y-3 flex flex-col justify-between group {{ $isHighlight ? 'bg-amber-100/40 hover:bg-amber-100/80 border-l-4 border-l-amber-500 border-amber-300 shadow-2xs' : 'bg-white border-gov-border hover:shadow-2xs' }}">
-                        
-                        <div class="space-y-2.5">
-                            <!-- Badge & Date Row -->
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}">
-                                    {{ $badgeText }}
-                                </span>
-                                <span class="text-xs {{ $isHighlight ? 'font-bold text-amber-900' : 'font-semibold text-slate-600' }} whitespace-nowrap shrink-0">
-                                    {{ $item['date'] ? $item['date']->translatedFormat('d M Y') : '-' }}
-                                    @if(!empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
-                                        • {{ $item['time_display'] }}
+                                <!-- 2. Hari & Tanggal -->
+                                <td class="p-3">
+                                    <div class="space-y-0.5">
+                                        <div class="font-bold {{ $isHighlight ? 'text-gov-navy' : 'text-gov-textMain' }}">
+                                            {{ $item['date'] ? Carbon\Carbon::parse($item['date'])->translatedFormat('l') : '-' }}
+                                        </div>
+                                        <div class="text-[11px] text-slate-500 font-normal leading-tight">
+                                            {{ $item['date'] ? Carbon\Carbon::parse($item['date'])->translatedFormat('d F Y') : '-' }}
+                                            @if(!empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
+                                                • {{ $item['time_display'] }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- 3. Kategori -->
+                                <td class="p-3 text-center">
+                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap {{ $badgeStyle }}">
+                                        {{ $badgeText }}
+                                    </span>
+                                </td>
+
+                                <!-- 4. Kegiatan & Tema -->
+                                <td class="p-3">
+                                    @if($isJumat)
+                                        <div class="font-bold text-gov-textMain leading-snug">
+                                            {{ $item['title'] ?: 'Khutbah Shalat Jumat' }}
+                                        </div>
+                                    @elseif($isAkbar)
+                                        <div class="font-bold text-gov-textMain leading-snug">
+                                            {{ $item['title'] }}
+                                        </div>
+                                        @if(!empty($item['description']))
+                                            <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                                                {{ $item['description'] }}
+                                            </p>
+                                        @endif
+                                        @if(!empty($item['budget']))
+                                            <div class="text-[11px] font-semibold text-gov-navy mt-0.5">
+                                                Anggaran: Rp {{ number_format($item['budget'], 0, ',', '.') }}
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="font-bold text-gov-textMain leading-snug">
+                                            {{ $item['title'] }}
+                                        </div>
+                                        @if(!empty($item['location']))
+                                            <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                                                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
+                                                <span>{{ $item['location'] }}</span>
+                                            </p>
+                                        @endif
                                     @endif
-                                </span>
-                            </div>
+                                </td>
 
-                            <!-- Title & Speaker -->
-                            <div>
-                                @if($isJumat)
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
-                                        {{ $item['khatib_name'] ?: ($item['title'] ?: 'Khatib Shalat Jumat') }}
-                                    </h3>
-                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                                        <span>Muadzin: <strong class="text-slate-700 font-medium">{{ $item['muadzin_name'] ?: '-' }}</strong></span>
-                                        <span class="mx-1.5 text-slate-300">•</span>
-                                        <span>MC: <strong class="text-slate-700 font-medium">{{ $item['mc_name'] ?: '-' }}</strong></span>
-                                    </p>
-                                @elseif($isAkbar)
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
-                                        {{ $item['title'] }}
-                                    </h3>
-                                    @if(!empty($item['description']))
-                                        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed line-clamp-2">
-                                            {{ $item['description'] }}
-                                        </p>
-                                    @endif
-                                    @if(!empty($item['budget']))
-                                        <div class="mt-2 text-xs font-semibold text-gov-navy">
-                                            Anggaran: Rp {{ number_format($item['budget'], 0, ',', '.') }}
+                                <!-- 5. Narasumber / Petugas -->
+                                <td class="p-3">
+                                    @if($isJumat)
+                                        <div class="space-y-0.5 leading-tight text-xs">
+                                            <div>
+                                                <span>Khatib:</span>
+                                                <strong class="text-gov-textMain font-semibold ml-1">{{ $item['khatib_name'] ?: ($item['title'] ?: 'Khatib Jumat') }}</strong>
+                                            </div>
+                                            <div class="text-slate-600">
+                                                <span>Muadzin:</span>
+                                                <span class="font-medium ml-1">{{ $item['muadzin_name'] ?: '-' }}</span>
+                                            </div>
+                                            @if(!empty($item['mc_name']) && $item['mc_name'] !== '-')
+                                                <div class="text-slate-600">
+                                                    <span>MC:</span>
+                                                    <span class="font-medium ml-1">{{ $item['mc_name'] }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @elseif($isAkbar)
+                                        <div class="text-xs text-slate-600">
+                                            <span>Lokasi:</span>
+                                            <strong class="text-gov-textMain font-semibold ml-1">{{ $item['location'] ?: 'Masjid Salahuddin' }}</strong>
+                                        </div>
+                                    @else
+                                        <div class="space-y-0.5 leading-tight text-xs">
+                                            <div>
+                                                <span>Pemateri:</span>
+                                                <strong class="text-gov-textMain font-semibold ml-1">{{ $item['speaker_name'] ?: 'Pemateri Kajian' }}</strong>
+                                            </div>
                                         </div>
                                     @endif
-                                @else
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
-                                        {{ $item['title'] }}
-                                    </h3>
-                                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                                        <span class="font-medium text-slate-700">{{ $item['speaker_name'] ?: 'Pemateri Kajian' }}</span>
-                                        @if(!empty($item['location']))
-                                            <span class="mx-1.5 text-slate-300">•</span>
-                                            <span>{{ $item['location'] }}</span>
-                                        @endif
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
+                                </td>
 
-                        <!-- Footer Card Action (Teks MC & Notula) -->
-                        @if($isJumat || !empty($item['notula']) || !empty($item['youtube_url']))
-                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end mt-auto">
+                                <!-- 6. Dokumen & Aksi -->
+                                <td class="p-3 text-center whitespace-nowrap">
+                                    <div class="inline-flex items-center justify-center gap-1.5 flex-wrap">
+                                        @if($isJumat)
+                                            <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
+                                               class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               title="Download & Cetak Teks MC Sholat Jumat (PDF)">
+                                                <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
+                                                <span>Teks MC</span>
+                                            </a>
+                                        @endif
+                                        @if(!empty($item['youtube_url']))
+                                            <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                title="Tonton Siaran di YouTube">
+                                                <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                </svg>
+                                                <span>YouTube</span>
+                                            </a>
+                                        @endif
+                                        @if(!empty($item['notula']))
+                                            <button type="button"
+                                                @click="openPortalNotula({{ Js::from([
+                                                    'id' => $item['id'],
+                                                    'title' => $item['title'] ?: ($isJumat ? 'Khutbah Jumat' : 'Kajian'),
+                                                    'type' => $item['type'] ?? 'pekanan',
+                                                    'speaker_name' => $item['speaker_name'] ?: ($item['khatib_name'] ?: 'Asatidz'),
+                                                    'date' => !empty($item['date']) ? (\Carbon\Carbon::parse($item['date'])->translatedFormat('l, d F Y')) : '',
+                                                    'time_display' => $item['time_display'] ?? '',
+                                                    'notula' => $item['notula'],
+                                                ]) }})"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                title="Baca Risalah Notula Kajian">
+                                                <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                                                    <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
+                                                </svg>
+                                                <span>Notula</span>
+                                            </button>
+                                        @endif
+                                        @if(!$isJumat && empty($item['youtube_url']) && empty($item['notula']))
+                                            <span class="text-slate-400 italic text-xs">-</span>
+                                        @endif
+                                    </div>
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mode Mobile: Tampilan Card -->
+            <div class="block md:hidden">
+                <div class="grid grid-cols-1 gap-4">
+                    @foreach($items as $item)
+                        @php
+                            $isJumat = ($item['type'] === 'jumat');
+                            $isTematik = ($item['type'] === 'tematik');
+                            $isPekanan = ($item['type'] === 'pekanan');
+                            $isAkbar = ($item['type'] === 'akbar');
+
+                            $badgeText = 'Pekanan';
+                            $badgeStyle = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                            if ($isJumat) {
+                                $badgeText = 'Khutbah Jumat';
+                                $badgeStyle = 'bg-amber-50 text-amber-800 border-amber-200';
+                            } elseif ($isTematik) {
+                                $badgeText = 'Tematik';
+                                $badgeStyle = 'bg-blue-50 text-blue-700 border-blue-200';
+                            } elseif ($isAkbar) {
+                                $badgeText = 'Kegiatan Akbar';
+                                $badgeStyle = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                            }
+
+                            $itemDateStr = $item['date'] ? Carbon\Carbon::parse($item['date'])->format('Y-m-d') : '';
+
+                            $isNext = false;
+                            if ($item['source'] === 'kajian') {
+                                if ($isJumat) {
+                                    $isNext = ($nextJumatKajianId && $item['id'] === $nextJumatKajianId);
+                                } else {
+                                    $isNext = ($nextPekananKajianId && $item['id'] === $nextPekananKajianId);
+                                }
+                            } elseif ($item['source'] === 'agenda') {
+                                $isNext = ($nextAgendaId && $item['id'] === $nextAgendaId);
+                            }
+
+                            $isCurrentActiveWeek = ($itemDateStr >= $todayDate && $itemDateStr <= $kajianCurrentWeekEnd);
+                            $isHighlight = ($isNext || $isCurrentActiveWeek);
+                        @endphp
+
+                        <div wire:key="mobile-activity-card-{{ $item['source'] }}-{{ $item['id'] }}"
+                             class="border rounded-xl p-4 transition space-y-3 flex flex-col justify-between group {{ $isHighlight ? 'bg-amber-100/40 hover:bg-amber-100/80 border-l-4 border-l-amber-500 border-amber-300 shadow-2xs' : 'bg-white border-gov-border hover:shadow-2xs' }}">
+                            
+                            <div class="space-y-2.5">
+                                <!-- Badge & Date Row -->
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}">
+                                        {{ $badgeText }}
+                                    </span>
+                                    <span class="text-xs {{ $isHighlight ? 'font-bold text-amber-900' : 'font-semibold text-slate-600' }} whitespace-nowrap shrink-0">
+                                        {{ $item['date'] ? $item['date']->translatedFormat('d M Y') : '-' }}
+                                        @if(!empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
+                                            • {{ $item['time_display'] }}
+                                        @endif
+                                    </span>
+                                </div>
+
+                                <!-- Title & Speaker -->
                                 <div>
                                     @if($isJumat)
-                                        <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
-                                           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                           title="Download & Cetak Teks MC Sholat Jumat (PDF)">
-                                            <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
-                                            <span>Teks MC</span>
-                                        </a>
-                                    @endif
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    @if(!empty($item['youtube_url']))
-                                        <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Tonton Siaran di YouTube">
-                                            <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                            </svg>
-                                            <span>YouTube</span>
-                                        </a>
-                                    @endif
-                                    @if(!empty($item['notula']))
-                                        <button type="button"
-                                            @click="openPortalNotula({{ json_encode([
-                                                'id' => $item['id'],
-                                                'title' => $item['title'] ?: ($isJumat ? 'Khutbah Jumat' : 'Kajian'),
-                                                'type' => $item['type'] ?? 'pekanan',
-                                                'speaker_name' => $item['speaker_name'] ?: ($item['khatib_name'] ?: 'Asatidz'),
-                                                'date' => !empty($item['date']) ? (\Carbon\Carbon::parse($item['date'])->translatedFormat('l, d F Y')) : '',
-                                                'time_display' => $item['time_display'] ?? '',
-                                                'notula' => $item['notula'],
-                                            ]) }})"
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Baca Risalah Notula Kajian">
-                                            <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
-                                                <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
-                                            </svg>
-                                            <span>Notula</span>
-                                        </button>
+                                        <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
+                                            {{ $item['khatib_name'] ?: ($item['title'] ?: 'Khatib Shalat Jumat') }}
+                                        </h3>
+                                        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                            <span>Muadzin: <strong class="text-slate-700 font-medium">{{ $item['muadzin_name'] ?: '-' }}</strong></span>
+                                            <span class="mx-1.5 text-slate-300">•</span>
+                                            <span>MC: <strong class="text-slate-700 font-medium">{{ $item['mc_name'] ?: '-' }}</strong></span>
+                                        </p>
+                                    @elseif($isAkbar)
+                                        <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
+                                            {{ $item['title'] }}
+                                        </h3>
+                                        @if(!empty($item['description']))
+                                            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed line-clamp-2">
+                                                {{ $item['description'] }}
+                                            </p>
+                                        @endif
+                                        @if(!empty($item['budget']))
+                                            <div class="mt-2 text-xs font-semibold text-gov-navy">
+                                                Anggaran: Rp {{ number_format($item['budget'], 0, ',', '.') }}
+                                            </div>
+                                        @endif
+                                    @else
+                                        <h3 class="text-sm sm:text-base font-bold text-gov-textMain group-hover:text-gov-navy transition leading-snug">
+                                            {{ $item['title'] }}
+                                        </h3>
+                                        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                                            <span class="font-medium text-slate-700">{{ $item['speaker_name'] ?: 'Pemateri Kajian' }}</span>
+                                            @if(!empty($item['location']))
+                                                <span class="mx-1.5 text-slate-300">•</span>
+                                                <span>{{ $item['location'] }}</span>
+                                            @endif
+                                        </p>
                                     @endif
                                 </div>
                             </div>
-                        @endif
 
-                    </div>
-                @endforeach
+                            <!-- Footer Card Action (Teks MC & Notula) -->
+                            @if($isJumat || !empty($item['notula']) || !empty($item['youtube_url']))
+                                <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end mt-auto">
+                                    <div>
+                                        @if($isJumat)
+                                            <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
+                                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               title="Download & Cetak Teks MC Sholat Jumat (PDF)">
+                                                <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
+                                                <span>Teks MC</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        @if(!empty($item['youtube_url']))
+                                            <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                title="Tonton Siaran di YouTube">
+                                                <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                </svg>
+                                                <span>YouTube</span>
+                                            </a>
+                                        @endif
+                                        @if(!empty($item['notula']))
+                                            <button type="button"
+                                                @click="openPortalNotula({{ Js::from([
+                                                    'id' => $item['id'],
+                                                    'title' => $item['title'] ?: ($isJumat ? 'Khutbah Jumat' : 'Kajian'),
+                                                    'type' => $item['type'] ?? 'pekanan',
+                                                    'speaker_name' => $item['speaker_name'] ?: ($item['khatib_name'] ?: 'Asatidz'),
+                                                    'date' => !empty($item['date']) ? (\Carbon\Carbon::parse($item['date'])->translatedFormat('l, d F Y')) : '',
+                                                    'time_display' => $item['time_display'] ?? '',
+                                                    'notula' => $item['notula'],
+                                                ]) }})"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                title="Baca Risalah Notula Kajian">
+                                                <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                                                    <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
+                                                </svg>
+                                                <span>Notula</span>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
             <!-- Pagination -->
@@ -356,10 +560,10 @@
                 {{ $items->links() }}
             </div>
 
-            <!-- Card Legend -->
+            <!-- Legend -->
             <div class="p-3.5 bg-slate-50/70 border border-gov-border rounded-xl text-xs text-slate-500 flex items-center gap-2">
                 <span class="w-3 h-3 rounded bg-amber-200 border border-amber-300 inline-block shrink-0"></span>
-                <span>Kartu kuning menandakan jadwal kajian selanjutnya atau kegiatan pada pekan berjalan.</span>
+                <span>Baris / kartu kuning menandakan jadwal kajian selanjutnya atau kegiatan pada pekan berjalan.</span>
             </div>
         @else
             <!-- Empty State -->

@@ -150,7 +150,7 @@
                       Jumat (P.{{ $row['week_number'] }})
                     </span>
                   @else
-                    <span class="text-slate-600 text-[11px] font-medium">Pekan {{ $row['week_number'] }}</span>
+                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekan {{ $row['week_number'] }}</span>
                   @endif
                 </td>
                 <td class="p-2 border-r border-slate-200 leading-tight">

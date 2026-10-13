@@ -226,7 +226,7 @@
           JADWAL PENUGASAN IMAM &amp; MUADZIN SHALAT FARDHU
         </h3>
         <p class="text-xs text-slate-600 font-medium mt-1">
-          {{ $settings->name ?? 'Masjid Salahuddin' }} • Khusus Shalat Dzuhur &amp; Ashar • Status: {{ $week === 'all' ? 'Semua Pekan' : 'Pekan ' . $week }}
+          {{ $settings->name ?? 'Masjid Salahuddin' }} • Shalat Dzuhur &amp; Ashar • {{ $week === 'all' ? 'Semua Pekan' : 'Pekan ' . $week }}
         </p>
       </div>
 

@@ -157,7 +157,7 @@
                                             <x-sort-icon field="dzuhur" table="petugas" />
                                         </div>
                                     </th>
-                                    <th class="p-3.5">Shalat Ashar</th>
+                                    <th class="p-3.5">Ashar</th>
                                     <th class="p-3.5 text-center w-28">Aksi</th>
                                 </tr>
                             </thead>
