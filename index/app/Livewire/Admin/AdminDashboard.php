@@ -3842,6 +3842,7 @@ class AdminDashboard extends Component
                 // Abaikan kesalahan pencatatan riwayat migrasi
             }
 
+            $this->ensureUserNipColumnExists();
             return Schema::hasTable('employees');
         } catch (\Throwable $e) {
             // 2. Fallback: coba panggil artisan migrate jika Schema::create terkendala
@@ -3851,8 +3852,83 @@ class AdminDashboard extends Component
                 Log::warning('Fallback migrate employees failed: ' . $ex->getMessage());
             }
 
+            $this->ensureUserNipColumnExists();
             return Schema::hasTable('employees');
         }
+    }
+
+    private function ensureUserNipColumnExists(): bool
+    {
+        try {
+            if (Schema::hasColumn('users', 'nip')) {
+                return true;
+            }
+
+            Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->string('nip', 30)->nullable()->after('email')->index();
+            });
+
+            return Schema::hasColumn('users', 'nip');
+        } catch (\Throwable $e) {
+            Log::warning('ensureUserNipColumnExists warning: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function findMatchingUser(?string $nip9, ?string $nip18, ?string $name): ?User
+    {
+        $hasNipCol = $this->ensureUserNipColumnExists();
+
+        // 1. Cari berdasarkan NIP jika kolom nip tersedia di tabel users
+        if ($hasNipCol) {
+            if ($nip9) {
+                $user = User::where('nip', $nip9)->first();
+                if ($user) {
+                    return $user;
+                }
+            }
+            if ($nip18) {
+                $user = User::where('nip', $nip18)->first();
+                if ($user) {
+                    return $user;
+                }
+            }
+        }
+
+        // 2. Cari berdasarkan awalan email jika ada (misal nip9@pajak.go.id)
+        if ($nip9) {
+            $user = User::where('email', 'like', $nip9 . '@%')->first();
+            if ($user) {
+                return $user;
+            }
+        }
+        if ($nip18) {
+            $user = User::where('email', 'like', $nip18 . '@%')->first();
+            if ($user) {
+                return $user;
+            }
+        }
+
+        // 3. Cari berdasarkan Nama Lengkap (persis)
+        if ($name) {
+            $user = User::where('name', $name)->first();
+            if ($user) {
+                return $user;
+            }
+
+            // 4. Pencocokan toleran nama tanpa gelar
+            $norm = \App\Services\EmployeeStatusSyncService::normalizeName($name);
+            if (! empty($norm) && strlen($norm) >= 6) {
+                $candidates = User::all(['id', 'name']);
+                foreach ($candidates as $cand) {
+                    if (\App\Services\EmployeeStatusSyncService::normalizeName($cand->name) === $norm) {
+                        return $cand;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public function openCreateEmployeeModal(): void
@@ -3957,17 +4033,7 @@ class AdminDashboard extends Component
             $this->notify("Data pegawai {$employee->name} berhasil diperbarui.");
         } else {
             // Auto-link ke akun User jika ada yang cocok
-            $matchedUser = null;
-            if ($nipPendek) {
-                $matchedUser = User::where('nip', $nipPendek)->first();
-            }
-            if (! $matchedUser && $nipPanjang) {
-                $matchedUser = User::where('nip', $nipPanjang)->first();
-            }
-            if (! $matchedUser) {
-                $matchedUser = User::where('name', $data['name'])->first();
-            }
-
+            $matchedUser = $this->findMatchingUser($nipPendek, $nipPanjang, $data['name']);
             if ($matchedUser) {
                 $data['user_id'] = $matchedUser->id;
             }
@@ -4053,14 +4119,18 @@ class AdminDashboard extends Component
             $counter++;
         }
 
-        $user = User::create([
+        $userData = [
             'name' => $employee->name,
             'email' => $email,
-            'nip' => $employee->nip_pendek ?: $employee->nip_panjang,
             'role' => 'Jamaah',
             'status' => 'AKTIF',
             'password' => null,
-        ]);
+        ];
+        if ($this->ensureUserNipColumnExists()) {
+            $userData['nip'] = $employee->nip_pendek ?: $employee->nip_panjang;
+        }
+
+        $user = User::create($userData);
 
         $employee->update(['user_id' => $user->id]);
         $this->notify("Akun pengguna untuk {$employee->name} ({$email}) berhasil dibuat dengan role Jamaah.");
@@ -4174,15 +4244,7 @@ class AdminDashboard extends Component
             // Deteksi akun User yang cocok
             $matchedUser = null;
             if ($this->importEmployeeAutoLink) {
-                if ($nip9) {
-                    $matchedUser = User::where('nip', $nip9)->first();
-                }
-                if (! $matchedUser && $nip18) {
-                    $matchedUser = User::where('nip', $nip18)->first();
-                }
-                if (! $matchedUser && $name) {
-                    $matchedUser = User::where('name', $name)->first();
-                }
+                $matchedUser = $this->findMatchingUser($nip9, $nip18, $name);
             }
 
             if ($emp) {
@@ -6151,10 +6213,13 @@ class AdminDashboard extends Component
             $userSearch = trim($this->userSubTab === 'pengguna' ? $this->search : '');
             if ($userSearch !== '') {
                 $s = '%' . $userSearch . '%';
-                $userQuery->where(function ($q) use ($s) {
+                $hasNipCol = Schema::hasColumn('users', 'nip');
+                $userQuery->where(function ($q) use ($s, $hasNipCol) {
                     $q->where('name', 'like', $s)
-                      ->orWhere('email', 'like', $s)
-                      ->orWhere('nip', 'like', $s);
+                      ->orWhere('email', 'like', $s);
+                    if ($hasNipCol) {
+                        $q->orWhere('nip', 'like', $s);
+                    }
                 });
             }
 
