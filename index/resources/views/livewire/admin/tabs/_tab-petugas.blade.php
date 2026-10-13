@@ -192,15 +192,18 @@
                                         <!-- 3. POLA PEKAN -->
                                         <td class="p-3 text-center">
                                             @if($isWeekend)
-                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-slate-100 text-slate-500 border-slate-200">
+                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-slate-100 text-slate-500 border-slate-200"
+                                                      style="width: 72px; min-width: 72px; max-width: 72px;">
                                                     Libur
                                                 </span>
                                             @elseif($isFriday)
-                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-emerald-100 text-emerald-800 border-emerald-300">
+                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-emerald-100 text-emerald-800 border-emerald-300"
+                                                      style="width: 72px; min-width: 72px; max-width: 72px;">
                                                     Pekan {{ $row['week_number'] }}
                                                 </span>
                                             @else
-                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-blue-50 text-blue-700 border-blue-300">
+                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-blue-50 text-blue-700 border-blue-300"
+                                                      style="width: 72px; min-width: 72px; max-width: 72px;">
                                                     Pekan {{ $row['week_number'] }}
                                                 </span>
                                             @endif

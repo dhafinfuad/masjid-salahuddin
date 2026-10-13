@@ -280,7 +280,8 @@
 
                                 <!-- 3. Kategori -->
                                 <td class="p-3 text-center">
-                                    <span class="w-[110px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}">
+                                    <span class="col-badge-category w-[110px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none whitespace-nowrap shrink-0 {{ $badgeStyle }}"
+                                          style="width: 110px; min-width: 110px; max-width: 110px;">
                                         {{ $badgeText }}
                                     </span>
                                 </td>
@@ -357,7 +358,8 @@
                                     <div class="flex flex-col items-center justify-center gap-1.5">
                                         @if($isJumat)
                                             <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
-                                               class="w-[92px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">
                                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
                                                 <span>Teks MC</span>
@@ -365,7 +367,8 @@
                                         @endif
                                         @if(!empty($item['youtube_url']))
                                             <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
-                                                class="w-[92px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Tonton Siaran di YouTube">
                                                 <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -384,7 +387,8 @@
                                                     'time_display' => $item['time_display'] ?? '',
                                                     'notula' => $item['notula'],
                                                 ]) }})"
-                                                class="w-[92px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Baca Risalah Notula Kajian">
                                                 <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
@@ -508,7 +512,8 @@
                                     <div>
                                         @if($isJumat)
                                             <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
-                                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">
                                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
                                                 <span>Teks MC</span>
@@ -518,7 +523,8 @@
                                     <div class="flex items-center gap-1.5">
                                         @if(!empty($item['youtube_url']))
                                             <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Tonton Siaran di YouTube">
                                                 <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -537,7 +543,8 @@
                                                     'time_display' => $item['time_display'] ?? '',
                                                     'notula' => $item['notula'],
                                                 ]) }})"
-                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Baca Risalah Notula Kajian">
                                                 <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>

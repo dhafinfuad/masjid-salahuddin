@@ -400,12 +400,14 @@
                                                 <div class="mb-2">
                                                     @if($fin->type === 'pemasukan')
                                                         <span
-                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0">
+                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0"
+                                                            style="width: 94px; min-width: 94px; max-width: 94px;">
                                                             Pemasukan
                                                         </span>
                                                     @else
                                                         <span
-                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-300 leading-none shrink-0">
+                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-300 leading-none shrink-0"
+                                                            style="width: 94px; min-width: 94px; max-width: 94px;">
                                                             Pengeluaran
                                                         </span>
                                                     @endif

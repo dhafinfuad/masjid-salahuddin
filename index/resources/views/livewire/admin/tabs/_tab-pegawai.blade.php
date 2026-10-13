@@ -185,11 +185,13 @@
                                 @if(Auth::user()->canManage())
                                     <button type="button" wire:click="toggleEmployeeStatus({{ $emp->id }})"
                                         class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' }}"
+                                        style="width: 70px; min-width: 70px; max-width: 70px;"
                                         title="Klik untuk mengubah status aktif/mutasi">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </button>
                                 @else
-                                    <span class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
+                                    <span class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}"
+                                          style="width: 70px; min-width: 70px; max-width: 70px;">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </span>
                                 @endif

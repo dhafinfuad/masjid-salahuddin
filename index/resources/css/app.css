@@ -397,3 +397,57 @@ tr.border-l-amber-500,
 .notula-scrollable::-webkit-scrollbar-thumb:hover {
     background-color: #64748b !important;
 }
+
+/* Standarisasi Lebar Badge dan Tombol Aksi Kolom Desktop */
+.col-badge-category {
+    width: 110px !important;
+    min-width: 110px !important;
+    max-width: 110px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.col-action-btn {
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+.col-badge-pattern,
+.col-badge-user-status {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.col-badge-pegawai-status {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+
+.col-badge-finance {
+    width: 94px !important;
+    min-width: 94px !important;
+    max-width: 94px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+

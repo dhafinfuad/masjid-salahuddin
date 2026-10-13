@@ -296,12 +296,14 @@
                                     @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                         <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
                                             class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                            style="width: 72px; min-width: 72px; max-width: 72px;"
                                             title="Klik untuk mengubah status">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     @else
                                         <span
-                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}"
+                                            style="width: 72px; min-width: 72px; max-width: 72px;">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     @endif

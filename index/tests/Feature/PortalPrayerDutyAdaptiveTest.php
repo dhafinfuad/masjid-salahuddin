@@ -78,7 +78,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 25, 10, 0, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Jumat')
+            ->assertSee('Petugas Sholat Jumat')
             ->assertSee('KHATIB & IMAM')
             ->assertSee('Ust. M. Yasak Lc MA')
             ->assertSee('MC / PROTOKOL')
@@ -96,7 +96,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 25, 15, 30, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Ashar')
+            ->assertSee('Petugas Sholat')
             ->assertSee('IMAM SHALAT ASHAR')
             ->assertSee('Ugik Endrar Viana')
             ->assertSee('BILAL / MUADZIN')
@@ -113,7 +113,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 25, 18, 30, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Dhuhur')
+            ->assertSee('Petugas Sholat')
             ->assertSee('Senin, 28 September 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('Ust. Farhan Dzuhur')
@@ -130,7 +130,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 24, 19, 0, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Jumat')
+            ->assertSee('Petugas Sholat Jumat')
             ->assertSee('Jumat, 25 September 2026')
             ->assertSee('KHATIB & IMAM')
             ->assertSee('Ust. M. Yasak Lc MA')
@@ -148,7 +148,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 28, 15, 0, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Ashar')
+            ->assertSee('Petugas Sholat')
             ->assertSee('Senin, 28 September 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('SHOLAT ASHAR');
@@ -179,7 +179,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
         Carbon::setTestNow(Carbon::create(2026, 9, 28, 19, 0, 0, 'Asia/Jakarta'));
 
         Livewire::test(PortalPage::class)
-            ->assertSee('Petugas Dhuhur')
+            ->assertSee('Petugas Sholat')
             ->assertSee('Selasa, 29 September 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('Ust. Selasa Dzuhur')
