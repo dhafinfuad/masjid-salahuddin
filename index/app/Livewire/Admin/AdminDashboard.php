@@ -3813,12 +3813,44 @@ class AdminDashboard extends Component
                 return true;
             }
 
-            Artisan::call('migrate', ['--force' => true]);
+            // 1. Buat tabel employees secara langsung via Schema Builder (bebas hambatan foreign-key/artisan lock)
+            Schema::create('employees', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->id();
+                $table->string('nip_pendek', 15)->nullable()->index();
+                $table->string('nip_panjang', 25)->nullable()->index();
+                $table->string('name')->index();
+                $table->string('jabatan')->nullable();
+                $table->string('unit_kerja')->default('KPP Madya Malang');
+                $table->enum('gender', ['L', 'P'])->nullable();
+                $table->string('status', 20)->default('AKTIF')->index();
+                $table->unsignedBigInteger('user_id')->nullable()->index();
+                $table->timestamps();
+            });
+
+            // Sinkronkan ke tabel migrations agar artisan tidak mencoba membuat ulang
+            try {
+                $migrationName = '2026_10_13_110000_create_employees_table';
+                if (Schema::hasTable('migrations') && ! DB::table('migrations')->where('migration', $migrationName)->exists()) {
+                    $maxBatch = DB::table('migrations')->max('batch') ?? 0;
+                    DB::table('migrations')->insert([
+                        'migration' => $migrationName,
+                        'batch' => $maxBatch + 1,
+                    ]);
+                }
+            } catch (\Throwable $mEx) {
+                // Abaikan kesalahan pencatatan riwayat migrasi
+            }
 
             return Schema::hasTable('employees');
         } catch (\Throwable $e) {
-            Log::warning('Auto migrate employees table failed: ' . $e->getMessage());
-            return false;
+            // 2. Fallback: coba panggil artisan migrate jika Schema::create terkendala
+            try {
+                Artisan::call('migrate', ['--force' => true]);
+            } catch (\Throwable $ex) {
+                Log::warning('Fallback migrate employees failed: ' . $ex->getMessage());
+            }
+
+            return Schema::hasTable('employees');
         }
     }
 
