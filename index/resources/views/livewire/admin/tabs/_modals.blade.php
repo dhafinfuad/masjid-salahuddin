@@ -3016,7 +3016,11 @@
                     <div class="flex items-center gap-2 p-2 bg-blue-50/70 border border-blue-200 rounded-lg text-[11px] text-blue-900">
                         <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600 shrink-0"></i>
                         <span>
-                            <strong>{{ $importPotonganPreview['updated_count'] }}</strong> data peserta per periode akan disinkronkan/diperbarui, dan <strong>{{ $importPotonganPreview['inserted_count'] }}</strong> data baru akan ditambahkan ke sistem.
+                            @if(($importPotonganPreview['deleted_count'] ?? 0) > 0)
+                                Data periode terkait akan diperbarui bersih: <strong>{{ number_format($importPotonganPreview['deleted_count'], 0, ',', '.') }}</strong> data lama dihapus, lalu <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru dimasukkan ke sistem.
+                            @else
+                                Sebanyak <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru akan dimasukkan ke sistem.
+                            @endif
                         </span>
                     </div>
                 </div>

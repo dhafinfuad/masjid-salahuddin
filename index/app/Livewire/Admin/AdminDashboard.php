@@ -4760,7 +4760,8 @@ class AdminDashboard extends Component
             $this->importPotonganError = '';
 
             $currentPeriodFormatted = number_format($result['current_period_amount'], 0, ',', '.');
-            $this->notify("Sinkronisasi berhasil! {$result['total_rows']} baris tersinkron. Bulan berjalan ({$result['current_period']}): {$result['current_period_count']} peserta (Rp {$currentPeriodFormatted}).");
+            $deletedInfo = ($result['deleted_count'] ?? 0) > 0 ? " ({$result['deleted_count']} data lama dibersihkan)" : '';
+            $this->notify("Sinkronisasi berhasil! {$result['total_rows']} data potongan tersimpan{$deletedInfo}. Bulan berjalan ({$result['current_period']}): {$result['current_period_count']} peserta (Rp {$currentPeriodFormatted}).");
         } catch (\Throwable $e) {
             $this->importPotonganError = 'Terjadi kesalahan saat memproses data: ' . $e->getMessage();
         }

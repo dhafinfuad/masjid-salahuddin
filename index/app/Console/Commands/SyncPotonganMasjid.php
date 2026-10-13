@@ -66,8 +66,8 @@ class SyncPotonganMasjid extends Command
             $this->newLine();
             $this->info("Ringkasan Sinkronisasi:");
             $this->line("✔ Total Baris Potongan di Excel : {$summary['total_rows']}");
-            $this->line("✔ Data Diperbarui (Existing)    : {$summary['updated_count']}");
-            $this->line("✔ Data Baru Ditambahkan         : {$summary['inserted_count']}");
+            $this->line("✔ Data Lama Digantikan/Dihapus  : " . ($summary['deleted_count'] ?? $summary['updated_count']));
+            $this->line("✔ Data Baru Dimasukkan          : {$summary['inserted_count']}");
             $this->line("✔ Periode Berjalan Realtime     : {$summary['current_period']}");
             $this->line("✔ Peserta Bulan Berjalan        : {$summary['current_period_count']} orang");
             $this->line("✔ Komitmen Bulan Berjalan       : Rp " . number_format($summary['current_period_amount'], 0, ',', '.'));

@@ -11,61 +11,149 @@ use ZipArchive;
 class PotonganMasjidSyncService
 {
     /**
-     * Map of Indonesian month names to month numbers (1-12)
+     * Map of Indonesian and English month names/abbreviations to month numbers (1-12)
      */
     protected array $monthMap = [
         'JANUARI' => 1,
+        'JANUARY' => 1,
+        'JAN' => 1,
         'FEBRUARI' => 2,
+        'FEBRUARY' => 2,
+        'FEB' => 2,
         'MARET' => 3,
+        'MARCH' => 3,
+        'MAR' => 3,
         'APRIL' => 4,
+        'APR' => 4,
         'MEI' => 5,
+        'MAY' => 5,
         'JUNI' => 6,
+        'JUNE' => 6,
+        'JUN' => 6,
         'JULI' => 7,
+        'JULY' => 7,
+        'JUL' => 7,
         'AGUSTUS' => 8,
+        'AUGUST' => 8,
+        'AGU' => 8,
+        'AUG' => 8,
         'SEPTEMBER' => 9,
+        'SEPT' => 9,
+        'SEP' => 9,
         'OKTOBER' => 10,
+        'OCTOBER' => 10,
         'OKT' => 10,
+        'OCT' => 10,
         'NOVEMBER' => 11,
+        'NOV' => 11,
         'DESEMBER' => 12,
+        'DECEMBER' => 12,
+        'DES' => 12,
+        'DEC' => 12,
     ];
 
     /**
      * Mapping for program types to social_program_id and canonical name
      */
     protected array $programMap = [
-        'zakat' => [
-            'id' => 3,
-            'name' => 'Program Zakat Mal Rutin',
-        ],
-        'infaq' => [
-            'id' => 2,
-            'name' => 'Infaq Rutin',
-        ],
-        'gib' => [
-            'id' => 2,
-            'name' => 'Infaq Rutin',
-        ],
-        'pot anak yatim' => [
-            'id' => 1,
-            'name' => 'Program Santunan Anak Yatim',
-        ],
-        'anak yatim' => [
-            'id' => 1,
-            'name' => 'Program Santunan Anak Yatim',
-        ],
-        'yatim' => [
-            'id' => 1,
-            'name' => 'Program Santunan Anak Yatim',
-        ],
-        'tabungan qurban' => [
-            'id' => 4,
-            'name' => 'Tabungan Qurban',
-        ],
-        'qurban' => [
-            'id' => 4,
-            'name' => 'Tabungan Qurban',
-        ],
+        // Program Zakat Mal Rutin (ID: 3)
+        'zakat' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+        'zakat mal' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+        'zakat maal' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+        'zakat mal rutin' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+        'program zakat mal' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+        'program zakat mal rutin' => ['id' => 3, 'name' => 'Program Zakat Mal Rutin'],
+
+        // Infaq Rutin (ID: 2)
+        'infaq' => ['id' => 2, 'name' => 'Infaq Rutin'],
+        'infaq rutin' => ['id' => 2, 'name' => 'Infaq Rutin'],
+        'program infaq rutin' => ['id' => 2, 'name' => 'Infaq Rutin'],
+        'gib' => ['id' => 2, 'name' => 'Infaq Rutin'],
+        'gerakan infaq beras' => ['id' => 2, 'name' => 'Infaq Rutin'],
+        'infaq beras' => ['id' => 2, 'name' => 'Infaq Rutin'],
+
+        // Program Santunan Anak Yatim (ID: 1)
+        'pot anak yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+        'anak yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+        'yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+        'santunan anak yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+        'program santunan anak yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+        'santunan yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
+
+        // Tabungan Qurban (ID: 4)
+        'tabungan qurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
+        'qurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
+        'kurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
+        'tabungan kurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
+        'program tabungan qurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
     ];
+
+    /**
+     * Resolve month raw string to month integer (1-12)
+     */
+    public function resolveMonthNum(string $monthRaw): ?int
+    {
+        $clean = strtoupper(trim($monthRaw));
+        if ($clean === '') {
+            return null;
+        }
+
+        if (isset($this->monthMap[$clean])) {
+            return $this->monthMap[$clean];
+        }
+
+        if (is_numeric($clean)) {
+            $val = (int)$clean;
+            return ($val >= 1 && $val <= 12) ? $val : null;
+        }
+
+        foreach ($this->monthMap as $mName => $mNum) {
+            if (str_contains($clean, $mName)) {
+                return $mNum;
+            }
+        }
+
+        if (preg_match('/(?:^|[^\d])(0?[1-9]|1[0-2])(?:\/|-|\s)/', $clean, $m)) {
+            return (int)$m[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve program type raw string to program ID and canonical name
+     */
+    public function resolveProgram(string $typeRaw, $programsFromDb = null): ?array
+    {
+        $cleanType = strtolower(trim(preg_replace('/\s+/', ' ', $typeRaw)));
+        if ($cleanType === '') {
+            return null;
+        }
+
+        if (isset($this->programMap[$cleanType])) {
+            return $this->programMap[$cleanType];
+        }
+
+        foreach ($this->programMap as $key => $mapping) {
+            if (str_contains($cleanType, $key) || str_contains($key, $cleanType)) {
+                return $mapping;
+            }
+        }
+
+        if ($programsFromDb) {
+            foreach ($programsFromDb as $prog) {
+                $dbName = strtolower(trim($prog->name));
+                if ($dbName === $cleanType || str_contains($cleanType, $dbName) || str_contains($dbName, $cleanType)) {
+                    return [
+                        'id' => $prog->id,
+                        'name' => $prog->name,
+                    ];
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Parse the Excel workbook into normalized participant rows.
@@ -140,7 +228,11 @@ class PotonganMasjidSyncService
         }
 
         // Fetch program names from DB if available
-        $programsFromDb = SocialProgram::all()->keyBy('id');
+        try {
+            $programsFromDb = SocialProgram::all()->keyBy('id');
+        } catch (\Throwable $e) {
+            $programsFromDb = collect();
+        }
 
         $parsedRows = [];
 
@@ -150,34 +242,44 @@ class PotonganMasjidSyncService
 
         $isFormat2 = false;
         $colMap = ['year' => 'A', 'month' => 'B', 'name' => 'C', 'type' => 'D', 'amount' => 'E'];
+        $headerRowNumber = 1;
 
-        if ($firstXml && isset($firstXml->sheetData->row[0])) {
-            $headerRow = $firstXml->sheetData->row[0];
-            $headerCells = [];
-            foreach ($headerRow->c as $c) {
-                $col = preg_replace('/[0-9]/', '', (string)$c['r']);
-                $type = (string)$c['t'];
-                $val = (string)$c->v;
-                $valStr = ($type === 's') ? ($sharedStrings[(int)$val] ?? '') : $val;
-                $headerCells[$col] = strtoupper(trim($valStr));
-            }
+        if ($firstXml && isset($firstXml->sheetData->row)) {
+            $rowCount = 0;
+            foreach ($firstXml->sheetData->row as $r) {
+                $rowCount++;
+                if ($rowCount > 6) {
+                    break;
+                }
+                $headerCells = [];
+                foreach ($r->c as $c) {
+                    $col = preg_replace('/[0-9]/', '', (string)$c['r']);
+                    $type = (string)$c['t'];
+                    $val = (string)$c->v;
+                    $valStr = ($type === 's') ? ($sharedStrings[(int)$val] ?? '') : $val;
+                    $headerCells[$col] = strtoupper(trim($valStr));
+                }
 
-            foreach ($headerCells as $col => $header) {
-                if (str_contains($header, 'TAHUN') || str_contains($header, 'YEAR')) {
-                    $colMap['year'] = $col;
+                $detectedCols = [];
+                foreach ($headerCells as $col => $header) {
+                    if (str_contains($header, 'TAHUN') || str_contains($header, 'YEAR')) {
+                        $detectedCols['year'] = $col;
+                    } elseif (str_contains($header, 'BULAN') || str_contains($header, 'MONTH')) {
+                        $detectedCols['month'] = $col;
+                    } elseif (str_contains($header, 'NAMA') || str_contains($header, 'PEGAWAI')) {
+                        $detectedCols['name'] = $col;
+                    } elseif (str_contains($header, 'JENIS') || str_contains($header, 'PROGRAM')) {
+                        $detectedCols['type'] = $col;
+                    } elseif (str_contains($header, 'JUMLAH') || str_contains($header, 'NOMINAL') || str_contains($header, 'POTONGAN')) {
+                        $detectedCols['amount'] = $col;
+                    }
+                }
+
+                if (isset($detectedCols['name']) && (isset($detectedCols['amount']) || isset($detectedCols['type']))) {
+                    $colMap = array_merge($colMap, $detectedCols);
+                    $headerRowNumber = (int)$r['r'];
                     $isFormat2 = true;
-                } elseif (str_contains($header, 'BULAN') || str_contains($header, 'MONTH')) {
-                    $colMap['month'] = $col;
-                    $isFormat2 = true;
-                } elseif (str_contains($header, 'NAMA') || str_contains($header, 'PEGAWAI')) {
-                    $colMap['name'] = $col;
-                    $isFormat2 = true;
-                } elseif (str_contains($header, 'JENIS') || str_contains($header, 'PROGRAM')) {
-                    $colMap['type'] = $col;
-                    $isFormat2 = true;
-                } elseif (str_contains($header, 'JUMLAH') || str_contains($header, 'NOMINAL') || str_contains($header, 'POTONGAN')) {
-                    $colMap['amount'] = $col;
-                    $isFormat2 = true;
+                    break;
                 }
             }
         }
@@ -191,7 +293,7 @@ class PotonganMasjidSyncService
 
                 foreach ($sXml->sheetData->row as $row) {
                     $rNum = (int)$row['r'];
-                    if ($rNum === 1) continue; // Skip header
+                    if ($rNum <= $headerRowNumber) continue; // Skip headers
 
                     $cells = [];
                     foreach ($row->c as $c) {
@@ -215,17 +317,20 @@ class PotonganMasjidSyncService
                         continue;
                     }
 
-                    $monthNum = $this->monthMap[$monthRaw] ?? (is_numeric($monthRaw) ? (int)$monthRaw : null);
+                    $monthNum = $this->resolveMonthNum($monthRaw);
                     if (!$monthNum || $monthNum < 1 || $monthNum > 12) {
                         continue;
                     }
 
-                    $progMapping = $this->programMap[$typeRaw] ?? null;
+                    $progMapping = $this->resolveProgram($typeRaw, $programsFromDb);
                     if (!$progMapping) {
                         continue;
                     }
 
                     $year = (!empty($yearVal) && is_numeric($yearVal)) ? (int)$yearVal : (int)now()->year;
+                    if (empty($yearVal) && preg_match('/20\d\d/', $cells[$colMap['month']] ?? '', $ym)) {
+                        $year = (int)$ym[0];
+                    }
                     $period = "Periode {$monthNum}/{$year}";
 
                     $dbProg = $programsFromDb->get($progMapping['id']);
@@ -253,7 +358,7 @@ class PotonganMasjidSyncService
 
             foreach ($sheets as $sInfo) {
                 $sName = strtoupper(trim($sInfo['name']));
-                $mNum = $this->monthMap[$sName] ?? null;
+                $mNum = $this->resolveMonthNum($sName);
                 if (!$mNum) continue;
 
                 $xmlStr = $zip->getFromName($sInfo['target']);
@@ -309,6 +414,8 @@ class PotonganMasjidSyncService
 
     /**
      * Synchronize parsed participants with the database.
+     * Replaces existing data for any period present in the imported file cleanly
+     * by deleting old period records and inserting the fresh imported rows.
      *
      * @param string $excelFilePath
      * @param bool $dryRun If true, does not persist changes to the database.
@@ -319,7 +426,11 @@ class PotonganMasjidSyncService
         $parsedRows = $this->parseWorkbook($excelFilePath);
 
         // Fetch program names from DB
-        $programs = SocialProgram::all()->keyBy('id');
+        try {
+            $programs = SocialProgram::all()->keyBy('id');
+        } catch (\Throwable $e) {
+            $programs = collect();
+        }
 
         $now = now();
         $currentMonth = (int)$now->month;
@@ -353,22 +464,44 @@ class PotonganMasjidSyncService
             ];
         }
 
-        // Map existing participants in DB for quick lookup: [prog_id][name_upper][period]
-        $existingDb = ProgramParticipant::all();
-        $dbLookup = [];
-        foreach ($existingDb as $ep) {
-            $normName = mb_strtoupper(trim(preg_replace('/\s+/', ' ', $ep->name)));
-            $dbLookup[$ep->social_program_id][$normName][$ep->period] = $ep;
+        // 1. Identify all periods present in the imported file
+        $targetPeriods = array_values(array_unique(array_filter(array_column($parsedRows, 'period'))));
+
+        // 2. Build full list of period strings to delete (including potential formatting variations)
+        $deletePeriods = [];
+        foreach ($targetPeriods as $tp) {
+            $deletePeriods[] = $tp;
+            if (preg_match('/(\d+)\/(\d+)/', $tp, $m)) {
+                $mNum = (int)$m[1];
+                $yNum = (int)$m[2];
+                $deletePeriods[] = "Periode {$mNum}/{$yNum}";
+                $deletePeriods[] = sprintf("Periode %02d/%d", $mNum, $yNum);
+                $deletePeriods[] = "{$mNum}/{$yNum}";
+                $deletePeriods[] = sprintf("%02d/%d", $mNum, $yNum);
+            }
+        }
+        $deletePeriods = array_values(array_unique($deletePeriods));
+
+        // 3. Count existing records in DB for the target periods that will be replaced
+        $existingDeletedCount = 0;
+        $existingByProgram = [];
+        try {
+            $existingDeletedCount = ProgramParticipant::whereIn('period', $deletePeriods)->count();
+            $existingByProgram = ProgramParticipant::whereIn('period', $deletePeriods)
+                ->groupBy('social_program_id')
+                ->select('social_program_id', DB::raw('count(*) as count'))
+                ->pluck('count', 'social_program_id')
+                ->toArray();
+        } catch (\Throwable $e) {
+            // DB might be in-memory or offline during preview
         }
 
-        $toUpdate = [];
         $toInsert = [];
 
         foreach ($parsedRows as $row) {
             $pId = $row['social_program_id'];
             $amt = (float)$row['monthly_amount'];
             $period = $row['period'];
-            $normName = mb_strtoupper(trim(preg_replace('/\s+/', ' ', $row['name'])));
 
             $totalAmount += $amt;
             $byPeriod[$period] = ($byPeriod[$period] ?? 0) + 1;
@@ -393,6 +526,8 @@ class PotonganMasjidSyncService
             $byProgram[$pId]['total_rows']++;
             $byProgram[$pId]['total_amount'] += $amt;
             $byProgram[$pId]['total']++;
+            $byProgram[$pId]['inserted']++;
+            $byProgram[$pId]['updated'] = $existingByProgram[$pId] ?? 0;
 
             if ($period === $currentPeriod) {
                 $currentPeriodCount++;
@@ -405,33 +540,21 @@ class PotonganMasjidSyncService
                 $byProgram[$pId]['nonactive']++;
             }
 
-            $existingModel = $dbLookup[$pId][$normName][$period] ?? null;
-            if ($existingModel) {
-                $toUpdate[] = [
-                    'model' => $existingModel,
-                    'data' => [
-                        'program_name' => $row['program_name'],
-                        'monthly_amount' => $amt,
-                    ],
-                ];
-                $byProgram[$pId]['updated']++;
-            } else {
-                $toInsert[] = [
-                    'social_program_id' => $pId,
-                    'name' => $row['name'],
-                    'program_name' => $row['program_name'],
-                    'monthly_amount' => $amt,
-                    'period' => $period,
-                ];
-                $byProgram[$pId]['inserted']++;
-            }
+            $toInsert[] = [
+                'social_program_id' => $pId,
+                'name' => $row['name'],
+                'program_name' => $row['program_name'],
+                'monthly_amount' => $amt,
+                'period' => $period,
+            ];
         }
 
         $summary = [
             'dry_run' => $dryRun,
             'total_rows' => $totalRows,
             'total_excel_unique' => $totalRows,
-            'updated_count' => count($toUpdate),
+            'deleted_count' => $existingDeletedCount,
+            'updated_count' => $existingDeletedCount, // Backward compatibility with UI/console summaries
             'inserted_count' => count($toInsert),
             'total_amount' => $totalAmount,
             'current_period' => $currentPeriod,
@@ -443,19 +566,20 @@ class PotonganMasjidSyncService
             'nonactive_count' => $totalRows - $currentPeriodCount,
             'by_period' => $byPeriod,
             'by_program' => $byProgram,
+            'target_periods' => $targetPeriods,
         ];
 
         if (!$dryRun) {
-            DB::transaction(function () use ($toUpdate, $toInsert) {
+            DB::transaction(function () use ($deletePeriods, $toInsert) {
                 // 1. Remove any legacy records with dash in period (e.g. 'Periode 1/2026 - 12/2027')
                 ProgramParticipant::where('period', 'like', '% - %')->delete();
 
-                // 2. Update existing records
-                foreach ($toUpdate as $up) {
-                    $up['model']->update($up['data']);
+                // 2. Delete ALL existing records for the imported months/periods to prevent ghost records
+                if (!empty($deletePeriods)) {
+                    ProgramParticipant::whereIn('period', $deletePeriods)->delete();
                 }
 
-                // 3. Insert new records in chunks of 250 for speed
+                // 3. Insert newly imported records in chunks of 250 for speed
                 $nowTs = now();
                 $chunks = array_chunk($toInsert, 250);
                 foreach ($chunks as $chunk) {
