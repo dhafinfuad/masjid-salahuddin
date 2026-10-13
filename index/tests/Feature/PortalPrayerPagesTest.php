@@ -124,12 +124,55 @@ class PortalPrayerPagesTest extends TestCase
 
         $roster = $component->viewData('roster');
         $this->assertNotEmpty($roster);
+        $this->assertCount(30, $roster, 'Roster must contain 30 days starting from today');
         $this->assertEquals($todayDate, $roster[0]['date'], 'First row must be today date');
         $this->assertEquals((int) $today->day, $roster[0]['day_number']);
         $this->assertTrue($roster[0]['is_today']);
 
+        // Row 2 should be tomorrow, row 3 should be day after tomorrow (sequential chronological)
+        $tomorrow = $today->copy()->addDays(1);
+        $this->assertEquals($tomorrow->format('Y-m-d'), $roster[1]['date']);
+        $this->assertEquals((int) $tomorrow->day, $roster[1]['day_number']);
+        $this->assertFalse($roster[1]['is_today']);
+
         $component->assertDontSee('Hari Ini');
         $component->assertSee('Baris kuning paling atas menandakan penugasan hari ini.');
+    }
+
+    public function test_petugas_sholat_shows_30_days_cross_month_from_october_31_to_november_29(): void
+    {
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 10, 31, 10, 0, 0, 'Asia/Jakarta'));
+
+        try {
+            $component = Livewire::test(PetugasSholatPage::class)
+                ->set('selectedMonth', 10)
+                ->set('selectedYear', 2026);
+
+            $roster = $component->viewData('roster');
+            $this->assertCount(30, $roster, 'Should display 30 days rolling window');
+
+            // Row 0: 31 October 2026 (Today)
+            $this->assertEquals('2026-10-31', $roster[0]['date']);
+            $this->assertEquals(31, $roster[0]['day_number']);
+            $this->assertTrue($roster[0]['is_today']);
+
+            // Row 1: 1 November 2026
+            $this->assertEquals('2026-11-01', $roster[1]['date']);
+            $this->assertEquals(1, $roster[1]['day_number']);
+            $this->assertFalse($roster[1]['is_today']);
+
+            // Row 2: 2 November 2026
+            $this->assertEquals('2026-11-02', $roster[2]['date']);
+            $this->assertEquals(2, $roster[2]['day_number']);
+            $this->assertFalse($roster[2]['is_today']);
+
+            // Row 29: 29 November 2026 (30th day)
+            $this->assertEquals('2026-11-29', $roster[29]['date']);
+            $this->assertEquals(29, $roster[29]['day_number']);
+            $this->assertFalse($roster[29]['is_today']);
+        } finally {
+            \Carbon\Carbon::setTestNow();
+        }
     }
 
     public function test_portal_khutbah_jumat_has_teks_mc_button_and_is_publicly_printable(): void

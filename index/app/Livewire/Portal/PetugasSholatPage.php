@@ -27,9 +27,23 @@ class PetugasSholatPage extends Component
     public function render()
     {
         $settings = MasjidSetting::getActive();
-        $startDate = Carbon::create($this->selectedYear, $this->selectedMonth, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth();
-        $endDate = $startDate->copy()->endOfMonth();
-        $daysInMonth = $startDate->daysInMonth;
+        $todayCarbon = Carbon::now('Asia/Jakarta');
+        $todayDate = $todayCarbon->format('Y-m-d');
+        $isCurrentMonthYear = ($this->selectedMonth === (int) $todayCarbon->month && $this->selectedYear === (int) $todayCarbon->year);
+
+        if ($isCurrentMonthYear) {
+            // When viewing current month, start from TODAY and show upcoming 30 days (rolling 30-day window)
+            // so users immediately see today's duty followed by upcoming duties sequentially (e.g. 13 Oct, 14 Oct, ...
+            // or 31 Oct, 1 Nov, ... up to 29 Nov).
+            $startDate = $todayCarbon->copy()->startOfDay();
+            $totalDays = 30;
+            $endDate = $todayCarbon->copy()->addDays($totalDays - 1)->endOfDay();
+        } else {
+            // When viewing another month (past or future), show all days of that month from day 1 to end of month.
+            $startDate = Carbon::create($this->selectedYear, $this->selectedMonth, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth();
+            $totalDays = $startDate->daysInMonth;
+            $endDate = $startDate->copy()->endOfMonth();
+        }
 
         // Eager load in 2 unified queries (Zero N+1)
         $fridayKajians = Kajian::jumat()
@@ -47,12 +61,11 @@ class PetugasSholatPage extends Component
         $allDuties = PrayerDuty::all();
 
         $dayMap = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'];
-        $todayDate = Carbon::now('Asia/Jakarta')->format('Y-m-d');
 
         $roster = [];
 
-        for ($d = 1; $d <= $daysInMonth; $d++) {
-            $date = Carbon::create($this->selectedYear, $this->selectedMonth, $d, 12, 0, 0, 'Asia/Jakarta');
+        for ($i = 0; $i < $totalDays; $i++) {
+            $date = $startDate->copy()->addDays($i)->setTime(12, 0, 0);
             $dateStr = $date->format('Y-m-d');
             $dayOfWeek = $date->dayOfWeekIso; // 1 = Monday, 7 = Sunday
             $dayName = $dayMap[$dayOfWeek] ?? 'Senin';
@@ -60,13 +73,14 @@ class PetugasSholatPage extends Component
             $isFriday = ($dayOfWeek === 5);
             $weekNumber = PrayerDuty::getWeekOfMonth($date);
             $isToday = ($dateStr === $todayDate);
+            $dayNumber = (int) $date->day;
 
             if ($isWeekend) {
                 $roster[] = [
                     'date' => $dateStr,
                     'day_name' => $dayName,
                     'formatted_date' => $date->translatedFormat('d F Y'),
-                    'day_number' => $d,
+                    'day_number' => $dayNumber,
                     'week_number' => $weekNumber,
                     'is_weekend' => true,
                     'is_friday' => false,
@@ -113,7 +127,7 @@ class PetugasSholatPage extends Component
                     'date' => $dateStr,
                     'day_name' => $dayName,
                     'formatted_date' => $date->translatedFormat('d F Y'),
-                    'day_number' => $d,
+                    'day_number' => $dayNumber,
                     'week_number' => $weekNumber,
                     'is_weekend' => false,
                     'is_friday' => true,
@@ -157,7 +171,7 @@ class PetugasSholatPage extends Component
                     'date' => $dateStr,
                     'day_name' => $dayName,
                     'formatted_date' => $date->translatedFormat('d F Y'),
-                    'day_number' => $d,
+                    'day_number' => $dayNumber,
                     'week_number' => $weekNumber,
                     'is_weekend' => false,
                     'is_friday' => false,
@@ -172,28 +186,6 @@ class PetugasSholatPage extends Component
                     'friday_muadzin' => '-',
                     'notes' => $dzuhurDuty?->notes ?: ($asharDuty?->notes ?: '-'),
                 ];
-            }
-        }
-
-        $todayCarbon = Carbon::now('Asia/Jakarta');
-        $todayDate = $todayCarbon->format('Y-m-d');
-        $isCurrentMonthYear = ($this->selectedMonth === (int) $todayCarbon->month && $this->selectedYear === (int) $todayCarbon->year);
-
-        // If viewing current month, hoist today's duty roster to the top row (index 0)
-        // so users immediately see today's imam & muadzin without scrolling.
-        if ($isCurrentMonthYear && count($roster) > 0) {
-            $todayIndex = null;
-            foreach ($roster as $idx => $item) {
-                if (($item['date'] ?? null) === $todayDate) {
-                    $todayIndex = $idx;
-                    break;
-                }
-            }
-
-            if ($todayIndex !== null) {
-                $todayItem = $roster[$todayIndex];
-                unset($roster[$todayIndex]);
-                array_unshift($roster, $todayItem);
             }
         }
 

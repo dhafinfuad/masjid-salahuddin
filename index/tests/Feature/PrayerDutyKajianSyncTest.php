@@ -33,8 +33,16 @@ class PrayerDutyKajianSyncTest extends TestCase
         ]);
     }
 
+    protected function tearDown(): void
+    {
+        \Carbon\Carbon::setTestNow();
+        parent::tearDown();
+    }
+
     public function test_monday_5_oct_does_not_pull_alvin_shohih_and_wednesday_7_oct_syncs_muhammad_yahya(): void
     {
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 10, 5, 10, 0, 0, 'Asia/Jakarta'));
+
         // 1. Setup Prayer Duties:
         // Senin Ashar: regular rawatib
         PrayerDuty::create([
