@@ -102,6 +102,7 @@
              }
              if (this.activeTab === 'users') {
                  const sub = this.userSubTab || 'pengguna';
+                 if (sub === 'pegawai') return 'Pengguna > Pegawai';
                  if (sub === 'kepengurusan') return 'Pengguna > Kepengurusan';
                  return 'Pengguna > Anggota';
              }
@@ -119,6 +120,8 @@
              }
              return this.activeTab ? (this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1)) : 'Dashboard';
          },
+         showEmployeeModal: false,
+         showImportEmployeeModal: false,
          showUploadDocModal: false,
          showKajianModal: false,
          showImportKajianModal: false,

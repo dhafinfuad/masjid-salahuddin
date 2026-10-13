@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\ActivityGallery;
 use App\Models\Agenda;
 use App\Models\Category;
+use App\Models\Employee;
 use App\Models\Event;
 use App\Models\FeedbackSuggestion;
 use App\Models\Finance;
@@ -297,8 +298,32 @@ class AdminDashboard extends Component
     // ==========================================
     // Takmir & Kepengurusan State (Subtab under /admin/users)
     // ==========================================
-    public string $userSubTab = 'pengguna'; // 'pengguna' | 'kepengurusan'
+    public string $userSubTab = 'pengguna'; // 'pengguna' | 'pegawai' | 'kepengurusan'
     public string $takmirActiveSection = 'dokumen'; // 'dokumen' | 'struktur' | 'tupoksi'
+
+    // ==========================================
+    // Master Data Pegawai Muslim KPP Madya Malang State
+    // ==========================================
+    public string $employeeSearch = '';
+    public string $employeeFilterStatus = 'all'; // 'all' | 'AKTIF' | 'MUTASI' | 'NONAKTIF'
+    public string $employeeFilterLink = 'all'; // 'all' | 'linked' | 'unlinked'
+
+    // Form Modal Pegawai (Tambah / Edit)
+    public bool $showEmployeeModal = false;
+    public ?int $editingEmployeeId = null;
+    public string $employeeFormNipPendek = '';
+    public string $employeeFormNipPanjang = '';
+    public string $employeeFormName = '';
+    public string $employeeFormJabatan = '';
+    public string $employeeFormUnitKerja = 'KPP Madya Malang';
+    public string $employeeFormGender = '';
+    public string $employeeFormStatus = 'AKTIF';
+
+    // Modal Import Pegawai Excel/CSV
+    public bool $showImportEmployeeModal = false;
+    public mixed $importEmployeeFile = null;
+    public bool $importEmployeeAutoLink = true;
+    public ?array $importEmployeeResult = null;
 
     // Upload & Dokumen SK
     public bool $showUploadDocModal = false;
@@ -683,8 +708,9 @@ class AdminDashboard extends Component
                 default => 'Program Sosial',
             },
             'users' => match ($this->userSubTab) {
+                'pegawai' => 'Data Pegawai Muslim KPP Madya Malang',
                 'kepengurusan' => 'Takmir & Kepengurusan',
-                default => 'Manajemen Pengguna',
+                default => 'Anggota (Pengguna)',
             },
             'settings' => match ($this->settingsSubTab) {
                 'poster' => 'Template & Studio Poster Kajian',
@@ -3774,6 +3800,303 @@ class AdminDashboard extends Component
         $this->notify("Status pegawai berhasil disinkronkan: {$result['activated_count']} aktif, {$result['deactivated_count']} dinonaktifkan.");
     }
 
+    // ==========================================
+    // Master Data Pegawai Actions
+    // ==========================================
+    public function openCreateEmployeeModal(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang menambah data pegawai.');
+            return;
+        }
+
+        $this->editingEmployeeId = null;
+        $this->employeeFormNipPendek = '';
+        $this->employeeFormNipPanjang = '';
+        $this->employeeFormName = '';
+        $this->employeeFormJabatan = '';
+        $this->employeeFormUnitKerja = 'KPP Madya Malang';
+        $this->employeeFormGender = '';
+        $this->employeeFormStatus = 'AKTIF';
+        $this->resetValidation([
+            'employeeFormName',
+            'employeeFormNipPendek',
+            'employeeFormNipPanjang',
+        ]);
+        $this->showEmployeeModal = true;
+    }
+
+    public function openEditEmployeeModal(int $id): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang mengubah data pegawai.');
+            return;
+        }
+
+        $employee = Employee::findOrFail($id);
+        $this->editingEmployeeId = $employee->id;
+        $this->employeeFormNipPendek = $employee->nip_pendek ?? '';
+        $this->employeeFormNipPanjang = $employee->nip_panjang ?? '';
+        $this->employeeFormName = $employee->name ?? '';
+        $this->employeeFormJabatan = $employee->jabatan ?? '';
+        $this->employeeFormUnitKerja = $employee->unit_kerja ?? 'KPP Madya Malang';
+        $this->employeeFormGender = $employee->gender ?? '';
+        $this->employeeFormStatus = $employee->status ?? 'AKTIF';
+        $this->resetValidation([
+            'employeeFormName',
+            'employeeFormNipPendek',
+            'employeeFormNipPanjang',
+        ]);
+        $this->showEmployeeModal = true;
+    }
+
+    public function saveEmployee(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $this->validate([
+            'employeeFormName' => 'required|string|min:3|max:255',
+            'employeeFormNipPendek' => 'nullable|string|max:15',
+            'employeeFormNipPanjang' => 'nullable|string|max:25',
+            'employeeFormJabatan' => 'nullable|string|max:255',
+            'employeeFormStatus' => 'required|in:AKTIF,MUTASI,NONAKTIF',
+        ], [
+            'employeeFormName.required' => 'Nama lengkap pegawai wajib diisi.',
+            'employeeFormName.min' => 'Nama pegawai minimal 3 karakter.',
+            'employeeFormStatus.required' => 'Status kepegawaian wajib dipilih.',
+        ]);
+
+        $nipPendek = $this->employeeFormNipPendek ? preg_replace('/\D/', '', $this->employeeFormNipPendek) : null;
+        $nipPanjang = $this->employeeFormNipPanjang ? preg_replace('/\D/', '', $this->employeeFormNipPanjang) : null;
+
+        $data = [
+            'name' => trim($this->employeeFormName),
+            'nip_pendek' => $nipPendek,
+            'nip_panjang' => $nipPanjang,
+            'jabatan' => trim($this->employeeFormJabatan) ?: null,
+            'unit_kerja' => trim($this->employeeFormUnitKerja) ?: 'KPP Madya Malang',
+            'gender' => in_array($this->employeeFormGender, ['L', 'P']) ? $this->employeeFormGender : null,
+            'status' => $this->employeeFormStatus,
+        ];
+
+        if ($this->editingEmployeeId) {
+            $employee = Employee::findOrFail($this->editingEmployeeId);
+            $employee->update($data);
+            $this->notify("Data pegawai {$employee->name} berhasil diperbarui.");
+        } else {
+            // Auto-link ke akun User jika ada yang cocok
+            $matchedUser = null;
+            if ($nipPendek) {
+                $matchedUser = User::where('nip', $nipPendek)->first();
+            }
+            if (! $matchedUser && $nipPanjang) {
+                $matchedUser = User::where('nip', $nipPanjang)->first();
+            }
+            if (! $matchedUser) {
+                $matchedUser = User::where('name', $data['name'])->first();
+            }
+
+            if ($matchedUser) {
+                $data['user_id'] = $matchedUser->id;
+            }
+
+            $employee = Employee::create($data);
+            $this->notify("Pegawai {$employee->name} berhasil ditambahkan ke database.");
+        }
+
+        $this->showEmployeeModal = false;
+        $this->editingEmployeeId = null;
+    }
+
+    public function deleteEmployee(int $id): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $employee = Employee::findOrFail($id);
+        $name = $employee->name;
+        $employee->delete();
+        $this->notify("Data pegawai {$name} telah dihapus dari database.");
+    }
+
+    public function toggleEmployeeStatus(int $id): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $employee = Employee::findOrFail($id);
+        $employee->status = ($employee->status === 'AKTIF') ? 'MUTASI' : 'AKTIF';
+        $employee->save();
+        $this->notify("Status {$employee->name} diubah menjadi {$employee->status}.");
+    }
+
+    public function createUserFromEmployee(int $employeeId): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $employee = Employee::findOrFail($employeeId);
+        if ($employee->user_id && $employee->user) {
+            $this->notify("Pegawai {$employee->name} sudah memiliki akun pengguna.");
+            return;
+        }
+
+        // Tentukan email default kemenkeu/djp
+        $nipKey = $employee->nip_pendek ?: ($employee->nip_panjang ?: Str::slug($employee->name, ''));
+        $email = strtolower($nipKey . '@pajak.go.id');
+
+        $counter = 1;
+        $baseEmail = $email;
+        while (User::where('email', $email)->exists()) {
+            $email = str_replace('@pajak.go.id', "_{$counter}@pajak.go.id", $baseEmail);
+            $counter++;
+        }
+
+        $user = User::create([
+            'name' => $employee->name,
+            'email' => $email,
+            'nip' => $employee->nip_pendek ?: $employee->nip_panjang,
+            'role' => 'Jamaah',
+            'status' => 'AKTIF',
+            'password' => null,
+        ]);
+
+        $employee->update(['user_id' => $user->id]);
+        $this->notify("Akun pengguna untuk {$employee->name} ({$email}) berhasil dibuat dengan role Jamaah.");
+    }
+
+    public function unlinkEmployeeFromUser(int $employeeId): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $employee = Employee::findOrFail($employeeId);
+        $employee->update(['user_id' => null]);
+        $this->notify("Tautan akun pengguna untuk {$employee->name} telah dilepas.");
+    }
+
+    public function openImportEmployeeModal(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang mengimpor data pegawai.');
+            return;
+        }
+
+        $this->importEmployeeFile = null;
+        $this->importEmployeeResult = null;
+        $this->resetValidation('importEmployeeFile');
+        $this->showImportEmployeeModal = true;
+    }
+
+    public function importEmployees(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        $this->validate([
+            'importEmployeeFile' => 'required|file|mimes:xlsx,xls,csv,txt|max:10240',
+        ], [
+            'importEmployeeFile.required' => 'Silakan pilih atau seret berkas spreadsheet terlebih dahulu.',
+            'importEmployeeFile.mimes' => 'Berkas harus berupa .xlsx, .xls, atau .csv.',
+            'importEmployeeFile.max' => 'Ukuran berkas maksimal 10 MB.',
+        ]);
+
+        $tempPath = $this->importEmployeeFile->getRealPath();
+        $entries = \App\Services\EmployeeStatusSyncService::parseFile($tempPath);
+
+        if (empty($entries)) {
+            $this->addError('importEmployeeFile', 'Tidak ditemukan data nama atau NIP pegawai yang valid pada berkas tersebut.');
+            return;
+        }
+
+        $imported = 0;
+        $updated = 0;
+        $linked = 0;
+
+        foreach ($entries as $entry) {
+            $name = $entry['name'] ?? null;
+            $nip18 = $entry['nip18'] ?? null;
+            $nip9 = $entry['nip9'] ?? null;
+
+            if (empty($name) && empty($nip18) && empty($nip9)) {
+                continue;
+            }
+
+            // Cari pegawai yang sudah ada
+            $emp = null;
+            if ($nip9) {
+                $emp = Employee::where('nip_pendek', $nip9)->first();
+            }
+            if (! $emp && $nip18) {
+                $emp = Employee::where('nip_panjang', $nip18)->first();
+            }
+            if (! $emp && $name) {
+                $emp = Employee::where('name', $name)->first();
+            }
+
+            // Deteksi akun User yang cocok
+            $matchedUser = null;
+            if ($this->importEmployeeAutoLink) {
+                if ($nip9) {
+                    $matchedUser = User::where('nip', $nip9)->first();
+                }
+                if (! $matchedUser && $nip18) {
+                    $matchedUser = User::where('nip', $nip18)->first();
+                }
+                if (! $matchedUser && $name) {
+                    $matchedUser = User::where('name', $name)->first();
+                }
+            }
+
+            if ($emp) {
+                $updateData = ['status' => 'AKTIF'];
+                if ($name && empty($emp->name)) $updateData['name'] = $name;
+                if ($nip9 && empty($emp->nip_pendek)) $updateData['nip_pendek'] = $nip9;
+                if ($nip18 && empty($emp->nip_panjang)) $updateData['nip_panjang'] = $nip18;
+                if ($matchedUser && empty($emp->user_id)) {
+                    $updateData['user_id'] = $matchedUser->id;
+                    $linked++;
+                }
+                $emp->update($updateData);
+                $updated++;
+            } else {
+                $createData = [
+                    'name' => $name ?: 'Pegawai ' . ($nip9 ?: $nip18),
+                    'nip_pendek' => $nip9,
+                    'nip_panjang' => $nip18,
+                    'unit_kerja' => 'KPP Madya Malang',
+                    'status' => 'AKTIF',
+                    'user_id' => $matchedUser?->id,
+                ];
+                Employee::create($createData);
+                $imported++;
+                if ($matchedUser) $linked++;
+            }
+        }
+
+        $this->importEmployeeResult = [
+            'total_rows' => count($entries),
+            'imported' => $imported,
+            'updated' => $updated,
+            'linked' => $linked,
+        ];
+
+        $this->notify("Impor pegawai sukses: {$imported} baru, {$updated} diperbarui, {$linked} tertaut akun pengguna.");
+    }
+
     public function logout(): void
     {
         Auth::logout();
@@ -5031,6 +5354,9 @@ class AdminDashboard extends Component
 
         $usersList = collect([]);
         $totalUsersCount = 0;
+        $employeesList = collect([]);
+        $totalEmployeesCount = 0;
+        $activeEmployeesCount = 0;
 
         $financeCategories = collect([]);
         $groupedFinanceCategories = [
@@ -5679,19 +6005,20 @@ class AdminDashboard extends Component
             $selectedReportAgenda = $this->selectedAgendaForReportId ? Agenda::find($this->selectedAgendaForReportId) : null;
         }
 
-        // 5. Tab Users
+        // 5. Tab Users & Pegawai
         if ($tab === 'users') {
             $userQuery = User::query();
             if ($this->userFilterRole !== 'all') {
                 $userQuery->where('role', $this->userFilterRole);
             }
 
-            $userSearch = trim($this->search);
+            $userSearch = trim($this->userSubTab === 'pengguna' ? $this->search : '');
             if ($userSearch !== '') {
                 $s = '%' . $userSearch . '%';
                 $userQuery->where(function ($q) use ($s) {
                     $q->where('name', 'like', $s)
-                      ->orWhere('email', 'like', $s);
+                      ->orWhere('email', 'like', $s)
+                      ->orWhere('nip', 'like', $s);
                 });
             }
 
@@ -5708,6 +6035,32 @@ class AdminDashboard extends Component
             }
             $usersList = $userQuery->paginate(10, ['*'], 'userPage');
             $totalUsersCount = User::count();
+
+            // Query Master Data Pegawai Muslim KPP Madya Malang
+            $employeeQuery = Employee::with('user');
+            if ($this->employeeFilterStatus !== 'all') {
+                $employeeQuery->where('status', $this->employeeFilterStatus);
+            }
+            if ($this->employeeFilterLink === 'linked') {
+                $employeeQuery->whereNotNull('user_id');
+            } elseif ($this->employeeFilterLink === 'unlinked') {
+                $employeeQuery->whereNull('user_id');
+            }
+
+            $empSearch = trim($this->employeeSearch ?: ($this->userSubTab === 'pegawai' ? $this->search : ''));
+            if ($empSearch !== '') {
+                $employeeQuery->search($empSearch);
+            }
+
+            $empSort = $this->tableSorts['employees'] ?? null;
+            if ($empSort && !empty($empSort['field'])) {
+                $employeeQuery->orderBy($empSort['field'], $empSort['direction']);
+            } else {
+                $employeeQuery->orderBy('name', 'asc');
+            }
+            $employeesList = $employeeQuery->paginate(15, ['*'], 'employeePage');
+            $totalEmployeesCount = Employee::count();
+            $activeEmployeesCount = Employee::where('status', 'AKTIF')->count();
         }
 
         // 6. Tab Finance
@@ -6103,6 +6456,9 @@ class AdminDashboard extends Component
             'allCities' => $allCities,
             'usersList' => $usersList,
             'totalUsersCount' => $totalUsersCount,
+            'employeesList' => $employeesList,
+            'totalEmployeesCount' => $totalEmployeesCount,
+            'activeEmployeesCount' => $activeEmployeesCount,
             'financeCategories' => $financeCategories,
             'groupedFinanceCategories' => $groupedFinanceCategories,
             'financesList' => $financesList,

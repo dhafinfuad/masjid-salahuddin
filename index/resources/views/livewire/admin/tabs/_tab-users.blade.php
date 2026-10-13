@@ -48,6 +48,49 @@
         </div>
     </div>
 
+    <!-- Top Header Card: Pegawai -->
+    <div x-show="userSubTab === 'pegawai'" x-cloak>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="flex items-center space-x-2.5">
+                <div class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+                    <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="16" rx="3"/>
+                        <circle cx="9" cy="10" r="2"/>
+                        <line x1="15" y1="8" x2="17" y2="8"/>
+                        <line x1="15" y1="12" x2="17" y2="12"/>
+                        <line x1="7" y1="16" x2="17" y2="16"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-base text-gov-textMain">Data Pegawai Muslim KPP Madya Malang</h3>
+                    <p class="text-xs text-gov-textMuted">Database induk seluruh pegawai muslim kantor untuk penugasan ibadah, rekap infaq, dan inventarisasi jamaah.</p>
+                </div>
+            </div>
+            @if(Auth::user()->canManage())
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" wire:click="openImportEmployeeModal"
+                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="12" y1="18" x2="12" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                        <span>Impor Berkas Pegawai</span>
+                    </button>
+                    <button type="button" wire:click="openCreateEmployeeModal"
+                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span>Tambah Pegawai</span>
+                    </button>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Top Header Card: Kepengurusan -->
     <div x-show="userSubTab === 'kepengurusan'" x-cloak>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
@@ -83,7 +126,7 @@
         </div>
     </div>
 
-    <!-- Sub-tab Navigation Bar: Pengguna vs Kepengurusan -->
+    <!-- Sub-tab Navigation Bar: Anggota vs Pegawai vs Kepengurusan -->
     <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
         <div class="flex flex-wrap items-center gap-2">
             <button type="button"
@@ -92,6 +135,19 @@
                 :class="userSubTab === 'pengguna' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                 <i data-lucide="users" class="w-4 h-4"></i>
                 <span>Anggota</span>
+            </button>
+            <button type="button"
+                @click="userSubTab = 'pegawai'; $wire.set('userSubTab', 'pegawai', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                :class="userSubTab === 'pegawai' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="16" rx="3"/>
+                    <circle cx="9" cy="10" r="2"/>
+                    <line x1="15" y1="8" x2="17" y2="8"/>
+                    <line x1="15" y1="12" x2="17" y2="12"/>
+                    <line x1="7" y1="16" x2="17" y2="16"/>
+                </svg>
+                <span>Pegawai</span>
             </button>
             <button type="button"
                 @click="userSubTab = 'kepengurusan'; $wire.set('userSubTab', 'kepengurusan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
@@ -403,7 +459,14 @@
     <!-- AKHIR SUBTAB 1: PENGGUNA -->
 
     <!-- ======================================================== -->
-    <!-- SUBTAB 2: KEPENGURUSAN & DOKUMEN SK -->
+    <!-- SUBTAB 2: DATA PEGAWAI MUSLIM KPP MADYA MALANG -->
+    <!-- ======================================================== -->
+    <div x-show="userSubTab === 'pegawai'" x-cloak class="space-y-6">
+        @include('livewire.admin.tabs._tab-pegawai')
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SUBTAB 3: KEPENGURUSAN & DOKUMEN SK -->
     <!-- ======================================================== -->
     <div x-show="userSubTab === 'kepengurusan'" x-cloak class="space-y-6">
         @include('livewire.admin.tabs._tab-kepengurusan')

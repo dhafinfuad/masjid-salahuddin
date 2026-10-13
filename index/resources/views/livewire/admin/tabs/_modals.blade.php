@@ -4361,5 +4361,224 @@
             </template>
         </div>
 
+    <!-- ======================================================== -->
+    <!-- MODAL: TAMBAH / EDIT PEGAWAI MUSLIM KPP MADYA MALANG -->
+    <!-- ======================================================== -->
+    <div x-show="$wire.showEmployeeModal" x-cloak wire:ignore.self
+         @click="if (window.isBackdropClick($event, $el)) $wire.set('showEmployeeModal', false)"
+         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+         style="display: none;" @keydown.escape.window="$wire.set('showEmployeeModal', false)">
+        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-gov-navy/10 text-gov-navy flex items-center justify-center">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="3"/>
+                            <circle cx="9" cy="10" r="2"/>
+                            <line x1="15" y1="8" x2="17" y2="8"/>
+                            <line x1="15" y1="12" x2="17" y2="12"/>
+                            <line x1="7" y1="16" x2="17" y2="16"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gov-textMain">{{ $editingEmployeeId ? 'Ubah Data Pegawai' : 'Tambah Pegawai Muslim' }}</h3>
+                        <p class="text-xs text-slate-500 font-medium">Civitas Pegawai Kantor Pelayanan Pajak Madya Malang</p>
+                    </div>
+                </div>
+                <button type="button" @click="$wire.set('showEmployeeModal', false)"
+                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="saveEmployee" class="space-y-3.5 text-xs">
+                <!-- Nama Pegawai -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap &amp; Gelar *</label>
+                    <input type="text" wire:model="employeeFormName" placeholder="Contoh: Deril Amrizal Kholid, S.Kom." required
+                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                    @error('employeeFormName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- NIP Pendek & NIP Panjang -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">NIP Pendek (9 Digit DJP)</label>
+                        <input type="text" wire:model="employeeFormNipPendek" placeholder="Contoh: 817931806" maxlength="15"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-mono">
+                        @error('employeeFormNipPendek') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">NIP Panjang (18 Digit BKN)</label>
+                        <input type="text" wire:model="employeeFormNipPanjang" placeholder="Contoh: 198501152010121001" maxlength="25"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-mono">
+                        @error('employeeFormNipPanjang') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <!-- Jabatan & Unit Kerja -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Jabatan / Seksi</label>
+                        <input type="text" wire:model="employeeFormJabatan" placeholder="Contoh: Account Representative"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                        @error('employeeFormJabatan') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Status Kantor</label>
+                        <select wire:model="employeeFormStatus"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
+                            <option value="AKTIF">Aktif di KPP Madya Malang</option>
+                            <option value="MUTASI">Mutasi / Pindah Kantor</option>
+                            <option value="NONAKTIF">Nonaktif / Pensiun</option>
+                        </select>
+                        @error('employeeFormStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+                    <button type="button" @click="$wire.set('showEmployeeModal', false)"
+                        class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-2">
+                        <span wire:loading.remove wire:target="saveEmployee">{{ $editingEmployeeId ? 'Simpan Perubahan' : 'Tambahkan Pegawai' }}</span>
+                        <span wire:loading.inline-flex wire:target="saveEmployee" style="display: none;" class="inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span>Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: IMPOR BERKAS REKAP PEGAWAI EXCEL / CSV -->
+    <!-- ======================================================== -->
+    <div x-show="$wire.showImportEmployeeModal" x-cloak wire:ignore.self
+         @click="if (window.isBackdropClick($event, $el)) $wire.set('showImportEmployeeModal', false)"
+         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+         style="display: none;" @keydown.escape.window="$wire.set('showImportEmployeeModal', false)">
+        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="8" y1="13" x2="16" y2="13"/>
+                            <line x1="8" y1="17" x2="16" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gov-textMain">Impor Data Pegawai Muslim</h3>
+                        <p class="text-xs text-slate-500 font-medium">Unggah berkas spreadsheet Excel (.xlsx, .xls) atau CSV</p>
+                    </div>
+                </div>
+                <button type="button" @click="$wire.set('showImportEmployeeModal', false)"
+                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="importEmployees" class="space-y-4 text-xs">
+                <!-- Dropzone Area -->
+                <div x-data="{ isDragging: false }"
+                     @dragenter.prevent="isDragging = true"
+                     @dragover.prevent="isDragging = true"
+                     @dragleave.prevent="isDragging = false"
+                     @drop="isDragging = false"
+                     :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                     class="relative border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 cursor-pointer group">
+                    <input id="importEmployeeFileInput"
+                           type="file"
+                           wire:model="importEmployeeFile"
+                           accept=".xlsx,.xls,.csv"
+                           @dragenter="isDragging = true"
+                           @dragover.prevent="isDragging = true"
+                           @dragleave="isDragging = false"
+                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                    <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                        <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-emerald-50 text-emerald-600 group-hover:scale-110'"
+                             class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-slate-700 font-semibold mt-1">
+                            <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau seret spreadsheet ke sini
+                        </p>
+                        <p class="text-[11px] text-slate-500">
+                            Format berkas: Rekapitulasi Pegawai (.xlsx, .xls, .csv maks. 10MB)
+                        </p>
+                    </div>
+                </div>
+
+                @error('importEmployeeFile')
+                    <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
+                @enderror
+
+                <!-- Loading Spinner Upload -->
+                <div wire:loading.inline-flex wire:target="importEmployeeFile" style="display: none;"
+                    class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap">
+                    <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="whitespace-nowrap leading-none">Membaca berkas spreadsheet...</span>
+                </div>
+
+                <!-- Opsi Auto Link ke Akun Pengguna -->
+                <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none">
+                    <input type="checkbox" wire:model="importEmployeeAutoLink"
+                        class="mt-0.5 rounded text-gov-navy focus:ring-gov-navy border-slate-300">
+                    <div class="text-xs">
+                        <span class="font-bold text-slate-800 block">Tautkan otomatis dengan akun pengguna yang cocok</span>
+                        <span class="text-slate-500 text-[11px] block mt-0.5">
+                            Jika ditemukan akun pada tabel Anggota yang memiliki NIP atau nama yang sama, data pegawai akan langsung ditautkan ke akun tersebut.
+                        </span>
+                    </div>
+                </label>
+
+                <!-- Ringkasan Hasil Impor -->
+                @if($importEmployeeResult)
+                    <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs space-y-1">
+                        <div class="font-bold flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Hasil Impor Spreadsheet:</span>
+                        </div>
+                        <p class="text-[11px]">
+                            Total baris: <strong>{{ $importEmployeeResult['total_rows'] }}</strong> | 
+                            Baru: <strong>{{ $importEmployeeResult['imported'] }}</strong> | 
+                            Diperbarui: <strong>{{ $importEmployeeResult['updated'] }}</strong> | 
+                            Tertaut akun: <strong>{{ $importEmployeeResult['linked'] }}</strong>
+                        </p>
+                    </div>
+                @endif
+
+                <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+                    <button type="button" @click="$wire.set('showImportEmployeeModal', false)"
+                        class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
+                        Tutup
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-2">
+                        <span wire:loading.remove wire:target="importEmployees">Mulai Impor Pegawai</span>
+                        <span wire:loading.inline-flex wire:target="importEmployees" style="display: none;" class="inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span>Memproses data...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 

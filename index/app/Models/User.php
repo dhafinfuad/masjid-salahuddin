@@ -134,6 +134,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Relasi ke Master Data Pegawai
+     */
+    public function employee(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
