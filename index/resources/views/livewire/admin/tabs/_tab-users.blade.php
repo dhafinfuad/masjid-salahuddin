@@ -68,7 +68,7 @@
             </div>
             @if(Auth::user()->canManage())
                 <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" wire:click="openImportEmployeeModal"
+                    <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
                         class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
                         <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -78,7 +78,7 @@
                         </svg>
                         <span>Impor Berkas Pegawai</span>
                     </button>
-                    <button type="button" wire:click="openCreateEmployeeModal"
+                    <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
                         class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
                         <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>

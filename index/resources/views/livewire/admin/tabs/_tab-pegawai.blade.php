@@ -188,7 +188,7 @@
                             <td class="py-3 px-4 text-right">
                                 <div class="inline-flex items-center space-x-1">
                                     @if(Auth::user()->canManage())
-                                        <button type="button" wire:click="openEditEmployeeModal({{ $emp->id }})"
+                                        <button type="button" @click="showEmployeeModal = true" wire:click="openEditEmployeeModal({{ $emp->id }})"
                                             class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 shadow-2xs transition cursor-pointer"
                                             title="Ubah Data Pegawai">
                                             <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
@@ -222,11 +222,11 @@
                                     </p>
                                     @if(Auth::user()->canManage())
                                         <div class="mt-4 flex items-center gap-2">
-                                            <button type="button" wire:click="openImportEmployeeModal"
+                                            <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
                                                 class="px-3 py-1.5 rounded-lg bg-gov-navy text-white text-xs font-bold shadow-2xs hover:bg-gov-navyHover transition cursor-pointer">
                                                 Impor Berkas Excel
                                             </button>
-                                            <button type="button" wire:click="openCreateEmployeeModal"
+                                            <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
                                                 class="px-3 py-1.5 rounded-lg bg-white border border-gov-border text-slate-700 text-xs font-semibold hover:bg-slate-50 transition cursor-pointer">
                                                 + Tambah Manual
                                             </button>
@@ -297,8 +297,8 @@
                     </div>
                     @if(Auth::user()->canManage())
                         <div class="flex items-center gap-1.5">
-                            <button type="button" wire:click="openEditEmployeeModal({{ $emp->id }})"
-                                class="p-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            <button type="button" @click="showEmployeeModal = true" wire:click="openEditEmployeeModal({{ $emp->id }})"
+                                class="p-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                             </button>
                             <button type="button" wire:click="deleteEmployee({{ $emp->id }})"

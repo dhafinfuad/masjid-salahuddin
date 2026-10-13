@@ -3848,6 +3848,7 @@ class AdminDashboard extends Component
             'employeeFormNipPanjang',
         ]);
         $this->showEmployeeModal = true;
+        $this->dispatch('open-employee-modal');
     }
 
     public function openEditEmployeeModal(int $id): void
@@ -3877,6 +3878,7 @@ class AdminDashboard extends Component
             'employeeFormNipPanjang',
         ]);
         $this->showEmployeeModal = true;
+        $this->dispatch('open-employee-modal');
     }
 
     public function saveEmployee(): void
@@ -3943,6 +3945,14 @@ class AdminDashboard extends Component
 
         $this->showEmployeeModal = false;
         $this->editingEmployeeId = null;
+        $this->dispatch('close-employee-modal');
+    }
+
+    public function closeEmployeeModal(): void
+    {
+        $this->showEmployeeModal = false;
+        $this->editingEmployeeId = null;
+        $this->dispatch('close-employee-modal');
     }
 
     public function deleteEmployee(int $id): void
@@ -4047,10 +4057,24 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
+            return;
+        }
+
         $this->importEmployeeFile = null;
         $this->importEmployeeResult = null;
         $this->resetValidation('importEmployeeFile');
         $this->showImportEmployeeModal = true;
+        $this->dispatch('open-import-employee-modal');
+    }
+
+    public function closeImportEmployeeModal(): void
+    {
+        $this->showImportEmployeeModal = false;
+        $this->importEmployeeFile = null;
+        $this->importEmployeeResult = null;
+        $this->dispatch('close-import-employee-modal');
     }
 
     public function importEmployees(): void

@@ -4362,12 +4362,13 @@
         </div>
 
     <!-- ======================================================== -->
+    <!-- ======================================================== -->
     <!-- MODAL: TAMBAH / EDIT PEGAWAI MUSLIM KPP MADYA MALANG -->
     <!-- ======================================================== -->
-    <div x-show="$wire.showEmployeeModal" x-cloak wire:ignore.self
-         @click="if (window.isBackdropClick($event, $el)) $wire.set('showEmployeeModal', false)"
+    <div x-show="showEmployeeModal" x-cloak wire:ignore.self
+         @click="if (window.isBackdropClick($event, $el)) { showEmployeeModal = false; $wire.closeEmployeeModal(); }"
          class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-         style="display: none;" @keydown.escape.window="$wire.set('showEmployeeModal', false)">
+         style="display: none;" @keydown.escape.window="showEmployeeModal = false; $wire.closeEmployeeModal();">
         <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2.5">
@@ -4385,7 +4386,7 @@
                         <p class="text-xs text-slate-500 font-medium">Civitas Pegawai Kantor Pelayanan Pajak Madya Malang</p>
                     </div>
                 </div>
-                <button type="button" @click="$wire.set('showEmployeeModal', false)"
+                <button type="button" @click="showEmployeeModal = false; $wire.closeEmployeeModal()"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -4437,7 +4438,7 @@
                 </div>
 
                 <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-                    <button type="button" @click="$wire.set('showEmployeeModal', false)"
+                    <button type="button" @click="showEmployeeModal = false; $wire.closeEmployeeModal()"
                         class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
                         Batal
                     </button>
@@ -4457,10 +4458,10 @@
     <!-- ======================================================== -->
     <!-- MODAL: IMPOR BERKAS REKAP PEGAWAI EXCEL / CSV -->
     <!-- ======================================================== -->
-    <div x-show="$wire.showImportEmployeeModal" x-cloak wire:ignore.self
-         @click="if (window.isBackdropClick($event, $el)) $wire.set('showImportEmployeeModal', false)"
+    <div x-show="showImportEmployeeModal" x-cloak wire:ignore.self
+         @click="if (window.isBackdropClick($event, $el)) { showImportEmployeeModal = false; $wire.closeImportEmployeeModal(); }"
          class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-         style="display: none;" @keydown.escape.window="$wire.set('showImportEmployeeModal', false)">
+         style="display: none;" @keydown.escape.window="showImportEmployeeModal = false; $wire.closeImportEmployeeModal();">
         <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2.5">
@@ -4478,7 +4479,7 @@
                         <p class="text-xs text-slate-500 font-medium">Unggah berkas spreadsheet Excel (.xlsx, .xls) atau CSV</p>
                     </div>
                 </div>
-                <button type="button" @click="$wire.set('showImportEmployeeModal', false)"
+                <button type="button" @click="showImportEmployeeModal = false; $wire.closeImportEmployeeModal()"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -4565,7 +4566,7 @@
                 @endif
 
                 <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-                    <button type="button" @click="$wire.set('showImportEmployeeModal', false)"
+                    <button type="button" @click="showImportEmployeeModal = false; $wire.closeImportEmployeeModal()"
                         class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
                         Tutup
                     </button>
