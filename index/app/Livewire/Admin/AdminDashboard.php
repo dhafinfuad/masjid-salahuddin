@@ -5307,9 +5307,6 @@ class AdminDashboard extends Component
 
         // 3. Tab Petugas
         if ($tab === 'petugas') {
-            $dutyFilterYearNum = ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear))
-                ? (int) $this->prayerDutyFilterYear
-                : (int) $now->year;
             $dutyFilterMonthNum = ($this->prayerDutyFilterMonth !== 'all' && is_numeric($this->prayerDutyFilterMonth))
                 ? (int) $this->prayerDutyFilterMonth
                 : (int) $now->month;
@@ -5320,211 +5317,315 @@ class AdminDashboard extends Component
             $dutySearch = trim($this->search);
             $dutySort = $this->tableSorts['petugas'] ?? null;
 
-            if ($dutyFilterWeekNum !== null) {
-                // Tampilan Jadwal Mingguan Roster (Senin s/d Jumat) yang selaras dengan kalender nyata
-                // dan menangani peralihan pekan lintas bulan (misal Pekan 5 September ke Pekan 1 Oktober)
-                $weekDays = PrayerDuty::getWeekCalendarDays($dutyFilterYearNum, $dutyFilterMonthNum, $dutyFilterWeekNum);
+            $dutyYearsFromDb = PrayerDuty::whereNotNull('tahun')
+                ->selectRaw('DISTINCT tahun')
+                ->pluck('tahun')
+                ->map(fn($y) => (int) $y);
+            if (! $dutyYearsFromDb->contains((int) $now->year)) {
+                $dutyYearsFromDb->push((int) $now->year);
+            }
+            $availableDutyYears = $dutyYearsFromDb->sortDesc()->values();
 
-                $yearDutiesQuery = PrayerDuty::query();
-                if ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear)) {
-                    $selectedYear = (int) $this->prayerDutyFilterYear;
-                    $yearDutiesQuery->where(function ($q) use ($selectedYear, $now) {
-                        $q->where('tahun', $selectedYear);
-                        if ($selectedYear === (int) $now->year) {
-                            $q->orWhereNull('tahun');
-                        }
-                    });
-                }
-                $allYearDuties = $yearDutiesQuery->get();
-
-                $times = ($this->prayerDutyFilterPrayerTime !== 'all' && in_array($this->prayerDutyFilterPrayerTime, ['dzuhur', 'ashar']))
-                    ? [$this->prayerDutyFilterPrayerTime]
-                    : ['dzuhur', 'ashar'];
-
-                $weeklyItems = [];
-                foreach ($weekDays as $dayInfo) {
-                    foreach ($times as $pTime) {
-                        $matchedDuties = $allYearDuties->filter(function ($d) use ($dayInfo, $pTime) {
-                            return $d->day_name === $dayInfo['day_name']
-                                && $d->prayer_time === $pTime
-                                && $d->matchesWeek($dayInfo['week_number']);
-                        });
-
-                        foreach ($matchedDuties as $matchedDuty) {
-                            $dutyRow = clone $matchedDuty;
-                            $dutyRow->resolved_date = $dayInfo['date'];
-                            $dutyRow->resolved_week = $dayInfo['week_number'];
-                            $dutyRow->resolved_week_label = 'Pekan ' . $dayInfo['week_number'];
-
-                            if ($dutySearch !== '') {
-                                $s = strtolower($dutySearch);
-                                $matchesSearch = str_contains(strtolower($dutyRow->imam_name ?? ''), $s)
-                                    || str_contains(strtolower($dutyRow->muadzin_name ?? ''), $s)
-                                    || str_contains(strtolower($dutyRow->day_name ?? ''), $s)
-                                    || str_contains(strtolower($dutyRow->prayer_time ?? ''), $s);
-                                if (!$matchesSearch) {
-                                    continue;
-                                }
-                            }
-
-                            $weeklyItems[] = $dutyRow;
-                        }
-                    }
-                }
-
-                if ($dutySort && !empty($dutySort['field'])) {
-                    $dir = $dutySort['direction'] ?? 'asc';
-                    $isDesc = ($dir === 'desc');
-                    $weeklyColl = collect($weeklyItems);
-
-                    if ($dutySort['field'] === 'date') {
-                        $weeklyColl = $weeklyColl->sort(function ($a, $b) use ($isDesc) {
-                            $timeA = $a->resolved_date ? $a->resolved_date->timestamp : ($isDesc ? -1 : PHP_INT_MAX);
-                            $timeB = $b->resolved_date ? $b->resolved_date->timestamp : ($isDesc ? -1 : PHP_INT_MAX);
-
-                            if ($timeA !== $timeB) {
-                                return $isDesc ? ($timeB <=> $timeA) : ($timeA <=> $timeB);
-                            }
-
-                            $prayerOrder = ['dzuhur' => 1, 'ashar' => 2];
-                            $orderA = $prayerOrder[$a->prayer_time] ?? 3;
-                            $orderB = $prayerOrder[$b->prayer_time] ?? 3;
-
-                            if ($orderA !== $orderB) {
-                                return $isDesc ? ($orderB <=> $orderA) : ($orderA <=> $orderB);
-                            }
-
-                            return $a->id <=> $b->id;
-                        });
-                    } elseif ($dutySort['field'] === 'day_name') {
-                        $dayOrder = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5];
-                        $weeklyColl = $weeklyColl->sort(function ($a, $b) use ($dayOrder, $isDesc) {
-                            $dA = $dayOrder[$a->day_name] ?? 6;
-                            $dB = $dayOrder[$b->day_name] ?? 6;
-                            if ($dA !== $dB) {
-                                return $isDesc ? ($dB <=> $dA) : ($dA <=> $dB);
-                            }
-                            $prayerOrder = ['dzuhur' => 1, 'ashar' => 2];
-                            return ($prayerOrder[$a->prayer_time] ?? 3) <=> ($prayerOrder[$b->prayer_time] ?? 3);
-                        });
-                    } elseif (in_array($dutySort['field'], ['imam_name', 'muadzin_name'])) {
-                        $field = $dutySort['field'];
-                        $weeklyColl = $weeklyColl->sort(function ($a, $b) use ($field, $isDesc) {
-                            $vA = strtolower($a->$field ?? '');
-                            $vB = strtolower($b->$field ?? '');
-                            return $isDesc ? strcmp($vB, $vA) : strcmp($vA, $vB);
-                        });
-                    }
-                    $weeklyItems = $weeklyColl->values()->all();
-                }
-
-                $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('dutyPage');
-                $perPage = 14;
-                $pagedWeekly = array_slice($weeklyItems, ($currentPage - 1) * $perPage, $perPage);
-
-                $allPrayerDuties = new \Illuminate\Pagination\LengthAwarePaginator(
-                    $pagedWeekly,
-                    count($weeklyItems),
-                    $perPage,
-                    $currentPage,
-                    ['path' => request()->url(), 'pageName' => 'dutyPage']
-                );
+            if ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear)) {
+                $yearsToRender = [(int) $this->prayerDutyFilterYear];
             } else {
-                $dutyQuery = PrayerDuty::query();
-                if ($this->prayerDutyFilterPrayerTime !== 'all' && in_array($this->prayerDutyFilterPrayerTime, ['dzuhur', 'ashar'])) {
-                    $dutyQuery->where('prayer_time', $this->prayerDutyFilterPrayerTime);
-                }
-                if ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear)) {
-                    $selectedYear = (int) $this->prayerDutyFilterYear;
-                    $dutyQuery->where(function ($q) use ($selectedYear, $now) {
-                        $q->where('tahun', $selectedYear);
-                        if ($selectedYear === (int) $now->year) {
-                            $q->orWhereNull('tahun');
-                        }
-                    });
-                }
+                $yearsToRender = $availableDutyYears->all();
+            }
 
-                if ($dutySearch !== '') {
-                    $s = '%' . $dutySearch . '%';
-                    $dutyQuery->where(function ($q) use ($s) {
-                        $q->where('imam_name', 'like', $s)
-                          ->orWhere('muadzin_name', 'like', $s)
-                          ->orWhere('day_name', 'like', $s)
-                          ->orWhere('prayer_time', 'like', $s);
-                    });
-                }
-
-                $dutySort = $this->tableSorts['petugas'] ?? null;
-                if ($dutySort && !empty($dutySort['field']) && $dutySort['field'] === 'date') {
-                    $dir = $dutySort['direction'] ?? 'asc';
-                    $isDesc = ($dir === 'desc');
-                    $allDuties = $dutyQuery->get();
-                    $currentWeekNum = PrayerDuty::getWeekOfMonth($now);
-
-                    foreach ($allDuties as $duty) {
-                        $dutyTargetWeek = $duty->resolved_week ?? null;
-                        if (!$dutyTargetWeek) {
-                            if (preg_match('/pekan_(\d)/', $duty->week_pattern, $m)) {
-                                $dutyTargetWeek = (int) $m[1];
-                            } elseif ($duty->matchesWeek($currentWeekNum)) {
-                                $dutyTargetWeek = $currentWeekNum;
-                            } elseif ($duty->week_pattern === 'semua') {
-                                $dutyTargetWeek = $currentWeekNum;
-                            } elseif ($duty->week_pattern === 'pekan_1_3_5') {
-                                $dutyTargetWeek = 1;
-                            } elseif ($duty->week_pattern === 'pekan_2_4') {
-                                $dutyTargetWeek = 2;
-                            }
-                        }
-                        $duty->resolved_week = $dutyTargetWeek;
-                        $duty->resolved_week_label = $dutyTargetWeek ? ('Pekan ' . $dutyTargetWeek) : $duty->week_pattern_label;
-                        $duty->resolved_date = $duty->resolved_date ?? $duty->resolveDate($dutyFilterYearNum, $dutyFilterMonthNum, $dutyTargetWeek);
+            $yearDutiesQuery = PrayerDuty::query();
+            if ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear)) {
+                $selectedYear = (int) $this->prayerDutyFilterYear;
+                $yearDutiesQuery->where(function ($q) use ($selectedYear, $now) {
+                    $q->where('tahun', $selectedYear);
+                    if ($selectedYear === (int) $now->year) {
+                        $q->orWhereNull('tahun');
                     }
+                });
+            }
+            $allYearDuties = $yearDutiesQuery->get();
 
-                    $sortedDuties = $allDuties->sort(function ($a, $b) use ($isDesc) {
-                        $timeA = $a->resolved_date ? $a->resolved_date->timestamp : ($isDesc ? -1 : PHP_INT_MAX);
-                        $timeB = $b->resolved_date ? $b->resolved_date->timestamp : ($isDesc ? -1 : PHP_INT_MAX);
+            $dayMap = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'];
+            $settings = MasjidSetting::getActive();
+            $todayDateStr = $today->format('Y-m-d');
+            $dailyItems = [];
 
-                        if ($timeA !== $timeB) {
-                            return $isDesc ? ($timeB <=> $timeA) : ($timeA <=> $timeB);
-                        }
+            foreach ($yearsToRender as $dutyFilterYearNum) {
+                $rangeStart = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth()->subWeeks(1);
+                $rangeEnd = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, 1, 0, 0, 0, 'Asia/Jakarta')->endOfMonth()->addWeeks(1);
 
-                        $prayerOrder = ['dzuhur' => 1, 'ashar' => 2];
-                        $orderA = $prayerOrder[$a->prayer_time] ?? 3;
-                        $orderB = $prayerOrder[$b->prayer_time] ?? 3;
+                $fridayKajians = Kajian::jumat()
+                    ->whereBetween('date', [$rangeStart->format('Y-m-d'), $rangeEnd->format('Y-m-d')])
+                    ->orderBy('date')
+                    ->get();
+                $fridayKajiansByDate = $fridayKajians->keyBy(fn($k) => $k->date->format('Y-m-d'));
+                $fridayKajiansByWeek = $fridayKajians->keyBy(fn($k) => PrayerDuty::getWeekOfMonth($k->date));
 
-                        if ($orderA !== $orderB) {
-                            return $isDesc ? ($orderB <=> $orderA) : ($orderA <=> $orderB);
-                        }
+                $kajianUmum = Kajian::kajianUmum()
+                    ->whereNotNull('speaker_name')
+                    ->where('speaker_name', '!=', '')
+                    ->whereBetween('date', [$rangeStart->format('Y-m-d'), $rangeEnd->format('Y-m-d')])
+                    ->orderBy('date')
+                    ->get();
+                $kajianUmumByDate = $kajianUmum->keyBy(fn($k) => $k->date->format('Y-m-d'));
 
-                        return $a->id <=> $b->id;
-                    })->values();
+                $dutiesForYear = $allYearDuties->filter(function ($d) use ($dutyFilterYearNum, $now) {
+                    if ($d->tahun !== null) {
+                        return (int) $d->tahun === $dutyFilterYearNum;
+                    }
+                    return (int) $now->year === $dutyFilterYearNum;
+                });
 
-                    $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('dutyPage');
-                    $perPage = 14;
-                    $currentItems = $sortedDuties->slice(($currentPage - 1) * $perPage, $perPage)->values();
-                    $allPrayerDuties = new \Illuminate\Pagination\LengthAwarePaginator(
-                        $currentItems,
-                        $sortedDuties->count(),
-                        $perPage,
-                        $currentPage,
-                        ['path' => request()->url(), 'pageName' => 'dutyPage']
-                    );
+                if ($dutyFilterWeekNum !== null) {
+                    $weekCalendarDays = PrayerDuty::getWeekCalendarDays($dutyFilterYearNum, $dutyFilterMonthNum, $dutyFilterWeekNum);
+                    $weekDays = [];
+                    foreach ($weekCalendarDays as $dInfo) {
+                        $weekDays[] = [
+                            'date' => $dInfo['date'],
+                            'day_name' => $dInfo['day_name'],
+                            'week_number' => $dInfo['week_number'],
+                            'month' => $dInfo['month'],
+                            'year' => $dInfo['year'],
+                        ];
+                    }
+                    if (!empty($weekDays)) {
+                        $lastDay = end($weekDays)['date'];
+                        $satDate = $lastDay->copy()->addDay();
+                        $sunDate = $lastDay->copy()->addDays(2);
+                        $weekDays[] = [
+                            'date' => $satDate,
+                            'day_name' => 'Sabtu',
+                            'week_number' => PrayerDuty::getWeekOfMonth($satDate),
+                            'month' => (int) $satDate->month,
+                            'year' => (int) $satDate->year,
+                        ];
+                        $weekDays[] = [
+                            'date' => $sunDate,
+                            'day_name' => 'Minggu',
+                            'week_number' => PrayerDuty::getWeekOfMonth($sunDate),
+                            'month' => (int) $sunDate->month,
+                            'year' => (int) $sunDate->year,
+                        ];
+                    }
                 } else {
-                    if ($dutySort && !empty($dutySort['field'])) {
-                        if ($dutySort['field'] === 'day_name') {
-                            $dutyQuery->orderByRaw("CASE day_name WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 ELSE 6 END " . $dutySort['direction']);
-                        } else {
-                            $dutyQuery->orderBy($dutySort['field'], $dutySort['direction']);
-                        }
-                    } else {
-                        $dutyQuery->orderByRaw("CASE day_name WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 ELSE 6 END")
-                                  ->orderByRaw("CASE week_pattern WHEN 'pekan_1' THEN 1 WHEN 'pekan_2' THEN 2 WHEN 'pekan_3' THEN 3 WHEN 'pekan_4' THEN 4 WHEN 'pekan_5' THEN 5 WHEN 'pekan_1_3_5' THEN 6 WHEN 'pekan_2_4' THEN 7 ELSE 8 END")
-                                  ->orderBy('prayer_time', 'desc');
+                    $startOfMonth = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, 1, 12, 0, 0, 'Asia/Jakarta');
+                    $daysInMonth = $startOfMonth->daysInMonth;
+                    $weekDays = [];
+                    for ($d = 1; $d <= $daysInMonth; $d++) {
+                        $dt = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, $d, 12, 0, 0, 'Asia/Jakarta');
+                        $weekDays[] = [
+                            'date' => $dt,
+                            'day_name' => $dayMap[$dt->dayOfWeekIso],
+                            'week_number' => PrayerDuty::getWeekOfMonth($dt),
+                            'month' => (int) $dt->month,
+                            'year' => (int) $dt->year,
+                        ];
                     }
-                    $allPrayerDuties = $dutyQuery->paginate(14, ['*'], 'dutyPage');
+                }
+
+                foreach ($weekDays as $dayInfo) {
+                    $date = $dayInfo['date'];
+                    $dateStr = $date->format('Y-m-d');
+                    $dayOfWeek = $date->dayOfWeekIso; // 1 = Monday, ..., 7 = Sunday
+                    $dayName = $dayInfo['day_name'];
+                    $weekNumber = $dayInfo['week_number'];
+                    $isWeekend = ($dayOfWeek === 6 || $dayOfWeek === 7);
+                    $isFriday = ($dayOfWeek === 5);
+                    $isToday = ($dateStr === $todayDateStr);
+                    $dayNumber = (int) $date->day;
+                    $formattedDate = $date->translatedFormat('d F Y');
+
+                    if ($isWeekend) {
+                        $row = [
+                            'date' => $dateStr,
+                            'resolved_date' => $date,
+                            'day_name' => $dayName,
+                            'formatted_date' => $formattedDate,
+                            'day_number' => $dayNumber,
+                            'week_number' => $weekNumber,
+                            'is_weekend' => true,
+                            'is_friday' => false,
+                            'is_today' => $isToday,
+                            'dzuhur_imam' => '-',
+                            'dzuhur_muadzin' => '-',
+                            'ashar_imam' => '-',
+                            'ashar_muadzin' => '-',
+                            'ashar_kajian_title' => null,
+                            'friday_khatib' => '-',
+                            'friday_mc' => '-',
+                            'friday_muadzin' => '-',
+                            'dzuhur_duty' => null,
+                            'ashar_duty' => null,
+                            'friday_kajian' => null,
+                            'kajian_on_date' => null,
+                            'imam_name' => '-',
+                            'muadzin_name' => '-',
+                        ];
+                    } elseif ($isFriday) {
+                        $kajian = $fridayKajiansByDate->get($dateStr) ?? $fridayKajiansByWeek->get($weekNumber);
+                        $khatib = $kajian ? ($kajian->khatib_name ?: 'Ust. M. Yasak Lc MA') : ($settings->friday_prayer_info['khatib'] ?? 'Ust. M. Yasak Lc MA');
+                        $mc = $kajian ? ($kajian->mc_name ?: ($kajian->speaker_name ?: 'Alan Irfansyah')) : ($settings->friday_prayer_info['mc'] ?? 'Alan Irfansyah');
+                        $muadzin = $kajian ? ($kajian->muadzin_name ?: ($kajian->description ?: 'Khodori')) : ($settings->friday_prayer_info['muadzin'] ?? 'Khodori');
+
+                        $asharDuty = $dutiesForYear
+                            ->where('day_name', 'Jumat')
+                            ->where('prayer_time', 'ashar')
+                            ->filter(fn($d) => $d->matchesWeek($weekNumber))
+                            ->first();
+
+                        $kajianOnDate = $kajianUmumByDate->get($dateStr);
+                        $asImam = $asharDuty?->imam_name ?: '-';
+                        $asMuadzin = $asharDuty?->muadzin_name ?: '-';
+                        $asharKajianTitle = null;
+
+                        if ($kajianOnDate && !empty($kajianOnDate->speaker_name)) {
+                            $asImam = $kajianOnDate->speaker_name;
+                            if (!empty($kajianOnDate->muadzin_name)) {
+                                $asMuadzin = $kajianOnDate->muadzin_name;
+                            }
+                            $asharKajianTitle = $kajianOnDate->title;
+                        }
+
+                        $row = [
+                            'date' => $dateStr,
+                            'resolved_date' => $date,
+                            'day_name' => $dayName,
+                            'formatted_date' => $formattedDate,
+                            'day_number' => $dayNumber,
+                            'week_number' => $weekNumber,
+                            'is_weekend' => false,
+                            'is_friday' => true,
+                            'is_today' => $isToday,
+                            'dzuhur_imam' => $khatib,
+                            'dzuhur_muadzin' => $muadzin,
+                            'ashar_imam' => $asImam,
+                            'ashar_muadzin' => $asMuadzin,
+                            'ashar_kajian_title' => $asharKajianTitle,
+                            'friday_khatib' => $khatib,
+                            'friday_mc' => $mc,
+                            'friday_muadzin' => $muadzin,
+                            'dzuhur_duty' => null,
+                            'ashar_duty' => $asharDuty,
+                            'friday_kajian' => $kajian,
+                            'kajian_on_date' => $kajianOnDate,
+                            'imam_name' => $khatib ?: $asImam,
+                            'muadzin_name' => $muadzin ?: $asMuadzin,
+                        ];
+                    } else {
+                        $matchingDuties = $dutiesForYear
+                            ->where('day_name', $dayName)
+                            ->filter(fn($d) => $d->matchesWeek($weekNumber));
+
+                        $dzuhurDuty = $matchingDuties->firstWhere('prayer_time', 'dzuhur');
+                        $asharDuty = $matchingDuties->firstWhere('prayer_time', 'ashar');
+                        $kajianOnDate = $kajianUmumByDate->get($dateStr);
+
+                        $dzImam = $dzuhurDuty?->imam_name ?: '-';
+                        $dzMuadzin = $dzuhurDuty?->muadzin_name ?: '-';
+
+                        $asImam = $asharDuty?->imam_name ?: '-';
+                        $asMuadzin = $asharDuty?->muadzin_name ?: '-';
+                        $asharKajianTitle = null;
+
+                        if ($kajianOnDate && !empty($kajianOnDate->speaker_name)) {
+                            $asImam = $kajianOnDate->speaker_name;
+                            if (!empty($kajianOnDate->muadzin_name)) {
+                                $asMuadzin = $kajianOnDate->muadzin_name;
+                            }
+                            $asharKajianTitle = $kajianOnDate->title;
+                        }
+
+                        $row = [
+                            'date' => $dateStr,
+                            'resolved_date' => $date,
+                            'day_name' => $dayName,
+                            'formatted_date' => $formattedDate,
+                            'day_number' => $dayNumber,
+                            'week_number' => $weekNumber,
+                            'is_weekend' => false,
+                            'is_friday' => false,
+                            'is_today' => $isToday,
+                            'dzuhur_imam' => $dzImam,
+                            'dzuhur_muadzin' => $dzMuadzin,
+                            'ashar_imam' => $asImam,
+                            'ashar_muadzin' => $asMuadzin,
+                            'ashar_kajian_title' => $asharKajianTitle,
+                            'friday_khatib' => '-',
+                            'friday_mc' => '-',
+                            'friday_muadzin' => '-',
+                            'dzuhur_duty' => $dzuhurDuty,
+                            'ashar_duty' => $asharDuty,
+                            'friday_kajian' => null,
+                            'kajian_on_date' => $kajianOnDate,
+                            'imam_name' => ($dzImam !== '-' ? $dzImam : ($asImam !== '-' ? $asImam : '-')),
+                            'muadzin_name' => ($dzMuadzin !== '-' ? $dzMuadzin : ($asMuadzin !== '-' ? $asMuadzin : '-')),
+                        ];
+                    }
+
+                    if ($dutySearch !== '') {
+                        $s = strtolower($dutySearch);
+                        $searchableText = strtolower(implode(' ', [
+                            $row['day_name'],
+                            $row['formatted_date'],
+                            $row['dzuhur_imam'],
+                            $row['dzuhur_muadzin'],
+                            $row['ashar_imam'],
+                            $row['ashar_muadzin'],
+                            $row['friday_khatib'],
+                            $row['friday_mc'],
+                            $row['friday_muadzin'],
+                            $row['ashar_kajian_title'] ?? '',
+                        ]));
+
+                        if (!str_contains($searchableText, $s)) {
+                            continue;
+                        }
+                    }
+
+                    $dailyItems[] = new \Illuminate\Support\Fluent($row);
                 }
             }
+
+            if ($dutySort && !empty($dutySort['field'])) {
+                $dir = $dutySort['direction'] ?? 'asc';
+                $isDesc = ($dir === 'desc');
+                $coll = collect($dailyItems);
+
+                if ($dutySort['field'] === 'date') {
+                    $coll = $coll->sort(function ($a, $b) use ($isDesc) {
+                        $tA = $a->resolved_date ? $a->resolved_date->timestamp : 0;
+                        $tB = $b->resolved_date ? $b->resolved_date->timestamp : 0;
+                        return $isDesc ? ($tB <=> $tA) : ($tA <=> $tB);
+                    });
+                } elseif ($dutySort['field'] === 'day_name') {
+                    $dayOrder = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5, 'Sabtu' => 6, 'Minggu' => 7];
+                    $coll = $coll->sort(function ($a, $b) use ($dayOrder, $isDesc) {
+                        $dA = $dayOrder[$a->day_name] ?? 8;
+                        $dB = $dayOrder[$b->day_name] ?? 8;
+                        return $isDesc ? ($dB <=> $dA) : ($dA <=> $dB);
+                    });
+                } elseif (in_array($dutySort['field'], ['imam_name', 'dzuhur', 'ashar'])) {
+                    $coll = $coll->sort(function ($a, $b) use ($isDesc) {
+                        $vA = strtolower($a->imam_name ?? '');
+                        $vB = strtolower($b->imam_name ?? '');
+                        return $isDesc ? strcmp($vB, $vA) : strcmp($vA, $vB);
+                    });
+                }
+                $dailyItems = $coll->values()->all();
+            }
+
+            $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage('dutyPage');
+            $perPage = ($dutyFilterWeekNum !== null)
+                ? max(14, count($yearsToRender) * 7)
+                : max(31, count($yearsToRender) * 31);
+            $currentItems = array_slice($dailyItems, ($currentPage - 1) * $perPage, $perPage);
+
+            $allPrayerDuties = new \Illuminate\Pagination\LengthAwarePaginator(
+                $currentItems,
+                count($dailyItems),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url(), 'pageName' => 'dutyPage']
+            );
 
             $dutyYearsFromDb = PrayerDuty::whereNotNull('tahun')
                 ->selectRaw('DISTINCT tahun')
@@ -5540,24 +5641,6 @@ class AdminDashboard extends Component
                 ->orderByRaw("CASE day_name WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 ELSE 6 END")
                 ->orderBy('prayer_time', 'desc')
                 ->get();
-
-            $rangeStart = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth()->subWeeks(1);
-            $rangeEnd = Carbon::create($dutyFilterYearNum, $dutyFilterMonthNum, 1, 0, 0, 0, 'Asia/Jakarta')->endOfMonth()->addWeeks(1);
-
-            $fridayKajians = Kajian::jumat()
-                ->whereBetween('date', [$rangeStart->format('Y-m-d'), $rangeEnd->format('Y-m-d')])
-                ->orderBy('date')
-                ->get();
-            $fridayKajiansByDate = $fridayKajians->keyBy(fn($k) => $k->date->format('Y-m-d'));
-            $fridayKajiansByWeek = $fridayKajians->keyBy(fn($k) => PrayerDuty::getWeekOfMonth($k->date));
-
-            $kajianUmum = Kajian::kajianUmum()
-                ->whereNotNull('speaker_name')
-                ->where('speaker_name', '!=', '')
-                ->whereBetween('date', [$rangeStart->format('Y-m-d'), $rangeEnd->format('Y-m-d')])
-                ->orderBy('date')
-                ->get();
-            $kajianUmumByDate = $kajianUmum->keyBy(fn($k) => $k->date->format('Y-m-d'));
         }
 
         // 4. Tab Agenda & ODOJ / Kegiatan
