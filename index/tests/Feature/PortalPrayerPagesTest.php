@@ -70,11 +70,48 @@ class PortalPrayerPagesTest extends TestCase
 
         $schedule = $component->viewData('schedule');
         $this->assertNotEmpty($schedule);
+        $this->assertCount(30, $schedule, 'Schedule must contain 30 days starting from today');
         $this->assertEquals($todayDate, $schedule[0]['date'], 'First row must be today date');
         $this->assertEquals((int) $today->day, $schedule[0]['day_number']);
 
+        $tomorrow = $today->copy()->addDays(1);
+        $this->assertEquals($tomorrow->format('Y-m-d'), $schedule[1]['date']);
+        $this->assertEquals((int) $tomorrow->day, $schedule[1]['day_number']);
+
         $component->assertDontSee('Hari Ini');
         $component->assertSee('Baris kuning paling atas menandakan waktu shalat hari ini.');
+    }
+
+    public function test_jadwal_sholat_shows_30_days_cross_month_from_october_31_to_november_29(): void
+    {
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::create(2026, 10, 31, 10, 0, 0, 'Asia/Jakarta'));
+
+        try {
+            $component = Livewire::test(JadwalSholatPage::class)
+                ->set('selectedMonth', 10)
+                ->set('selectedYear', 2026);
+
+            $schedule = $component->viewData('schedule');
+            $this->assertCount(30, $schedule, 'Should display 30 days rolling window');
+
+            // Row 0: 31 October 2026 (Today)
+            $this->assertEquals('2026-10-31', $schedule[0]['date']);
+            $this->assertEquals(31, $schedule[0]['day_number']);
+
+            // Row 1: 1 November 2026
+            $this->assertEquals('2026-11-01', $schedule[1]['date']);
+            $this->assertEquals(1, $schedule[1]['day_number']);
+
+            // Row 2: 2 November 2026
+            $this->assertEquals('2026-11-02', $schedule[2]['date']);
+            $this->assertEquals(2, $schedule[2]['day_number']);
+
+            // Row 29: 29 November 2026 (30th day)
+            $this->assertEquals('2026-11-29', $schedule[29]['date']);
+            $this->assertEquals(29, $schedule[29]['day_number']);
+        } finally {
+            \Carbon\Carbon::setTestNow();
+        }
     }
 
     public function test_jadwal_sholat_keeps_chronological_order_for_other_months(): void

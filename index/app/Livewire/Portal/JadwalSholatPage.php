@@ -47,13 +47,6 @@ class JadwalSholatPage extends Component
         $settings = MasjidSetting::getActive();
         $cities = $prayerService->getCities();
 
-        $schedule = $prayerService->getMonthlyPrayerSchedule(
-            $this->cityId,
-            $this->selectedYear,
-            $this->selectedMonth,
-            $settings
-        );
-
         $months = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
             5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
@@ -66,22 +59,64 @@ class JadwalSholatPage extends Component
         $todayDate = $todayCarbon->format('Y-m-d');
         $isCurrentMonthYear = ($this->selectedMonth === (int) $todayCarbon->month && $this->selectedYear === (int) $todayCarbon->year);
 
-        // If viewing the current month, hoist today's schedule to the top row (index 0)
-        // so users immediately see today's prayer times without scrolling.
-        if ($isCurrentMonthYear && is_array($schedule)) {
-            $todayIndex = null;
-            foreach ($schedule as $idx => $item) {
-                if (($item['date'] ?? null) === $todayDate) {
-                    $todayIndex = $idx;
-                    break;
-                }
+        if ($isCurrentMonthYear) {
+            // When viewing current month, start from TODAY and show upcoming 30 days (rolling 30-day window)
+            // sequentially (e.g. 13 Oct, 14 Oct, ... or 31 Oct, 1 Nov, ... up to 29 Nov).
+            $startDate = $todayCarbon->copy()->startOfDay();
+            $totalDays = 30;
+            $endDate = $todayCarbon->copy()->addDays($totalDays - 1)->endOfDay();
+
+            $currSchedule = $prayerService->getMonthlyPrayerSchedule(
+                $this->cityId,
+                (int) $todayCarbon->year,
+                (int) $todayCarbon->month,
+                $settings
+            );
+
+            $scheduleByDate = collect($currSchedule)->keyBy('date');
+
+            if ((int) $endDate->month !== (int) $todayCarbon->month || (int) $endDate->year !== (int) $todayCarbon->year) {
+                $nextSchedule = $prayerService->getMonthlyPrayerSchedule(
+                    $this->cityId,
+                    (int) $endDate->year,
+                    (int) $endDate->month,
+                    $settings
+                );
+                $scheduleByDate = $scheduleByDate->merge(collect($nextSchedule)->keyBy('date'));
             }
 
-            if ($todayIndex !== null) {
-                $todayItem = $schedule[$todayIndex];
-                unset($schedule[$todayIndex]);
-                array_unshift($schedule, $todayItem);
+            $schedule = [];
+            for ($i = 0; $i < $totalDays; $i++) {
+                $dateObj = $startDate->copy()->addDays($i);
+                $dateKey = $dateObj->format('Y-m-d');
+
+                if ($scheduleByDate->has($dateKey)) {
+                    $schedule[] = $scheduleByDate->get($dateKey);
+                } else {
+                    $schedule[] = [
+                        'date' => $dateKey,
+                        'day_name' => $dateObj->translatedFormat('l'),
+                        'formatted_date' => $dateObj->translatedFormat('d F Y'),
+                        'day_number' => (int) $dateObj->day,
+                        'imsak' => '-',
+                        'subuh' => '-',
+                        'terbit' => '-',
+                        'dhuha' => '-',
+                        'dzuhur' => '-',
+                        'ashar' => '-',
+                        'maghrib' => '-',
+                        'isya' => '-',
+                    ];
+                }
             }
+        } else {
+            // When viewing another month (past or future), show all days of that month from day 1 to end of month.
+            $schedule = $prayerService->getMonthlyPrayerSchedule(
+                $this->cityId,
+                $this->selectedYear,
+                $this->selectedMonth,
+                $settings
+            );
         }
 
         return view('livewire.portal.jadwal-sholat-page', [
