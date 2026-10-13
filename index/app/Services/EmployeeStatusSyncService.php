@@ -212,20 +212,46 @@ class EmployeeStatusSyncService
     }
 
     /**
+     * Bersihkan gelar akademik, vokasi, kehormatan, dan profesi dari string nama
+     */
+    public static function stripAcademicTitles(string $name): string
+    {
+        // 1. Jika terdapat tanda koma (pola umum penulisan gelar di Indonesia / SIKKA DJP: "Nama Pokok, Gelar1, Gelar2")
+        if (str_contains($name, ',')) {
+            $parts = explode(',', $name);
+            $baseName = trim($parts[0]);
+            // Pastikan bagian sebelum koma memang berupa nama pokok yang valid
+            if (strlen($baseName) >= 3 && preg_match('/[a-zA-Z]{2,}/', $baseName)) {
+                $name = $baseName;
+            }
+        }
+
+        // 2. Bersihkan gelar awalan umum (misal Drs., Dra., Dr., Ir., Prof., Apt., H., Hj., K.H., Ustadz, dll.)
+        $prefixPatterns = [
+            '/^(dr|drs|dra|ir|prof|apt|h|hj|kh|ustadz|ustad)\b\.?\s+/i',
+        ];
+        $name = preg_replace($prefixPatterns, '', $name);
+
+        // 3. Bersihkan gelar akhiran vokasi, sarjana, magister, doktoral, dan profesi (termasuk jika tanpa koma)
+        $suffixPatterns = [
+            '/\b(s|m|a)\.?(e|m|kom|si|t|h|pd|sos|ak|akt|ap|ab|ip|pjk|pnl|tr|st|kn|sa|ag|mn)\b\.?/i',
+            '/\b(a\.?\s*md\.?\s*(pjk|ak|pnl)?|a\.?p\.?a\.?pj|s\.?s\.?t|d3|d4|s1|s2|s3)\b\.?/i',
+            '/\b(ph\.?d|mba|bba|ll\.?m|ak|akt|cpa|ca|bap|cma)\b\.?/i',
+        ];
+        $name = preg_replace($suffixPatterns, '', $name);
+
+        return trim($name);
+    }
+
+    /**
      * Normalisasi string nama untuk pencocokan toleran
      */
     public static function normalizeName(string $name): string
     {
+        $name = self::stripAcademicTitles($name);
         $name = strtolower($name);
 
-        // Hapus gelar akademik & kehormatan umum (awalan dan akhiran)
-        $patterns = [
-            '/\b(dr|drs|dra|ir|h|hj|prof|apt)\b\.?/i',
-            '/\b(s\.?e|m\.?m|s\.?kom|m\.?si|s\.?t|m\.?t|s\.?h|m\.?h|s\.?pd|m\.?pd|s\.?sos|ak|bba|mba|ph\.?d|ll\.?m)\b\.?/i',
-        ];
-        $name = preg_replace($patterns, '', $name);
-
-        // Hapus tanda baca
+        // Hapus tanda baca selain alfanumerik dan spasi
         $name = preg_replace('/[^a-z0-9\s]/', ' ', $name);
 
         // Rapikan spasi berlebih

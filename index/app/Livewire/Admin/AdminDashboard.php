@@ -3875,60 +3875,147 @@ class AdminDashboard extends Component
         }
     }
 
-    private function findMatchingUser(?string $nip9, ?string $nip18, ?string $name): ?User
+    private function syncUserNipIfEmpty(User $user, ?string $nip): void
+    {
+        if ($nip && empty($user->nip) && $this->ensureUserNipColumnExists()) {
+            try {
+                $user->update(['nip' => $nip]);
+            } catch (\Throwable $e) {
+                // Abaikan jika kolom bermasalah
+            }
+        }
+    }
+
+    private function findMatchingUser(?string $nip9, ?string $nip18, ?string $name, $cachedUsers = null): ?User
     {
         $hasNipCol = $this->ensureUserNipColumnExists();
 
         // 1. Cari berdasarkan NIP jika kolom nip tersedia di tabel users
         if ($hasNipCol) {
             if ($nip9) {
-                $user = User::where('nip', $nip9)->first();
+                $user = $cachedUsers ? $cachedUsers->firstWhere('nip', $nip9) : User::where('nip', $nip9)->first();
                 if ($user) {
                     return $user;
                 }
             }
             if ($nip18) {
-                $user = User::where('nip', $nip18)->first();
+                $user = $cachedUsers ? $cachedUsers->firstWhere('nip', $nip18) : User::where('nip', $nip18)->first();
                 if ($user) {
                     return $user;
                 }
             }
         }
 
-        // 2. Cari berdasarkan awalan email jika ada (misal nip9@pajak.go.id)
+        // 2. Cari berdasarkan awalan email jika berformat NIP (misal 817931806@pajak.go.id)
         if ($nip9) {
-            $user = User::where('email', 'like', $nip9 . '@%')->first();
+            $user = $cachedUsers
+                ? $cachedUsers->first(fn($u) => str_starts_with(strtolower((string)$u->email), $nip9 . '@'))
+                : User::where('email', 'like', $nip9 . '@%')->first();
             if ($user) {
+                $this->syncUserNipIfEmpty($user, $nip18 ?: $nip9);
                 return $user;
             }
         }
         if ($nip18) {
-            $user = User::where('email', 'like', $nip18 . '@%')->first();
+            $user = $cachedUsers
+                ? $cachedUsers->first(fn($u) => str_starts_with(strtolower((string)$u->email), $nip18 . '@'))
+                : User::where('email', 'like', $nip18 . '@%')->first();
             if ($user) {
+                $this->syncUserNipIfEmpty($user, $nip18 ?: $nip9);
                 return $user;
             }
         }
 
         // 3. Cari berdasarkan Nama Lengkap (persis)
         if ($name) {
-            $user = User::where('name', $name)->first();
+            $user = $cachedUsers ? $cachedUsers->firstWhere('name', $name) : User::where('name', $name)->first();
             if ($user) {
+                $this->syncUserNipIfEmpty($user, $nip18 ?: $nip9);
                 return $user;
             }
 
-            // 4. Pencocokan toleran nama tanpa gelar
+            // 4. Pencocokan toleran nama pokok tanpa gelar akademik (misal: "Dhafin Fuad Mahathir, A.Md.Pjk." vs "Dhafin Fuad Mahathir")
             $norm = \App\Services\EmployeeStatusSyncService::normalizeName($name);
-            if (! empty($norm) && strlen($norm) >= 6) {
-                $candidates = User::all(['id', 'name']);
+            if (! empty($norm) && strlen($norm) >= 5) {
+                $candidates = $cachedUsers ?: User::all();
                 foreach ($candidates as $cand) {
-                    if (\App\Services\EmployeeStatusSyncService::normalizeName($cand->name) === $norm) {
+                    $candNorm = \App\Services\EmployeeStatusSyncService::normalizeName($cand->name);
+                    if ($candNorm === $norm) {
+                        $this->syncUserNipIfEmpty($cand, $nip18 ?: $nip9);
                         return $cand;
+                    }
+                }
+
+                // 5. Pencocokan nama pada email instansi pegawai (misal: "dhafin.mahathir@pajak.go.id" vs "DHAFIN FUAD MAHATHIR")
+                foreach ($candidates as $cand) {
+                    $emailPrefix = explode('@', strtolower((string)$cand->email))[0] ?? '';
+                    $emailNameNorm = \App\Services\EmployeeStatusSyncService::normalizeName(str_replace(['.', '_', '-'], ' ', $emailPrefix));
+                    if (! empty($emailNameNorm) && strlen($emailNameNorm) >= 6) {
+                        if ($emailNameNorm === $norm || str_contains($norm, $emailNameNorm) || str_contains($emailNameNorm, $norm)) {
+                            $this->syncUserNipIfEmpty($cand, $nip18 ?: $nip9);
+                            return $cand;
+                        }
+                    }
+                }
+
+                // 6. Substring match toleran untuk nama panjang (panjang kata >= 2)
+                foreach ($candidates as $cand) {
+                    $candNorm = \App\Services\EmployeeStatusSyncService::normalizeName($cand->name);
+                    if (str_contains($norm, ' ') && str_contains($candNorm, ' ')) {
+                        if (str_contains($norm, $candNorm) || str_contains($candNorm, $norm)) {
+                            $this->syncUserNipIfEmpty($cand, $nip18 ?: $nip9);
+                            return $cand;
+                        }
                     }
                 }
             }
         }
 
         return null;
+    }
+
+    public function autoLinkUnlinkedEmployees(): int
+    {
+        if (! $this->ensureEmployeeTableExists()) {
+            return 0;
+        }
+
+        $unlinkedEmployees = Employee::whereNull('user_id')->get();
+        if ($unlinkedEmployees->isEmpty()) {
+            return 0;
+        }
+
+        $allUsers = User::all();
+        if ($allUsers->isEmpty()) {
+            return 0;
+        }
+
+        $linkedCount = 0;
+        foreach ($unlinkedEmployees as $emp) {
+            $matchedUser = $this->findMatchingUser($emp->nip_pendek, $emp->nip_panjang, $emp->name, $allUsers);
+            if ($matchedUser) {
+                $emp->update(['user_id' => $matchedUser->id]);
+                $this->syncUserNipIfEmpty($matchedUser, $emp->nip_panjang ?: $emp->nip_pendek);
+                $linkedCount++;
+            }
+        }
+
+        return $linkedCount;
+    }
+
+    public function syncEmployeeLinks(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Hanya pengurus yang berwenang menautkan akun pegawai.');
+            return;
+        }
+
+        $linkedCount = $this->autoLinkUnlinkedEmployees();
+        if ($linkedCount > 0) {
+            $this->notify("Berhasil menautkan {$linkedCount} data pegawai ke akun aplikasi yang cocok.");
+        } else {
+            $this->notify('Seluruh data pegawai sudah tertaut secara optimal ke akun pengguna aplikasi.');
+        }
     }
 
     public function openCreateEmployeeModal(): void
@@ -4029,6 +4116,14 @@ class AdminDashboard extends Component
 
         if ($this->editingEmployeeId) {
             $employee = Employee::findOrFail($this->editingEmployeeId);
+            // Jika sebelumnya belum tertaut akun, coba cari kecocokan akun pengguna
+            if (empty($employee->user_id)) {
+                $matchedUser = $this->findMatchingUser($nipPendek, $nipPanjang, $data['name']);
+                if ($matchedUser) {
+                    $data['user_id'] = $matchedUser->id;
+                    $this->syncUserNipIfEmpty($matchedUser, $nipPanjang ?: $nipPendek);
+                }
+            }
             $employee->update($data);
             $this->notify("Data pegawai {$employee->name} berhasil diperbarui.");
         } else {
@@ -4036,6 +4131,7 @@ class AdminDashboard extends Component
             $matchedUser = $this->findMatchingUser($nipPendek, $nipPanjang, $data['name']);
             if ($matchedUser) {
                 $data['user_id'] = $matchedUser->id;
+                $this->syncUserNipIfEmpty($matchedUser, $nipPanjang ?: $nipPendek);
             }
 
             $employee = Employee::create($data);
@@ -4108,7 +4204,16 @@ class AdminDashboard extends Component
             return;
         }
 
-        // Tentukan email default kemenkeu/djp
+        // 1. Cek terlebih dahulu apakah akun pengguna sebenarnya SUDAH ADA dengan nama/NIP yang cocok
+        $existingUser = $this->findMatchingUser($employee->nip_pendek, $employee->nip_panjang, $employee->name);
+        if ($existingUser) {
+            $employee->update(['user_id' => $existingUser->id]);
+            $this->syncUserNipIfEmpty($existingUser, $employee->nip_panjang ?: $employee->nip_pendek);
+            $this->notify("Akun pengguna {$existingUser->name} ({$existingUser->email}, Role: {$existingUser->role}) berhasil ditautkan ke {$employee->name}.");
+            return;
+        }
+
+        // 2. Jika belum ada akun yang cocok sama sekali, buatkan akun baru (Role Jamaah)
         $nipKey = $employee->nip_pendek ?: ($employee->nip_panjang ?: Str::slug($employee->name, ''));
         $email = strtolower($nipKey . '@pajak.go.id');
 
@@ -4223,6 +4328,8 @@ class AdminDashboard extends Component
         $updated = 0;
         $linked = 0;
 
+        $cachedUsers = $this->importEmployeeAutoLink ? User::all() : collect();
+
         foreach ($entries as $entry) {
             $name = $entry['name'] ?? null;
             $nip18 = $entry['nip_panjang'] ?? null;
@@ -4250,7 +4357,7 @@ class AdminDashboard extends Component
             // Deteksi akun User yang cocok
             $matchedUser = null;
             if ($this->importEmployeeAutoLink) {
-                $matchedUser = $this->findMatchingUser($nip9, $nip18, $name);
+                $matchedUser = $this->findMatchingUser($nip9, $nip18, $name, $cachedUsers);
             }
 
             if ($emp) {
@@ -6247,6 +6354,11 @@ class AdminDashboard extends Component
 
             // Query Master Data Pegawai Muslim KPP Madya Malang (dengan auto-migration & schema guard)
             if ($this->ensureEmployeeTableExists()) {
+                // Tautkan otomatis pegawai yang belum terhubung ke akun aplikasi jika ada kecocokan
+                if ($this->userSubTab === 'pegawai') {
+                    $this->autoLinkUnlinkedEmployees();
+                }
+
                 $employeeQuery = Employee::with('user');
                 if ($this->employeeFilterStatus !== 'all') {
                     $employeeQuery->where('status', $this->employeeFilterStatus);

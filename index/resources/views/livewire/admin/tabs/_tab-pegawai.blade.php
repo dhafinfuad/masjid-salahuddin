@@ -75,12 +75,32 @@
             </div>
         </div>
 
-        <!-- Teks Indikator Total (Aturan GEMINI.md: Dilarang keras menggunakan badge counter angka) -->
-        <div class="text-slate-500 font-medium text-xs">
-            Total: <span class="font-bold text-gov-navy">{{ method_exists($employeesList, 'total') ? $employeesList->total() : $employeesList->count() }}</span> Pegawai
-            @if($activeEmployeesCount > 0)
-                <span class="text-slate-400 ml-1">({{ $activeEmployeesCount }} aktif)</span>
+        <div class="flex items-center gap-2.5">
+            @if(Auth::user()->canManage())
+                <button type="button" wire:click="syncEmployeeLinks" wire:loading.attr="disabled"
+                    class="px-2.5 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-navy text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    title="Pindai dan tautkan otomatis seluruh pegawai ke akun aplikasi yang cocok">
+                    <span wire:loading.remove wire:target="syncEmployeeLinks" class="inline-flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-indigo-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                        <span>Tautkan Akun</span>
+                    </span>
+                    <span wire:loading.inline-flex wire:target="syncEmployeeLinks" style="display: none;" class="inline-flex items-center gap-1 shrink-0 whitespace-nowrap">
+                        <svg class="w-3.5 h-3.5 animate-spin text-indigo-600 shrink-0" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Menautkan...</span>
+                    </span>
+                </button>
             @endif
+
+            <!-- Teks Indikator Total (Aturan GEMINI.md: Dilarang keras menggunakan badge counter angka) -->
+            <div class="text-slate-500 font-medium text-xs">
+                Total: <span class="font-bold text-gov-navy">{{ method_exists($employeesList, 'total') ? $employeesList->total() : $employeesList->count() }}</span> Pegawai
+                @if($activeEmployeesCount > 0)
+                    <span class="text-slate-400 ml-1">({{ $activeEmployeesCount }} aktif)</span>
+                @endif
+            </div>
         </div>
     </div>
 
@@ -171,9 +191,10 @@
                                         @if(Auth::user()->canManage())
                                             <button type="button"
                                                 wire:click="createUserFromEmployee({{ $emp->id }})"
-                                                wire:confirm="Buatkan akun pengguna (Role Jamaah) untuk {{ $emp->name }}?"
-                                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 hover:bg-gov-navy hover:text-white text-gov-navy border border-gov-navy/20 transition cursor-pointer">
-                                                + Buat Akun
+                                                wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
+                                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 hover:bg-gov-navy hover:text-white text-gov-navy border border-gov-navy/20 transition cursor-pointer"
+                                                title="Tautkan otomatis jika akun sudah ada, atau buatkan akun baru">
+                                                Tautkan / Buat Akun
                                             </button>
                                         @endif
                                     </div>
@@ -296,8 +317,9 @@
                             </span>
                         @else
                             <button type="button" wire:click="createUserFromEmployee({{ $emp->id }})"
+                                wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
                                 class="text-[10px] font-bold text-gov-navy hover:underline">
-                                + Buatkan Akun
+                                Tautkan / Buat Akun
                             </button>
                         @endif
                     </div>

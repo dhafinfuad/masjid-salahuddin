@@ -157,4 +157,70 @@ class EmployeeStatusSyncTest extends TestCase
             ->call('syncEmployeeStatus')
             ->assertSet('toastMessage', 'Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
     }
+
+    public function test_employee_with_academic_degree_is_automatically_linked_to_user_account(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Buat user akun aplikasi atas nama Dhafin Fuad Mahathir (Role Master)
+        $user = User::factory()->create([
+            'name' => 'Dhafin Fuad Mahathir',
+            'email' => 'dhafin.mahathir@pajak.go.id',
+            'role' => 'Master',
+            'status' => 'AKTIF',
+            'nip' => null,
+        ]);
+
+        // Buat record pegawai dengan penulisan resmi SIKKA bergelar akademik
+        $employee = \App\Models\Employee::create([
+            'name' => 'DHAFIN FUAD MAHATHIR, A.Md.Pjk.',
+            'nip_pendek' => '817931806',
+            'nip_panjang' => '199802122018011003',
+            'jabatan' => 'Pelaksana (Seksi Penjaminan Kualitas Data)',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+            'user_id' => null,
+        ]);
+
+        $this->assertNull($employee->user_id);
+
+        // Kunjungi subtab pegawai pada AdminDashboard
+        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+            ->set('userSubTab', 'pegawai')
+            ->call('syncEmployeeLinks');
+
+        // Pastikan record pegawai kini otomatis tertaut ke akun user
+        $this->assertEquals($user->id, $employee->fresh()->user_id);
+        $this->assertEquals('199802122018011003', $user->fresh()->nip);
+    }
+
+    public function test_create_user_from_employee_links_existing_user_instead_of_duplicating(): void
+    {
+        $this->actingAs($this->admin);
+
+        $user = User::factory()->create([
+            'name' => 'Dhafin Fuad Mahathir',
+            'email' => 'dhafin.mahathir@pajak.go.id',
+            'role' => 'Master',
+            'status' => 'AKTIF',
+        ]);
+
+        $employee = \App\Models\Employee::create([
+            'name' => 'DHAFIN FUAD MAHATHIR, A.Md.Pjk.',
+            'nip_pendek' => '817931806',
+            'nip_panjang' => '199802122018011003',
+            'status' => 'AKTIF',
+            'user_id' => null,
+        ]);
+
+        $initialUserCount = User::count();
+
+        // Klik tombol createUserFromEmployee
+        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+            ->call('createUserFromEmployee', $employee->id);
+
+        // Jumlah user tidak boleh bertambah (mencegah akun ganda dummy)
+        $this->assertEquals($initialUserCount, User::count());
+        $this->assertEquals($user->id, $employee->fresh()->user_id);
+    }
 }
