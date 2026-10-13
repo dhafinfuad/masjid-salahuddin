@@ -326,6 +326,7 @@ class AdminDashboard extends Component
     public bool $showImportEmployeeModal = false;
     public mixed $importEmployeeFile = null;
     public bool $importEmployeeAutoLink = true;
+    public bool $importEmployeeOnlyMuslim = true;
     public ?array $importEmployeeResult = null;
 
     // Upload & Dokumen SK
@@ -4130,10 +4131,15 @@ class AdminDashboard extends Component
         ]);
 
         $tempPath = $this->importEmployeeFile->getRealPath();
-        $entries = \App\Services\EmployeeStatusSyncService::parseFile($tempPath);
+        $parseResult = \App\Services\EmployeeImportService::parseFile($tempPath, $this->importEmployeeOnlyMuslim);
+        $entries = $parseResult['items'];
 
         if (empty($entries)) {
-            $this->addError('importEmployeeFile', 'Tidak ditemukan data nama atau NIP pegawai yang valid pada berkas tersebut.');
+            $msg = 'Tidak ditemukan data nama atau NIP pegawai yang valid pada berkas tersebut.';
+            if ($parseResult['skipped_non_muslim'] > 0) {
+                $msg = "Seluruh data ({$parseResult['skipped_non_muslim']} baris) dilewati karena opsi 'Hanya Pegawai Muslim' aktif dan tidak terdeteksi beragama Islam.";
+            }
+            $this->addError('importEmployeeFile', $msg);
             return;
         }
 
@@ -4143,8 +4149,11 @@ class AdminDashboard extends Component
 
         foreach ($entries as $entry) {
             $name = $entry['name'] ?? null;
-            $nip18 = $entry['nip18'] ?? null;
-            $nip9 = $entry['nip9'] ?? null;
+            $nip18 = $entry['nip_panjang'] ?? null;
+            $nip9 = $entry['nip_pendek'] ?? null;
+            $gender = $entry['gender'] ?? null;
+            $jabatan = $entry['jabatan'] ?? null;
+            $unitKerja = $entry['unit_kerja'] ?? 'KPP Madya Malang';
 
             if (empty($name) && empty($nip18) && empty($nip9)) {
                 continue;
@@ -4178,9 +4187,14 @@ class AdminDashboard extends Component
 
             if ($emp) {
                 $updateData = ['status' => 'AKTIF'];
-                if ($name && empty($emp->name)) $updateData['name'] = $name;
-                if ($nip9 && empty($emp->nip_pendek)) $updateData['nip_pendek'] = $nip9;
-                if ($nip18 && empty($emp->nip_panjang)) $updateData['nip_panjang'] = $nip18;
+                if ($name && (empty($emp->name) || strtolower($emp->name) === strtolower($name))) {
+                    $updateData['name'] = $name;
+                }
+                if ($nip9) $updateData['nip_pendek'] = $nip9;
+                if ($nip18) $updateData['nip_panjang'] = $nip18;
+                if ($gender) $updateData['gender'] = $gender;
+                if ($jabatan) $updateData['jabatan'] = $jabatan;
+                if ($unitKerja) $updateData['unit_kerja'] = $unitKerja;
                 if ($matchedUser && empty($emp->user_id)) {
                     $updateData['user_id'] = $matchedUser->id;
                     $linked++;
@@ -4192,7 +4206,9 @@ class AdminDashboard extends Component
                     'name' => $name ?: 'Pegawai ' . ($nip9 ?: $nip18),
                     'nip_pendek' => $nip9,
                     'nip_panjang' => $nip18,
-                    'unit_kerja' => 'KPP Madya Malang',
+                    'gender' => $gender,
+                    'jabatan' => $jabatan,
+                    'unit_kerja' => $unitKerja,
                     'status' => 'AKTIF',
                     'user_id' => $matchedUser?->id,
                 ];
@@ -4203,13 +4219,18 @@ class AdminDashboard extends Component
         }
 
         $this->importEmployeeResult = [
-            'total_rows' => count($entries),
+            'total_rows' => $parseResult['total_rows'],
             'imported' => $imported,
             'updated' => $updated,
             'linked' => $linked,
+            'skipped_non_muslim' => $parseResult['skipped_non_muslim'],
         ];
 
-        $this->notify("Impor pegawai sukses: {$imported} baru, {$updated} diperbarui, {$linked} tertaut akun pengguna.");
+        $notifMsg = "Impor pegawai sukses: {$imported} baru, {$updated} diperbarui, {$linked} tertaut akun pengguna.";
+        if ($parseResult['skipped_non_muslim'] > 0) {
+            $notifMsg .= " ({$parseResult['skipped_non_muslim']} non-muslim dilewati)";
+        }
+        $this->notify($notifMsg);
     }
 
     public function logout(): void

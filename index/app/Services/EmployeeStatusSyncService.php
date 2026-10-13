@@ -61,6 +61,26 @@ class EmployeeStatusSyncService
      */
     public static function parseFile(string $filePath): array
     {
+        // 1. Coba parsing dengan EmployeeImportService cerdas (mendukung 130+ kolom SIKKA/DJP)
+        try {
+            $smartResult = EmployeeImportService::parseFile($filePath, false);
+            if ($smartResult['header_found'] && ! empty($smartResult['items'])) {
+                $entries = [];
+                foreach ($smartResult['items'] as $item) {
+                    $entries[] = [
+                        'raw' => trim(($item['nip_panjang'] ?? '') . ' ' . ($item['nip_pendek'] ?? '') . ' ' . ($item['name'] ?? '')),
+                        'nip18' => $item['nip_panjang'] ?? null,
+                        'nip9' => $item['nip_pendek'] ?? null,
+                        'name' => $item['name'] ?? null,
+                    ];
+                }
+                return $entries;
+            }
+        } catch (\Throwable $e) {
+            // Lanjutkan ke fallback di bawah jika terjadi kegagalan
+        }
+
+        // 2. Fallback parser berbasis token sederhana
         $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
         $rows = [];
 

@@ -20,6 +20,7 @@ return new class extends Migration
                 $table->string('jabatan')->nullable(); // Jabatan / Fungsional / Seksi
                 $table->string('unit_kerja')->default('KPP Madya Malang');
                 $table->enum('gender', ['L', 'P'])->nullable();
+                $table->string('status', 20)->default('AKTIF')->index();
                 $table->unsignedBigInteger('user_id')->nullable()->index(); // Relasi opsional ke akun pengguna
                 $table->timestamps();
             });

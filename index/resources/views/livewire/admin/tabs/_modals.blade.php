@@ -4537,6 +4537,18 @@
                     <span class="whitespace-nowrap leading-none">Membaca berkas spreadsheet...</span>
                 </div>
 
+                <!-- Opsi Filter Hanya Pegawai Muslim -->
+                <label class="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-50/50 border border-emerald-200 cursor-pointer select-none">
+                    <input type="checkbox" wire:model="importEmployeeOnlyMuslim"
+                        class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
+                    <div class="text-xs">
+                        <span class="font-bold text-slate-800 block">Hanya impor pegawai yang beragama Islam</span>
+                        <span class="text-slate-500 text-[11px] block mt-0.5">
+                            Jika spreadsheet memuat kolom Agama (misal format resmi SIKKA Kemenkeu), sistem otomatis menyaring dan hanya memasukkan pegawai muslim ke database.
+                        </span>
+                    </div>
+                </label>
+
                 <!-- Opsi Auto Link ke Akun Pengguna -->
                 <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none">
                     <input type="checkbox" wire:model="importEmployeeAutoLink"
@@ -4556,11 +4568,14 @@
                             <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             <span>Hasil Impor Spreadsheet:</span>
                         </div>
-                        <p class="text-[11px]">
+                        <p class="text-[11px] leading-relaxed">
                             Total baris: <strong>{{ $importEmployeeResult['total_rows'] }}</strong> | 
                             Baru: <strong>{{ $importEmployeeResult['imported'] }}</strong> | 
                             Diperbarui: <strong>{{ $importEmployeeResult['updated'] }}</strong> | 
                             Tertaut akun: <strong>{{ $importEmployeeResult['linked'] }}</strong>
+                            @if(($importEmployeeResult['skipped_non_muslim'] ?? 0) > 0)
+                                | Non-muslim dilewati: <strong>{{ $importEmployeeResult['skipped_non_muslim'] }}</strong>
+                            @endif
                         </p>
                     </div>
                 @endif
