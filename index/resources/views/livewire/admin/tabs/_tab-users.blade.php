@@ -51,7 +51,7 @@
     <!-- Top Header Card: Pegawai -->
     <div x-show="userSubTab === 'pegawai'" x-cloak>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-2.5">
+            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
                 <div class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
                     <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -67,24 +67,9 @@
                 </div>
             </div>
             @if(Auth::user()->canManage())
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" wire:click="syncEmployeeLinks" wire:loading.attr="disabled"
-                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer disabled:opacity-50"
-                        title="Tautkan otomatis data pegawai ke akun pengguna aplikasi">
-                        <span wire:loading.remove wire:target="syncEmployeeLinks" class="inline-flex items-center space-x-2">
-                            <svg class="w-4 h-4 text-indigo-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                            </svg>
-                            <span>Tautkan Akun</span>
-                        </span>
-                        <span wire:loading.inline-flex wire:target="syncEmployeeLinks" style="display: none;" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                            <svg class="w-3.5 h-3.5 animate-spin text-indigo-600 shrink-0" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <span>Menautkan...</span>
-                        </span>
-                    </button>
+                <div class="flex items-center gap-2.5 shrink-0 flex-nowrap">
                     <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
-                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
                         <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
@@ -94,8 +79,8 @@
                         <span>Impor Berkas Pegawai</span>
                     </button>
                     <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
-                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
-                        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
+                        <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
