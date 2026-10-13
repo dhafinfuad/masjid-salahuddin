@@ -28,8 +28,11 @@ use App\Services\PrayerTimeService;
 use App\Services\SimpleXlsxService;
 use App\Services\TteSignatureService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -3803,10 +3806,31 @@ class AdminDashboard extends Component
     // ==========================================
     // Master Data Pegawai Actions
     // ==========================================
+    private function ensureEmployeeTableExists(): bool
+    {
+        try {
+            if (Schema::hasTable('employees')) {
+                return true;
+            }
+
+            Artisan::call('migrate', ['--force' => true]);
+
+            return Schema::hasTable('employees');
+        } catch (\Throwable $e) {
+            Log::warning('Auto migrate employees table failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public function openCreateEmployeeModal(): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Hanya pengurus yang berwenang menambah data pegawai.');
+            return;
+        }
+
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
             return;
         }
 
@@ -3833,6 +3857,11 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
+            return;
+        }
+
         $employee = Employee::findOrFail($id);
         $this->editingEmployeeId = $employee->id;
         $this->employeeFormNipPendek = $employee->nip_pendek ?? '';
@@ -3854,6 +3883,11 @@ class AdminDashboard extends Component
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak.');
+            return;
+        }
+
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
             return;
         }
 
@@ -3918,6 +3952,11 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
+            return;
+        }
+
         $employee = Employee::findOrFail($id);
         $name = $employee->name;
         $employee->delete();
@@ -3931,6 +3970,11 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
+            return;
+        }
+
         $employee = Employee::findOrFail($id);
         $employee->status = ($employee->status === 'AKTIF') ? 'MUTASI' : 'AKTIF';
         $employee->save();
@@ -3941,6 +3985,11 @@ class AdminDashboard extends Component
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak.');
+            return;
+        }
+
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
             return;
         }
 
@@ -3981,6 +4030,11 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->notify('Tabel pegawai belum siap di database.');
+            return;
+        }
+
         $employee = Employee::findOrFail($employeeId);
         $employee->update(['user_id' => null]);
         $this->notify("Tautan akun pengguna untuk {$employee->name} telah dilepas.");
@@ -4003,6 +4057,11 @@ class AdminDashboard extends Component
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak.');
+            return;
+        }
+
+        if (! $this->ensureEmployeeTableExists()) {
+            $this->addError('importEmployeeFile', 'Tabel pegawai belum siap di database.');
             return;
         }
 
@@ -6036,31 +6095,40 @@ class AdminDashboard extends Component
             $usersList = $userQuery->paginate(10, ['*'], 'userPage');
             $totalUsersCount = User::count();
 
-            // Query Master Data Pegawai Muslim KPP Madya Malang
-            $employeeQuery = Employee::with('user');
-            if ($this->employeeFilterStatus !== 'all') {
-                $employeeQuery->where('status', $this->employeeFilterStatus);
-            }
-            if ($this->employeeFilterLink === 'linked') {
-                $employeeQuery->whereNotNull('user_id');
-            } elseif ($this->employeeFilterLink === 'unlinked') {
-                $employeeQuery->whereNull('user_id');
-            }
+            // Query Master Data Pegawai Muslim KPP Madya Malang (dengan auto-migration & schema guard)
+            if ($this->ensureEmployeeTableExists()) {
+                $employeeQuery = Employee::with('user');
+                if ($this->employeeFilterStatus !== 'all') {
+                    $employeeQuery->where('status', $this->employeeFilterStatus);
+                }
+                if ($this->employeeFilterLink === 'linked') {
+                    $employeeQuery->whereNotNull('user_id');
+                } elseif ($this->employeeFilterLink === 'unlinked') {
+                    $employeeQuery->whereNull('user_id');
+                }
 
-            $empSearch = trim($this->employeeSearch ?: ($this->userSubTab === 'pegawai' ? $this->search : ''));
-            if ($empSearch !== '') {
-                $employeeQuery->search($empSearch);
-            }
+                $empSearch = trim($this->employeeSearch ?: ($this->userSubTab === 'pegawai' ? $this->search : ''));
+                if ($empSearch !== '') {
+                    $employeeQuery->search($empSearch);
+                }
 
-            $empSort = $this->tableSorts['employees'] ?? null;
-            if ($empSort && !empty($empSort['field'])) {
-                $employeeQuery->orderBy($empSort['field'], $empSort['direction']);
+                $empSort = $this->tableSorts['employees'] ?? null;
+                if ($empSort && !empty($empSort['field'])) {
+                    $employeeQuery->orderBy($empSort['field'], $empSort['direction']);
+                } else {
+                    $employeeQuery->orderBy('name', 'asc');
+                }
+                $employeesList = $employeeQuery->paginate(15, ['*'], 'employeePage');
+                $totalEmployeesCount = Employee::count();
+                $activeEmployeesCount = Employee::where('status', 'AKTIF')->count();
             } else {
-                $employeeQuery->orderBy('name', 'asc');
+                $employeesList = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15, 1, [
+                    'path' => request()->url(),
+                    'pageName' => 'employeePage',
+                ]);
+                $totalEmployeesCount = 0;
+                $activeEmployeesCount = 0;
             }
-            $employeesList = $employeeQuery->paginate(15, ['*'], 'employeePage');
-            $totalEmployeesCount = Employee::count();
-            $activeEmployeesCount = Employee::where('status', 'AKTIF')->count();
         }
 
         // 6. Tab Finance
