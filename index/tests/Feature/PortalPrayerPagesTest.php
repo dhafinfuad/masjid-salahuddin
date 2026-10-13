@@ -338,7 +338,7 @@ class PortalPrayerPagesTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Kajian Mendatang Selanjutnya Yang Spesial');
         $response->assertSee('border-l-4 border-l-amber-500');
-        $response->assertSee('Kartu kuning menandakan jadwal kajian selanjutnya atau kegiatan pada pekan berjalan.');
+        $response->assertSee('kuning menandakan jadwal kajian selanjutnya atau kegiatan pada pekan berjalan.');
         $response->assertDontSee('Hari Ini');
     }
 

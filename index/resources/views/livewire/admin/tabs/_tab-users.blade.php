@@ -295,13 +295,13 @@
                                 <td class="py-3 px-4 text-center">
                                     @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                         <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
-                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
                                             title="Klik untuk mengubah status">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     @else
                                         <span
-                                            class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </span>
                                     @endif

@@ -257,9 +257,9 @@
                                         @if($isFridayDzuhurWidget && $fridayKajianWidget)
                                             <div class="flex items-center gap-1.5 shrink-0 pl-2">
                                                 <a href="{{ route('admin.kajian.teks-mc', $fridayKajianWidget->id) }}" target="_blank"
-                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                     title="Buka & Cetak Teks MC Shalat Jumat">
-                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
+                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
                                                     <span>Teks MC</span>
                                                 </a>
                                             </div>

@@ -184,12 +184,12 @@
                             <td class="py-3 px-4 text-center">
                                 @if(Auth::user()->canManage())
                                     <button type="button" wire:click="toggleEmployeeStatus({{ $emp->id }})"
-                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' }}"
+                                        class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' }}"
                                         title="Klik untuk mengubah status aktif/mutasi">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </button>
                                 @else
-                                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
+                                    <span class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </span>
                                 @endif

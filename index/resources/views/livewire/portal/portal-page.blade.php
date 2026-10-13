@@ -357,9 +357,9 @@
                                                         <div>
                                                             @if($kajian->type === 'jumat')
                                                                 <a href="{{ route('admin.kajian.teks-mc', $kajian->id) }}" target="_blank"
-                                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                                     title="Download & Cetak Teks MC Sholat Jumat (PDF)">
-                                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy shrink-0"></i>
+                                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
                                                                     <span>Teks MC</span>
                                                                 </a>
                                                             @endif
@@ -377,7 +377,7 @@
                                                             @endif
                                                             @if(!empty($kajian->notula))
                                                                 <button type="button"
-                                                                    @click="openPortalNotula({{ json_encode([
+                                                                    @click="openPortalNotula({{ Js::from([
                                                                         'id' => $kajian->id,
                                                                         'title' => $kajian->title ?: ($kajian->type === 'jumat' ? 'Khutbah Jumat' : 'Kajian'),
                                                                         'type' => $kajian->type,
@@ -386,9 +386,9 @@
                                                                         'time_display' => $kajian->time_display ?: '',
                                                                         'notula' => $kajian->notula,
                                                                     ]) }})"
-                                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                                     title="Baca Risalah Notula Kajian">
-                                                                    <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                                                                         <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
                                                                     </svg>
