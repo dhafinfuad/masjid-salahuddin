@@ -3,6 +3,32 @@
 <!-- ======================================================== -->
 <div class="space-y-6">
 
+    <!-- Ringkasan Hasil Impor Spreadsheet (jika baru selesai diimpor) -->
+    @if($importEmployeeResult)
+        <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center justify-between gap-3 shadow-2xs animate-in fade-in">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                    <span class="font-bold text-emerald-900 block">Hasil Impor Data Pegawai:</span>
+                    <span class="text-[11px] text-emerald-700">
+                        Total baris: <strong>{{ $importEmployeeResult['total_rows'] }}</strong> | 
+                        Baru: <strong>{{ $importEmployeeResult['imported'] }}</strong> | 
+                        Diperbarui: <strong>{{ $importEmployeeResult['updated'] }}</strong> | 
+                        Tertaut akun: <strong>{{ $importEmployeeResult['linked'] }}</strong>
+                        @if(($importEmployeeResult['skipped_non_muslim'] ?? 0) > 0)
+                            | Non-muslim dilewati: <strong>{{ $importEmployeeResult['skipped_non_muslim'] }}</strong>
+                        @endif
+                    </span>
+                </div>
+            </div>
+            <button type="button" wire:click="$set('importEmployeeResult', null)" class="text-emerald-500 hover:text-emerald-700 p-1.5 rounded-lg hover:bg-emerald-100 transition cursor-pointer" title="Tutup ringkasan">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    @endif
+
     <!-- Filter Card & Pencarian Pegawai -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
@@ -71,7 +97,6 @@
                                 <x-sort-icon field="name" table="employees" />
                             </div>
                         </th>
-                        <th class="py-3 px-4">Identitas NIP</th>
                         <th wire:click="sortBy('jabatan', 'employees')" class="py-3 px-4 cursor-pointer hover:bg-slate-100 transition-colors group select-none">
                             <div class="flex items-center gap-1">
                                 <span>Jabatan / Unit</span>
@@ -114,27 +139,6 @@
                                 </div>
                             </td>
 
-                            <!-- Identitas NIP -->
-                            <td class="py-3 px-4">
-                                <div class="space-y-0.5 font-mono text-xs">
-                                    @if($emp->nip_pendek)
-                                        <div class="flex items-center gap-1.5 text-slate-800">
-                                            <span class="text-[10px] font-sans font-bold text-slate-400 uppercase">NIP 9:</span>
-                                            <span class="font-bold text-gov-navy">{{ $emp->nip_pendek }}</span>
-                                        </div>
-                                    @endif
-                                    @if($emp->nip_panjang)
-                                        <div class="flex items-center gap-1.5 text-slate-600">
-                                            <span class="text-[10px] font-sans font-bold text-slate-400 uppercase">NIP 18:</span>
-                                            <span>{{ $emp->nip_panjang }}</span>
-                                        </div>
-                                    @endif
-                                    @if(!$emp->nip_pendek && !$emp->nip_panjang)
-                                        <span class="text-[11px] text-slate-400 font-sans italic">Belum tercatat</span>
-                                    @endif
-                                </div>
-                            </td>
-
                             <!-- Jabatan / Seksi -->
                             <td class="py-3 px-4">
                                 <div class="text-slate-700 font-medium">
@@ -142,17 +146,24 @@
                                 </div>
                             </td>
 
-                            <!-- Status Akun Aplikasi -->
+                            <!-- Status Akun Aplikasi (Badge langsung merujuk ke Role) -->
                             <td class="py-3 px-4 text-center">
                                 @if($emp->user_id && $emp->user)
+                                    @php
+                                        $role = $emp->user->role;
+                                        $badgeClasses = match($role) {
+                                            'Master', 'admin', 'Administrator' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                            'Ketua', 'Sekretaris', 'Bendahara' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                            default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        };
+                                    @endphp
                                     <div class="inline-flex flex-col items-center gap-0.5">
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                            <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border {{ $badgeClasses }}">
+                                            <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            <span>Akun Terhubung</span>
+                                            <span>{{ $role }}</span>
                                         </span>
-                                        <span class="text-[10px] text-slate-400">Role: {{ $emp->user->role }}</span>
                                     </div>
                                 @else
                                     <div class="inline-flex flex-col items-center gap-1">
@@ -207,7 +218,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-12 px-4 text-center">
+                            <td colspan="6" class="py-12 px-4 text-center">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-10 h-10 text-slate-300 mb-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                         <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -266,27 +277,20 @@
                     </span>
                 </div>
 
-                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 text-[11px] font-mono space-y-1">
-                    @if($emp->nip_pendek)
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-400 font-sans text-[10px] uppercase font-bold">NIP 9:</span>
-                            <span class="font-bold text-gov-navy">{{ $emp->nip_pendek }}</span>
-                        </div>
-                    @endif
-                    @if($emp->nip_panjang)
-                        <div class="flex justify-between items-center">
-                            <span class="text-slate-400 font-sans text-[10px] uppercase font-bold">NIP 18:</span>
-                            <span class="text-slate-700">{{ $emp->nip_panjang }}</span>
-                        </div>
-                    @endif
-                </div>
-
                 <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
                     <div>
                         @if($emp->user_id && $emp->user)
-                            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
-                                <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span>Akun ({{ $emp->user->role }})</span>
+                            @php
+                                $role = $emp->user->role;
+                                $badgeClasses = match($role) {
+                                    'Master', 'admin', 'Administrator' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                    'Ketua', 'Sekretaris', 'Bendahara' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                    default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                };
+                            @endphp
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ $badgeClasses }}">
+                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>{{ $role }}</span>
                             </span>
                         @else
                             <button type="button" wire:click="createUserFromEmployee({{ $emp->id }})"

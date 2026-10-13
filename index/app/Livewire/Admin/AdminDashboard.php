@@ -4176,8 +4176,14 @@ class AdminDashboard extends Component
     {
         $this->showImportEmployeeModal = false;
         $this->importEmployeeFile = null;
-        $this->importEmployeeResult = null;
         $this->dispatch('close-import-employee-modal');
+    }
+
+    public function updatedImportEmployeeFile(): void
+    {
+        if ($this->importEmployeeFile) {
+            $this->importEmployees();
+        }
     }
 
     public function importEmployees(): void
@@ -4287,6 +4293,8 @@ class AdminDashboard extends Component
             'linked' => $linked,
             'skipped_non_muslim' => $parseResult['skipped_non_muslim'],
         ];
+
+        $this->importEmployeeFile = null;
 
         $notifMsg = "Impor pegawai sukses: {$imported} baru, {$updated} diperbarui, {$linked} tertaut akun pengguna.";
         if ($parseResult['skipped_non_muslim'] > 0) {
