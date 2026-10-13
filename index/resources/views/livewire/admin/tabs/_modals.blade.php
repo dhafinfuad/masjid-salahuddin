@@ -467,12 +467,25 @@
                         <!-- Upload Controls & Database Status -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <label class="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition overflow-hidden"
+                                       x-data="{ isDragging: false }"
+                                       @dragenter.prevent="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave.prevent="isDragging = false"
+                                       @drop="isDragging = false"
+                                       :class="isDragging ? 'ring-2 ring-gov-navy border-gov-navy bg-sky-50 text-gov-navy' : ''">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <span>Pilih Foto</span>
-                                    <input type="file" wire:model="kajianSpeakerPhoto" accept="image/png,image/jpeg,image/webp" class="sr-only">
+                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : 'Pilih / Seret Foto'">Pilih Foto</span>
+                                    <input type="file"
+                                           wire:model="kajianSpeakerPhoto"
+                                           accept="image/png,image/jpeg,image/webp"
+                                           @dragenter="isDragging = true"
+                                           @dragover.prevent="isDragging = true"
+                                           @dragleave="isDragging = false"
+                                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                                 </label>
                                 @if ($kajianSpeakerPhoto || $kajianExistingPhoto)
                                     <button type="button" wire:click="removeKajianPhoto" class="px-2 py-1 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition font-medium cursor-pointer">
@@ -766,9 +779,49 @@
                 </div>
 
                 <div class="space-y-1.5 pt-1">
-                    <label for="importKajianFile" class="block font-semibold text-slate-700">Pilih Berkas Excel *</label>
-                    <input id="importKajianFile" type="file" wire:model="importKajianFile" accept=".xlsx,.xls,.csv,.txt"
-                        class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer rounded-lg border border-gov-border bg-slate-50/50 p-2 focus:outline-none focus:ring-1 focus:ring-gov-navy transition">
+                    <label class="block font-semibold text-slate-700">Pilih Berkas Excel *</label>
+                    <div x-data="{ isDragging: false }"
+                         :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                         class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                        
+                        <!-- Invisible Full-Surface Native File Input -->
+                        <input id="importKajianFile"
+                               type="file"
+                               wire:model="importKajianFile"
+                               accept=".xlsx,.xls,.csv,.txt"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                        <div class="pointer-events-none space-y-2">
+                            <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                                 :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                                <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                    <path d="M12 12v9"/>
+                                    <path d="m16 16-4-4-4 4"/>
+                                </svg>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                                <span>atau seret & lepas berkas Excel ke area ini</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv (Maksimal 5 MB)</p>
+                            @if($importKajianFile)
+                                <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
+                                    <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>{{ $importKajianFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                                </div>
+                            @endif
+                            <template x-if="isDragging">
+                                <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                    Lepaskan berkas di sini untuk mengunggah
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                     @error('importKajianFile') <span
                     class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
@@ -1013,9 +1066,49 @@
                 </div>
 
                 <div class="space-y-1.5 pt-1">
-                    <label for="importDutyFile" class="block font-semibold text-slate-700">Pilih Berkas Excel *</label>
-                    <input id="importDutyFile" type="file" wire:model="importDutyFile" accept=".xlsx,.xls,.csv,.txt"
-                        class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer rounded-lg border border-gov-border bg-slate-50/50 p-2 focus:outline-none focus:ring-1 focus:ring-gov-navy transition">
+                    <label class="block font-semibold text-slate-700">Pilih Berkas Excel *</label>
+                    <div x-data="{ isDragging: false }"
+                         :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                         class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                        
+                        <!-- Invisible Full-Surface Native File Input -->
+                        <input id="importDutyFile"
+                               type="file"
+                               wire:model="importDutyFile"
+                               accept=".xlsx,.xls,.csv,.txt"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                        <div class="pointer-events-none space-y-2">
+                            <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                                 :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                                <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                    <path d="M12 12v9"/>
+                                    <path d="m16 16-4-4-4 4"/>
+                                </svg>
+                            </div>
+                            <div class="text-xs text-slate-600">
+                                <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                                <span>atau seret & lepas berkas Excel ke area ini</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv (Maksimal 5 MB)</p>
+                            @if($importDutyFile)
+                                <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
+                                    <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>{{ $importDutyFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                                </div>
+                            @endif
+                            <template x-if="isDragging">
+                                <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                    Lepaskan berkas di sini untuk mengunggah
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                     @error('importDutyFile') <span
                     class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
@@ -1145,8 +1238,41 @@
                                 <span>Lampiran Berkas LPJ (PDF Opsional)</span>
                                 <span class="text-[10px] text-slate-400 font-normal ml-1">(.pdf maks 10MB)</span>
                             </label>
-                            <input id="agendaReportPdfInput" type="file" wire:model="agendaReportPdf" accept=".pdf,application/pdf"
-                                class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
+                            <div x-data="{ isDragging: false }"
+                                 @dragenter.prevent="isDragging = true"
+                                 @dragover.prevent="isDragging = true"
+                                 @dragleave.prevent="isDragging = false"
+                                 @drop="isDragging = false"
+                                 :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                                 class="relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-200 cursor-pointer group">
+                                <input id="agendaReportPdfInput"
+                                       type="file"
+                                       wire:model="agendaReportPdf"
+                                       accept=".pdf,application/pdf"
+                                       @dragenter="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave="isDragging = false"
+                                       @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                                <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                                    <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-rose-50 text-rose-600 group-hover:scale-110'"
+                                         class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <path d="M12 18v-6"></path>
+                                            <path d="M9 15l3-3 3 3"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs text-slate-700 font-semibold mt-1">
+                                        <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file</span> atau seret PDF ke area ini
+                                    </p>
+                                    <p class="text-[11px] text-slate-500">
+                                        Format berkas: Dokumen PDF resmi laporan (Maksimal 10 MB)
+                                    </p>
+                                </div>
+                            </div>
                             @error('agendaReportPdf')
                                 <span class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
                             @enderror
@@ -1307,19 +1433,49 @@
                         dengan pemisah koma, titik-koma, atau tab maksimal 2 MB.</p>
                 </div>
 
-                <div
-                    class="border-2 border-dashed border-gov-border rounded-xl p-6 text-center space-y-2 bg-slate-50/50 hover:bg-slate-50 transition">
-                    <i data-lucide="upload-cloud" class="w-8 h-8 text-gov-navy mx-auto"></i>
-                    <div class="text-xs text-slate-600">
-                        <label for="importAgendaFile"
-                            class="font-bold text-gov-navy hover:underline cursor-pointer">Pilih file</label> atau tarik
-                        file ke area ini
+                <div x-data="{ isDragging: false }"
+                     :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                     class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                    
+                    <!-- Invisible Full-Surface Native File Input -->
+                    <input id="importAgendaFile"
+                           type="file"
+                           wire:model="importAgendaFile"
+                           accept=".csv,.txt"
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                           @dragenter="isDragging = true"
+                           @dragover.prevent="isDragging = true"
+                           @dragleave="isDragging = false"
+                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                    <div class="pointer-events-none space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                             :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                            <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                <path d="M12 12v9"/>
+                                <path d="m16 16-4-4-4 4"/>
+                            </svg>
+                        </div>
+                        <div class="text-xs text-slate-600">
+                            <span class="font-bold text-gov-navy group-hover:underline">Pilih file</span> atau seret & lepas berkas ke area ini
+                        </div>
+                        <p class="text-[11px] text-slate-400">Format: CSV / TXT (Maksimal 2 MB)</p>
+                        @if($importAgendaFile)
+                            <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
+                                <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>{{ $importAgendaFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                            </div>
+                        @endif
+                        <template x-if="isDragging">
+                            <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                Lepaskan berkas di sini untuk mengunggah
+                            </div>
+                        </template>
                     </div>
-                    <input id="importAgendaFile" type="file" wire:model="importAgendaFile" accept=".csv,.txt"
-                        class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer">
-                    @error('importAgendaFile') <span
-                    class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
+                @error('importAgendaFile') <span
+                class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
 
                 <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showImportAgendaModal = false"
@@ -1490,8 +1646,42 @@
                         <span>Pilih Berkas Spreadsheet Excel / CSV</span>
                         <span class="text-[10px] text-slate-400 font-normal ml-1">(.xlsx, .xls, .csv maks 10MB)</span>
                     </label>
-                    <input type="file" wire:model="employeeStatusFile" accept=".xlsx,.xls,.csv"
-                        class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
+                    <div x-data="{ isDragging: false }"
+                         @dragenter.prevent="isDragging = true"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop="isDragging = false"
+                         :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                         class="relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-200 cursor-pointer group">
+                        <input id="employeeStatusFileInput"
+                               type="file"
+                               wire:model="employeeStatusFile"
+                               accept=".xlsx,.xls,.csv"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                        <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                            <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-emerald-50 text-emerald-600 group-hover:scale-110'"
+                                 class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <p class="text-xs text-slate-700 font-semibold mt-1">
+                                <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau seret Excel / CSV ke sini
+                            </p>
+                            <p class="text-[11px] text-slate-500">
+                                Berkas rekap data kepegawaian (Maksimal 10 MB)
+                            </p>
+                        </div>
+                    </div>
                     @error('employeeStatusFile')
                         <span class="text-rose-600 text-[11px] font-semibold block">{{ $message }}</span>
                     @enderror
@@ -1723,14 +1913,55 @@
 
                 <!-- Input Berkas PDF -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Pilih File PDF * <span class="text-slate-400 font-normal">(Maks. 10MB)</span></label>
-                    <input wire:model="uploadDocFile" type="file" accept="application/pdf"
-                        class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover file:cursor-pointer cursor-pointer text-xs">
+                    <label class="block font-semibold text-slate-700 mb-1">Pilih File PDF Dokumen Legalitas * <span class="text-slate-400 font-normal">(Maks. 10MB)</span></label>
+
+                    <div x-data="{ isDragging: false }"
+                         @dragenter.prevent="isDragging = true"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop="isDragging = false"
+                         :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                         class="relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-200 cursor-pointer group">
+                        <input id="uploadDocFileInput"
+                               wire:model="uploadDocFile"
+                               type="file"
+                               accept="application/pdf"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                        <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                            <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-sky-50 text-sky-600 group-hover:scale-110'"
+                                 class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                            </div>
+                            <p class="text-xs text-slate-700 font-semibold mt-1">
+                                <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file</span> atau seret PDF dokumen ke area ini
+                            </p>
+                            <p class="text-[11px] text-slate-500">
+                                Berkas resmi SK / Legalitas PDF (Maksimal 10 MB)
+                            </p>
+                        </div>
+                    </div>
+
                     @error('uploadDocFile')
                         <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
                     @enderror
-                    <div wire:loading wire:target="uploadDocFile" class="text-xs text-gov-navy font-semibold mt-1">
-                        Sedang mengunggah berkas ke buffer...
+
+                    <div wire:loading.inline-flex wire:target="uploadDocFile" style="display: none;"
+                        class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap mt-2">
+                        <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap leading-none">Mengunggah berkas ke buffer...</span>
                     </div>
                 </div>
 
@@ -2155,16 +2386,47 @@
                 <!-- Bukti Transaksi / Nota -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Unggah Nota / Kwitansi / Bukti Transfer (Opsional)</label>
-                    <input id="financeReceiptFilesInput" wire:model="financeReceiptFiles" type="file" multiple accept="image/*,.pdf"
-                        class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-gov-navy hover:file:bg-slate-200 cursor-pointer">
-                    <p class="text-[11px] text-slate-500 mt-1">Dapat memilih lebih dari 1 file sekaligus (JPG, PNG, WEBP, atau PDF, maks. 5MB per file). Gambar otomatis dikonversi ke WebP tajam & ringan.</p>
+                    <div x-data="{ isDragging: false }"
+                         @dragenter.prevent="isDragging = true"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop="isDragging = false"
+                         :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                         class="relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-200 cursor-pointer group">
+                        <input id="financeReceiptFilesInput"
+                               wire:model="financeReceiptFiles"
+                               type="file"
+                               multiple
+                               accept="image/*,.pdf"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
 
-                    <div wire:loading wire:target="financeReceiptFiles" class="text-xs text-sky-600 font-medium mt-1.5 flex items-center gap-1.5">
-                        <svg class="animate-spin w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                            <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-sky-50 text-sky-600 group-hover:scale-110'"
+                                 class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-xs text-slate-700 font-semibold mt-1">
+                                <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file</span> atau seret bukti nota ke sini
+                            </p>
+                            <p class="text-[11px] text-slate-500">
+                                Dapat memilih lebih dari 1 file sekaligus (JPG, PNG, WEBP, atau PDF, maks. 5MB per file). Gambar otomatis dikonversi ke WebP tajam & ringan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div wire:loading.inline-flex wire:target="financeReceiptFiles" style="display: none;"
+                        class="inline-flex flex-row items-center gap-2 text-xs font-medium text-sky-700 bg-sky-50 px-3 py-1.5 rounded-lg border border-sky-200 shrink-0 whitespace-nowrap mt-2">
+                        <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-sky-600 inline-block" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>Sedang mengunggah berkas bukti...</span>
+                        <span class="whitespace-nowrap leading-none">Sedang mengunggah berkas bukti...</span>
                     </div>
 
                     @error('financeReceiptFiles') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
@@ -2649,19 +2911,51 @@
                         dengan pemisah koma atau tab maksimal 2 MB.</p>
                 </div>
 
-                <div
-                    class="border-2 border-dashed border-gov-border rounded-xl p-6 text-center space-y-2 bg-slate-50/50 hover:bg-slate-50 transition">
-                    <i data-lucide="upload-cloud" class="w-8 h-8 text-gov-navy mx-auto"></i>
-                    <div class="text-xs text-slate-600">
-                        <label for="importFinanceFile"
-                            class="font-bold text-gov-navy hover:underline cursor-pointer">Pilih file</label> atau tarik
-                        file ke area ini
+                <div x-data="{ isDragging: false }"
+                     :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                     class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                    
+                    <!-- Invisible Full-Surface Native File Input -->
+                    <input id="importFinanceFile"
+                           type="file"
+                           wire:model="importFinanceFile"
+                           accept=".csv,.txt"
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                           @dragenter="isDragging = true"
+                           @dragover.prevent="isDragging = true"
+                           @dragleave="isDragging = false"
+                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                    <div class="pointer-events-none space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                             :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                            <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                <path d="M12 12v9"/>
+                                <path d="m16 16-4-4-4 4"/>
+                            </svg>
+                        </div>
+                        <div class="text-xs text-slate-600">
+                            <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                            <span>atau seret & lepas berkas ke area ini</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Format: CSV / TXT (Maksimal 2 MB)</p>
+                        @if($importFinanceFile)
+                            <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
+                                <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>{{ $importFinanceFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                            </div>
+                        @endif
+                        <template x-if="isDragging">
+                            <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                Lepaskan berkas di sini untuk mengunggah
+                            </div>
+                        </template>
                     </div>
-                    <input id="importFinanceFile" type="file" wire:model="importFinanceFile" accept=".csv,.txt"
-                        class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer">
-                    @error('importFinanceFile') <span
-                    class="text-xs font-medium text-rose-600 block">{{ $message }}</span> @enderror
                 </div>
+                @error('importFinanceFile')
+                    <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
+                @enderror
 
                 <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showFinanceImportModal = false"
@@ -2917,27 +3211,54 @@
 
             <!-- Step 1: Upload Dropzone (When preview is not yet generated) -->
             @if(!$importPotonganPreview)
-                <div class="space-y-3">
-                    <div class="border-2 border-dashed border-gov-border rounded-xl p-6 text-center space-y-2 bg-slate-50/50 hover:bg-slate-50 transition relative">
+                <div class="space-y-3" x-data="{ isDragging: false }">
+                    <div :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                         class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                        
+                        <!-- Invisible Full-Surface Native File Input -->
+                        <input id="potonganFileInput"
+                               type="file"
+                               wire:model.live="potonganFile"
+                               accept=".xlsx,.xls"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
                         <!-- Loading Overlay during file upload & parsing -->
-                        <div wire:loading.flex wire:target="potonganFile" class="absolute inset-0 bg-white/80 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-10">
-                            <svg class="w-7 h-7 animate-spin text-gov-navy" viewBox="0 0 24 24" fill="none">
+                        <div wire:loading.flex wire:target="potonganFile" class="absolute inset-0 bg-white/90 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-20">
+                            <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="text-xs font-semibold text-slate-700">Menganalisis isi berkas Excel...</span>
+                            <span class="text-xs font-semibold text-slate-700 whitespace-nowrap">Menganalisis isi berkas Excel...</span>
                         </div>
 
-                        <i data-lucide="upload-cloud" class="w-9 h-9 text-gov-navy mx-auto"></i>
-                        <div class="text-xs text-slate-600">
-                            <label for="potonganFileInput" class="font-bold text-gov-navy hover:underline cursor-pointer">
-                                Klik untuk memilih berkas
-                            </label>
-                            <span>atau seret berkas Excel ke area ini</span>
+                        <!-- Dropzone Visual Elements (pointer-events-none prevents child drag interference) -->
+                        <div class="pointer-events-none space-y-2">
+                            <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                                 :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                                <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                    <path d="M12 12v9"/>
+                                    <path d="m16 16-4-4-4 4"/>
+                                </svg>
+                            </div>
+
+                            <div class="text-xs text-slate-600">
+                                <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                                <span>atau seret & lepas berkas Excel ke area ini</span>
+                            </div>
+
+                            <p class="text-[11px] text-slate-400">Format: Rekapitulasi Potongan Masjid 2.0.xlsx / .xls (Maksimal 15 MB)</p>
+
+                            <template x-if="isDragging">
+                                <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                    Lepaskan berkas di sini untuk mengunggah
+                                </div>
+                            </template>
                         </div>
-                        <p class="text-[11px] text-slate-400">Format: Rekapitulasi Potongan Masjid 2.0.xlsx / .xls (Maksimal 15 MB)</p>
-                        <input id="potonganFileInput" type="file" wire:model.live="potonganFile" accept=".xlsx,.xls"
-                            class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer">
                     </div>
                     @error('potonganFile')
                         <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
@@ -3408,12 +3729,25 @@
                                 @endif
                             </div>
                             <div class="min-w-0 flex-1">
-                                <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <label class="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition overflow-hidden"
+                                       x-data="{ isDragging: false }"
+                                       @dragenter.prevent="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave.prevent="isDragging = false"
+                                       @drop="isDragging = false"
+                                       :class="isDragging ? 'ring-2 ring-gov-navy border-gov-navy bg-sky-50 text-gov-navy' : ''">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <span>{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto Ustadz' : 'Unggah Foto Ustadz' }}</span>
-                                    <input type="file" wire:model="ustadzPhoto" accept="image/png,image/jpeg,image/webp" class="sr-only">
+                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : '{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto / Seret' : 'Unggah Foto / Seret' }}'">{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto Ustadz' : 'Unggah Foto Ustadz' }}</span>
+                                    <input type="file"
+                                           wire:model="ustadzPhoto"
+                                           accept="image/png,image/jpeg,image/webp"
+                                           @dragenter="isDragging = true"
+                                           @dragover.prevent="isDragging = true"
+                                           @dragleave="isDragging = false"
+                                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                                 </label>
                                 <p class="text-[11px] text-slate-500 mt-0.5 truncate">Format JPG, PNG, WEBP (maks. 3MB). Foto persegi/proporsional direkomendasikan.</p>
                                 <div wire:loading.inline-flex wire:target="ustadzPhoto" style="display: none;"
@@ -3624,38 +3958,64 @@
                 <!-- Upload Foto Baru -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Unggah Foto Dokumentasi</label>
-                    <div class="p-3 border-2 border-dashed border-slate-200 hover:border-gov-navy/50 rounded-lg bg-slate-50/50 text-center transition">
-                        <input type="file" wire:model="galleryUploadedPhotos" multiple accept="image/*" id="galleryPhotosInput" class="hidden"
-                            @change="
-                                const maxBytesPerFile = 30 * 1024 * 1024;
-                                const maxBatchBytes = 60 * 1024 * 1024;
-                                const files = $el.files ? Array.from($el.files) : [];
-                                const oversized = files.filter(f => f.size > maxBytesPerFile);
-                                const totalBytes = files.reduce((acc, f) => acc + f.size, 0);
+                    <div x-data="{ isDragging: false }"
+                         :class="isDragging ? 'border-gov-navy bg-blue-50/60 ring-2 ring-gov-navy/20' : 'border-slate-200 hover:border-gov-navy/50 bg-slate-50/50'"
+                         class="p-5 border-2 border-dashed rounded-lg text-center transition relative overflow-hidden group">
+                        
+                        <!-- Invisible Full-Surface Native File Input -->
+                        <input type="file"
+                               wire:model="galleryUploadedPhotos"
+                               multiple
+                               accept="image/*"
+                               id="galleryPhotosInput"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               @change="
+                                   const maxBytesPerFile = 30 * 1024 * 1024;
+                                   const maxBatchBytes = 60 * 1024 * 1024;
+                                   const files = $el.files ? Array.from($el.files) : [];
+                                   const oversized = files.filter(f => f.size > maxBytesPerFile);
+                                   const totalBytes = files.reduce((acc, f) => acc + f.size, 0);
 
-                                if (oversized.length > 0) {
-                                    const details = oversized.map(f => f.name + ' (' + (f.size / (1024 * 1024)).toFixed(1) + ' MB)').join(', ');
-                                    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Ukuran foto melebihi batas maksimal 30 MB per file: ' + details + '. Silakan pilih foto dengan ukuran maksimal 30 MB.' } }));
-                                    $event.stopImmediatePropagation();
-                                    $el.value = '';
-                                    return;
-                                }
+                                   if (oversized.length > 0) {
+                                       const details = oversized.map(f => f.name + ' (' + (f.size / (1024 * 1024)).toFixed(1) + ' MB)').join(', ');
+                                       window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Ukuran foto melebihi batas maksimal 30 MB per file: ' + details + '. Silakan pilih foto dengan ukuran maksimal 30 MB.' } }));
+                                       $event.stopImmediatePropagation();
+                                       $el.value = '';
+                                       return;
+                                   }
 
-                                if (totalBytes > maxBatchBytes) {
-                                    const totalMb = (totalBytes / (1024 * 1024)).toFixed(1);
-                                    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Total ukuran foto yang dipilih (' + totalMb + ' MB) melebihi batas muatan pengiriman (60 MB). Silakan unggah bertahap 2-3 foto sekaligus.' } }));
-                                    $event.stopImmediatePropagation();
-                                    $el.value = '';
-                                    return;
-                                }
-                            ">
-                        <label for="galleryPhotosInput" class="cursor-pointer block space-y-1">
-                            <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mx-auto"></i>
+                                   if (totalBytes > maxBatchBytes) {
+                                       const totalMb = (totalBytes / (1024 * 1024)).toFixed(1);
+                                       window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Total ukuran foto yang dipilih (' + totalMb + ' MB) melebihi batas muatan pengiriman (60 MB). Silakan unggah bertahap 2-3 foto sekaligus.' } }));
+                                       $event.stopImmediatePropagation();
+                                       $el.value = '';
+                                       return;
+                                   }
+                               ">
+
+                        <div class="pointer-events-none space-y-1.5">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-500 transition group-hover:scale-105"
+                                 :class="isDragging ? 'scale-110 bg-gov-navy/10 text-gov-navy' : ''">
+                                <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                    <path d="M12 12v9"/>
+                                    <path d="m16 16-4-4-4 4"/>
+                                </svg>
+                            </div>
                             <div class="text-slate-600 font-medium text-[11px]">
-                                <span class="text-gov-navy font-bold hover:underline">Pilih file foto</span> atau drag & drop ke sini
+                                <span class="text-gov-navy font-bold group-hover:underline">Pilih file foto</span> atau drag & drop ke sini
                             </div>
                             <p class="text-[10px] text-slate-400">Format: JPG, PNG, WEBP (Bisa pilih beberapa foto sekaligus, maks 30MB/foto, maks total 60MB/batch). Otomatis dikonversi ke WebP tajam & ringan.</p>
-                        </label>
+                            <template x-if="isDragging">
+                                <div class="text-xs font-bold text-blue-700 animate-pulse pt-0.5">
+                                    Lepaskan foto di sini untuk mengunggah
+                                </div>
+                            </template>
+                        </div>
                     </div>
                     <div wire:loading.inline-flex wire:target="galleryUploadedPhotos" style="display: none;" class="items-center gap-1.5 text-xs text-amber-700 pt-1.5">
                         <svg class="w-3.5 h-3.5 animate-spin text-amber-600 inline-block" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>

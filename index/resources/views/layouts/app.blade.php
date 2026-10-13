@@ -142,6 +142,14 @@
                 if (window.createLucideIcons) window.createLucideIcons();
             });
 
+            // Global drag & drop guard: mencegah browser membuka atau mengunduh file mentah secara tak sengaja jika di-drop di luar dropzone
+            ['dragover', 'drop'].forEach(eventType => {
+                window.addEventListener(eventType, function(e) {
+                    if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'file') return;
+                    e.preventDefault();
+                }, false);
+            });
+
             window.copyTextToClipboard = function(text, onSuccess, onError) {
                 if (!text) {
                     if (onError) onError('Tidak ada teks untuk disalin');

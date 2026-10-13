@@ -157,18 +157,51 @@
                         @endif
                     </div>
 
-                    <input type="file" wire:model="logo_file" accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                           @change="
-                               const file = $event.target.files[0];
-                               if (file) {
-                                   const reader = new FileReader();
-                                   reader.onload = (e) => {
-                                       logo_url = e.target.result;
-                                   };
-                                   reader.readAsDataURL(file);
-                               }
-                           "
-                           class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gov-navy file:text-white hover:file:bg-gov-navyHover cursor-pointer">
+                    <!-- Dropzone Logo -->
+                    <div x-data="{ isDragging: false }"
+                         @dragenter.prevent="isDragging = true"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop="isDragging = false"
+                         :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                         class="relative border-2 border-dashed rounded-xl p-3.5 text-center transition-all duration-200 cursor-pointer group">
+                        <input id="mosqueLogoFileInput"
+                               type="file"
+                               wire:model="logo_file"
+                               accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               @change="
+                                   const file = $event.target.files[0];
+                                   if (file) {
+                                       const reader = new FileReader();
+                                       reader.onload = (e) => {
+                                           logo_url = e.target.result;
+                                       };
+                                       reader.readAsDataURL(file);
+                                   }
+                               "
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                        <div class="pointer-events-none flex flex-col items-center justify-center gap-1">
+                            <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-slate-100 text-gov-navy group-hover:scale-110'"
+                                 class="w-8 h-8 rounded-lg flex items-center justify-center transition-transform shadow-2xs">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <p class="text-xs text-slate-700 font-semibold mt-0.5">
+                                <span class="text-gov-navy underline underline-offset-2">Klik untuk pilih berkas</span> atau seret logo ke sini
+                            </p>
+                            <p class="text-[10px] text-slate-400">
+                                Format PNG, SVG, atau WebP transparan (Maks. 3 MB)
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="flex flex-wrap items-center gap-2 pt-1">
                         <button type="button" wire:click="useDefaultMosqueLogo"
