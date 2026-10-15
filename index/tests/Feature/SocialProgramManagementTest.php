@@ -548,6 +548,30 @@ class SocialProgramManagementTest extends TestCase
             'monthly_amount' => 200000,
         ]);
     }
+
+    public function test_admin_can_create_program_santunan_dhuafa_with_dhuafa_category(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->call('openCreateSocialProgram')
+            ->set('socialProgramName', 'Program Santunan Dhuafa')
+            ->set('socialProgramCategory', 'dhuafa')
+            ->set('socialProgramPeriodType', 'bulanan')
+            ->set('socialProgramStatus', 'AKTIF')
+            ->set('socialProgramIcon', 'hand-heart')
+            ->set('socialProgramDescription', 'Penyaluran bantuan santunan dhuafa')
+            ->call('saveSocialProgram')
+            ->assertHasNoErrors()
+            ->assertDispatched('close-social-program-modal');
+
+        $this->assertDatabaseHas('social_programs', [
+            'name' => 'Program Santunan Dhuafa',
+            'category' => 'dhuafa',
+            'icon' => 'hand-heart',
+            'status' => 'AKTIF',
+        ]);
+    }
 }
 
 

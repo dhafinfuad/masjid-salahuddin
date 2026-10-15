@@ -487,6 +487,7 @@
                                             @php
                                                 $iconName = 'heart-handshake';
                                                 if (stripos($prog->name, 'yatim') !== false) $iconName = 'heart';
+                                                elseif (stripos($prog->name, 'dhuafa') !== false) $iconName = 'hand-heart';
                                                 elseif (stripos($prog->name, 'infaq') !== false) $iconName = 'wallet';
                                                 elseif (stripos($prog->name, 'zakat') !== false) $iconName = 'coins';
                                                 elseif (stripos($prog->name, 'qurban') !== false) $iconName = 'scale';

@@ -3548,7 +3548,8 @@
                         <label class="block font-semibold text-slate-700 mb-1">Kategori Program *</label>
                         <select wire:model="socialProgramCategory"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="yatim">Santunan Yatim & Dhuafa</option>
+                            <option value="yatim">Santunan Anak Yatim</option>
+                            <option value="dhuafa">Santunan Dhuafa</option>
                             <option value="infaq">Infaq Pegawai</option>
                             <option value="zakat">Zakat Mal</option>
                             <option value="qurban">Tabungan Qurban</option>

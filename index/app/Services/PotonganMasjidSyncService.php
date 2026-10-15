@@ -80,6 +80,13 @@ class PotonganMasjidSyncService
         'program santunan anak yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
         'santunan yatim' => ['id' => 1, 'name' => 'Program Santunan Anak Yatim'],
 
+        // Program Santunan Dhuafa (ID: 5)
+        'santunan dhuafa' => ['id' => 5, 'name' => 'Program Santunan Dhuafa'],
+        'dhuafa' => ['id' => 5, 'name' => 'Program Santunan Dhuafa'],
+        'pot dhuafa' => ['id' => 5, 'name' => 'Program Santunan Dhuafa'],
+        'potongan dhuafa' => ['id' => 5, 'name' => 'Program Santunan Dhuafa'],
+        'program santunan dhuafa' => ['id' => 5, 'name' => 'Program Santunan Dhuafa'],
+
         // Tabungan Qurban (ID: 4)
         'tabungan qurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],
         'qurban' => ['id' => 4, 'name' => 'Tabungan Qurban'],

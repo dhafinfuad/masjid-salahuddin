@@ -24,6 +24,15 @@ class SocialProgramSeeder extends Seeder
                 'icon' => 'heart-handshake',
             ],
             [
+                'name' => 'Program Santunan Dhuafa',
+                'slug' => 'santunan-dhuafa',
+                'category' => 'dhuafa',
+                'description' => 'Penyaluran bantuan santunan bagi kaum dhuafa yang diselenggarakan secara berkala oleh takmir KPP Madya Malang.',
+                'period_type' => 'bulanan',
+                'status' => 'AKTIF',
+                'icon' => 'hand-heart',
+            ],
+            [
                 'name' => 'Infaq Rutin',
                 'slug' => 'infaq-rutin',
                 'category' => 'infaq',

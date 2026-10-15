@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('category')->default('sosial'); // yatim, infaq, zakat, qurban, sosial
+            $table->string('category')->default('sosial'); // yatim, dhuafa, infaq, zakat, qurban, sosial
             $table->text('description')->nullable();
             $table->string('period_type')->default('bulanan'); // bulanan, tahunan, insidental
             $table->string('status')->default('AKTIF'); // AKTIF, SELESAI, DITUTUP
