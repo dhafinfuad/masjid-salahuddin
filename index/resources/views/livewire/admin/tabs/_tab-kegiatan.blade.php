@@ -51,7 +51,7 @@
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                                 </button>
                                 <div x-show="openExport" x-cloak
-                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
+                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
                                     <a :href="'{{ route('admin.kajian.export-excel') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
                                         class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
                                         <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
@@ -93,7 +93,7 @@
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                                 </button>
                                 <div x-show="openExport" x-cloak
-                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
+                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
                                     <a href="{{ route('admin.agenda.export-excel') }}"
                                         class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
                                         <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
@@ -291,7 +291,7 @@
                                                     <span class="inline-flex text-[11px] text-slate-500">Pekanan</span>
                                                 @endif
                                                 @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800" title="Notula kajian tersimpan">
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200" title="Notula kajian tersimpan">
                                                         <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                         Notula Ada
                                                     </span>
@@ -343,12 +343,12 @@
                                                 <!-- Dropdown Menu Aksi -->
                                                 <div x-show="openMenu" 
                                                     x-cloak
-                                                    x-transition:enter="transition ease-out duration-100"
-                                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                                    x-transition:enter="transition ease-out duration-50"
+                                                    x-transition:enter-start="transform opacity-0 scale-98"
                                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                                    x-transition:leave="transition ease-in duration-75"
+                                                    x-transition:leave="transition ease-in duration-50"
                                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                                    x-transition:leave-end="transform opacity-0 scale-98"
                                                     @click.outside="openMenu = false"
                                                     @keydown.escape.window="openMenu = false"
                                                     class="absolute right-3 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -500,7 +500,7 @@
                                             <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekanan</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula kajian tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none" title="Notula kajian tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
@@ -531,12 +531,12 @@
                                         <!-- Dropdown Menu Aksi Mobile -->
                                         <div x-show="openMenu" 
                                             x-cloak
-                                            x-transition:enter="transition ease-out duration-100"
-                                            x-transition:enter-start="transform opacity-0 scale-95"
+                                            x-transition:enter="transition ease-out duration-50"
+                                            x-transition:enter-start="transform opacity-0 scale-98"
                                             x-transition:enter-end="transform opacity-100 scale-100"
-                                            x-transition:leave="transition ease-in duration-75"
+                                            x-transition:leave="transition ease-in duration-50"
                                             x-transition:leave-start="transform opacity-100 scale-100"
-                                            x-transition:leave-end="transform opacity-0 scale-95"
+                                            x-transition:leave-end="transform opacity-0 scale-98"
                                             @click.outside="openMenu = false"
                                             @keydown.escape.window="openMenu = false"
                                             class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -763,13 +763,13 @@
                                                     </button>
                                                 @else
                                                     <span
-                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300' }}">
+                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
                                                         {{ $k->is_holiday_disabled ? 'Libur' : 'Aktif' }}
                                                     </span>
                                                 @endif
 
                                                 @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0" title="Notula khutbah tersimpan">
+                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none shrink-0" title="Notula khutbah tersimpan">
                                                         <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                         Notula Ada
                                                     </span>
@@ -827,12 +827,12 @@
                                                 <!-- Dropdown Menu Aksi -->
                                                 <div x-show="openMenu" 
                                                     x-cloak
-                                                    x-transition:enter="transition ease-out duration-100"
-                                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                                    x-transition:enter="transition ease-out duration-50"
+                                                    x-transition:enter-start="transform opacity-0 scale-98"
                                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                                    x-transition:leave="transition ease-in duration-75"
+                                                    x-transition:leave="transition ease-in duration-50"
                                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                                    x-transition:leave-end="transform opacity-0 scale-98"
                                                     @click.outside="openMenu = false"
                                                     @keydown.escape.window="openMenu = false"
                                                     class="absolute right-3 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -984,7 +984,7 @@
                                                 class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">Aktif</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none" title="Notula khutbah tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none" title="Notula khutbah tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
@@ -1014,12 +1014,12 @@
                                             <!-- Dropdown Menu Aksi Mobile -->
                                             <div x-show="openMenu" 
                                                 x-cloak
-                                                x-transition:enter="transition ease-out duration-100"
-                                                x-transition:enter-start="transform opacity-0 scale-95"
+                                                x-transition:enter="transition ease-out duration-50"
+                                                x-transition:enter-start="transform opacity-0 scale-98"
                                                 x-transition:enter-end="transform opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave="transition ease-in duration-50"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
-                                                x-transition:leave-end="transform opacity-0 scale-95"
+                                                x-transition:leave-end="transform opacity-0 scale-98"
                                                 @click.outside="openMenu = false"
                                                 @keydown.escape.window="openMenu = false"
                                                 class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -1300,7 +1300,7 @@
                                             @else
                                                 <span
                                                     class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
-                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800') }}">
+                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') }}">
                                                     {{ $agenda->status }}
                                                 </span>
                                             @endif
@@ -1321,12 +1321,12 @@
                                                 <!-- Dropdown Menu Aksi -->
                                                 <div x-show="openMenu" 
                                                     x-cloak
-                                                    x-transition:enter="transition ease-out duration-100"
-                                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                                    x-transition:enter="transition ease-out duration-50"
+                                                    x-transition:enter-start="transform opacity-0 scale-98"
                                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                                    x-transition:leave="transition ease-in duration-75"
+                                                    x-transition:leave="transition ease-in duration-50"
                                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                                    x-transition:leave-end="transform opacity-0 scale-98"
                                                     @click.outside="openMenu = false"
                                                     @keydown.escape.window="openMenu = false"
                                                     class="absolute right-3 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -1411,7 +1411,7 @@
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <span
                                             class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
-                                            {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800') }}">
+                                            {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') }}">
                                             {{ $agenda->status }}
                                         </span>
                                         @if(!empty($agenda->youtube_url))
@@ -1439,12 +1439,12 @@
                                             <!-- Dropdown Menu Aksi Mobile -->
                                             <div x-show="openMenu" 
                                                 x-cloak
-                                                x-transition:enter="transition ease-out duration-100"
-                                                x-transition:enter-start="transform opacity-0 scale-95"
+                                                x-transition:enter="transition ease-out duration-50"
+                                                x-transition:enter-start="transform opacity-0 scale-98"
                                                 x-transition:enter-end="transform opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave="transition ease-in duration-50"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
-                                                x-transition:leave-end="transform opacity-0 scale-95"
+                                                x-transition:leave-end="transform opacity-0 scale-98"
                                                 @click.outside="openMenu = false"
                                                 @keydown.escape.window="openMenu = false"
                                                 class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
@@ -1651,7 +1651,7 @@
                                             </button>
                                             <button type="button" wire:click="setSingleOdojStatus({{ $entry->id }}, 'Belum')"
                                                 wire:loading.attr="disabled"
-                                                class="group/undo px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 hover:bg-rose-50 text-emerald-800 hover:text-rose-700 border border-emerald-200 hover:border-rose-200 transition-all shadow-2xs cursor-pointer disabled:opacity-50">
+                                                class="group/undo px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 hover:bg-rose-50 text-emerald-700 hover:text-rose-700 border border-emerald-200 hover:border-rose-200 transition-all shadow-2xs cursor-pointer disabled:opacity-50">
                                                 <span class="group-hover/undo:hidden inline-flex items-center gap-1">
                                                     <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd"
@@ -1664,7 +1664,7 @@
                                             </button>
                                         @else
                                             <span
-                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 Sudah
                                             </span>
                                         @endif

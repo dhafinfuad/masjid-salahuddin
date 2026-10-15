@@ -197,7 +197,7 @@
                                                     Libur
                                                 </span>
                                             @elseif($isFriday)
-                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-emerald-100 text-emerald-800 border-emerald-300"
+                                                <span class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 bg-emerald-50 text-emerald-700 border-emerald-200"
                                                       style="width: 72px; min-width: 72px; max-width: 72px;">
                                                     Pekan {{ $row['week_number'] }}
                                                 </span>
@@ -404,7 +404,7 @@
                                                 Libur
                                             </span>
                                         @elseif($isFriday)
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-100 text-emerald-800 border-emerald-300">
+                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">
                                                 Pekan {{ $row['week_number'] }}
                                             </span>
                                         @else

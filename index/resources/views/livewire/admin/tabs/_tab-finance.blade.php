@@ -37,7 +37,7 @@
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                             </button>
                             <div x-show="openFinanceExport" x-cloak
-                                class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
+                                class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
                                 <a href="{{ route('admin.finance.export-excel') }}"
                                     class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
                                     <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
@@ -245,17 +245,17 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0" :class="open ? 'rotate-180' : ''"></i>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-75 shrink-0" :class="open ? 'rotate-180' : ''"></i>
                                     </button>
 
-                                        <!-- Dropdown Checklist Panel -->
+                                        <!-- Dropdown Checklist Panel (Animasi Sangat Cepat) -->
                                         <div x-show="open" @click.outside="open = false" x-cloak
-                                            x-transition:enter="transition ease-out duration-100"
-                                            x-transition:enter-start="transform opacity-0 scale-95"
+                                            x-transition:enter="transition ease-out duration-50"
+                                            x-transition:enter-start="transform opacity-0 scale-98"
                                             x-transition:enter-end="transform opacity-100 scale-100"
-                                            x-transition:leave="transition ease-in duration-75"
+                                            x-transition:leave="transition ease-in duration-50"
                                             x-transition:leave-start="transform opacity-100 scale-100"
-                                            x-transition:leave-end="transform opacity-0 scale-95"
+                                            x-transition:leave-end="transform opacity-0 scale-98"
                                             class="absolute left-0 mt-1.5 w-60 max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-xl border border-gov-border p-2.5 z-40 space-y-2 text-xs">
                                         
                                         <!-- Header Actions -->
@@ -400,7 +400,7 @@
                                                 <div class="mb-2">
                                                     @if($fin->type === 'pemasukan')
                                                         <span
-                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none shrink-0"
+                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none shrink-0"
                                                             style="width: 94px; min-width: 94px; max-width: 94px;">
                                                             Pemasukan
                                                         </span>
@@ -523,7 +523,7 @@
 
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     @if($fin->type === 'pemasukan')
-                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none">
+                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
                                             Pemasukan
                                         </span>
                                     @else

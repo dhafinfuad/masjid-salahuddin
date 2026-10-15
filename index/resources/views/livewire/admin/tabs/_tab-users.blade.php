@@ -243,7 +243,7 @@
                             @php
                                 $badgeColor = match ($u->role) {
                                     'Master', 'admin' => 'bg-purple-100 text-purple-800 border-purple-300',
-                                    'Ketua' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                                    'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                                     'Sekretaris', 'operator' => 'bg-blue-100 text-blue-800 border-blue-300',
                                     'Bendahara' => 'bg-amber-100 text-amber-800 border-amber-300',
                                     default => 'bg-slate-100 text-slate-700 border-slate-300',
@@ -363,7 +363,7 @@
                 @php
                     $badgeColor = match ($u->role) {
                         'Master', 'admin' => 'bg-purple-100 text-purple-800 border-purple-300',
-                        'Ketua' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                        'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
                         'Sekretaris', 'operator' => 'bg-blue-100 text-blue-800 border-blue-300',
                         'Bendahara' => 'bg-amber-100 text-amber-800 border-amber-300',
                         default => 'bg-slate-100 text-slate-700 border-slate-300',

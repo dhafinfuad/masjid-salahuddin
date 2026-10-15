@@ -68,8 +68,7 @@ Use the following color combinations based on semantic meaning:
 
 | Status | Background | Text | Border | Usage |
 |:---|:---|:---|:---|:---|
-| **Success / Hadir / Aktif** | `bg-emerald-100` | `text-emerald-800` | `border-emerald-300` | Hadir, Sukses, Selesai |
-| **Success (light)** | `bg-emerald-50` | `text-emerald-700` | `border-emerald-200` | Aktif, Pendaftaran Dibuka |
+| **Success / Hadir / Aktif** | `bg-emerald-50` | `text-emerald-700` | `border-emerald-200` | Hadir, Sukses, Selesai, Aktif |
 | **Danger / Batal / Libur** | `bg-rose-100` | `text-rose-800` | `border-rose-300` | Batal Hadir, Diliburkan |
 | **Danger (light)** | `bg-rose-50` | `text-rose-700` | `border-rose-200` | Kuota Penuh, Nonaktif |
 | **Warning / Pending / Belum Hadir** | `bg-amber-100` | `text-amber-800` | `border-amber-300` | Belum Hadir, Pending |
@@ -86,7 +85,7 @@ For badges that change state dynamically via Alpine.js, use `:class` bindings wi
 ```html
 <span class="inline-flex items-center justify-center rounded-full h-[20px] px-2.5 text-[11px] leading-none font-semibold border transition-colors"
       :class="{
-          'bg-emerald-100 text-emerald-800 border-emerald-300': statusBadge === 'Hadir',
+          'bg-emerald-50 text-emerald-700 border-emerald-200': statusBadge === 'Hadir',
           'bg-rose-100 text-rose-800 border-rose-300': statusBadge === 'Batal Hadir',
           'bg-amber-100 text-amber-800 border-amber-300': statusBadge === 'Belum Hadir'
       }"
@@ -101,7 +100,7 @@ For badges that change state dynamically via Alpine.js, use `:class` bindings wi
 
 ### Static Status Badge
 ```html
-<span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 leading-none">
+<span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
     Hadir
 </span>
 ```

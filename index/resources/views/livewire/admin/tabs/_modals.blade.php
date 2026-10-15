@@ -387,10 +387,10 @@
 
                             <!-- Dropdown Saran Database Ustadz -->
                             <div x-show="openSuggestions && filteredUstadz.length > 0"
-                                x-transition:enter="transition ease-out duration-100"
+                                x-transition:enter="transition ease-out duration-50"
                                 x-transition:enter-start="opacity-0 translate-y-1"
                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave="transition ease-in duration-50"
                                 x-transition:leave-start="opacity-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 translate-y-1"
                                 class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
@@ -573,10 +573,10 @@
 
                                 <!-- Dropdown Saran Khatib -->
                                 <div x-show="openKhatibSuggestions && filteredKhatib.length > 0"
-                                    x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter="transition ease-out duration-50"
                                     x-transition:enter-start="opacity-0 translate-y-1"
                                     x-transition:enter-end="opacity-100 translate-y-0"
-                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave="transition ease-in duration-50"
                                     x-transition:leave-start="opacity-100 translate-y-0"
                                     x-transition:leave-end="opacity-0 translate-y-1"
                                     class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
@@ -2138,8 +2138,8 @@
             <!-- Transaction Details Summary Card -->
             <div class="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none"
-                          :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-rose-100 text-rose-800 border-rose-300'"
+                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none"
+                          :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-800 border-rose-300'"
                           x-text="receiptPreviewModal.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'"></span>
                     <span class="text-slate-500 font-medium" x-text="receiptPreviewModal.date"></span>
                 </div>
@@ -3510,9 +3510,21 @@
     <!-- ========================================== -->
     <div x-show="showPrintPernyataanModal" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el)) showPrintPernyataanModal = false"
+        x-transition:enter="transition ease-out duration-75"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-50"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;" @keydown.escape.window="showPrintPernyataanModal = false">
-        <div class="relative bg-white rounded-2xl max-w-xl w-full p-6 text-left shadow-2xl border border-gov-border transform transition-all space-y-4"
+        <div class="relative bg-white rounded-2xl max-w-xl w-full p-6 text-left shadow-2xl border border-gov-border space-y-4"
+            x-transition:enter="transition ease-out duration-75"
+            x-transition:enter-start="opacity-0 scale-98"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-50"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-98"
             @click.stop>
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -3573,7 +3585,7 @@
                 <div x-show="printPernyataanMode === 'single'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Nama Pegawai (dari Riwayat) *</label>
                     <select x-model="printPernyataanEmployeeName"
-                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
                         <option value="">-- Pilih Nama Pegawai yang Ada di Rekapitulasi --</option>
                         @if(isset($distinctParticipantNames))
                             @foreach($distinctParticipantNames as $pName)
@@ -3588,7 +3600,7 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Pilih Pegawai Baru dari Master (Atau Kosongkan untuk Blanko) *</label>
                         <select x-model="printPernyataanEmployeeId"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
                             <option value="">-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --</option>
                             @if(isset($allEmployeesForPrint))
                                 @foreach($allEmployeesForPrint as $empItem)
@@ -3612,7 +3624,7 @@
                 <div x-show="printPernyataanMode !== 'new'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Tahun Riwayat Potongan *</label>
                     <select x-model="printPernyataanYear"
-                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
                         @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
                             <option value="{{ $y }}">Tahun {{ $y }}</option>
                         @endfor
@@ -3637,7 +3649,7 @@
                             <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
                             <div class="grid grid-cols-2 gap-1.5">
                                 <select x-model="printPernyataanEffectiveMonth"
-                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
                                     <option value="">-- Kosongkan --</option>
                                     @php
                                         $daftarBulan = [
@@ -3650,7 +3662,7 @@
                                     @endforeach
                                 </select>
                                 <select x-model="printPernyataanEffectiveYear"
-                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
                                     <option value="">-- Kosongkan --</option>
                                     @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
                                         <option value="{{ $y }}">{{ $y }}</option>

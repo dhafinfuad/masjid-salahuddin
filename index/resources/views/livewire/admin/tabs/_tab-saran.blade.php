@@ -232,7 +232,7 @@
                                 Dibaca
                             </span>
                         @elseif($item->status === 'ditindaklanjuti')
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                 Selesai
                             </span>
                         @else
