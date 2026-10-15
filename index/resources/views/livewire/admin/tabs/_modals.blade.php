@@ -871,25 +871,33 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari *</label>
-                        <select x-model="dutyForm.day_name"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="Senin">Senin</option>
-                            <option value="Selasa">Selasa</option>
-                            <option value="Rabu">Rabu</option>
-                            <option value="Kamis">Kamis</option>
-                            <option value="Jumat">Jumat</option>
-                        </select>
+                        <x-custom-select
+                            x-model="dutyForm.day_name"
+                            :options="[
+                                ['value' => 'Senin', 'label' => 'Senin'],
+                                ['value' => 'Selasa', 'label' => 'Selasa'],
+                                ['value' => 'Rabu', 'label' => 'Rabu'],
+                                ['value' => 'Kamis', 'label' => 'Kamis'],
+                                ['value' => 'Jumat', 'label' => 'Jumat'],
+                            ]"
+                            placeholder="Pilih Hari..."
+                            class="w-full text-xs"
+                        />
                         @error('dutyDayName') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Waktu Shalat *</label>
-                        <select x-model="dutyForm.prayer_time"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="dzuhur">Shalat Dzuhur</option>
-                            <option value="ashar">Shalat Ashar</option>
-                        </select>
+                        <x-custom-select
+                            x-model="dutyForm.prayer_time"
+                            :options="[
+                                ['value' => 'dzuhur', 'label' => 'Shalat Dzuhur'],
+                                ['value' => 'ashar', 'label' => 'Shalat Ashar'],
+                            ]"
+                            placeholder="Pilih Waktu..."
+                            class="w-full text-xs"
+                        />
                         @error('dutyPrayerTime') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
@@ -905,17 +913,21 @@
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Pola Pekan Penugasan *</label>
-                    <select x-model="dutyForm.week_pattern"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                        <option value="semua">Semua Pekan (Rutin Setiap Minggu)</option>
-                        <option value="pekan_1">Pekan 1 Saja</option>
-                        <option value="pekan_2">Pekan 2 Saja</option>
-                        <option value="pekan_3">Pekan 3 Saja</option>
-                        <option value="pekan_4">Pekan 4 Saja</option>
-                        <option value="pekan_5">Pekan 5 Saja</option>
-                        <option value="pekan_1_3_5">Pekan Ganjil (Pekan 1, 3, dan 5)</option>
-                        <option value="pekan_2_4">Pekan Genap (Pekan 2 dan 4)</option>
-                    </select>
+                    <x-custom-select
+                        x-model="dutyForm.week_pattern"
+                        :options="[
+                            ['value' => 'semua', 'label' => 'Semua Pekan (Rutin Setiap Minggu)'],
+                            ['value' => 'pekan_1', 'label' => 'Pekan 1 Saja'],
+                            ['value' => 'pekan_2', 'label' => 'Pekan 2 Saja'],
+                            ['value' => 'pekan_3', 'label' => 'Pekan 3 Saja'],
+                            ['value' => 'pekan_4', 'label' => 'Pekan 4 Saja'],
+                            ['value' => 'pekan_5', 'label' => 'Pekan 5 Saja'],
+                            ['value' => 'pekan_1_3_5', 'label' => 'Pekan Ganjil (Pekan 1, 3, dan 5)'],
+                            ['value' => 'pekan_2_4', 'label' => 'Pekan Genap (Pekan 2 dan 4)'],
+                        ]"
+                        placeholder="Pilih Pola Pekan..."
+                        class="w-full text-xs"
+                    />
                     @error('dutyWeekPattern') <span
                     class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
 
@@ -1193,12 +1205,16 @@
 
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Status Kegiatan</label>
-                            <select x-model="agendaForm.status"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer">
-                                <option value="Direncanakan">Direncanakan</option>
-                                <option value="Berjalan">Berjalan</option>
-                                <option value="SELESAI">Selesai</option>
-                            </select>
+                            <x-custom-select
+                                x-model="agendaForm.status"
+                                :options="[
+                                    ['value' => 'Direncanakan', 'label' => 'Direncanakan'],
+                                    ['value' => 'Berjalan', 'label' => 'Berjalan'],
+                                    ['value' => 'SELESAI', 'label' => 'Selesai'],
+                                ]"
+                                placeholder="Pilih Status..."
+                                class="w-full text-xs"
+                            />
                         </div>
 
                         <div>
@@ -1524,12 +1540,19 @@
             <form wire:submit.prevent="saveOdojAssignment" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nomor Juz *</label>
-                    <select wire:model.live="assignJuzNumber" wire:change="loadAssignJuzData"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium cursor-pointer">
-                        @for($j = 1; $j <= 30; $j++)
-                            <option value="{{ $j }}">Juz {{ $j }}</option>
-                        @endfor
-                    </select>
+                    @php
+                        $juzOptions = [];
+                        for ($j = 1; $j <= 30; $j++) {
+                            $juzOptions[] = ['value' => $j, 'label' => 'Juz ' . $j];
+                        }
+                    @endphp
+                    <x-custom-select
+                        wire:model.live="assignJuzNumber"
+                        wire:change="loadAssignJuzData"
+                        :options="$juzOptions"
+                        placeholder="Pilih Juz..."
+                        class="w-full text-xs"
+                    />
                     @error('assignJuzNumber') <span
                         class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
@@ -1821,28 +1844,37 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Role / Peran Pengguna *</label>
-                        <select wire:model="userRole"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <optgroup label="Pengurus (Hak Akses Penuh / CRUD)">
-                                <option value="Master">Master Admin (Pengurus Tertinggi)</option>
-                                <option value="Ketua">Ketua DKM</option>
-                                <option value="Sekretaris">Sekretaris (Operasional)</option>
-                                <option value="Bendahara">Bendahara (Keuangan)</option>
-                            </optgroup>
-                            <optgroup label="Jamaah & Masyarakat">
-                                <option value="Jamaah">Jamaah (Read-Only / Mode Lihat)</option>
-                            </optgroup>
-                        </select>
+                        @php
+                            $userRoleOptions = [
+                                ['label' => 'Pengurus (Hak Akses Penuh / CRUD)', 'is_header' => true],
+                                ['value' => 'Master', 'label' => 'Master Admin (Pengurus Tertinggi)'],
+                                ['value' => 'Ketua', 'label' => 'Ketua DKM'],
+                                ['value' => 'Sekretaris', 'label' => 'Sekretaris (Operasional)'],
+                                ['value' => 'Bendahara', 'label' => 'Bendahara (Keuangan)'],
+                                ['label' => 'Jamaah & Masyarakat', 'is_header' => true],
+                                ['value' => 'Jamaah', 'label' => 'Jamaah (Read-Only / Mode Lihat)'],
+                            ];
+                        @endphp
+                        <x-custom-select 
+                            wire:model="userRole"
+                            :options="$userRoleOptions"
+                            placeholder="Pilih Role / Peran"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('userRole') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Akun *</label>
-                        <select wire:model="userStatus"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="AKTIF">AKTIF (Dapat Login & Beraktivitas)</option>
-                            <option value="NONAKTIF">NONAKTIF (Akses Ditangguhkan)</option>
-                        </select>
+                        <x-custom-select 
+                            wire:model="userStatus"
+                            :options="[
+                                ['value' => 'AKTIF', 'label' => 'AKTIF (Dapat Login & Beraktivitas)'],
+                                ['value' => 'NONAKTIF', 'label' => 'NONAKTIF (Akses Ditangguhkan)'],
+                            ]"
+                            placeholder="Pilih Status Akun"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('userStatus') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -2313,36 +2345,44 @@
                                 <span class="whitespace-nowrap leading-none">Memuat pos...</span>
                             </span>
                         </div>
-                        <select wire:model="financeCategoryId"
-                            class="w-full px-3.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                            <option value="">-- Pilih Pos Kategori --</option>
-                            @if(isset($groupedFinanceCategories))
-                                @if($financeType === 'pemasukan')
-                                    <optgroup label="📥 PENERIMAAN">
-                                        @foreach($groupedFinanceCategories['Penerimaan'] as $fc)
-                                            <option value="{{ $fc->id }}">{{ $fc->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                @else
-                                    <optgroup label="📤 PENGELUARAN RUTIN">
-                                        @foreach($groupedFinanceCategories['Pengeluaran Rutin'] as $fc)
-                                            <option value="{{ $fc->id }}">{{ $fc->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                    <optgroup label="🛠️ PENGELUARAN NON-RUTIN">
-                                        @foreach($groupedFinanceCategories['Pengeluaran Non-Rutin'] as $fc)
-                                            <option value="{{ $fc->id }}">{{ $fc->name }}</option>
-                                        @endforeach
-                                    </optgroup>
-                                @endif
-                            @else
-                                @foreach($financeCategories as $fc)
-                                    @if(($financeType === 'pemasukan' && $fc->group === 'penerimaan') || ($financeType === 'pengeluaran' && $fc->group !== 'penerimaan'))
-                                        <option value="{{ $fc->id }}">{{ $fc->name }}</option>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </select>
+                        @php
+                            $catOptions = [['value' => '', 'label' => '-- Pilih Pos Kategori --']];
+                            if (isset($groupedFinanceCategories)) {
+                                if ($financeType === 'pemasukan') {
+                                    $catOptions[] = ['label' => '📥 PENERIMAAN', 'is_header' => true];
+                                    if (isset($groupedFinanceCategories['Penerimaan'])) {
+                                        foreach($groupedFinanceCategories['Penerimaan'] as $fc) {
+                                            $catOptions[] = ['value' => (string)$fc->id, 'label' => $fc->name];
+                                        }
+                                    }
+                                } else {
+                                    $catOptions[] = ['label' => '📤 PENGELUARAN RUTIN', 'is_header' => true];
+                                    if (isset($groupedFinanceCategories['Pengeluaran Rutin'])) {
+                                        foreach($groupedFinanceCategories['Pengeluaran Rutin'] as $fc) {
+                                            $catOptions[] = ['value' => (string)$fc->id, 'label' => $fc->name];
+                                        }
+                                    }
+                                    $catOptions[] = ['label' => '🛠️ PENGELUARAN NON-RUTIN', 'is_header' => true];
+                                    if (isset($groupedFinanceCategories['Pengeluaran Non-Rutin'])) {
+                                        foreach($groupedFinanceCategories['Pengeluaran Non-Rutin'] as $fc) {
+                                            $catOptions[] = ['value' => (string)$fc->id, 'label' => $fc->name];
+                                        }
+                                    }
+                                }
+                            } else {
+                                foreach($financeCategories as $fc) {
+                                    if (($financeType === 'pemasukan' && $fc->group === 'penerimaan') || ($financeType === 'pengeluaran' && $fc->group !== 'penerimaan')) {
+                                        $catOptions[] = ['value' => (string)$fc->id, 'label' => $fc->name];
+                                    }
+                                }
+                            }
+                        @endphp
+                        <x-custom-select 
+                            wire:model="financeCategoryId"
+                            :options="$catOptions"
+                            placeholder="-- Pilih Pos Kategori --"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('financeCategoryId') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -2352,17 +2392,21 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Alokasi Pembukuan Kas</label>
-                        <select wire:model="financeAgendaId"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="">🏢 Kas Umum Masjid (Rutin Bulanan)</option>
-                            @if(isset($allAgendas) && $allAgendas->isNotEmpty())
-                                <optgroup label="🎯 PROGRAM TEMATIK / AGENDA KEGIATAN">
-                                    @foreach($allAgendas as $ag)
-                                        <option value="{{ $ag->id }}">Kegiatan: {{ $ag->title }}</option>
-                                    @endforeach
-                                </optgroup>
-                            @endif
-                        </select>
+                        @php
+                            $agendaOptions = [['value' => '', 'label' => '🏢 Kas Umum Masjid (Rutin Bulanan)']];
+                            if (isset($allAgendas) && $allAgendas->isNotEmpty()) {
+                                $agendaOptions[] = ['label' => '🎯 PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
+                                foreach($allAgendas as $ag) {
+                                    $agendaOptions[] = ['value' => (string)$ag->id, 'label' => 'Kegiatan: ' . $ag->title];
+                                }
+                            }
+                        @endphp
+                        <x-custom-select 
+                            wire:model="financeAgendaId"
+                            :options="$agendaOptions"
+                            placeholder="🏢 Kas Umum Masjid (Rutin Bulanan)"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nominal Anggaran (Rp) *</label>
@@ -2585,12 +2629,16 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Kelompok Pos *</label>
-                        <select x-model="financeCategoryForm.group" required
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="penerimaan">📥 Penerimaan (Kas Masuk)</option>
-                            <option value="pengeluaran_rutin">📤 Pengeluaran Rutin</option>
-                            <option value="pengeluaran_nonrutin">🛠️ Pengeluaran Non-Rutin</option>
-                        </select>
+                        <x-custom-select 
+                            x-model="financeCategoryForm.group"
+                            :options="[
+                                ['value' => 'penerimaan', 'label' => '📥 Penerimaan (Kas Masuk)'],
+                                ['value' => 'pengeluaran_rutin', 'label' => '📤 Pengeluaran Rutin'],
+                                ['value' => 'pengeluaran_nonrutin', 'label' => '🛠️ Pengeluaran Non-Rutin'],
+                            ]"
+                            placeholder="Pilih Kelompok Pos"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('newCategoryGroup') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -2684,24 +2732,36 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Bulan</label>
-                            <select wire:model.live="printMonth"
-                                class="w-full p-2 rounded-lg border border-gov-border bg-white font-medium cursor-pointer">
-                                <option value="all">Semua Bulan (Setahun)</option>
-                                @for($m = 1; $m <= 12; $m++)
-                                    <option value="{{ $m }}">{{ Carbon\Carbon::create(2026, $m, 1)->translatedFormat('F') }}
-                                    </option>
-                                @endfor
-                            </select>
+                            @php
+                                $printMonthOptions = [['value' => 'all', 'label' => 'Semua Bulan (Setahun)']];
+                                for($m = 1; $m <= 12; $m++) {
+                                    $printMonthOptions[] = [
+                                        'value' => (string)$m,
+                                        'label' => Carbon\Carbon::create(2026, $m, 1)->translatedFormat('F')
+                                    ];
+                                }
+                            @endphp
+                            <x-custom-select 
+                                wire:model.live="printMonth"
+                                :options="$printMonthOptions"
+                                placeholder="Semua Bulan (Setahun)"
+                                buttonClass="p-2 bg-white"
+                            />
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Tahun</label>
-                            <select wire:model.live="printYear"
-                                class="w-full p-2 rounded-lg border border-gov-border bg-white font-medium cursor-pointer">
-                                <option value="all">Semua Tahun</option>
-                                @for($y = 2026; $y >= 2021; $y--)
-                                    <option value="{{ $y }}">{{ $y }}</option>
-                                @endfor
-                            </select>
+                            @php
+                                $printYearOptions = [['value' => 'all', 'label' => 'Semua Tahun']];
+                                for($y = 2026; $y >= 2021; $y--) {
+                                    $printYearOptions[] = ['value' => (string)$y, 'label' => (string)$y];
+                                }
+                            @endphp
+                            <x-custom-select 
+                                wire:model.live="printYear"
+                                :options="$printYearOptions"
+                                placeholder="Semua Tahun"
+                                buttonClass="p-2 bg-white"
+                            />
                         </div>
                     </div>
                 </div>
@@ -2711,18 +2771,23 @@
                     <span class="font-bold text-slate-700 block">Pilih Agenda Kegiatan Tematik</span>
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Agenda / Program Kegiatan</label>
-                        <select wire:model.live="printAgendaId"
-                            class="w-full p-2 rounded-lg border border-gov-border bg-white font-medium cursor-pointer">
-                            @if(isset($allAgendas) && $allAgendas->isNotEmpty())
-                                @foreach($allAgendas as $ag)
-                                    <option value="{{ $ag->id }}">{{ $ag->title }} ({{ $ag->formatted_date }}) - Status:
-                                        {{ $ag->status }}
-                                    </option>
-                                @endforeach
-                            @else
-                                <option value="">Belum ada agenda terdaftar</option>
-                            @endif
-                        </select>
+                        @php
+                            $printAgendaOptions = [];
+                            if(isset($allAgendas) && $allAgendas->isNotEmpty()) {
+                                foreach($allAgendas as $ag) {
+                                    $printAgendaOptions[] = [
+                                        'value' => (string)$ag->id,
+                                        'label' => $ag->title . ' (' . $ag->formatted_date . ') - Status: ' . $ag->status
+                                    ];
+                                }
+                            }
+                        @endphp
+                        <x-custom-select 
+                            wire:model.live="printAgendaId"
+                            :options="$printAgendaOptions"
+                            placeholder="Pilih Agenda / Program"
+                            buttonClass="p-2 bg-white"
+                        />
                     </div>
                 </div>
 
@@ -3025,13 +3090,17 @@
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Alokasi Program Utama</label>
-                        <select wire:model="lumpSumProgram"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium cursor-pointer transition">
-                            <option value="Infaq Rutin">Infaq Rutin Pegawai</option>
-                            <option value="Santunan Anak Yatim">Santunan Anak Yatim</option>
-                            <option value="Zakat Mal Rutin">Zakat Mal Rutin</option>
-                            <option value="Tabungan Qurban">Tabungan Qurban</option>
-                        </select>
+                        <x-custom-select 
+                            wire:model="lumpSumProgram"
+                            :options="[
+                                ['value' => 'Infaq Rutin', 'label' => 'Infaq Rutin Pegawai'],
+                                ['value' => 'Santunan Anak Yatim', 'label' => 'Santunan Anak Yatim'],
+                                ['value' => 'Zakat Mal Rutin', 'label' => 'Zakat Mal Rutin'],
+                                ['value' => 'Tabungan Qurban', 'label' => 'Tabungan Qurban'],
+                            ]"
+                            placeholder="Pilih Alokasi Program"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                     </div>
                 </div>
 
@@ -3106,12 +3175,18 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Program Sosial Pilihan *</label>
-                        <select wire:model="participantProgram"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            @foreach($allSocialPrograms as $prog)
-                                <option value="{{ $prog->name }}">{{ $prog->name }}</option>
-                            @endforeach
-                        </select>
+                        @php
+                            $partProgOptions = [];
+                            foreach($allSocialPrograms as $prog) {
+                                $partProgOptions[] = ['value' => $prog->name, 'label' => $prog->name];
+                            }
+                        @endphp
+                        <x-custom-select 
+                            wire:model="participantProgram"
+                            :options="$partProgOptions"
+                            placeholder="Pilih Program Sosial"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('participantProgram') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -3405,12 +3480,18 @@
                 <!-- Filter Tahun -->
                 <div class="space-y-1.5">
                     <label class="block font-bold text-gov-textMain">Tahun Potongan</label>
-                    <select x-model.number="exportPotonganYear"
-                        class="w-full rounded-lg border border-gov-border px-3 py-2 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy">
-                        @for($y = (int) now()->year + 1; $y >= 2024; $y--)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endfor
-                    </select>
+                    @php
+                        $exportYearOptions = [];
+                        for ($y = (int) now()->year + 1; $y >= 2024; $y--) {
+                            $exportYearOptions[] = ['value' => $y, 'label' => (string) $y];
+                        }
+                    @endphp
+                    <x-custom-select
+                        x-model.number="exportPotonganYear"
+                        :options="$exportYearOptions"
+                        placeholder="Pilih Tahun..."
+                        class="w-full text-xs"
+                    />
                 </div>
 
                 <!-- Filter Rentang Bulan (Bulan Mulai & Bulan Selesai) -->
@@ -3432,42 +3513,40 @@
                             </button>
                         </div>
                     </div>
+                    @php
+                        $monthOptions = [
+                            ['value' => 1, 'label' => 'Januari'],
+                            ['value' => 2, 'label' => 'Februari'],
+                            ['value' => 3, 'label' => 'Maret'],
+                            ['value' => 4, 'label' => 'April'],
+                            ['value' => 5, 'label' => 'Mei'],
+                            ['value' => 6, 'label' => 'Juni'],
+                            ['value' => 7, 'label' => 'Juli'],
+                            ['value' => 8, 'label' => 'Agustus'],
+                            ['value' => 9, 'label' => 'September'],
+                            ['value' => 10, 'label' => 'Oktober'],
+                            ['value' => 11, 'label' => 'November'],
+                            ['value' => 12, 'label' => 'Desember'],
+                        ];
+                    @endphp
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <select x-model.number="exportPotonganStartMonth"
+                            <x-custom-select
+                                x-model.number="exportPotonganStartMonth"
                                 @change="if(exportPotonganStartMonth > exportPotonganEndMonth) exportPotonganEndMonth = exportPotonganStartMonth"
-                                class="w-full rounded-lg border border-gov-border px-3 py-2 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy">
-                                <option value="1">Januari</option>
-                                <option value="2">Februari</option>
-                                <option value="3">Maret</option>
-                                <option value="4">April</option>
-                                <option value="5">Mei</option>
-                                <option value="6">Juni</option>
-                                <option value="7">Juli</option>
-                                <option value="8">Agustus</option>
-                                <option value="9">September</option>
-                                <option value="10">Oktober</option>
-                                <option value="11">November</option>
-                                <option value="12">Desember</option>
-                            </select>
+                                :options="$monthOptions"
+                                placeholder="Bulan Mulai..."
+                                class="w-full text-xs"
+                            />
                         </div>
                         <div>
-                            <select x-model.number="exportPotonganEndMonth"
+                            <x-custom-select
+                                x-model.number="exportPotonganEndMonth"
                                 @change="if(exportPotonganEndMonth < exportPotonganStartMonth) exportPotonganStartMonth = exportPotonganEndMonth"
-                                class="w-full rounded-lg border border-gov-border px-3 py-2 text-xs font-medium text-slate-800 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy">
-                                <option value="1">Januari</option>
-                                <option value="2">Februari</option>
-                                <option value="3">Maret</option>
-                                <option value="4">April</option>
-                                <option value="5">Mei</option>
-                                <option value="6">Juni</option>
-                                <option value="7">Juli</option>
-                                <option value="8">Agustus</option>
-                                <option value="9">September</option>
-                                <option value="10">Oktober</option>
-                                <option value="11">November</option>
-                                <option value="12">Desember</option>
-                            </select>
+                                :options="$monthOptions"
+                                placeholder="Bulan Selesai..."
+                                class="w-full text-xs"
+                            />
                         </div>
                     </div>
                 </div>
@@ -3876,22 +3955,30 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Periode Program *</label>
-                        <select wire:model="socialProgramPeriodType"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="bulanan">Bulanan (Rutin)</option>
-                            <option value="tahunan">Tahunan (Berkala)</option>
-                            <option value="insidental">Insidental (Sekali Waktu)</option>
-                        </select>
+                        <x-custom-select
+                            wire:model="socialProgramPeriodType"
+                            :options="[
+                                ['value' => 'bulanan', 'label' => 'Bulanan (Rutin)'],
+                                ['value' => 'tahunan', 'label' => 'Tahunan (Berkala)'],
+                                ['value' => 'insidental', 'label' => 'Insidental (Sekali Waktu)'],
+                            ]"
+                            placeholder="Pilih Periode..."
+                            class="w-full text-xs"
+                        />
                         @error('socialProgramPeriodType') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Program *</label>
-                        <select wire:model="socialProgramStatus"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="AKTIF">Aktif (Menerima Peserta)</option>
-                            <option value="DITUTUP">Ditutup Sementara</option>
-                            <option value="SELESAI">Selesai</option>
-                        </select>
+                        <x-custom-select
+                            wire:model="socialProgramStatus"
+                            :options="[
+                                ['value' => 'AKTIF', 'label' => 'Aktif (Menerima Peserta)'],
+                                ['value' => 'DITUTUP', 'label' => 'Ditutup Sementara'],
+                                ['value' => 'SELESAI', 'label' => 'Selesai'],
+                            ]"
+                            placeholder="Pilih Status..."
+                            class="w-full text-xs"
+                        />
                         @error('socialProgramStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
@@ -3899,15 +3986,19 @@
                 <!-- Ikon Tampilan -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Ikon Tampilan</label>
-                    <select wire:model="socialProgramIcon"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                        <option value="heart-handshake">heart-handshake (Santunan/Sosial)</option>
-                        <option value="hand-heart">hand-heart (Sedekah/Dhuafa)</option>
-                        <option value="wallet">wallet (Infaq/Dompet)</option>
-                        <option value="coins">coins (Zakat/Koin)</option>
-                        <option value="sparkles">sparkles (Qurban/Spesial)</option>
-                        <option value="users">users (Komunitas)</option>
-                    </select>
+                    <x-custom-select
+                        wire:model="socialProgramIcon"
+                        :options="[
+                            ['value' => 'heart-handshake', 'label' => 'heart-handshake (Santunan/Sosial)'],
+                            ['value' => 'hand-heart', 'label' => 'hand-heart (Sedekah/Dhuafa)'],
+                            ['value' => 'wallet', 'label' => 'wallet (Infaq/Dompet)'],
+                            ['value' => 'coins', 'label' => 'coins (Zakat/Koin)'],
+                            ['value' => 'sparkles', 'label' => 'sparkles (Qurban/Spesial)'],
+                            ['value' => 'users', 'label' => 'users (Komunitas)'],
+                        ]"
+                        placeholder="Pilih Ikon..."
+                        class="w-full text-xs"
+                    />
                 </div>
 
                 <!-- Deskripsi Program -->
@@ -4458,13 +4549,17 @@
                                 <!-- Status Tindak Lanjut -->
                                 <div>
                                     <label class="block font-semibold text-slate-700 mb-1">Status Tindak Lanjut</label>
-                                    <select wire:model="saranUpdateStatus"
-                                        class="w-full px-3 py-1.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition cursor-pointer">
-                                        <option value="dibaca">Telah Dibaca</option>
-                                        <option value="ditindaklanjuti">Selesai Ditindaklanjuti</option>
-                                        <option value="arsip">Diarsipkan</option>
-                                        <option value="baru">Tandai Baru (Belum Dibaca)</option>
-                                    </select>
+                                    <x-custom-select
+                                        wire:model="saranUpdateStatus"
+                                        :options="[
+                                            ['value' => 'dibaca', 'label' => 'Telah Dibaca'],
+                                            ['value' => 'ditindaklanjuti', 'label' => 'Selesai Ditindaklanjuti'],
+                                            ['value' => 'arsip', 'label' => 'Diarsipkan'],
+                                            ['value' => 'baru', 'label' => 'Tandai Baru (Belum Dibaca)'],
+                                        ]"
+                                        placeholder="Pilih Status..."
+                                        class="w-full text-xs"
+                                    />
                                 </div>
 
                                 <!-- Publikasikan ke Portal -->
@@ -4722,12 +4817,16 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Kantor</label>
-                        <select wire:model="employeeFormStatus"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="AKTIF">Aktif di KPP Madya Malang</option>
-                            <option value="MUTASI">Mutasi / Pindah Kantor</option>
-                            <option value="NONAKTIF">Nonaktif / Pensiun</option>
-                        </select>
+                        <x-custom-select 
+                            wire:model="employeeFormStatus"
+                            :options="[
+                                ['value' => 'AKTIF', 'label' => 'Aktif di KPP Madya Malang'],
+                                ['value' => 'MUTASI', 'label' => 'Mutasi / Pindah Kantor'],
+                                ['value' => 'NONAKTIF', 'label' => 'Nonaktif / Pensiun'],
+                            ]"
+                            placeholder="Pilih Status Kantor"
+                            buttonClass="p-2.5 bg-slate-50/50"
+                        />
                         @error('employeeFormStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>

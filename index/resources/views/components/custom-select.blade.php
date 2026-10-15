@@ -12,7 +12,8 @@
 
 @php
     $wireModel = $attributes->wire('model');
-    $xModel = $attributes->get('x-model');
+    $xModelNumber = $attributes->get('x-model.number');
+    $xModel = $attributes->get('x-model') ?? $xModelNumber;
     
     $normalizedOptions = [];
     if ($options instanceof \Illuminate\Support\Collection) {
@@ -58,7 +59,7 @@
             selected: @entangle($attributes->wire('model')),
         @elseif($xModel)
             get selected() { return {{ $xModel }}; },
-            set selected(val) { {{ $xModel }} = val; },
+            set selected(val) { {{ $xModel }} = {{ $xModelNumber ? 'Number(val)' : 'val' }}; },
         @else
             selected: {{ Js::from($selected ?? '') }},
         @endif
@@ -154,4 +155,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Accessible / Testing Native Representation -->
+    <select class="sr-only" tabindex="-1" aria-hidden="true" wire:ignore>
+        @php
+            $inOptGroup = false;
+        @endphp
+        @foreach($normalizedOptions as $opt)
+            @if(!empty($opt['is_header']))
+                @if($inOptGroup)
+                    </optgroup>
+                @endif
+                <optgroup label="{{ $opt['label'] }}">
+                @php $inOptGroup = true; @endphp
+            @else
+                <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
+            @endif
+        @endforeach
+        @if($inOptGroup)
+            </optgroup>
+        @endif
+    </select>
 </div>

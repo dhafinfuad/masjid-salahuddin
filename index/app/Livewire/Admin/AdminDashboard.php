@@ -3417,6 +3417,11 @@ class AdminDashboard extends Component
         $this->odojDate = Carbon::today()->format('Y-m-d');
     }
 
+    public function updatedAssignJuzNumber(): void
+    {
+        $this->loadAssignJuzData();
+    }
+
     public function loadAssignJuzData(): void
     {
         $targetDate = $this->odojDate ?: Carbon::today()->format('Y-m-d');
