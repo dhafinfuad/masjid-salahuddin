@@ -334,7 +334,7 @@
                 </td>
                 <td class="p-2 border-r border-slate-200 text-center whitespace-nowrap">
                   @if($row['is_friday'])
-                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">
+                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-400">
                       Jumat (P.{{ $row['week_number'] }})
                     </span>
                   @else
