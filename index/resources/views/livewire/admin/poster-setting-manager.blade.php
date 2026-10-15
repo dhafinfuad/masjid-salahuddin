@@ -273,7 +273,7 @@
                     <div class="bg-slate-50/70 p-3.5 rounded-xl border border-gov-border space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-200/80 pb-2">
                             <span class="text-xs font-bold text-slate-700">Isi Teks Judul &amp; Deskripsi</span>
-                            <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Pratinjau Langsung</span>
+                            <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-400">Pratinjau Langsung</span>
                         </div>
 
                         <!-- Input Judul Sesuai Template -->

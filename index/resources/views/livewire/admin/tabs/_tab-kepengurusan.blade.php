@@ -39,7 +39,7 @@
             <div class="bg-white rounded-xl p-5 border border-gov-border shadow-2xs flex flex-col justify-between space-y-4">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                             SK Penetapan Resmi
                         </span>
                         <span class="text-[11px] text-slate-400 font-mono">PDF Dokumen</span>
@@ -323,7 +323,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div class="space-y-1.5 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                         <div class="flex items-center justify-between">
-                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                                 Sekretaris
                             </span>
                             <span class="text-[11px] text-slate-400">1 nama per baris</span>
@@ -526,7 +526,7 @@
 
                     <!-- Sekretaris -->
                     <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                             Tupoksi Sekretaris
                         </span>
                         <textarea wire:model.defer="sekretarisTupoksi" rows="3"

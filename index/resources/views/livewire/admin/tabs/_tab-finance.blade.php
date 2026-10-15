@@ -291,7 +291,7 @@
                                                         </span>
                                                     </div>
                                                     @if($isCurrentMonth)
-                                                        <span class="inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                                                        <span class="inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 shrink-0">
                                                             Bulan Ini
                                                         </span>
                                                     @endif
@@ -827,7 +827,7 @@
                                             <td class="p-3.5">
                                                 @if($fc->group === 'penerimaan')
                                                     <span
-                                                        class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                                                        class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                                                         Penerimaan
                                                     </span>
                                                 @elseif($fc->group === 'pengeluaran_rutin')

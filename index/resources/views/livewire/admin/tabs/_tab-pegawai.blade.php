@@ -154,7 +154,7 @@
                                         $badgeClasses = match($role) {
                                             'Master', 'admin', 'Administrator' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
                                             'Ketua', 'Sekretaris', 'Bendahara' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                            default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                            default => 'bg-emerald-50 text-emerald-700 border-emerald-400',
                                         };
                                     @endphp
                                     <div class="inline-flex flex-col items-center gap-0.5">
@@ -185,13 +185,13 @@
                             <td class="py-3 px-4 text-center">
                                 @if(Auth::user()->canManage())
                                     <button type="button" wire:click="toggleEmployeeStatus({{ $emp->id }})"
-                                        class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' }}"
+                                        class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' }}"
                                         style="width: 70px; min-width: 70px; max-width: 70px;"
                                         title="Klik untuk mengubah status aktif/mutasi">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </button>
                                 @else
-                                    <span class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}"
+                                    <span class="w-[70px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-amber-50 text-amber-700 border-amber-200' }}"
                                           style="width: 70px; min-width: 70px; max-width: 70px;">
                                         {{ $emp->status === 'AKTIF' ? 'Aktif' : 'Mutasi' }}
                                     </span>
@@ -275,7 +275,7 @@
                             <span class="text-[10px] text-slate-400 block">{{ $emp->jabatan ?: 'Pegawai KPP Madya' }}</span>
                         </div>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border {{ $emp->status === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-amber-50 text-amber-700 border-amber-200' }}">
                         {{ $emp->status }}
                     </span>
                 </div>
@@ -288,7 +288,7 @@
                                 $badgeClasses = match($role) {
                                     'Master', 'admin', 'Administrator' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
                                     'Ketua', 'Sekretaris', 'Bendahara' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                    default => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    default => 'bg-emerald-50 text-emerald-700 border-emerald-400',
                                 };
                             @endphp
                             <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ $badgeClasses }}">

@@ -115,7 +115,7 @@
                                         $isDone = strcasecmp($agStatus, 'SELESAI') === 0;
                                         $isRunning = strcasecmp($agStatus, 'Berjalan') === 0;
                                         $statusBadgeClass = $isDone 
-                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-400' 
                                             : ($isRunning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-sky-50 text-sky-700 border-sky-200');
                                         $statusLabel = ucfirst(strtolower($agStatus));
                                     @endphp
@@ -238,7 +238,7 @@
                                                 <span class="font-bold text-gov-textMain">{{ $duty->day_name }}</span>
                                                 <span class="inline-flex items-center h-4.5 px-1.5 rounded-md text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-200 capitalize">{{ $duty->prayer_time }}</span>
                                                 @if($isFridayDzuhurWidget && $fridayKajianWidget)
-                                                    <span class="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Kajian Jumat</span>
+                                                    <span class="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-400">Kajian Jumat</span>
                                                     <span class="inline-flex items-center text-[10px] font-semibold text-gov-navy bg-amber-100/80 px-1.5 py-0.5 rounded border border-amber-300">
                                                         {{ \Carbon\Carbon::parse($fridayKajianWidget->date)->translatedFormat('d M Y') }} • {{ $fridayKajianWidget->time_display ?: '11:27 WIB' }}
                                                     </span>

@@ -292,7 +292,7 @@
                             <!-- Perangkat Badge (Complies with UI_GUIDELINES.md: h-[20px] text-[11px] rounded-full) -->
                             <td class="py-2.5 px-3 whitespace-nowrap">
                                 @if($devType === 'mobile')
-                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200 leading-none gap-1">
+                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-400 leading-none gap-1">
                                         <i data-lucide="smartphone" class="w-3 h-3"></i>
                                         <span>Mobile</span>
                                     </span>

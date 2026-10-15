@@ -133,7 +133,7 @@
                                         </div>
                                         <div class="flex items-center gap-1.5 shrink-0">
                                             @if($prog->status === 'AKTIF')
-                                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">Aktif</span>
+                                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-400">Aktif</span>
                                             @else
                                                 <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-slate-100 text-slate-600 border-slate-200">{{ ucfirst(strtolower($prog->status)) }}</span>
                                             @endif
@@ -299,7 +299,7 @@
                                                     </span>
                                                 </div>
                                                 @if($isCurrentMonth)
-                                                    <span class="inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                                                    <span class="inline-flex items-center h-[18px] px-1.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 shrink-0">
                                                         Bulan Ini
                                                     </span>
                                                 @endif
@@ -398,7 +398,7 @@
 
                                             <!-- Periode -->
                                             <td class="py-3 px-4 text-center">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold' : 'bg-slate-100 text-slate-700' }}">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
                                                     {{ $p->period ?: 'Bulanan' }}
                                                 </span>
                                             </td>
@@ -474,7 +474,7 @@
                                         <h5 class="font-bold text-sm text-gov-textMain">{{ $p->name }}</h5>
                                     </div>
                                     <div>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold' : 'bg-slate-100 text-slate-700' }}">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
                                             {{ $p->period ?: 'Bulanan' }}
                                         </span>
                                     </div>

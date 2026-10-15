@@ -272,7 +272,7 @@
                       Berjalan
                     </span>
                   @else
-                    <span class="inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-200">
+                    <span class="inline-flex items-center h-[18px] px-2 rounded-full text-[10px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-400">
                       Selesai
                     </span>
                   @endif

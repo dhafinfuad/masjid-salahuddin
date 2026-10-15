@@ -291,7 +291,7 @@
                                                     <span class="inline-flex text-[11px] text-slate-500">Pekanan</span>
                                                 @endif
                                                 @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200" title="Notula kajian tersimpan">
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400" title="Notula kajian tersimpan">
                                                         <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                         Notula Ada
                                                     </span>
@@ -500,7 +500,7 @@
                                             <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekanan</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none" title="Notula kajian tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none" title="Notula kajian tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
@@ -751,7 +751,7 @@
                                             <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
                                                 @if(Auth::user()->canManage())
                                                     <button type="button" wire:click="toggleHolidayDisabled({{ $k->id }})"
-                                                        class="inline-flex items-center gap-1 h-5 px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none shrink-0 whitespace-nowrap {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' }}"
+                                                        class="inline-flex items-center gap-1 h-5 px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none shrink-0 whitespace-nowrap {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' }}"
                                                         title="Klik untuk mengubah status hari libur">
                                                         @if($k->is_holiday_disabled)
                                                             <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0 inline-block"></i>
@@ -763,13 +763,13 @@
                                                     </button>
                                                 @else
                                                     <span
-                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
+                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-400' }}">
                                                         {{ $k->is_holiday_disabled ? 'Libur' : 'Aktif' }}
                                                     </span>
                                                 @endif
 
                                                 @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none shrink-0" title="Notula khutbah tersimpan">
+                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none shrink-0" title="Notula khutbah tersimpan">
                                                         <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                         Notula Ada
                                                     </span>
@@ -981,10 +981,10 @@
                                                 class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 leading-none">Diliburkan</span>
                                         @else
                                             <span
-                                                class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">Aktif</span>
+                                                class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">Aktif</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none" title="Notula khutbah tersimpan">
+                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none" title="Notula khutbah tersimpan">
                                                 <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                                 Notula Ada
                                             </span>
@@ -1289,7 +1289,7 @@
                                             @if(Auth::user()->canManage())
                                                 <select wire:change="updateAgendaStatus({{ $agenda->id }}, $event.target.value)"
                                                     class="table-select text-xs font-medium rounded-lg border border-gov-border py-1 px-2 focus:ring-1 focus:ring-gov-navy transition cursor-pointer
-                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-50 text-sky-800 border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200') }}">
+                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-50 text-sky-800 border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-emerald-50 text-emerald-800 border-emerald-400') }}">
                                                     <option value="Direncanakan" @selected($agenda->status === 'Direncanakan')>
                                                         Direncanakan</option>
                                                     <option value="Berjalan" @selected($agenda->status === 'Berjalan')>Berjalan
@@ -1300,7 +1300,7 @@
                                             @else
                                                 <span
                                                     class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
-                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') }}">
+                                                    {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-400') }}">
                                                     {{ $agenda->status }}
                                                 </span>
                                             @endif
@@ -1411,7 +1411,7 @@
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <span
                                             class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold
-                                            {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') }}">
+                                            {{ $agenda->status === 'Direncanakan' ? 'bg-sky-100 text-sky-800 border border-sky-200' : ($agenda->status === 'Berjalan' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-400') }}">
                                             {{ $agenda->status }}
                                         </span>
                                         @if(!empty($agenda->youtube_url))
@@ -1651,7 +1651,7 @@
                                             </button>
                                             <button type="button" wire:click="setSingleOdojStatus({{ $entry->id }}, 'Belum')"
                                                 wire:loading.attr="disabled"
-                                                class="group/undo px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 hover:bg-rose-50 text-emerald-700 hover:text-rose-700 border border-emerald-200 hover:border-rose-200 transition-all shadow-2xs cursor-pointer disabled:opacity-50">
+                                                class="group/undo px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 hover:bg-rose-50 text-emerald-700 hover:text-rose-700 border border-emerald-400 hover:border-rose-200 transition-all shadow-2xs cursor-pointer disabled:opacity-50">
                                                 <span class="group-hover/undo:hidden inline-flex items-center gap-1">
                                                     <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd"
@@ -1664,7 +1664,7 @@
                                             </button>
                                         @else
                                             <span
-                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400">
                                                 Sudah
                                             </span>
                                         @endif

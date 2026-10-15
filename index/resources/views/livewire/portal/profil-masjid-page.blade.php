@@ -454,7 +454,7 @@
 
                         <!-- Sekretaris -->
                         <div class="p-3.5 rounded-xl border border-gov-border bg-white shadow-2xs space-y-1.5">
-                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                                 {{ $pengurus['sekretaris']['role'] }}
                             </span>
                             <div class="space-y-0.5">

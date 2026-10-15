@@ -418,7 +418,7 @@
                                                 <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
                                     </button>
                                 </template>
                             </div>
@@ -496,7 +496,7 @@
 
                             <!-- Indicator when photo is auto-detected from database -->
                             <div x-show="!$wire.kajianSpeakerPhoto && !$wire.kajianExistingPhoto && (kajianForm.speaker_name && ustadzPhotoMap && ustadzPhotoMap[kajianForm.speaker_name])" class="mt-1.5 flex items-center gap-1.5">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400">
                                     <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
@@ -604,7 +604,7 @@
                                                     <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
                                                 </div>
                                             </div>
-                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
                                         </button>
                                     </template>
                                 </div>
@@ -2139,7 +2139,7 @@
             <div class="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none"
-                          :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-800 border-rose-300'"
+                          :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-rose-100 text-rose-800 border-rose-300'"
                           x-text="receiptPreviewModal.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'"></span>
                     <span class="text-slate-500 font-medium" x-text="receiptPreviewModal.date"></span>
                 </div>
@@ -4151,7 +4151,7 @@
 
                                             <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
                                                 @if($u->photo)
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400">
                                                         <svg class="w-2.5 h-2.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                         </svg>

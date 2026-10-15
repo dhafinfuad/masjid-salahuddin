@@ -68,7 +68,7 @@ Use the following color combinations based on semantic meaning:
 
 | Status | Background | Text | Border | Usage |
 |:---|:---|:---|:---|:---|
-| **Success / Hadir / Aktif** | `bg-emerald-50` | `text-emerald-700` | `border-emerald-200` | Hadir, Sukses, Selesai, Aktif |
+| **Success / Hadir / Aktif** | `bg-emerald-50` | `text-emerald-700` | `border-emerald-400` | Hadir, Sukses, Selesai, Aktif |
 | **Danger / Batal / Libur** | `bg-rose-100` | `text-rose-800` | `border-rose-300` | Batal Hadir, Diliburkan |
 | **Danger (light)** | `bg-rose-50` | `text-rose-700` | `border-rose-200` | Kuota Penuh, Nonaktif |
 | **Warning / Pending / Belum Hadir** | `bg-amber-100` | `text-amber-800` | `border-amber-300` | Belum Hadir, Pending |
@@ -85,7 +85,7 @@ For badges that change state dynamically via Alpine.js, use `:class` bindings wi
 ```html
 <span class="inline-flex items-center justify-center rounded-full h-[20px] px-2.5 text-[11px] leading-none font-semibold border transition-colors"
       :class="{
-          'bg-emerald-50 text-emerald-700 border-emerald-200': statusBadge === 'Hadir',
+          'bg-emerald-50 text-emerald-700 border-emerald-400': statusBadge === 'Hadir',
           'bg-rose-100 text-rose-800 border-rose-300': statusBadge === 'Batal Hadir',
           'bg-amber-100 text-amber-800 border-amber-300': statusBadge === 'Belum Hadir'
       }"
@@ -100,7 +100,7 @@ For badges that change state dynamically via Alpine.js, use `:class` bindings wi
 
 ### Static Status Badge
 ```html
-<span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+<span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
     Hadir
 </span>
 ```
@@ -123,7 +123,7 @@ For badges that change state dynamically via Alpine.js, use `:class` bindings wi
 ```html
 <button type="button"
         wire:click="toggleStatus({{ $id }})"
-        class="inline-flex items-center gap-1 h-[20px] px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none {{ $isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' }}">
+        class="inline-flex items-center gap-1 h-[20px] px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none {{ $isActive ? 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' : 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' }}">
     <i data-lucide="{{ $isActive ? 'check-circle-2' : 'alert-circle' }}" class="w-3 h-3"></i>
     <span>{{ $isActive ? 'Aktif' : 'Nonaktif' }}</span>
 </button>
