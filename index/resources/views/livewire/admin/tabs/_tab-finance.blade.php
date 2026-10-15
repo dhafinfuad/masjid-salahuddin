@@ -400,7 +400,7 @@
                                                 <div class="mb-2">
                                                     @if($fin->type === 'pemasukan')
                                                         <span
-                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none shrink-0"
+                                                            class="w-[94px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none shrink-0"
                                                             style="width: 94px; min-width: 94px; max-width: 94px;">
                                                             Pemasukan
                                                         </span>
@@ -523,7 +523,7 @@
 
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     @if($fin->type === 'pemasukan')
-                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 leading-none">
+                                        <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">
                                             Pemasukan
                                         </span>
                                     @else
