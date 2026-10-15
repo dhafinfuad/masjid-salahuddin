@@ -3584,32 +3584,99 @@
                 <!-- Mode Single: Dropdown Pegawai yang Pernah Memotong -->
                 <div x-show="printPernyataanMode === 'single'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Nama Pegawai (dari Riwayat) *</label>
-                    <select x-model="printPernyataanEmployeeName"
-                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                        <option value="">-- Pilih Nama Pegawai yang Ada di Rekapitulasi --</option>
-                        @if(isset($distinctParticipantNames))
-                            @foreach($distinctParticipantNames as $pName)
-                                <option value="{{ $pName }}">{{ $pName }}</option>
-                            @endforeach
-                        @endif
-                    </select>
+                    <div class="relative" x-data="{ openEmpName: false, searchEmp: '' }" :class="openEmpName ? 'z-40' : 'z-10'" @click.outside="openEmpName = false" @keydown.escape.window="openEmpName = false">
+                        <button type="button" @click="openEmpName = !openEmpName"
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                            <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai yang Ada di Rekapitulasi --'"></span>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openEmpName ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </button>
+
+                        <div x-show="openEmpName" x-cloak
+                            x-transition:enter="transition ease-out duration-50"
+                            x-transition:enter-start="transform opacity-0 scale-98"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-50"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-98"
+                            class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
+                            style="display: none;">
+                            <div class="p-1 pb-1.5 border-b border-slate-100">
+                                <input x-model="searchEmp" type="text" placeholder="Ketik untuk mencari nama..."
+                                    class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
+                            </div>
+                            <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
+                                <button type="button" @click="printPernyataanEmployeeName = ''; openEmpName = false"
+                                    class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer text-slate-500 italic">
+                                    -- Batal Pilih --
+                                </button>
+                                @if(isset($distinctParticipantNames))
+                                    @foreach($distinctParticipantNames as $pName)
+                                        <button type="button"
+                                            x-show="!searchEmp || '{{ strtolower(addslashes($pName)) }}'.includes(searchEmp.toLowerCase())"
+                                            @click="printPernyataanEmployeeName = '{{ addslashes($pName) }}'; openEmpName = false"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            :class="printPernyataanEmployeeName === '{{ addslashes($pName) }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
+                                            <span>{{ $pName }}</span>
+                                            <span x-show="printPernyataanEmployeeName === '{{ addslashes($pName) }}'" class="text-gov-navy font-bold">✓</span>
+                                        </button>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mode New: Pilih dari Master Pegawai atau Formulir Kosong -->
                 <div x-show="printPernyataanMode === 'new'" class="space-y-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Pilih Pegawai Baru dari Master (Atau Kosongkan untuk Blanko) *</label>
-                        <select x-model="printPernyataanEmployeeId"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                            <option value="">-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --</option>
-                            @if(isset($allEmployeesForPrint))
-                                @foreach($allEmployeesForPrint as $empItem)
-                                    <option value="{{ $empItem->id }}">
-                                        {{ $empItem->name }} (NIP: {{ $empItem->nip_panjang ?: ($empItem->nip_pendek ?: '-') }})
-                                    </option>
-                                @endforeach
-                            @endif
-                        </select>
+                        <div class="relative" x-data="{ openEmpId: false, searchNewEmp: '', selectedName: '' }" :class="openEmpId ? 'z-40' : 'z-10'" @click.outside="openEmpId = false" @keydown.escape.window="openEmpId = false">
+                            <button type="button" @click="openEmpId = !openEmpId"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                                <span class="truncate" x-text="printPernyataanEmployeeId && selectedName ? selectedName : '-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --'"></span>
+                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openEmpId ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </button>
+
+                            <div x-show="openEmpId" x-cloak
+                                x-transition:enter="transition ease-out duration-50"
+                                x-transition:enter-start="transform opacity-0 scale-98"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-50"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-98"
+                                class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
+                                style="display: none;">
+                                <div class="p-1 pb-1.5 border-b border-slate-100">
+                                    <input x-model="searchNewEmp" type="text" placeholder="Ketik nama atau NIP pegawai..."
+                                        class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
+                                </div>
+                                <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
+                                    <button type="button" @click="printPernyataanEmployeeId = ''; selectedName = ''; openEmpId = false"
+                                        class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer text-slate-500 italic">
+                                        -- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --
+                                    </button>
+                                    @if(isset($allEmployeesForPrint))
+                                        @foreach($allEmployeesForPrint as $empItem)
+                                            @php
+                                                $empDisplay = $empItem->name . ' (NIP: ' . ($empItem->nip_panjang ?: ($empItem->nip_pendek ?: '-')) . ')';
+                                            @endphp
+                                            <button type="button"
+                                                x-show="!searchNewEmp || '{{ strtolower(addslashes($empDisplay)) }}'.includes(searchNewEmp.toLowerCase())"
+                                                @click="printPernyataanEmployeeId = '{{ $empItem->id }}'; selectedName = '{{ addslashes($empDisplay) }}'; openEmpId = false"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                                :class="printPernyataanEmployeeId == '{{ $empItem->id }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
+                                                <span>{{ $empDisplay }}</span>
+                                                <span x-show="printPernyataanEmployeeId == '{{ $empItem->id }}'" class="text-gov-navy font-bold">✓</span>
+                                            </button>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-amber-800 flex items-start gap-2">
@@ -3623,12 +3690,34 @@
                 <!-- Tahun Riwayat Potongan (Untuk Mode All & Single) -->
                 <div x-show="printPernyataanMode !== 'new'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Tahun Riwayat Potongan *</label>
-                    <select x-model="printPernyataanYear"
-                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                        @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
-                            <option value="{{ $y }}">Tahun {{ $y }}</option>
-                        @endfor
-                    </select>
+                    <div class="relative" x-data="{ openHistoryYear: false }" :class="openHistoryYear ? 'z-40' : 'z-10'" @click.outside="openHistoryYear = false" @keydown.escape.window="openHistoryYear = false">
+                        <button type="button" @click="openHistoryYear = !openHistoryYear"
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                            <span class="truncate" x-text="'Tahun ' + printPernyataanYear"></span>
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openHistoryYear ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </button>
+
+                        <div x-show="openHistoryYear" x-cloak
+                            x-transition:enter="transition ease-out duration-50"
+                            x-transition:enter-start="transform opacity-0 scale-98"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-50"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-98"
+                            class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
+                            style="display: none;">
+                            @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
+                                <button type="button" @click="printPernyataanYear = '{{ $y }}'; openHistoryYear = false"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                    :class="printPernyataanYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
+                                    <span>Tahun {{ $y }}</span>
+                                    <span x-show="printPernyataanYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>
+                                </button>
+                            @endfor
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Input Opsional: Tanggal Surat & Mulai Berlaku -->
@@ -3648,26 +3737,83 @@
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
                             <div class="grid grid-cols-2 gap-1.5">
-                                <select x-model="printPernyataanEffectiveMonth"
-                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                                    <option value="">-- Kosongkan --</option>
-                                    @php
-                                        $daftarBulan = [
-                                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                        ];
-                                    @endphp
-                                    @foreach($daftarBulan as $bulan)
-                                        <option value="{{ $bulan }}">{{ $bulan }}</option>
-                                    @endforeach
-                                </select>
-                                <select x-model="printPernyataanEffectiveYear"
-                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                                    <option value="">-- Kosongkan --</option>
-                                    @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
-                                        <option value="{{ $y }}">{{ $y }}</option>
-                                    @endfor
-                                </select>
+                                <!-- Dropdown Bulan Custom (Seamless & Instan) -->
+                                <div class="relative" x-data="{ openMonth: false }" :class="openMonth ? 'z-40' : 'z-10'" @click.outside="openMonth = false" @keydown.escape.window="openMonth = false">
+                                    <button type="button" @click="openMonth = !openMonth"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                        <span class="truncate" x-text="printPernyataanEffectiveMonth ? printPernyataanEffectiveMonth : '-- Kosongkan --'"></span>
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openMonth ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6"/>
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="openMonth" x-cloak
+                                        x-transition:enter="transition ease-out duration-50"
+                                        x-transition:enter-start="transform opacity-0 scale-98"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-50"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-98"
+                                        class="absolute left-0 top-full mt-1 w-full min-w-[140px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
+                                        style="display: none;">
+                                        <button type="button" @click="printPernyataanEffectiveMonth = ''; openMonth = false"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            :class="!printPernyataanEffectiveMonth ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
+                                            <span>-- Kosongkan --</span>
+                                            <span x-show="!printPernyataanEffectiveMonth" class="text-gov-navy font-bold">✓</span>
+                                        </button>
+                                        @php
+                                            $daftarBulan = [
+                                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                            ];
+                                        @endphp
+                                        @foreach($daftarBulan as $bulan)
+                                            <button type="button" @click="printPernyataanEffectiveMonth = '{{ $bulan }}'; openMonth = false"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                                :class="printPernyataanEffectiveMonth === '{{ $bulan }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
+                                                <span>{{ $bulan }}</span>
+                                                <span x-show="printPernyataanEffectiveMonth === '{{ $bulan }}'" class="text-gov-navy font-bold">✓</span>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <!-- Dropdown Tahun Custom (Seamless & Instan) -->
+                                <div class="relative" x-data="{ openYear: false }" :class="openYear ? 'z-40' : 'z-10'" @click.outside="openYear = false" @keydown.escape.window="openYear = false">
+                                    <button type="button" @click="openYear = !openYear"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                        <span class="truncate" x-text="printPernyataanEffectiveYear ? printPernyataanEffectiveYear : '-- Kosongkan --'"></span>
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openYear ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m6 9 6 6 6-6"/>
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="openYear" x-cloak
+                                        x-transition:enter="transition ease-out duration-50"
+                                        x-transition:enter-start="transform opacity-0 scale-98"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-50"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-98"
+                                        class="absolute right-0 top-full mt-1 w-full min-w-[110px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
+                                        style="display: none;">
+                                        <button type="button" @click="printPernyataanEffectiveYear = ''; openYear = false"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            :class="!printPernyataanEffectiveYear ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
+                                            <span>-- Kosongkan --</span>
+                                            <span x-show="!printPernyataanEffectiveYear" class="text-gov-navy font-bold">✓</span>
+                                        </button>
+                                        @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
+                                            <button type="button" @click="printPernyataanEffectiveYear = '{{ $y }}'; openYear = false"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                                :class="printPernyataanEffectiveYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
+                                                <span>{{ $y }}</span>
+                                                <span x-show="printPernyataanEffectiveYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>
+                                            </button>
+                                        @endfor
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
