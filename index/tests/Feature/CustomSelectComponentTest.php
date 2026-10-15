@@ -52,4 +52,23 @@ class CustomSelectComponentTest extends TestCase
         $this->assertStringContainsString('Cari tahun...', $html);
         $this->assertStringContainsString('searchable: true', $html);
     }
+
+    public function test_custom_select_renders_with_group_headers()
+    {
+        $options = [
+            ['value' => '', 'label' => '-- Pilih Pos --'],
+            ['label' => 'PENERIMAAN', 'is_header' => true],
+            ['value' => '1', 'label' => 'Infaq Rutin'],
+            ['label' => 'PENGELUARAN', 'is_header' => true],
+            ['value' => '2', 'label' => 'Listrik'],
+        ];
+
+        $html = Blade::render('<x-custom-select :options="$options" placeholder="Pilih Pos" />', [
+            'options' => $options
+        ]);
+
+        $this->assertStringContainsString('PENERIMAAN', $html);
+        $this->assertStringContainsString('is_header', $html);
+        $this->assertStringContainsString('Infaq Rutin', $html);
+    }
 }

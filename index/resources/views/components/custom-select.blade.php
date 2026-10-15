@@ -28,7 +28,12 @@
             } elseif (is_array($opt)) {
                 $val = $opt['id'] ?? $opt['value'] ?? $opt['code'] ?? (string)$key;
                 $lbl = $opt['name'] ?? $opt['label'] ?? $opt['title'] ?? (string)$val;
-                $normalizedOptions[] = ['value' => (string)$val, 'label' => (string)$lbl];
+                $isHeader = !empty($opt['is_header']);
+                $normalizedOptions[] = [
+                    'value' => (string)$val,
+                    'label' => (string)$lbl,
+                    'is_header' => $isHeader,
+                ];
             } else {
                 if ($isList) {
                     $val = (string)$opt;
@@ -37,7 +42,7 @@
                     $val = (string)$key;
                     $lbl = (string)$opt;
                 }
-                $normalizedOptions[] = ['value' => $val, 'label' => $lbl];
+                $normalizedOptions[] = ['value' => $val, 'label' => $lbl, 'is_header' => false];
             }
         }
     }
@@ -59,9 +64,9 @@
         @endif
         options: {{ Js::from($normalizedOptions) }},
         get currentLabel() {
-            const found = this.options.find(o => String(o.value) === String(this.selected));
+            const found = this.options.find(o => !o.is_header && String(o.value) === String(this.selected));
             if (found) return found.label;
-            return {{ Js::from($placeholder) }} || (this.options[0] ? this.options[0].label : '');
+            return {{ Js::from($placeholder) }} || (this.options.find(o => !o.is_header) ? this.options.find(o => !o.is_header).label : '');
         },
         toggle() {
             this.open = !this.open;
@@ -78,7 +83,7 @@
         get filteredOptions() {
             if (!this.searchable || !this.search) return this.options;
             const q = this.search.toLowerCase();
-            return this.options.filter(o => o.label.toLowerCase().includes(q));
+            return this.options.filter(o => o.is_header || o.label.toLowerCase().includes(q));
         }
     }"
     @custom-select-opened.window="if ($event.detail.id !== id) open = false"
@@ -124,16 +129,25 @@
         @endif
 
         <div class="overflow-y-auto max-h-52 divide-y divide-slate-50">
-            <template x-for="opt in filteredOptions" :key="opt.value">
-                <button 
-                    type="button" 
-                    @click.stop="select(opt.value)"
-                    class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors"
-                    :class="String(selected) === String(opt.value) ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'"
-                >
-                    <span class="truncate" x-text="opt.label"></span>
-                    <span x-show="String(selected) === String(opt.value)" class="text-gov-navy font-bold shrink-0 ml-1.5">✓</span>
-                </button>
+            <template x-for="(opt, idx) in filteredOptions" :key="opt.value + '_' + idx">
+                <div>
+                    <template x-if="opt.is_header">
+                        <div class="px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase text-slate-400 bg-slate-50/90 border-y border-slate-100 select-none">
+                            <span x-text="opt.label"></span>
+                        </div>
+                    </template>
+                    <template x-if="!opt.is_header">
+                        <button 
+                            type="button" 
+                            @click.stop="select(opt.value)"
+                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors"
+                            :class="String(selected) === String(opt.value) ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'"
+                        >
+                            <span class="truncate" x-text="opt.label"></span>
+                            <span x-show="String(selected) === String(opt.value)" class="text-gov-navy font-bold shrink-0 ml-1.5">✓</span>
+                        </button>
+                    </template>
+                </div>
             </template>
             <div x-show="filteredOptions.length === 0" class="px-3 py-2 text-slate-400 italic text-center text-xs">
                 Tidak ada data ditemukan
