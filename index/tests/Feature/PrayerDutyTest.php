@@ -414,7 +414,7 @@ class PrayerDutyTest extends TestCase
         // 4. Verify exported rows structure & text formatting, and verify Jumat Dzuhur and notes are excluded!
         $rows = \App\Services\SimpleXlsxService::parseFile($tempFile);
         $this->assertNotEmpty($rows);
-        $this->assertSame(['No', 'Hari', 'Tanggal', 'Waktu Shalat', 'Petugas Imam', 'Petugas Muadzin', 'Pola Pekan'], $rows[0]);
+        $this->assertSame(['No', 'Hari', 'Tanggal', 'Waktu Shalat', 'Petugas Imam', 'Petugas Muadzin', 'Petugas MC', 'Pola Pekan'], $rows[0]);
 
         // Assert Jumat Dzuhur is excluded, while Jumat Ashar is included
         $hasJumatDzuhur = false;
@@ -434,8 +434,8 @@ class PrayerDutyTest extends TestCase
         // 5. Edit the exported data (simulating user editing Excel)
         $editedHeaders = $rows[0];
         $editedRows = [
-            ['1', 'Senin', '-', 'Dzuhur', 'Ust. Hasil Edit Excel', 'Muadzin Hasil Edit', 'semua'],
-            ['2', 'Selasa', '-', 'Ashar', 'Ust. Baru Tambahan', 'Muadzin Baru', 'pekan_1_3_5'],
+            ['1', 'Senin', '-', 'Dzuhur', 'Ust. Hasil Edit Excel', 'Muadzin Hasil Edit', '-', 'semua'],
+            ['2', 'Selasa', '-', 'Ashar', 'Ust. Baru Tambahan', 'Muadzin Baru', '-', 'pekan_1_3_5'],
         ];
         $editedXlsxContent = \App\Services\SimpleXlsxService::createXlsx($editedHeaders, $editedRows);
         @unlink($tempFile);
@@ -609,6 +609,67 @@ class PrayerDutyTest extends TestCase
         $response->assertSee('MC :');
         $response->assertDontSee('✓ Khatib Jumat');
         $response->assertDontSee('✓ Bilal Jumat');
+    }
+
+    public function test_export_excel_includes_petugas_mc_column_and_friday_dzuhur_mc_sync(): void
+    {
+        $this->actingAs($this->admin);
+
+        PrayerDuty::create([
+            'day_name' => 'Kamis',
+            'prayer_time' => 'dzuhur',
+            'week_pattern' => 'pekan_3',
+            'tahun' => 2026,
+            'imam_name' => 'Dharma Setiawan',
+            'muadzin_name' => 'Ugik Endrar Viana',
+        ]);
+
+        PrayerDuty::create([
+            'day_name' => 'Jumat',
+            'prayer_time' => 'ashar',
+            'week_pattern' => 'pekan_3',
+            'tahun' => 2026,
+            'imam_name' => 'Bimo Heriyanto',
+            'muadzin_name' => 'Juli Ardianto',
+        ]);
+
+        Kajian::create([
+            'title' => 'Khutbah Jumat Pekan 3',
+            'type' => 'jumat',
+            'date' => '2026-10-16',
+            'khatib_name' => 'Ust Hasyim Azhari SPdI',
+            'muadzin_name' => 'Ugik Endrar Viana',
+            'mc_name' => 'Dhafin Fuad Mahathir',
+        ]);
+
+        $response = $this->get(route('admin.petugas.export-excel', [
+            'week' => 3,
+            'month' => 10,
+            'year' => 2026,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('spreadsheetml.sheet', $response->headers->get('content-type'));
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_mc_') . '.xlsx';
+        file_put_contents($tempFile, $response->getContent());
+        $rows = \App\Services\SimpleXlsxService::parseFile($tempFile);
+        @unlink($tempFile);
+
+        $this->assertNotEmpty($rows);
+        $this->assertSame(['No', 'Hari', 'Tanggal', 'Waktu Shalat', 'Petugas Imam', 'Petugas Muadzin', 'Petugas MC', 'Pola Pekan'], $rows[0]);
+
+        // Find Jumat Dzuhur row
+        $foundJumatDzuhur = false;
+        foreach ($rows as $r) {
+            if (($r[1] ?? '') === 'Jumat' && strtolower($r[3] ?? '') === 'dzuhur') {
+                $foundJumatDzuhur = true;
+                $this->assertEquals('Ust Hasyim Azhari SPdI', $r[4], 'Petugas Imam must be synchronized with Friday Khatib');
+                $this->assertEquals('Ugik Endrar Viana', $r[5], 'Petugas Muadzin must be synchronized with Friday Muadzin');
+                $this->assertEquals('Dhafin Fuad Mahathir', $r[6], 'Petugas MC must be synchronized with Friday MC');
+            }
+        }
+        $this->assertTrue($foundJumatDzuhur, 'Jumat Dzuhur must be present in weekly Excel export');
     }
 }
 

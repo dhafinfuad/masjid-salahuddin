@@ -17,6 +17,7 @@ class PrayerDutyExportController extends Controller
      */
     public function exportExcel(Request $request): Response
     {
+        $settings = MasjidSetting::getActive();
         $week = $request->query('week', 'all');
         $prayerTime = $request->query('prayer_time', 'all');
         $year = $request->query('year', 'all');
@@ -54,23 +55,37 @@ class PrayerDutyExportController extends Controller
             $duties = collect([]);
             foreach ($weekCalendarDays as $dayInfo) {
                 foreach ($times as $pTime) {
-                    // Kecualikan Jumat Dzuhur karena diatur di halaman Kegiatan (Khutbah Jumat)
-                    if ($dayInfo['day_name'] === 'Jumat' && $pTime === 'dzuhur') {
-                        continue;
-                    }
-
                     $matchedDuties = $allYearDuties->filter(function ($d) use ($dayInfo, $pTime) {
                         return $d->day_name === $dayInfo['day_name']
                             && $d->prayer_time === $pTime
                             && $d->matchesWeek($dayInfo['week_number']);
                     });
 
-                    foreach ($matchedDuties as $matchedDuty) {
-                        $dutyRow = clone $matchedDuty;
+                    if ($matchedDuties->isEmpty()) {
+                        $matchedDuties = $allYearDuties->filter(function ($d) use ($dayInfo, $pTime, $selectedWeekNum) {
+                            return $d->day_name === $dayInfo['day_name']
+                                && $d->prayer_time === $pTime
+                                && $d->matchesWeek($selectedWeekNum);
+                        });
+                    }
+
+                    if ($matchedDuties->isEmpty()) {
+                        $dutyRow = new PrayerDuty();
+                        $dutyRow->day_name = $dayInfo['day_name'];
+                        $dutyRow->prayer_time = $pTime;
+                        $dutyRow->week_pattern = 'pekan_' . $dayInfo['week_number'];
                         $dutyRow->resolved_date = $dayInfo['date'];
                         $dutyRow->resolved_week = $dayInfo['week_number'];
                         $dutyRow->resolved_week_label = 'Pekan ' . $dayInfo['week_number'];
                         $duties->push($dutyRow);
+                    } else {
+                        foreach ($matchedDuties as $matchedDuty) {
+                            $dutyRow = clone $matchedDuty;
+                            $dutyRow->resolved_date = $dayInfo['date'];
+                            $dutyRow->resolved_week = $dayInfo['week_number'];
+                            $dutyRow->resolved_week_label = 'Pekan ' . $dayInfo['week_number'];
+                            $duties->push($dutyRow);
+                        }
                     }
                 }
             }
@@ -144,7 +159,7 @@ class PrayerDutyExportController extends Controller
                 return $orderA <=> $orderB;
             }
 
-            return $a->id <=> $b->id;
+            return ($a->id ?? 0) <=> ($b->id ?? 0);
         })->values();
 
         $rangeStart = Carbon::create($selectedYearNum, $selectedMonthNum, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth()->subWeeks(1);
@@ -172,19 +187,15 @@ class PrayerDutyExportController extends Controller
             'Waktu Shalat',
             'Petugas Imam',
             'Petugas Muadzin',
+            'Petugas MC',
             'Pola Pekan',
         ];
 
-        $colWidths = [6, 14, 20, 16, 26, 26, 18];
+        $colWidths = [6, 14, 20, 16, 26, 26, 24, 18];
 
         $rows = [];
         $rowNum = 1;
         foreach ($duties as $duty) {
-            // Kecualikan Jumat Dzuhur karena diatur di halaman Kegiatan (Khutbah Jumat)
-            if ($duty->day_name === 'Jumat' && $duty->prayer_time === 'dzuhur') {
-                continue;
-            }
-
             $dutyWeek = $duty->resolved_week ?? null;
             if (!$dutyWeek) {
                 $currentWeekNum = PrayerDuty::getWeekOfMonth(now());
@@ -207,11 +218,35 @@ class PrayerDutyExportController extends Controller
 
             $imam = ($duty->imam_name ?: '-');
             $muadzin = ($duty->muadzin_name ?: '-');
+            $mc = '-';
 
-            if ($duty->prayer_time === 'ashar' && $matchedKajianOnDate && !empty($matchedKajianOnDate->speaker_name)) {
+            if ($duty->day_name === 'Jumat' && $duty->prayer_time === 'dzuhur') {
+                $matchedKajian = ($dateKey && isset($fridayKajiansByDate[$dateKey]))
+                    ? $fridayKajiansByDate[$dateKey]
+                    : ($dutyWeek && isset($fridayKajiansByWeek[$dutyWeek]) ? $fridayKajiansByWeek[$dutyWeek] : null);
+
+                $khatib = $matchedKajian
+                    ? ($matchedKajian->khatib_name ?: ($matchedKajian->speaker_name ?: ($duty->imam_name ?: ($settings->friday_prayer_info['khatib'] ?? 'Ust. M. Yasak Lc MA'))))
+                    : ($duty->imam_name ?: ($settings->friday_prayer_info['khatib'] ?? 'Ust. M. Yasak Lc MA'));
+
+                $bilal = $matchedKajian
+                    ? ($matchedKajian->muadzin_name ?: ($matchedKajian->description ?: ($duty->muadzin_name ?: ($settings->friday_prayer_info['muadzin'] ?? 'Khodori'))))
+                    : ($duty->muadzin_name ?: ($settings->friday_prayer_info['muadzin'] ?? 'Khodori'));
+
+                $mcName = $matchedKajian
+                    ? ($matchedKajian->mc_name ?: ($settings->friday_prayer_info['mc'] ?? '-'))
+                    : ($settings->friday_prayer_info['mc'] ?? '-');
+
+                $imam = (!empty($khatib) && $khatib !== '') ? $khatib : '-';
+                $muadzin = (!empty($bilal) && $bilal !== '') ? $bilal : '-';
+                $mc = (!empty($mcName) && $mcName !== '') ? $mcName : '-';
+            } elseif ($duty->prayer_time === 'ashar' && $matchedKajianOnDate && !empty($matchedKajianOnDate->speaker_name)) {
                 $imam = $matchedKajianOnDate->speaker_name;
                 if (!empty($matchedKajianOnDate->muadzin_name)) {
                     $muadzin = $matchedKajianOnDate->muadzin_name;
+                }
+                if (!empty($matchedKajianOnDate->mc_name)) {
+                    $mc = $matchedKajianOnDate->mc_name;
                 }
             }
 
@@ -222,6 +257,7 @@ class PrayerDutyExportController extends Controller
                 ucfirst($duty->prayer_time),
                 $imam,
                 $muadzin,
+                $mc,
                 $duty->resolved_week_label ?? $duty->week_pattern,
             ];
         }
