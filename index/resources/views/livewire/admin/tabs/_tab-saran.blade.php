@@ -232,7 +232,7 @@
                                 Dibaca
                             </span>
                         @elseif($item->status === 'ditindaklanjuti')
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400">
                                 Selesai
                             </span>
                         @else
@@ -269,7 +269,7 @@
                     <div class="shrink-0">
                         @if(Auth::check() && Auth::user()->canManage())
                             <button type="button" wire:click="toggleSaranPublic({{ $item->id }})"
-                                class="px-2 py-1 rounded-lg text-[11px] font-semibold border transition cursor-pointer inline-flex items-center gap-1 {{ $item->is_public ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100' }}"
+                                class="px-2 py-1 rounded-lg text-[11px] font-semibold border transition cursor-pointer inline-flex items-center gap-1 {{ $item->is_public ? 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100' }}"
                                 title="Ubah status publikasi feed portal">
                                 @if($item->is_public)
                                     <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -280,7 +280,7 @@
                                 @endif
                             </button>
                         @else
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border {{ $item->is_public ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200' }}">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border {{ $item->is_public ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-slate-50 text-slate-500 border-slate-200' }}">
                                 {{ $item->is_public ? 'Publik' : 'Privat' }}
                             </span>
                         @endif
