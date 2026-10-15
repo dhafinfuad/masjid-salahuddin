@@ -488,12 +488,9 @@ class AdminDashboard extends Component
     public string $socialProgramName = '';
     public string $socialProgramSlug = '';
     public string $socialProgramCategory = 'sosial'; // 'yatim' | 'infaq' | 'zakat' | 'qurban' | 'sosial'
-    public string $socialProgramDescription = '';
-    public string $socialProgramTarget = '10000000';
     public string $socialProgramPeriodType = 'bulanan'; // 'bulanan' | 'tahunan' | 'insidental'
     public string $socialProgramStatus = 'AKTIF'; // 'AKTIF' | 'DITUTUP' | 'SELESAI'
     public string $socialProgramIcon = 'heart-handshake';
-    public string $socialProgramColor = 'emerald';
     
     // ==========================================
     // Visitor Statistics State
@@ -593,11 +590,6 @@ class AdminDashboard extends Component
         }
         $this->search = '';
         $this->toastMessage = '';
-    }
-
-    public function updatedSocialProgramTarget(mixed $val): void
-    {
-        $this->socialProgramTarget = preg_replace('/\D/', '', (string) $val);
     }
 
     public function updatedFinanceAmount(mixed $val): void
@@ -5419,11 +5411,9 @@ class AdminDashboard extends Component
         $this->socialProgramSlug = '';
         $this->socialProgramCategory = 'sosial';
         $this->socialProgramDescription = '';
-        $this->socialProgramTarget = '10000000';
         $this->socialProgramPeriodType = 'bulanan';
         $this->socialProgramStatus = 'AKTIF';
         $this->socialProgramIcon = 'heart-handshake';
-        $this->socialProgramColor = 'emerald';
         $this->showSocialProgramModal = true;
         $this->dispatch('open-social-program-modal');
     }
@@ -5442,11 +5432,9 @@ class AdminDashboard extends Component
         $this->socialProgramSlug = $prog->slug;
         $this->socialProgramCategory = $prog->category ?? 'sosial';
         $this->socialProgramDescription = $prog->description ?? '';
-        $this->socialProgramTarget = (string) (int) $prog->target_amount;
         $this->socialProgramPeriodType = $prog->period_type ?? 'bulanan';
         $this->socialProgramStatus = $prog->status ?? 'AKTIF';
         $this->socialProgramIcon = $prog->icon ?? 'heart-handshake';
-        $this->socialProgramColor = $prog->color ?? 'emerald';
         $this->showSocialProgramModal = true;
         $this->dispatch('open-social-program-modal');
     }
@@ -5458,17 +5446,13 @@ class AdminDashboard extends Component
             return;
         }
 
-        $this->socialProgramTarget = preg_replace('/\D/', '', (string) $this->socialProgramTarget);
-
         $this->validate([
             'socialProgramName' => 'required|string|min:3|max:255',
-            'socialProgramTarget' => 'required|numeric|min:0',
             'socialProgramCategory' => 'required|string',
             'socialProgramPeriodType' => 'required|string',
             'socialProgramStatus' => 'required|string',
         ], [
             'socialProgramName.required' => 'Nama program sosial wajib diisi.',
-            'socialProgramTarget.required' => 'Target komitmen dana wajib diisi.',
         ]);
 
         $slug = Str::slug($this->socialProgramName);
@@ -5489,11 +5473,9 @@ class AdminDashboard extends Component
             'slug' => $slug,
             'category' => $this->socialProgramCategory,
             'description' => $this->socialProgramDescription,
-            'target_amount' => (float) $this->socialProgramTarget,
             'period_type' => $this->socialProgramPeriodType,
             'status' => $this->socialProgramStatus,
             'icon' => $this->socialProgramIcon ?: 'heart-handshake',
-            'color' => $this->socialProgramColor ?: 'emerald',
         ];
 
         if ($this->isEditingSocialProgram && $this->editingSocialProgramId) {
@@ -5698,7 +5680,6 @@ class AdminDashboard extends Component
         $socialParticipantsList = collect([]);
         $totalSocialCommitment = 0;
         $totalSocialCollectedAll = 0;
-        $totalSocialTargetAll = 0;
 
         $allCities = [];
 
@@ -6528,7 +6509,6 @@ class AdminDashboard extends Component
                     ->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])
                     ->sum('monthly_amount');
                 $totalSocialCollectedAll = (float) $allSocialPrograms->sum(fn ($p) => (float) $p->total_collected);
-                $totalSocialTargetAll = (float) $allSocialPrograms->sum(fn ($p) => (float) $p->target_amount);
                 $totalActiveSocialParticipants = 0;
 
                 $socialParticipantsList = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
@@ -6587,7 +6567,6 @@ class AdminDashboard extends Component
                 $socialParticipantsList = $socialParticipantsQuery->paginate(15, ['*'], 'socialParticipantPage');
                 $totalSocialCommitment = (float) ProgramParticipant::where('period', $currentPeriod)->sum('monthly_amount');
                 $totalSocialCollectedAll = $allSocialPrograms->sum(fn ($p) => $p->total_collected);
-                $totalSocialTargetAll = $allSocialPrograms->sum(fn ($p) => (float) $p->target_amount);
                 $totalActiveSocialParticipants = ProgramParticipant::where('period', $currentPeriod)->count();
 
                 // Setoran Kantor (Penerimaan Kliring & Tukin)
@@ -6811,7 +6790,6 @@ class AdminDashboard extends Component
             'socialParticipantsList' => $socialParticipantsList,
             'totalSocialCommitment' => $totalSocialCommitment,
             'totalSocialCollectedAll' => $totalSocialCollectedAll,
-            'totalSocialTargetAll' => $totalSocialTargetAll,
             'totalActiveSocialParticipants' => $totalActiveSocialParticipants,
             'availablePeriods' => $availablePeriods,
             // Tab Galeri

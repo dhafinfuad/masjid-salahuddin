@@ -43,11 +43,9 @@ class ExampleTest extends TestCase
             'slug' => 'santunan-anak-yatim',
             'category' => 'yatim',
             'period_type' => 'bulanan',
-            'target_amount' => 10000000,
             'current_amount' => 0,
             'participants_count' => 0,
             'icon' => 'heart-handshake',
-            'color_theme' => 'emerald',
             'status' => 'AKTIF',
         ]);
 

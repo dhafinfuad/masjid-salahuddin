@@ -46,11 +46,9 @@ class SocialProgramManagementTest extends TestCase
             'slug' => 'santunan-anak-yatim',
             'category' => 'yatim',
             'description' => 'Santunan bulanan yatim dhuafa',
-            'target_amount' => 10000000,
             'period_type' => 'bulanan',
             'status' => 'AKTIF',
             'icon' => 'heart-handshake',
-            'color' => 'emerald',
         ]);
 
         $this->infaqProgram = SocialProgram::create([
@@ -58,11 +56,9 @@ class SocialProgramManagementTest extends TestCase
             'slug' => 'infaq-rutin-pegawai',
             'category' => 'infaq',
             'description' => 'Infaq rutin bulanan pegawai',
-            'target_amount' => 20000000,
             'period_type' => 'bulanan',
             'status' => 'AKTIF',
             'icon' => 'wallet',
-            'color' => 'blue',
         ]);
     }
 
@@ -108,7 +104,6 @@ class SocialProgramManagementTest extends TestCase
         $this->assertEquals(750000, $this->yatimProgram->total_collected);
         $this->assertEquals(1000000, $this->yatimProgram->total_disbursed);
         $this->assertEquals(-250000, $this->yatimProgram->current_balance);
-        $this->assertEquals(7.5, $this->yatimProgram->target_progress_percentage);
     }
 
     public function test_admin_dashboard_can_load_programs_tab(): void
@@ -140,7 +135,6 @@ class SocialProgramManagementTest extends TestCase
             ->call('openCreateSocialProgram')
             ->set('socialProgramName', 'Zakat Mal Rutin')
             ->set('socialProgramCategory', 'zakat')
-            ->set('socialProgramTarget', '15000000')
             ->set('socialProgramPeriodType', 'bulanan')
             ->set('socialProgramStatus', 'AKTIF')
             ->set('socialProgramDescription', 'Penghimpunan zakat profesi pegawai')
@@ -151,7 +145,6 @@ class SocialProgramManagementTest extends TestCase
         $this->assertDatabaseHas('social_programs', [
             'name' => 'Zakat Mal Rutin',
             'category' => 'zakat',
-            'target_amount' => 15000000,
             'status' => 'AKTIF',
         ]);
     }
@@ -163,14 +156,14 @@ class SocialProgramManagementTest extends TestCase
         Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
             ->call('openEditSocialProgram', $this->yatimProgram->id)
             ->assertSet('socialProgramName', 'Santunan Anak Yatim')
-            ->set('socialProgramTarget', '12500000')
+            ->set('socialProgramDescription', 'Santunan bulanan yatim dhuafa terupdate')
             ->call('saveSocialProgram')
             ->assertHasNoErrors()
             ->assertDispatched('close-social-program-modal');
 
         $this->assertDatabaseHas('social_programs', [
             'id' => $this->yatimProgram->id,
-            'target_amount' => 12500000,
+            'description' => 'Santunan bulanan yatim dhuafa terupdate',
         ]);
     }
 

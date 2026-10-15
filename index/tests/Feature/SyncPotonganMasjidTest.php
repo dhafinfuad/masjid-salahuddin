@@ -25,11 +25,9 @@ class SyncPotonganMasjidTest extends TestCase
             'slug' => 'santunan-anak-yatim',
             'category' => 'yatim',
             'description' => 'Program Santunan Anak Yatim',
-            'target_amount' => 33325000,
             'period_type' => 'bulanan',
             'status' => 'AKTIF',
             'icon' => 'heart-handshake',
-            'color' => 'emerald',
         ]);
 
         SocialProgram::create([
@@ -38,11 +36,9 @@ class SyncPotonganMasjidTest extends TestCase
             'slug' => 'infaq-rutin',
             'category' => 'infaq',
             'description' => 'Infaq Rutin',
-            'target_amount' => 43575000,
             'period_type' => 'bulanan',
             'status' => 'AKTIF',
             'icon' => 'wallet',
-            'color' => 'blue',
         ]);
 
         SocialProgram::create([
@@ -51,11 +47,9 @@ class SyncPotonganMasjidTest extends TestCase
             'slug' => 'zakat-mal-rutin',
             'category' => 'zakat',
             'description' => 'Program Zakat Mal Rutin',
-            'target_amount' => 29500000,
             'period_type' => 'bulanan',
             'status' => 'AKTIF',
             'icon' => 'coins',
-            'color' => 'amber',
         ]);
 
         SocialProgram::create([
@@ -64,11 +58,9 @@ class SyncPotonganMasjidTest extends TestCase
             'slug' => 'tabungan-qurban',
             'category' => 'qurban',
             'description' => 'Tabungan Qurban',
-            'target_amount' => 112400000,
             'period_type' => 'tahunan',
             'status' => 'AKTIF',
             'icon' => 'sparkles',
-            'color' => 'teal',
         ]);
     }
 

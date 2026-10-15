@@ -3524,7 +3524,7 @@
                         <h3 class="text-base font-bold text-gov-textMain"
                             x-text="isEditingSocialProgram ? 'Edit Program Sosial' : 'Tambah Program Sosial Baru'">
                         </h3>
-                        <p class="text-xs text-slate-500">Kelola master program sosial masjid dan target himpunan dana</p>
+                        <p class="text-xs text-slate-500">Kelola master program sosial masjid</p>
                     </div>
                 </div>
                 <button type="button" @click="showSocialProgramModal = false"
@@ -3568,14 +3568,8 @@
                     </div>
                 </div>
 
-                <!-- Target Dana & Status Keaktifan -->
+                <!-- Status Program & Ikon Tampilan -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Target Himpunan Dana (Rp) *</label>
-                        <input wire:model="socialProgramTarget" x-ribuan="$wire.socialProgramTarget" type="text" inputmode="numeric" placeholder="Contoh: 10.000.000" required
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-bold">
-                        @error('socialProgramTarget') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Program *</label>
                         <select wire:model="socialProgramStatus"
@@ -3586,10 +3580,6 @@
                         </select>
                         @error('socialProgramStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
-                </div>
-
-                <!-- Ikon & Pilihan Warna -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Ikon Tampilan</label>
                         <select wire:model="socialProgramIcon"
@@ -3600,17 +3590,6 @@
                             <option value="sparkles">sparkles (Qurban/Spesial)</option>
                             <option value="users">users (Komunitas)</option>
                             <option value="hand-heart">hand-heart (Sedekah)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Tema Warna</label>
-                        <select wire:model="socialProgramColor"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="emerald">Emerald (Hijau Syariah)</option>
-                            <option value="blue">Blue (Biru Profesional)</option>
-                            <option value="amber">Amber (Kuning Keemasan)</option>
-                            <option value="teal">Teal (Toska Elegan)</option>
-                            <option value="purple">Purple (Ungu Mewah)</option>
                         </select>
                     </div>
                 </div>

@@ -671,6 +671,58 @@ class PrayerDutyTest extends TestCase
         }
         $this->assertTrue($foundJumatDzuhur, 'Jumat Dzuhur must be present in weekly Excel export');
     }
+
+    public function test_export_excel_with_all_weeks_filter_includes_friday_dzuhur_and_petugas_mc(): void
+    {
+        $this->actingAs($this->admin);
+
+        PrayerDuty::create([
+            'day_name' => 'Senin',
+            'prayer_time' => 'dzuhur',
+            'week_pattern' => 'semua',
+            'tahun' => 2026,
+            'imam_name' => 'Adim Kadimuloh',
+            'muadzin_name' => 'Lukman Hakim',
+        ]);
+
+        Kajian::create([
+            'title' => 'Khutbah Jumat 16 Okt',
+            'type' => 'jumat',
+            'date' => '2026-10-16',
+            'khatib_name' => 'Ust Hasyim Azhari SPdI',
+            'muadzin_name' => 'Ugik Endrar Viana',
+            'mc_name' => 'Dhafin Fuad Mahathir',
+        ]);
+
+        $response = $this->get(route('admin.petugas.export-excel', [
+            'week' => 'all',
+            'month' => 10,
+            'year' => 2026,
+        ]));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('spreadsheetml.sheet', $response->headers->get('content-type'));
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_all_weeks_') . '.xlsx';
+        file_put_contents($tempFile, $response->getContent());
+        $rows = \App\Services\SimpleXlsxService::parseFile($tempFile);
+        @unlink($tempFile);
+
+        $this->assertNotEmpty($rows);
+        $this->assertSame(['No', 'Hari', 'Tanggal', 'Waktu Shalat', 'Petugas Imam', 'Petugas Muadzin', 'Petugas MC', 'Pola Pekan'], $rows[0]);
+
+        // Find Jumat 16 October 2026 Dzuhur row
+        $foundFriday16Dzuhur = false;
+        foreach ($rows as $r) {
+            if (($r[1] ?? '') === 'Jumat' && str_contains($r[2] ?? '', '16 Oktober 2026') && strtolower($r[3] ?? '') === 'dzuhur') {
+                $foundFriday16Dzuhur = true;
+                $this->assertEquals('Ust Hasyim Azhari SPdI', $r[4]);
+                $this->assertEquals('Ugik Endrar Viana', $r[5]);
+                $this->assertEquals('Dhafin Fuad Mahathir', $r[6], 'Petugas MC must NOT be empty when filtering Semua Pekan');
+            }
+        }
+        $this->assertTrue($foundFriday16Dzuhur, 'Friday 16 October Dzuhur must be present in Semua Pekan export');
+    }
 }
 
 

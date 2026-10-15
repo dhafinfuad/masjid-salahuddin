@@ -48,38 +48,14 @@ class ThousandSeparatorInputTest extends TestCase
             'slug' => 'santunan-yatim-dhuafa',
             'category' => 'yatim',
             'description' => 'Santunan yatim',
-            'target_amount' => 10000000,
             'period_type' => 'bulanan',
-            
             'icon' => 'heart-handshake',
-            'color' => 'emerald',
         ]);
 
         $this->financeCategory = FinanceCategory::create([
             'name' => 'Operasional Masjid',
             'type' => 'pengeluaran',
             'color' => 'amber',
-        ]);
-    }
-
-    public function test_social_program_target_with_thousand_dots_is_stored_as_pure_number(): void
-    {
-        $this->actingAs($this->admin);
-
-        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
-            ->call('openCreateSocialProgram')
-            ->set('socialProgramName', 'Beasiswa Generasi Quran')
-            ->set('socialProgramCategory', 'sosial')
-            ->set('socialProgramTarget', '15.000.000') // With thousand dots!
-            ->set('socialProgramPeriodType', 'bulanan')
-            ->set('socialProgramStatus', 'AKTIF')
-            ->call('saveSocialProgram')
-            ->assertHasNoErrors()
-            ->assertDispatched('close-social-program-modal');
-
-        $this->assertDatabaseHas('social_programs', [
-            'name' => 'Beasiswa Generasi Quran',
-            'target_amount' => 15000000,
         ]);
     }
 

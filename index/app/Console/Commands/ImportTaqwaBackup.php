@@ -218,7 +218,6 @@ class ImportTaqwaBackup extends Command
                         'slug' => Str::slug($name),
                         'category' => $type,
                         'description' => $p['description'] ?? '',
-                        'target_amount' => $p['balance'] ?? 50000000,
                         'period_type' => 'Bulanan',
                         'status' => 'AKTIF',
                     ]);
@@ -230,7 +229,6 @@ class ImportTaqwaBackup extends Command
                     $dbProgram->update([
                         'name' => $name,
                         'description' => $p['description'] ?? $dbProgram->description,
-                        'target_amount' => ($p['balance'] ?? 0) > $dbProgram->target_amount ? $p['balance'] : $dbProgram->target_amount,
                         'status' => 'AKTIF',
                     ]);
                 }

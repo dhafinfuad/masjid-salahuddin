@@ -35,7 +35,30 @@ class PrayerDutyExportController extends Controller
 
         if ($selectedWeekNum !== null) {
             $weekCalendarDays = PrayerDuty::getWeekCalendarDays($selectedYearNum, $selectedMonthNum, $selectedWeekNum);
+        } elseif (($request->has('month') && is_numeric($month)) || ($request->has('week') && $request->query('week') === 'all')) {
+            $startDate = Carbon::create($selectedYearNum, $selectedMonthNum, 1, 12, 0, 0, 'Asia/Jakarta')->startOfMonth();
+            $daysInMonth = $startDate->daysInMonth;
+            $dayMap = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat'];
+            $weekCalendarDays = [];
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dt = Carbon::create($selectedYearNum, $selectedMonthNum, $d, 12, 0, 0, 'Asia/Jakarta');
+                $dayOfWeekIso = $dt->dayOfWeekIso;
+                if (!isset($dayMap[$dayOfWeekIso])) {
+                    continue; // Lewati hari Sabtu dan Minggu (weekend)
+                }
+                $weekCalendarDays[] = [
+                    'day_name' => $dayMap[$dayOfWeekIso],
+                    'date' => $dt,
+                    'week_number' => PrayerDuty::getWeekOfMonth($dt),
+                    'month' => (int) $dt->month,
+                    'year' => (int) $dt->year,
+                ];
+            }
+        } else {
+            $weekCalendarDays = null;
+        }
 
+        if ($weekCalendarDays !== null) {
             $yearDutiesQuery = PrayerDuty::query();
             if ($year !== 'all' && is_numeric($year)) {
                 $selectedYear = (int) $year;
@@ -61,7 +84,7 @@ class PrayerDutyExportController extends Controller
                             && $d->matchesWeek($dayInfo['week_number']);
                     });
 
-                    if ($matchedDuties->isEmpty()) {
+                    if ($matchedDuties->isEmpty() && $selectedWeekNum !== null) {
                         $matchedDuties = $allYearDuties->filter(function ($d) use ($dayInfo, $pTime, $selectedWeekNum) {
                             return $d->day_name === $dayInfo['day_name']
                                 && $d->prayer_time === $pTime
@@ -296,7 +319,30 @@ class PrayerDutyExportController extends Controller
 
         if ($selectedWeekNum !== null) {
             $weekCalendarDays = PrayerDuty::getWeekCalendarDays($selectedYearNum, $selectedMonthNum, $selectedWeekNum);
+        } elseif (($request->has('month') && is_numeric($month)) || ($request->has('week') && $request->query('week') === 'all')) {
+            $startDate = Carbon::create($selectedYearNum, $selectedMonthNum, 1, 12, 0, 0, 'Asia/Jakarta')->startOfMonth();
+            $daysInMonth = $startDate->daysInMonth;
+            $dayMap = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat'];
+            $weekCalendarDays = [];
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $dt = Carbon::create($selectedYearNum, $selectedMonthNum, $d, 12, 0, 0, 'Asia/Jakarta');
+                $dayOfWeekIso = $dt->dayOfWeekIso;
+                if (!isset($dayMap[$dayOfWeekIso])) {
+                    continue; // Lewati hari Sabtu dan Minggu (weekend)
+                }
+                $weekCalendarDays[] = [
+                    'day_name' => $dayMap[$dayOfWeekIso],
+                    'date' => $dt,
+                    'week_number' => PrayerDuty::getWeekOfMonth($dt),
+                    'month' => (int) $dt->month,
+                    'year' => (int) $dt->year,
+                ];
+            }
+        } else {
+            $weekCalendarDays = null;
+        }
 
+        if ($weekCalendarDays !== null) {
             $yearDutiesQuery = PrayerDuty::query();
             if ($year !== 'all' && is_numeric($year)) {
                 $selectedYear = (int) $year;
@@ -322,7 +368,7 @@ class PrayerDutyExportController extends Controller
                             && $d->matchesWeek($dayInfo['week_number']);
                     });
 
-                    if ($matchedDuties->isEmpty()) {
+                    if ($matchedDuties->isEmpty() && $selectedWeekNum !== null) {
                         $matchedDuties = $allYearDuties->filter(function ($d) use ($dayInfo, $pTime, $selectedWeekNum) {
                             return $d->day_name === $dayInfo['day_name']
                                 && $d->prayer_time === $pTime
@@ -330,12 +376,23 @@ class PrayerDutyExportController extends Controller
                         });
                     }
 
-                    foreach ($matchedDuties as $matchedDuty) {
-                        $dutyRow = clone $matchedDuty;
+                    if ($matchedDuties->isEmpty()) {
+                        $dutyRow = new PrayerDuty();
+                        $dutyRow->day_name = $dayInfo['day_name'];
+                        $dutyRow->prayer_time = $pTime;
+                        $dutyRow->week_pattern = 'pekan_' . $dayInfo['week_number'];
                         $dutyRow->resolved_date = $dayInfo['date'];
                         $dutyRow->resolved_week = $dayInfo['week_number'];
                         $dutyRow->resolved_week_label = 'Pekan ' . $dayInfo['week_number'];
                         $duties->push($dutyRow);
+                    } else {
+                        foreach ($matchedDuties as $matchedDuty) {
+                            $dutyRow = clone $matchedDuty;
+                            $dutyRow->resolved_date = $dayInfo['date'];
+                            $dutyRow->resolved_week = $dayInfo['week_number'];
+                            $dutyRow->resolved_week_label = 'Pekan ' . $dayInfo['week_number'];
+                            $duties->push($dutyRow);
+                        }
                     }
                 }
             }
