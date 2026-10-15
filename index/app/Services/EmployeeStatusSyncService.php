@@ -196,6 +196,7 @@ class EmployeeStatusSyncService
             $name = trim(implode(' ', $nameCandidates));
             // Bersihkan nomor urut di awal nama jika ada (misal: "1. Bimo Heriyanto" -> "Bimo Heriyanto")
             $name = preg_replace('/^\d+[\.\-\s]+/', '', $name);
+            $name = self::stripAcademicTitles($name);
         }
 
         // Jika tidak ada NIP dan nama kosong, skip
@@ -216,29 +217,36 @@ class EmployeeStatusSyncService
      */
     public static function stripAcademicTitles(string $name): string
     {
+        if (trim($name) === '') {
+            return '';
+        }
+
         // 1. Jika terdapat tanda koma (pola umum penulisan gelar di Indonesia / SIKKA DJP: "Nama Pokok, Gelar1, Gelar2")
         if (str_contains($name, ',')) {
             $parts = explode(',', $name);
             $baseName = trim($parts[0]);
             // Pastikan bagian sebelum koma memang berupa nama pokok yang valid
-            if (strlen($baseName) >= 3 && preg_match('/[a-zA-Z]{2,}/', $baseName)) {
+            if (strlen($baseName) >= 2 && preg_match('/[a-zA-Z]{2,}/', $baseName)) {
                 $name = $baseName;
             }
         }
 
-        // 2. Bersihkan gelar awalan umum (misal Drs., Dra., Dr., Ir., Prof., Apt., H., Hj., K.H., Ustadz, dll.)
-        $prefixPatterns = [
-            '/^(dr|drs|dra|ir|prof|apt|h|hj|kh|ustadz|ustad)\b\.?\s+/i',
-        ];
-        $name = preg_replace($prefixPatterns, '', $name);
+        // 2. Bersihkan gelar awalan umum berulang (misal Drs., Dra., Dr., Ir., Prof., Apt., H., Hj., K.H., Ustadz, dll.)
+        $prefixPattern = '/^(?:(?:dr|drs|dra|ir|prof|apt|drg|h|hj|kh|ustadz|ustad|ust)\b\.?\s*)+/i';
+        $name = preg_replace($prefixPattern, '', $name);
 
         // 3. Bersihkan gelar akhiran vokasi, sarjana, magister, doktoral, dan profesi (termasuk jika tanpa koma)
         $suffixPatterns = [
-            '/\b(s|m|a)\.?(e|m|kom|si|t|h|pd|sos|ak|akt|ap|ab|ip|pjk|pnl|tr|st|kn|sa|ag|mn)\b\.?/i',
+            '/\b(s|m|a)\.?(e|m|kom|si|t|h|pd|sos|ak|akt|ap|ab|ip|pjk|pnl|tr|st|kn|sa|ag|mn|stat|ked|psi)\b\.?/i',
             '/\b(a\.?\s*md\.?\s*(pjk|ak|pnl)?|a\.?p\.?a\.?pj|s\.?s\.?t|d3|d4|s1|s2|s3)\b\.?/i',
-            '/\b(ph\.?d|mba|bba|ll\.?m|ak|akt|cpa|ca|bap|cma)\b\.?/i',
+            '/\b(ph\.?d|mba|bba|ll\.?m|ak|akt|cpa|ca|bap|cma|cta|acpa)\b\.?/i',
         ];
         $name = preg_replace($suffixPatterns, '', $name);
+
+        // 4. Bersihkan karakter sisa di ujung dan awal nama (titik, koma, strip, spasi berlebih)
+        $name = preg_replace('/[,\.\s\-_]+$/', '', $name);
+        $name = preg_replace('/^[,\.\s\-_]+/', '', $name);
+        $name = preg_replace('/\s+/', ' ', $name);
 
         return trim($name);
     }

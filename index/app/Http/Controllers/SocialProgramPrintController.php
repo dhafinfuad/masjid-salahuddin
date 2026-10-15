@@ -64,7 +64,7 @@ class SocialProgramPrintController extends Controller
     ];
 
     /**
-     * Format nama pegawai ke Kapital per Kata (Title Case) dan mempertahankan format gelar akademik
+     * Format nama pegawai ke Kapital per Kata (Title Case) dan bersih dari gelar akademik
      */
     public static function formatTitleCaseName(?string $name): ?string
     {
@@ -72,43 +72,12 @@ class SocialProgramPrintController extends Controller
             return null;
         }
 
-        $trimmed = trim($name);
-        $titled = Str::title(strtolower($trimmed));
-
-        // Format gelar akademik dan singkatan umum yang harus kapital / kombinasi khusus
-        $replacements = [
-            '/\b(s|m)\.(kom|pd|e|t|si|ag|sn|sos|h|ak|st|sa|mn)\b/i' => fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])),
-            '/\b(a)\.(md|p)\b/i' => fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])),
-            '/\b(s|m)\.(e)\.(i)\b/i' => 'S.E.I.',
-            '/\b(ph)\.(d)\b/i' => 'Ph.D.',
-            '/\b(drs)\b/i' => 'Drs.',
-            '/\b(dra)\b/i' => 'Dra.',
-            '/\b(ir)\b/i' => 'Ir.',
-            '/\b(prof)\b/i' => 'Prof.',
-            '/\b(dr)\b/i' => 'Dr.',
-            '/\b(sh)\b/i' => 'S.H.',
-            '/\b(se)\b/i' => 'S.E.',
-            '/\b(st)\b/i' => 'S.T.',
-            '/\b(si)\b/i' => 'S.I.',
-            '/\b(mm)\b/i' => 'M.M.',
-            '/\b(msi)\b/i' => 'M.Si.',
-            '/\b(mh)\b/i' => 'M.H.',
-            '/\b(ak)\b/i' => 'Ak.',
-            '/\b(cpa)\b/i' => 'CPA',
-            '/\b(bkn)\b/i' => 'BKN',
-            '/\b(djp)\b/i' => 'DJP',
-            '/\b(kpp)\b/i' => 'KPP',
-        ];
-
-        foreach ($replacements as $pattern => $replacement) {
-            if (is_callable($replacement)) {
-                $titled = preg_replace_callback($pattern, $replacement, $titled);
-            } else {
-                $titled = preg_replace($pattern, $replacement, $titled);
-            }
+        $clean = EmployeeStatusSyncService::stripAcademicTitles($name);
+        if (blank($clean)) {
+            return null;
         }
 
-        return $titled;
+        return Str::title(strtolower(trim($clean)));
     }
 
     /**

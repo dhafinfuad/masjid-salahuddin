@@ -131,14 +131,20 @@ class SocialProgramPrintTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja');
         $response->assertDontSee('Riwayat Potongan Tahun');
-        $response->assertSee('Malang, ______________ 20 ______________', false);
+        // Tanggal menggunakan garis lurus solid (bukan underscore terpisah)
+        $response->assertSee('Malang,');
+        $response->assertSee('border-b border-slate-700', false);
+        $response->assertDontSee('______________ 20 ______________');
+        // Footer tidak lagi menampilkan kutipan ayat
+        $response->assertDontSee('At-Taubah: 103');
+        $response->assertDontSee('Al-Baqarah: 245');
     }
 
     public function test_fuzzy_matching_and_title_casing_for_employee_data(): void
     {
         $this->actingAs($this->admin);
 
-        // Buat employee dengan gelar akademik dan seksi
+        // Buat employee dengan input yang mengandung gelar akademik
         $emp = Employee::create([
             'name' => 'Bimo Heriyanto, S.E.',
             'nip_panjang' => '198501152010121001',
@@ -146,6 +152,9 @@ class SocialProgramPrintTest extends TestCase
             'unit_kerja' => 'KPP Madya Malang',
             'status' => 'AKTIF',
         ]);
+
+        // Verifikasi pada database nama otomatis dibersihkan dari gelar
+        $this->assertEquals('Bimo Heriyanto', $emp->fresh()->name);
 
         // Buat participant dengan nama huruf kapital semua tanpa gelar (seperti hasil import Excel potongan)
         ProgramParticipant::create([
@@ -159,16 +168,24 @@ class SocialProgramPrintTest extends TestCase
         $response = $this->get('/admin/programs/print-surat-pernyataan?mode=all&year=2026');
 
         $response->assertStatus(200);
-        // Nama pegawai diformat Title Case Kapital per kata
-        $response->assertSee('Bimo Heriyanto, S.E.');
+        // Nama pegawai diformat Title Case Kapital per kata TANPA GELAR
+        $response->assertSee('Bimo Heriyanto');
+        $response->assertDontSee('S.E.');
         // NIP, Jabatan, dan Seksi/Kelompok otomatis terisi
         $response->assertSee('198501152010121001');
         $response->assertSee('Account Representative');
         $response->assertSee('Seksi Pengawasan II');
-        // Tanggal default garis kosong yang baru
-        $response->assertSee('Malang, ______________ 20 ______________', false);
+        // Tanggal format garis lurus solid
+        $response->assertSee('Malang,');
+        $response->assertSee('border-b border-slate-700', false);
         // Header Riwayat Potongan tidak ada uppercase tracking
         $response->assertDontSee('uppercase tracking-[0.1em]', false);
         $response->assertSee('Riwayat Potongan Tahun 2026');
+        // Top action bar seragam dengan style UI proyek dan tanpa badge count
+        $response->assertSee('no-print bg-slate-900', false);
+        $response->assertDontSee('Total:');
+        // Tidak ada kutipan ayat pada footer
+        $response->assertDontSee('At-Taubah: 103');
+        $response->assertDontSee('Al-Baqarah: 245');
     }
 }

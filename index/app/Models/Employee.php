@@ -39,7 +39,7 @@ class Employee extends Model
     ];
 
     /**
-     * Pastikan nama pegawai selalu Title Case dan mempertahankan format gelar akademik.
+     * Pastikan nama pegawai selalu Title Case dan bebas dari gelar akademik.
      */
     protected function name(): Attribute
     {
@@ -49,13 +49,8 @@ class Employee extends Model
                 if (! $value) {
                     return $value;
                 }
-                $trimmed = trim($value);
-                if (strtolower($trimmed) === $trimmed || strtoupper($trimmed) === $trimmed) {
-                    $titled = Str::title($trimmed);
-                    return preg_replace_callback('/\b(s|m)\.(kom|pd|e|t|si|ag|sn|sos)\b/i', fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])), $titled);
-                }
-
-                return preg_replace_callback('/\b([a-z])/i', fn ($m) => strtoupper($m[1]), $trimmed);
+                $stripped = \App\Services\EmployeeStatusSyncService::stripAcademicTitles($value);
+                return Str::title(strtolower(trim($stripped)));
             },
         );
     }

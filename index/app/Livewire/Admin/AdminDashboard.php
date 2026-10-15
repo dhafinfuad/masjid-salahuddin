@@ -707,7 +707,7 @@ class AdminDashboard extends Component
             'users' => match ($this->userSubTab) {
                 'pegawai' => 'Data Pegawai Muslim KPP Madya Malang',
                 'kepengurusan' => 'Takmir & Kepengurusan',
-                default => 'Anggota (Pengguna)',
+                default => 'Manajemen Pengguna',
             },
             'settings' => match ($this->settingsSubTab) {
                 'poster' => 'Template & Studio Poster Kajian',

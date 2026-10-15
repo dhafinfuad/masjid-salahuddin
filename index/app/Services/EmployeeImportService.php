@@ -236,13 +236,8 @@ class EmployeeImportService
             return null;
         }
 
-        $fullName = $nameRaw;
-        if ($prefix !== '' && ! str_starts_with($fullName, $prefix)) {
-            $fullName = $prefix . ' ' . $fullName;
-        }
-        if ($suffix !== '' && ! str_ends_with($fullName, $suffix)) {
-            $fullName = $fullName . ', ' . $suffix;
-        }
+        // Hapus penambahan gelar prefix maupun suffix sesuai mandat: nama pegawai tanpa gelar
+        $fullName = EmployeeStatusSyncService::stripAcademicTitles($nameRaw);
 
         // 5. Gender
         $gender = null;

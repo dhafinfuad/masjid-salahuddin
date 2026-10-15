@@ -64,39 +64,45 @@
   </style>
 </head>
 
-<body class="bg-neutral-200 py-8 print:bg-white print:py-0 font-['Plus_Jakarta_Sans',Arial,sans-serif]">
+<body class="bg-slate-100 text-slate-800 font-['Plus_Jakarta_Sans',Arial,sans-serif] antialiased min-h-screen">
 
-  <!-- Top Floating Action Bar (Hanya tampil di browser, otomatis disembunyikan saat cetak) -->
-  <header class="no-print fixed top-0 inset-x-0 z-50 bg-[#06172e] text-white px-4 sm:px-8 py-3 flex items-center justify-between gap-4 shadow-md border-b border-slate-800">
-    <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-amber-400 text-slate-900 flex items-center justify-center font-bold text-sm">
-        <i data-lucide="file-text" class="w-4 h-4"></i>
-      </div>
-      <div>
-        <h1 class="text-sm font-bold text-white leading-tight">Surat Pernyataan Pemotongan Tukin</h1>
-        <p class="text-xs text-amber-300 font-medium">
-          Total: <span class="font-bold">{{ count($pages) }} Lembar Surat</span> (Tahun {{ $year }})
-        </p>
-      </div>
+  <!-- Top Action Bar (Header) Sesuai Standar Proyek -->
+  <header class="no-print bg-slate-900 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 border-b border-slate-800 sticky top-0 z-30 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="text-xs sm:text-sm font-bold text-white tracking-wide">
+        Surat Pernyataan Pemotongan Tunjangan Kinerja
+      </span>
     </div>
 
     <div class="flex items-center gap-2">
-      <a href="{{ route('admin.tab', ['tab' => 'programs']) }}"
-         class="px-3.5 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition inline-flex items-center gap-1.5 cursor-pointer">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+      <!-- Tombol Cetak / PDF -->
+      <button 
+        type="button"
+        onclick="window.print()" 
+        class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
+        <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span class="hidden sm:inline">Cetak /</span> Simpan PDF
+      </button>
+
+      <!-- Tombol Tutup / Kembali -->
+      <a 
+        href="{{ route('admin.tab', ['tab' => 'programs']) }}" 
+        class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg border border-slate-700 transition-colors focus:outline-none cursor-pointer"
+        title="Kembali ke Manajemen Program Sosial">
+        <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
         <span>Kembali</span>
       </a>
-      <button type="button" onclick="window.print()"
-              class="px-4 py-1.5 rounded-lg bg-[#ffb900] hover:bg-amber-400 text-[#06172e] font-extrabold text-xs shadow-md transition inline-flex items-center gap-1.5 cursor-pointer">
-        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-        <span>Cetak / Simpan PDF</span>
-      </button>
     </div>
   </header>
 
-  <!-- Spacer untuk fixed toolbar saat di layar browser -->
-  <div class="no-print h-14"></div>
-
+  <div class="py-6 print:py-0">
   <!-- Loop Per Lembar Pegawai (A4 = 794px x 1123px) -->
   @foreach($pages as $index => $page)
     <div class="page-container mx-auto flex h-[1123px] w-[794px] flex-col overflow-hidden bg-white text-[#1d1d1b] shadow-lg print:shadow-none mb-8 print:mb-0">
@@ -188,13 +194,23 @@
           </table>
         </section>
 
-        <!-- 3. Tanda Tangan Yang Menyatakan -->
-        <section class="flex justify-end text-center text-sm leading-[1.55]">
-          <div>
-            Malang, {{ $dateLetter ?: '______________ 20 ______________' }}<br>
-            Yang menyatakan,
-            <div class="h-12"></div>
-            ( <span class="font-bold underline underline-offset-2">{{ $page['name'] ?: '______________________' }}</span> )
+        <!-- 3. Tanda Tangan Yang Menyatakan (Format Garis Lurus Solid Tanpa Tabrakan Teks) -->
+        <section class="flex justify-end text-sm">
+          <div class="text-center min-w-[260px]">
+            <div class="flex items-center justify-center gap-1.5 whitespace-nowrap leading-none mb-3">
+              <span class="text-slate-800">Malang,</span>
+              @if(!empty($dateLetter))
+                <span class="font-medium text-slate-900">{{ $dateLetter }}</span>
+              @else
+                <span class="inline-block w-28 border-b border-slate-700 h-4"></span>
+                <span class="text-slate-800">20</span>
+                <span class="inline-block w-12 border-b border-slate-700 h-4"></span>
+              @endif
+            </div>
+            <p class="leading-none mb-16 text-[#06172e]">Yang menyatakan,</p>
+            <p class="font-bold underline underline-offset-2 text-slate-900 leading-none">
+              ( {{ $page['name'] ?: '______________________' }} )
+            </p>
           </div>
         </section>
 
@@ -247,19 +263,16 @@
 
         <!-- 5. Footer Surat -->
         <footer class="mt-auto flex flex-col gap-1.5 border-t border-[#c3c9d4] pt-3 text-[13px] leading-normal">
-          <p>
-            Mohon dikumpulkan kepada Sdr. <b>{{ $secretaryName }}</b>, Sekretaris Masjid Salahuddin
+          <p class="text-slate-700">
+            Mohon dikumpulkan kepada Sdr. <b class="text-slate-900">{{ $secretaryName }}</b>, Sekretaris Masjid Salahuddin
             ({{ $secretarySection }}).
-          </p>
-          <p class="italic text-[#06172e]">
-            "...dengan zakat itu kamu membersihkan dan menyucikan mereka..." (QS. At-Taubah: 103)<br>
-            "Siapakah yang memberi pinjaman kepada Allah, pinjaman yang baik..." (QS. Al-Baqarah: 245)
           </p>
         </footer>
 
       </main>
     </div>
   @endforeach
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
