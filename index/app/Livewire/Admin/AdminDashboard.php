@@ -488,6 +488,7 @@ class AdminDashboard extends Component
     public string $socialProgramName = '';
     public string $socialProgramSlug = '';
     public string $socialProgramCategory = 'sosial'; // 'yatim' | 'infaq' | 'zakat' | 'qurban' | 'sosial'
+    public string $socialProgramDescription = '';
     public string $socialProgramPeriodType = 'bulanan'; // 'bulanan' | 'tahunan' | 'insidental'
     public string $socialProgramStatus = 'AKTIF'; // 'AKTIF' | 'DITUTUP' | 'SELESAI'
     public string $socialProgramIcon = 'heart-handshake';
