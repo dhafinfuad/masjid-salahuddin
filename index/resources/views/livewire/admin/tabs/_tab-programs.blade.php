@@ -253,17 +253,17 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0" :class="open ? 'rotate-180' : ''"></i>
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-75 shrink-0" :class="open ? 'rotate-180' : ''"></i>
                                 </button>
 
-                                <!-- Dropdown Checklist Panel -->
+                                <!-- Dropdown Checklist Panel (Animasi Sangat Cepat) -->
                                 <div x-show="open" @click.outside="open = false" x-cloak
-                                    x-transition:enter="transition ease-out duration-100"
-                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter="transition ease-out duration-50"
+                                    x-transition:enter-start="transform opacity-0 scale-98"
                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave="transition ease-in duration-50"
                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                    x-transition:leave-end="transform opacity-0 scale-98"
                                     class="absolute right-0 sm:right-auto sm:left-0 mt-1.5 w-64 max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-xl border border-gov-border p-2.5 z-40 space-y-2 text-xs">
                                     
                                     <!-- Header Actions -->

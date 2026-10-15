@@ -105,17 +105,17 @@
                         </div>
                         <div class="flex items-center gap-1 shrink-0 text-slate-400">
                             <i data-lucide="search" class="w-3 h-3 text-slate-400 shrink-0 inline-block"></i>
-                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200 shrink-0 inline-block" :class="{ 'rotate-180': open }"></i>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-75 shrink-0 inline-block" :class="{ 'rotate-180': open }"></i>
                         </div>
                     </button>
 
-                    <!-- Searchable Dropdown Panel -->
+                    <!-- Searchable Dropdown Panel (Animasi Sangat Cepat) -->
                     <div x-show="open"
                          x-cloak
-                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter="transition ease-out duration-50"
                          x-transition:enter-start="opacity-0 translate-y-1 scale-98"
                          x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave="transition ease-in duration-50"
                          x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                          x-transition:leave-end="opacity-0 translate-y-1 scale-98"
                          class="absolute left-0 top-full mt-1.5 w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gov-border z-50 overflow-hidden flex flex-col"
