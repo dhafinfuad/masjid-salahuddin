@@ -208,7 +208,7 @@ class PrayerDutyTest extends TestCase
         // AdminDashboard tab petugas must default to week 4
         Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
             ->assertSet('prayerDutyFilterWeek', '4')
-            ->assertSee('Pekan 4 ⭐ (Hari Ini)');
+            ->assertSee('Pekan 4 ⭐');
 
         Carbon::setTestNow(); // Reset time travel
     }

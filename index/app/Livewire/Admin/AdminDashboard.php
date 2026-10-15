@@ -6805,7 +6805,7 @@ class AdminDashboard extends Component
             'allEmployeesForPrint' => (function() {
                 try {
                     if (\Illuminate\Support\Facades\Schema::hasTable('employees')) {
-                        return Employee::orderBy('name')->get(['id', 'name', 'nip_panjang', 'nip_pendek', 'jabatan', 'unit_kerja']);
+                        return Employee::where('status', 'AKTIF')->orderBy('name')->get(['id', 'name', 'nip_panjang', 'nip_pendek', 'jabatan', 'unit_kerja']);
                     }
                 } catch (\Throwable $e) {
                     report($e);

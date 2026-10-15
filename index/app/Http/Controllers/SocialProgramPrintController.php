@@ -291,6 +291,12 @@ class SocialProgramPrintController extends Controller
                 }
                 $records = $allParticipants->get($name);
                 $emp = $this->findEmployee($name, $allEmployees, $usersByName, $usersByNip);
+
+                // Mode 'all': Hanya cetak form untuk pegawai yang saat ini berstatus AKTIF
+                if (! $emp || strtoupper(trim((string) $emp->status)) !== 'AKTIF') {
+                    continue;
+                }
+
                 $parsedData = $this->extractEmployeeData($emp, $name, $usersByNip, $usersByName);
 
                 $commitments = $this->buildProgramCommitments($records);

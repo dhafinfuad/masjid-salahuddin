@@ -188,4 +188,67 @@ class SocialProgramPrintTest extends TestCase
         $response->assertDontSee('At-Taubah: 103');
         $response->assertDontSee('Al-Baqarah: 245');
     }
+
+    public function test_all_mode_only_includes_currently_active_employees(): void
+    {
+        $this->actingAs($this->admin);
+
+        // 1. Pegawai Aktif
+        $activeEmp = Employee::create([
+            'name' => 'Ahmad Fajar',
+            'nip_panjang' => '199001012015011001',
+            'jabatan' => 'Pelaksana',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+        ]);
+        ProgramParticipant::create([
+            'name' => 'Ahmad Fajar',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        // 2. Pegawai Mutasi
+        $mutatedEmp = Employee::create([
+            'name' => 'Bambang Mutasi',
+            'nip_panjang' => '198002022005021002',
+            'jabatan' => 'Fungsional',
+            'unit_kerja' => 'KPP Pratama Batu',
+            'status' => 'MUTASI',
+        ]);
+        ProgramParticipant::create([
+            'name' => 'Bambang Mutasi',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        // 3. Pegawai Nonaktif
+        $inactiveEmp = Employee::create([
+            'name' => 'Cahyo Pensiun',
+            'nip_panjang' => '196003031985031003',
+            'jabatan' => 'Purna Tugas',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'NONAKTIF',
+        ]);
+        ProgramParticipant::create([
+            'name' => 'Cahyo Pensiun',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=all&year=2026');
+
+        $response->assertStatus(200);
+        // Pegawai AKTIF wajib tercetak
+        $response->assertSee('Ahmad Fajar');
+        // Pegawai MUTASI & NONAKTIF TIDAK BOLEH tercetak pada mode Semua Pegawai
+        $response->assertDontSee('Bambang Mutasi');
+        $response->assertDontSee('Cahyo Pensiun');
+    }
 }
+

@@ -3516,9 +3516,9 @@
         x-transition:leave="transition ease-in duration-50"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-start sm:items-center p-3 sm:p-6"
         style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
-        <div class="relative bg-white rounded-2xl max-w-xl w-full p-6 text-left shadow-2xl border border-gov-border space-y-4"
+        <div class="relative bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 text-left shadow-2xl border border-gov-border space-y-4 my-6 sm:my-auto"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
             x-transition:enter-end="opacity-100 scale-100"
@@ -3556,7 +3556,7 @@
                                 <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
                                 <span>Semua Pegawai</span>
                             </span>
-                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Mail-Merge seluruh pegawai yang ada riwayat</span>
+                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Mail-Merge seluruh pegawai aktif yang ada riwayat</span>
                         </button>
 
                         <button type="button" @click="printPernyataanMode = 'single'; closePrintDropdowns()"
