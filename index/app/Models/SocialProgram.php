@@ -13,17 +13,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $slug
  * @property string $category
  * @property string|null $description
- * @property float $target_amount
  * @property string $period_type
  * @property string $status
  * @property string|null $icon
- * @property string|null $color
  * @property int $active_participants_count
  * @property float $monthly_commitment_total
  * @property float $total_collected
  * @property float $total_disbursed
  * @property float $current_balance
- * @property float $target_progress_percentage
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * 
@@ -39,15 +36,9 @@ class SocialProgram extends Model
         'slug',
         'category',
         'description',
-        'target_amount',
         'period_type',
         'status',
         'icon',
-        'color',
-    ];
-
-    protected $casts = [
-        'target_amount' => 'decimal:2',
     ];
 
     public function scopeActive(Builder $query): Builder
@@ -121,14 +112,5 @@ class SocialProgram extends Model
               ->orWhere('program_name', $this->name)
               ->orWhere('program_name', str_replace('Program ', '', $this->name));
         })->where('period', $currentPeriod)->sum('monthly_amount');
-    }
-
-    public function getTargetProgressPercentageAttribute(): float
-    {
-        if ($this->target_amount <= 0) {
-            return 0;
-        }
-
-        return round(($this->total_collected / (float) $this->target_amount) * 100, 1);
     }
 }
