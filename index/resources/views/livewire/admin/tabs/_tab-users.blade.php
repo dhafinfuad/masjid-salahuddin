@@ -243,7 +243,7 @@
                             @php
                                 $badgeColor = match ($u->role) {
                                     'Master', 'admin' => 'bg-purple-100 text-purple-800 border-purple-300',
-                                    'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-400',
                                     'Sekretaris', 'operator' => 'bg-blue-100 text-blue-800 border-blue-300',
                                     'Bendahara' => 'bg-amber-100 text-amber-800 border-amber-300',
                                     default => 'bg-slate-100 text-slate-700 border-slate-300',
@@ -265,7 +265,7 @@
                                             <span class="block font-bold text-slate-900">{{ $u->name }}</span>
                                             @if($u->id === Auth::id())
                                                 <span
-                                                    class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+                                                    class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-400">
                                                     Anda
                                                 </span>
                                             @endif
@@ -295,14 +295,14 @@
                                 <td class="py-3 px-4 text-center">
                                     @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                         <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
-                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
                                             style="width: 72px; min-width: 72px; max-width: 72px;"
                                             title="Klik untuk mengubah status">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </button>
                                     @else
                                         <span
-                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}"
+                                            class="w-[72px] justify-center inline-flex items-center h-[20px] px-2 rounded-full text-[11px] font-semibold border leading-none shrink-0 {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-rose-50 text-rose-700 border-rose-200' }}"
                                             style="width: 72px; min-width: 72px; max-width: 72px;">
                                             {{ ($u->status ?? 'AKTIF') === 'AKTIF' ? 'Aktif' : 'Nonaktif' }}
                                         </span>
@@ -363,7 +363,7 @@
                 @php
                     $badgeColor = match ($u->role) {
                         'Master', 'admin' => 'bg-purple-100 text-purple-800 border-purple-300',
-                        'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        'Ketua' => 'bg-emerald-50 text-emerald-700 border-emerald-400',
                         'Sekretaris', 'operator' => 'bg-blue-100 text-blue-800 border-blue-300',
                         'Bendahara' => 'bg-amber-100 text-amber-800 border-amber-300',
                         default => 'bg-slate-100 text-slate-700 border-slate-300',
@@ -384,7 +384,7 @@
                                 <div class="flex items-center gap-1.5">
                                     <span class="font-bold text-slate-900 text-sm">{{ $u->name }}</span>
                                     @if($u->id === Auth::id())
-                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
+                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] bg-emerald-50 text-emerald-700 font-semibold border border-emerald-400">
                                             Anda
                                         </span>
                                     @endif
@@ -395,12 +395,12 @@
                         <div>
                             @if(Auth::user()->canManage() && $u->id !== Auth::id())
                                 <button type="button" wire:click="toggleUserStatus({{ $u->id }})"
-                                    class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
+                                    class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none transition cursor-pointer {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' }}"
                                     title="Klik untuk mengubah status">
                                     {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
                                 </button>
                             @else
-                                <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
+                                <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $isAktif ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-rose-50 text-rose-700 border-rose-200' }}">
                                     {{ $isAktif ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             @endif
