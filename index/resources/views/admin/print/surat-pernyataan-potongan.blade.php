@@ -252,13 +252,6 @@
               </tbody>
             </table>
           </section>
-        @else
-          <!-- Spacer pengganti saat Riwayat Potongan disembunyikan agar tata letak tetap proporsional -->
-          <div class="flex-1 border-t border-dashed border-slate-200 pt-4 flex flex-col justify-center text-center">
-            <p class="text-xs text-slate-400 italic">
-              Formulir Pernyataan Pemotongan Tunjangan Kinerja Baru — Belum Tercatat Riwayat Pemotongan Sebelumnya
-            </p>
-          </div>
         @endif
 
         <!-- 5. Footer Surat -->

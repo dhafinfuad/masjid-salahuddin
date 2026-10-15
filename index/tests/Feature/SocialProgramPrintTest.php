@@ -117,9 +117,9 @@ class SocialProgramPrintTest extends TestCase
         $response->assertSee('199001012015021002');
         $response->assertSee('Fungsional Pemeriksa');
         $response->assertSee('Seksi Pemeriksaan');
-        // Riwayat Potongan harus disembunyikan
+        // Riwayat Potongan harus disembunyikan dan tanpa banner placeholder
         $response->assertDontSee('Riwayat Potongan Tahun');
-        $response->assertSee('Belum Tercatat Riwayat Pemotongan Sebelumnya');
+        $response->assertDontSee('Belum Tercatat Riwayat Pemotongan Sebelumnya');
     }
 
     public function test_admin_can_print_blank_form(): void

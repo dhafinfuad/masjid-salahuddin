@@ -664,12 +664,25 @@
         printPernyataanEmployeeId: '',
         printPernyataanEmployeeName: '',
         printPernyataanYear: {{ now()->year }},
-        printPernyataanDateLetter: '',
-        printPernyataanEffectiveMonth: '',
-        printPernyataanEffectiveYear: {{ now()->year }},
+@php
+        $daftarBulanIndo = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        $bulanIniIndo = $daftarBulanIndo[(int) now()->month] ?? 'Oktober';
+@endphp
+        printPernyataanEffectiveMonth: '{{ $bulanIniIndo }}',
+        printPernyataanEffectiveYear: '{{ now()->year }}',
         printPernyataanSecretaryName: 'Deril Amrizal Kholid',
         printPernyataanSecretarySection: 'Seksi Penjaminan Kualitas Data',
         openPrintPernyataanModal() {
+            if (!this.printPernyataanEffectiveMonth) {
+                this.printPernyataanEffectiveMonth = '{{ $bulanIniIndo }}';
+            }
+            if (!this.printPernyataanEffectiveYear) {
+                this.printPernyataanEffectiveYear = '{{ now()->year }}';
+            }
             this.showPrintPernyataanModal = true;
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();

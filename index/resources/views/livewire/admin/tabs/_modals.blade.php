@@ -3636,12 +3636,26 @@
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
                             <div class="grid grid-cols-2 gap-1.5">
-                                <input x-model="printPernyataanEffectiveMonth" type="text"
-                                    placeholder="Contoh: Januari"
-                                    class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
-                                <input x-model="printPernyataanEffectiveYear" type="number"
-                                    placeholder="2026"
-                                    class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                                <select x-model="printPernyataanEffectiveMonth"
+                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                                    <option value="">-- Kosongkan --</option>
+                                    @php
+                                        $daftarBulan = [
+                                            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                                            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                        ];
+                                    @endphp
+                                    @foreach($daftarBulan as $bulan)
+                                        <option value="{{ $bulan }}">{{ $bulan }}</option>
+                                    @endforeach
+                                </select>
+                                <select x-model="printPernyataanEffectiveYear"
+                                    class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                                    <option value="">-- Kosongkan --</option>
+                                    @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
+                                        <option value="{{ $y }}">{{ $y }}</option>
+                                    @endfor
+                                </select>
                             </div>
                         </div>
                     </div>
