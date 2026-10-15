@@ -3542,21 +3542,8 @@
                     @error('socialProgramName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Kategori & Jenis Periode (Select font-medium per Rule 1) -->
+                <!-- Periode & Status Program -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Kategori Program *</label>
-                        <select wire:model="socialProgramCategory"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="yatim">Santunan Anak Yatim</option>
-                            <option value="dhuafa">Santunan Dhuafa</option>
-                            <option value="infaq">Infaq Pegawai</option>
-                            <option value="zakat">Zakat Mal</option>
-                            <option value="qurban">Tabungan Qurban</option>
-                            <option value="sosial">Sosial Umum</option>
-                        </select>
-                        @error('socialProgramCategory') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Periode Program *</label>
                         <select wire:model="socialProgramPeriodType"
@@ -3567,10 +3554,6 @@
                         </select>
                         @error('socialProgramPeriodType') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
-                </div>
-
-                <!-- Status Program & Ikon Tampilan -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status Program *</label>
                         <select wire:model="socialProgramStatus"
@@ -3581,18 +3564,20 @@
                         </select>
                         @error('socialProgramStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Ikon Tampilan</label>
-                        <select wire:model="socialProgramIcon"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
-                            <option value="heart-handshake">heart-handshake (Santunan/Sosial)</option>
-                            <option value="wallet">wallet (Infaq/Dompet)</option>
-                            <option value="coins">coins (Zakat/Koin)</option>
-                            <option value="sparkles">sparkles (Qurban/Spesial)</option>
-                            <option value="users">users (Komunitas)</option>
-                            <option value="hand-heart">hand-heart (Sedekah)</option>
-                        </select>
-                    </div>
+                </div>
+
+                <!-- Ikon Tampilan -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Ikon Tampilan</label>
+                    <select wire:model="socialProgramIcon"
+                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium">
+                        <option value="heart-handshake">heart-handshake (Santunan/Sosial)</option>
+                        <option value="hand-heart">hand-heart (Sedekah/Dhuafa)</option>
+                        <option value="wallet">wallet (Infaq/Dompet)</option>
+                        <option value="coins">coins (Zakat/Koin)</option>
+                        <option value="sparkles">sparkles (Qurban/Spesial)</option>
+                        <option value="users">users (Komunitas)</option>
+                    </select>
                 </div>
 
                 <!-- Deskripsi Program -->

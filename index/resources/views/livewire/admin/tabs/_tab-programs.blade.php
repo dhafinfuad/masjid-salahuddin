@@ -127,7 +127,7 @@
                                             <div>
                                                 <h4 class="text-sm font-bold text-gov-textMain">{{ $prog->name }}</h4>
                                                 <span class="inline-flex items-center text-[11px] font-medium text-slate-500 capitalize">
-                                                    Kategori: {{ $prog->category }} • {{ ucfirst($prog->period_type) }}
+                                                    Periode {{ ucfirst($prog->period_type) }}
                                                 </span>
                                             </div>
                                         </div>

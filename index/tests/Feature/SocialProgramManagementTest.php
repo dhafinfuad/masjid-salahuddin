@@ -572,6 +572,27 @@ class SocialProgramManagementTest extends TestCase
             'status' => 'AKTIF',
         ]);
     }
+
+    public function test_admin_can_create_social_program_without_category_input(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->call('openCreateSocialProgram')
+            ->set('socialProgramName', 'Program Beasiswa Tahfidz')
+            ->set('socialProgramPeriodType', 'bulanan')
+            ->set('socialProgramStatus', 'AKTIF')
+            ->set('socialProgramIcon', 'book-open')
+            ->set('socialProgramDescription', 'Bantuan beasiswa santri tahfidz Quran')
+            ->call('saveSocialProgram')
+            ->assertHasNoErrors()
+            ->assertDispatched('close-social-program-modal');
+
+        $this->assertDatabaseHas('social_programs', [
+            'name' => 'Program Beasiswa Tahfidz',
+            'status' => 'AKTIF',
+        ]);
+    }
 }
 
 

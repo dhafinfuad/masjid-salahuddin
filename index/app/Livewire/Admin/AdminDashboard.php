@@ -5449,7 +5449,6 @@ class AdminDashboard extends Component
 
         $this->validate([
             'socialProgramName' => 'required|string|min:3|max:255',
-            'socialProgramCategory' => 'required|string',
             'socialProgramPeriodType' => 'required|string',
             'socialProgramStatus' => 'required|string',
         ], [
@@ -5472,7 +5471,7 @@ class AdminDashboard extends Component
         $data = [
             'name' => $this->socialProgramName,
             'slug' => $slug,
-            'category' => $this->socialProgramCategory,
+            'category' => $this->socialProgramCategory ?: Str::slug($this->socialProgramName),
             'description' => $this->socialProgramDescription,
             'period_type' => $this->socialProgramPeriodType,
             'status' => $this->socialProgramStatus,
