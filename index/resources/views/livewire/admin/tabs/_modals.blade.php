@@ -3517,7 +3517,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showPrintPernyataanModal = false">
+        style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
         <div class="relative bg-white rounded-2xl max-w-xl w-full p-6 text-left shadow-2xl border border-gov-border space-y-4"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
@@ -3525,7 +3525,7 @@
             x-transition:leave="transition ease-in duration-50"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-98"
-            @click.stop>
+            @click="closePrintDropdowns()">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div class="flex items-center space-x-2.5">
@@ -3549,7 +3549,7 @@
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Mode Sasaran Pegawai *</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <button type="button" @click="printPernyataanMode = 'all'"
+                        <button type="button" @click="printPernyataanMode = 'all'; closePrintDropdowns()"
                             class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
                             :class="printPernyataanMode === 'all' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
                             <span class="flex items-center gap-1.5">
@@ -3559,7 +3559,7 @@
                             <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Mail-Merge seluruh pegawai yang ada riwayat</span>
                         </button>
 
-                        <button type="button" @click="printPernyataanMode = 'single'"
+                        <button type="button" @click="printPernyataanMode = 'single'; closePrintDropdowns()"
                             class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
                             :class="printPernyataanMode === 'single' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
                             <span class="flex items-center gap-1.5">
@@ -3569,7 +3569,7 @@
                             <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Cetak spesifik 1 pegawai dari daftar</span>
                         </button>
 
-                        <button type="button" @click="printPernyataanMode = 'new'"
+                        <button type="button" @click="printPernyataanMode = 'new'; closePrintDropdowns()"
                             class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
                             :class="printPernyataanMode === 'new' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
                             <span class="flex items-center gap-1.5">
@@ -3584,39 +3584,34 @@
                 <!-- Mode Single: Dropdown Pegawai yang Pernah Memotong -->
                 <div x-show="printPernyataanMode === 'single'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Nama Pegawai (dari Riwayat) *</label>
-                    <div class="relative" x-data="{ openEmpName: false, searchEmp: '' }" :class="openEmpName ? 'z-40' : 'z-10'" @click.outside="openEmpName = false" @keydown.escape.window="openEmpName = false">
-                        <button type="button" @click="openEmpName = !openEmpName"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                    <div class="relative" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'z-40' : 'z-10'"
+                        @click.outside="if (printPernyataanOpenDropdown === 'singleEmp') closePrintDropdowns()">
+                        <button type="button" @click.stop="togglePrintDropdown('singleEmp')"
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
                             <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai yang Ada di Rekapitulasi --'"></span>
-                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openEmpName ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m6 9 6 6 6-6"/>
                             </svg>
                         </button>
 
-                        <div x-show="openEmpName" x-cloak
-                            x-transition:enter="transition ease-out duration-50"
-                            x-transition:enter-start="transform opacity-0 scale-98"
-                            x-transition:enter-end="transform opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-50"
-                            x-transition:leave-start="transform opacity-100 scale-100"
-                            x-transition:leave-end="transform opacity-0 scale-98"
+                        <div x-show="printPernyataanOpenDropdown === 'singleEmp'" x-cloak @click.stop
                             class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
                             style="display: none;">
                             <div class="p-1 pb-1.5 border-b border-slate-100">
-                                <input x-model="searchEmp" type="text" placeholder="Ketik untuk mencari nama..."
+                                <input x-model="printPernyataanSearchEmp" type="text" placeholder="Ketik untuk mencari nama..."
                                     class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
                             </div>
                             <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
-                                <button type="button" @click="printPernyataanEmployeeName = ''; openEmpName = false"
-                                    class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer text-slate-500 italic">
+                                <button type="button" @click.stop="printPernyataanEmployeeName = ''; closePrintDropdowns()"
+                                    class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer text-slate-500 italic">
                                     -- Batal Pilih --
                                 </button>
                                 @if(isset($distinctParticipantNames))
                                     @foreach($distinctParticipantNames as $pName)
                                         <button type="button"
-                                            x-show="!searchEmp || '{{ strtolower(addslashes($pName)) }}'.includes(searchEmp.toLowerCase())"
-                                            @click="printPernyataanEmployeeName = '{{ addslashes($pName) }}'; openEmpName = false"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            x-show="!printPernyataanSearchEmp || '{{ strtolower(addslashes($pName)) }}'.includes(printPernyataanSearchEmp.toLowerCase())"
+                                            @click.stop="printPernyataanEmployeeName = '{{ addslashes($pName) }}'; closePrintDropdowns()"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                             :class="printPernyataanEmployeeName === '{{ addslashes($pName) }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
                                             <span>{{ $pName }}</span>
                                             <span x-show="printPernyataanEmployeeName === '{{ addslashes($pName) }}'" class="text-gov-navy font-bold">✓</span>
@@ -3632,31 +3627,26 @@
                 <div x-show="printPernyataanMode === 'new'" class="space-y-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Pilih Pegawai Baru dari Master (Atau Kosongkan untuk Blanko) *</label>
-                        <div class="relative" x-data="{ openEmpId: false, searchNewEmp: '', selectedName: '' }" :class="openEmpId ? 'z-40' : 'z-10'" @click.outside="openEmpId = false" @keydown.escape.window="openEmpId = false">
-                            <button type="button" @click="openEmpId = !openEmpId"
-                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
-                                <span class="truncate" x-text="printPernyataanEmployeeId && selectedName ? selectedName : '-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --'"></span>
-                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openEmpId ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="relative" :class="printPernyataanOpenDropdown === 'newEmp' ? 'z-40' : 'z-10'"
+                            @click.outside="if (printPernyataanOpenDropdown === 'newEmp') closePrintDropdowns()">
+                            <button type="button" @click.stop="togglePrintDropdown('newEmp')"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                                <span class="truncate" x-text="printPernyataanEmployeeId && printPernyataanSelectedNewName ? printPernyataanSelectedNewName : '-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --'"></span>
+                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'newEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m6 9 6 6 6-6"/>
                                 </svg>
                             </button>
 
-                            <div x-show="openEmpId" x-cloak
-                                x-transition:enter="transition ease-out duration-50"
-                                x-transition:enter-start="transform opacity-0 scale-98"
-                                x-transition:enter-end="transform opacity-100 scale-100"
-                                x-transition:leave="transition ease-in duration-50"
-                                x-transition:leave-start="transform opacity-100 scale-100"
-                                x-transition:leave-end="transform opacity-0 scale-98"
+                            <div x-show="printPernyataanOpenDropdown === 'newEmp'" x-cloak @click.stop
                                 class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
                                 style="display: none;">
                                 <div class="p-1 pb-1.5 border-b border-slate-100">
-                                    <input x-model="searchNewEmp" type="text" placeholder="Ketik nama atau NIP pegawai..."
+                                    <input x-model="printPernyataanSearchNewEmp" type="text" placeholder="Ketik nama atau NIP pegawai..."
                                         class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
                                 </div>
                                 <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
-                                    <button type="button" @click="printPernyataanEmployeeId = ''; selectedName = ''; openEmpId = false"
-                                        class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer text-slate-500 italic">
+                                    <button type="button" @click.stop="printPernyataanEmployeeId = ''; printPernyataanSelectedNewName = ''; closePrintDropdowns()"
+                                        class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer text-slate-500 italic">
                                         -- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --
                                     </button>
                                     @if(isset($allEmployeesForPrint))
@@ -3665,9 +3655,9 @@
                                                 $empDisplay = $empItem->name . ' (NIP: ' . ($empItem->nip_panjang ?: ($empItem->nip_pendek ?: '-')) . ')';
                                             @endphp
                                             <button type="button"
-                                                x-show="!searchNewEmp || '{{ strtolower(addslashes($empDisplay)) }}'.includes(searchNewEmp.toLowerCase())"
-                                                @click="printPernyataanEmployeeId = '{{ $empItem->id }}'; selectedName = '{{ addslashes($empDisplay) }}'; openEmpId = false"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                                x-show="!printPernyataanSearchNewEmp || '{{ strtolower(addslashes($empDisplay)) }}'.includes(printPernyataanSearchNewEmp.toLowerCase())"
+                                                @click.stop="printPernyataanEmployeeId = '{{ $empItem->id }}'; printPernyataanSelectedNewName = '{{ addslashes($empDisplay) }}'; closePrintDropdowns()"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                                 :class="printPernyataanEmployeeId == '{{ $empItem->id }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
                                                 <span>{{ $empDisplay }}</span>
                                                 <span x-show="printPernyataanEmployeeId == '{{ $empItem->id }}'" class="text-gov-navy font-bold">✓</span>
@@ -3690,27 +3680,22 @@
                 <!-- Tahun Riwayat Potongan (Untuk Mode All & Single) -->
                 <div x-show="printPernyataanMode !== 'new'" class="space-y-1">
                     <label class="block font-semibold text-slate-700">Tahun Riwayat Potongan *</label>
-                    <div class="relative" x-data="{ openHistoryYear: false }" :class="openHistoryYear ? 'z-40' : 'z-10'" @click.outside="openHistoryYear = false" @keydown.escape.window="openHistoryYear = false">
-                        <button type="button" @click="openHistoryYear = !openHistoryYear"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                    <div class="relative" :class="printPernyataanOpenDropdown === 'historyYear' ? 'z-40' : 'z-10'"
+                        @click.outside="if (printPernyataanOpenDropdown === 'historyYear') closePrintDropdowns()">
+                        <button type="button" @click.stop="togglePrintDropdown('historyYear')"
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
                             <span class="truncate" x-text="'Tahun ' + printPernyataanYear"></span>
-                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openHistoryYear ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'historyYear' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m6 9 6 6 6-6"/>
                             </svg>
                         </button>
 
-                        <div x-show="openHistoryYear" x-cloak
-                            x-transition:enter="transition ease-out duration-50"
-                            x-transition:enter-start="transform opacity-0 scale-98"
-                            x-transition:enter-end="transform opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-50"
-                            x-transition:leave-start="transform opacity-100 scale-100"
-                            x-transition:leave-end="transform opacity-0 scale-98"
+                        <div x-show="printPernyataanOpenDropdown === 'historyYear'" x-cloak @click.stop
                             class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
                             style="display: none;">
                             @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
-                                <button type="button" @click="printPernyataanYear = '{{ $y }}'; openHistoryYear = false"
-                                    class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                <button type="button" @click.stop="printPernyataanYear = '{{ $y }}'; closePrintDropdowns()"
+                                    class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                     :class="printPernyataanYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
                                     <span>Tahun {{ $y }}</span>
                                     <span x-show="printPernyataanYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>
@@ -3737,27 +3722,22 @@
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
                             <div class="grid grid-cols-2 gap-1.5">
-                                <!-- Dropdown Bulan Custom (Seamless & Instan) -->
-                                <div class="relative" x-data="{ openMonth: false }" :class="openMonth ? 'z-40' : 'z-10'" @click.outside="openMonth = false" @keydown.escape.window="openMonth = false">
-                                    <button type="button" @click="openMonth = !openMonth"
-                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                <!-- Dropdown Bulan Custom (Seamless & Instan 0ms) -->
+                                <div class="relative" :class="printPernyataanOpenDropdown === 'month' ? 'z-40' : 'z-10'"
+                                    @click.outside="if (printPernyataanOpenDropdown === 'month') closePrintDropdowns()">
+                                    <button type="button" @click.stop="togglePrintDropdown('month')"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
                                         <span class="truncate" x-text="printPernyataanEffectiveMonth ? printPernyataanEffectiveMonth : '-- Kosongkan --'"></span>
-                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openMonth ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'month' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="m6 9 6 6 6-6"/>
                                         </svg>
                                     </button>
 
-                                    <div x-show="openMonth" x-cloak
-                                        x-transition:enter="transition ease-out duration-50"
-                                        x-transition:enter-start="transform opacity-0 scale-98"
-                                        x-transition:enter-end="transform opacity-100 scale-100"
-                                        x-transition:leave="transition ease-in duration-50"
-                                        x-transition:leave-start="transform opacity-100 scale-100"
-                                        x-transition:leave-end="transform opacity-0 scale-98"
+                                    <div x-show="printPernyataanOpenDropdown === 'month'" x-cloak @click.stop
                                         class="absolute left-0 top-full mt-1 w-full min-w-[140px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
                                         style="display: none;">
-                                        <button type="button" @click="printPernyataanEffectiveMonth = ''; openMonth = false"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                        <button type="button" @click.stop="printPernyataanEffectiveMonth = ''; closePrintDropdowns()"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                             :class="!printPernyataanEffectiveMonth ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
                                             <span>-- Kosongkan --</span>
                                             <span x-show="!printPernyataanEffectiveMonth" class="text-gov-navy font-bold">✓</span>
@@ -3769,8 +3749,8 @@
                                             ];
                                         @endphp
                                         @foreach($daftarBulan as $bulan)
-                                            <button type="button" @click="printPernyataanEffectiveMonth = '{{ $bulan }}'; openMonth = false"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            <button type="button" @click.stop="printPernyataanEffectiveMonth = '{{ $bulan }}'; closePrintDropdowns()"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                                 :class="printPernyataanEffectiveMonth === '{{ $bulan }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
                                                 <span>{{ $bulan }}</span>
                                                 <span x-show="printPernyataanEffectiveMonth === '{{ $bulan }}'" class="text-gov-navy font-bold">✓</span>
@@ -3779,34 +3759,29 @@
                                     </div>
                                 </div>
 
-                                <!-- Dropdown Tahun Custom (Seamless & Instan) -->
-                                <div class="relative" x-data="{ openYear: false }" :class="openYear ? 'z-40' : 'z-10'" @click.outside="openYear = false" @keydown.escape.window="openYear = false">
-                                    <button type="button" @click="openYear = !openYear"
-                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition-colors duration-75 cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                <!-- Dropdown Tahun Custom (Seamless & Instan 0ms) -->
+                                <div class="relative" :class="printPernyataanOpenDropdown === 'year' ? 'z-40' : 'z-10'"
+                                    @click.outside="if (printPernyataanOpenDropdown === 'year') closePrintDropdowns()">
+                                    <button type="button" @click.stop="togglePrintDropdown('year')"
+                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
                                         <span class="truncate" x-text="printPernyataanEffectiveYear ? printPernyataanEffectiveYear : '-- Kosongkan --'"></span>
-                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-75" :class="openYear ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'year' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="m6 9 6 6 6-6"/>
                                         </svg>
                                     </button>
 
-                                    <div x-show="openYear" x-cloak
-                                        x-transition:enter="transition ease-out duration-50"
-                                        x-transition:enter-start="transform opacity-0 scale-98"
-                                        x-transition:enter-end="transform opacity-100 scale-100"
-                                        x-transition:leave="transition ease-in duration-50"
-                                        x-transition:leave-start="transform opacity-100 scale-100"
-                                        x-transition:leave-end="transform opacity-0 scale-98"
+                                    <div x-show="printPernyataanOpenDropdown === 'year'" x-cloak @click.stop
                                         class="absolute right-0 top-full mt-1 w-full min-w-[110px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
                                         style="display: none;">
-                                        <button type="button" @click="printPernyataanEffectiveYear = ''; openYear = false"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                        <button type="button" @click.stop="printPernyataanEffectiveYear = ''; closePrintDropdowns()"
+                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                             :class="!printPernyataanEffectiveYear ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
                                             <span>-- Kosongkan --</span>
                                             <span x-show="!printPernyataanEffectiveYear" class="text-gov-navy font-bold">✓</span>
                                         </button>
                                         @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
-                                            <button type="button" @click="printPernyataanEffectiveYear = '{{ $y }}'; openYear = false"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 transition cursor-pointer flex items-center justify-between"
+                                            <button type="button" @click.stop="printPernyataanEffectiveYear = '{{ $y }}'; closePrintDropdowns()"
+                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
                                                 :class="printPernyataanEffectiveYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
                                                 <span>{{ $y }}</span>
                                                 <span x-show="printPernyataanEffectiveYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>

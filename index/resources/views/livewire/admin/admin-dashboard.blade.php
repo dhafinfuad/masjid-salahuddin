@@ -664,6 +664,7 @@
         printPernyataanEmployeeId: '',
         printPernyataanEmployeeName: '',
         printPernyataanYear: {{ now()->year }},
+        printPernyataanDateLetter: '',
 @php
         $daftarBulanIndo = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -676,7 +677,21 @@
         printPernyataanEffectiveYear: '{{ now()->year }}',
         printPernyataanSecretaryName: 'Deril Amrizal Kholid',
         printPernyataanSecretarySection: 'Seksi Penjaminan Kualitas Data',
+        printPernyataanOpenDropdown: null,
+        printPernyataanSearchEmp: '',
+        printPernyataanSearchNewEmp: '',
+        printPernyataanSelectedNewName: '',
+        togglePrintDropdown(name) {
+            this.printPernyataanOpenDropdown = (this.printPernyataanOpenDropdown === name ? null : name);
+        },
+        closePrintDropdowns() {
+            this.printPernyataanOpenDropdown = null;
+        },
         openPrintPernyataanModal() {
+            this.printPernyataanOpenDropdown = null;
+            this.printPernyataanSearchEmp = '';
+            this.printPernyataanSearchNewEmp = '';
+            this.printPernyataanSelectedNewName = '';
             if (!this.printPernyataanEffectiveMonth) {
                 this.printPernyataanEffectiveMonth = '{{ $bulanIniIndo }}';
             }
