@@ -451,3 +451,7 @@ tr.border-l-amber-500,
     text-align: center !important;
 }
 
+/* Standarisasi Border Emerald 400 untuk Lencana Status */
+.border-emerald-400 {
+    border-color: #34d399 !important;
+}
