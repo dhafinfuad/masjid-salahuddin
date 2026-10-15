@@ -6792,6 +6792,26 @@ class AdminDashboard extends Component
             'totalSocialCollectedAll' => $totalSocialCollectedAll,
             'totalActiveSocialParticipants' => $totalActiveSocialParticipants,
             'availablePeriods' => $availablePeriods,
+            'distinctParticipantNames' => (function() {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('program_participants')) {
+                        return ProgramParticipant::distinct()->orderBy('name')->pluck('name')->filter()->values();
+                    }
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+                return collect();
+            })(),
+            'allEmployeesForPrint' => (function() {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('employees')) {
+                        return Employee::orderBy('name')->get(['id', 'name', 'nip_panjang', 'nip_pendek', 'jabatan', 'unit_kerja']);
+                    }
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+                return collect();
+            })(),
             // Tab Galeri
             'activityGalleries' => (function() {
                 ActivityGallery::ensureTableExists();

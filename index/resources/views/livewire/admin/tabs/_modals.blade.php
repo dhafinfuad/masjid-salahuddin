@@ -3506,6 +3506,189 @@
     </div>
 
     <!-- ========================================== -->
+    <!-- MODAL: CETAK SURAT PERNYATAAN POTONGAN TUKIN -->
+    <!-- ========================================== -->
+    <div x-show="showPrintPernyataanModal" x-cloak wire:ignore.self
+        @click="if (window.isBackdropClick($event, $el)) showPrintPernyataanModal = false"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        style="display: none;" @keydown.escape.window="showPrintPernyataanModal = false">
+        <div class="relative bg-white rounded-2xl max-w-xl w-full p-6 text-left shadow-2xl border border-gov-border transform transition-all space-y-4"
+            @click.stop>
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200">
+                        <i data-lucide="printer" class="w-4 h-4 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gov-textMain">Cetak Surat Pernyataan Potongan Tukin</h3>
+                        <p class="text-xs text-slate-500">Cetak lembar pernyataan kesediaan pemotongan tunjangan kinerja pegawai</p>
+                    </div>
+                </div>
+                <button type="button" @click="showPrintPernyataanModal = false"
+                    class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="space-y-4 text-xs">
+                <!-- Mode Pemilihan Pegawai -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1.5">Mode Sasaran Pegawai *</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button type="button" @click="printPernyataanMode = 'all'"
+                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
+                            :class="printPernyataanMode === 'all' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                                <span>Semua Pegawai</span>
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Mail-Merge seluruh pegawai yang ada riwayat</span>
+                        </button>
+
+                        <button type="button" @click="printPernyataanMode = 'single'"
+                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
+                            :class="printPernyataanMode === 'single' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                                <span>Pilih Pegawai</span>
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Cetak spesifik 1 pegawai dari daftar</span>
+                        </button>
+
+                        <button type="button" @click="printPernyataanMode = 'new'"
+                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
+                            :class="printPernyataanMode === 'new' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
+                                <span>Pegawai Baru</span>
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Tanpa tabel riwayat potongan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mode Single: Dropdown Pegawai yang Pernah Memotong -->
+                <div x-show="printPernyataanMode === 'single'" class="space-y-1">
+                    <label class="block font-semibold text-slate-700">Nama Pegawai (dari Riwayat) *</label>
+                    <select x-model="printPernyataanEmployeeName"
+                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                        <option value="">-- Pilih Nama Pegawai yang Ada di Rekapitulasi --</option>
+                        @if(isset($distinctParticipantNames))
+                            @foreach($distinctParticipantNames as $pName)
+                                <option value="{{ $pName }}">{{ $pName }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <!-- Mode New: Pilih dari Master Pegawai atau Formulir Kosong -->
+                <div x-show="printPernyataanMode === 'new'" class="space-y-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Pilih Pegawai Baru dari Master (Atau Kosongkan untuk Blanko) *</label>
+                        <select x-model="printPernyataanEmployeeId"
+                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                            <option value="">-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --</option>
+                            @if(isset($allEmployeesForPrint))
+                                @foreach($allEmployeesForPrint as $empItem)
+                                    <option value="{{ $empItem->id }}">
+                                        {{ $empItem->name }} (NIP: {{ $empItem->nip_panjang ?: ($empItem->nip_pendek ?: '-') }})
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-amber-800 flex items-start gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                        <div class="text-[11px] leading-relaxed">
+                            <span class="font-bold">Informasi:</span> Pada mode Pegawai Baru, <span class="font-semibold underline">tabel Riwayat Potongan akan disembunyikan</span> sehingga formulir siap diisi dan ditandatangani untuk pendaftaran komitmen baru.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tahun Riwayat Potongan (Untuk Mode All & Single) -->
+                <div x-show="printPernyataanMode !== 'new'" class="space-y-1">
+                    <label class="block font-semibold text-slate-700">Tahun Riwayat Potongan *</label>
+                    <select x-model="printPernyataanYear"
+                        class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
+                        @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
+                            <option value="{{ $y }}">Tahun {{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- Input Opsional: Tanggal Surat & Mulai Berlaku -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <div class="font-bold text-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-gov-navy"></i>
+                        <span>Keterangan Waktu Persuratan (Opsional)</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Tanggal Surat</label>
+                            <input x-model="printPernyataanDateLetter" type="text"
+                                placeholder="Contoh: 15 Oktober 2026 (kosong = titik-titik)"
+                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <input x-model="printPernyataanEffectiveMonth" type="text"
+                                    placeholder="Contoh: Januari"
+                                    class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                                <input x-model="printPernyataanEffectiveYear" type="number"
+                                    placeholder="2026"
+                                    class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Petugas Sekretaris Pengumpul Berkas -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <div class="font-bold text-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-gov-navy"></i>
+                        <span>Sekretaris Pengumpul Berkas (Footer Surat)</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Nama Sekretaris</label>
+                            <input x-model="printPernyataanSecretaryName" type="text"
+                                placeholder="Deril Amrizal Kholid"
+                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-600 mb-1">Seksi / Unit Sekretaris</label>
+                            <input x-model="printPernyataanSecretarySection" type="text"
+                                placeholder="Seksi Penjaminan Kualitas Data"
+                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
+                <button type="button" @click="showPrintPernyataanModal = false"
+                    class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                    Batal
+                </button>
+                <a :href="'{{ route('admin.programs.print-surat-pernyataan') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection)"
+                    target="_blank"
+                    @click="setTimeout(() => { showPrintPernyataanModal = false; }, 300)"
+                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+                    <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
+                    <span>Buka Dokumen Cetak</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- MODAL: TAMBAH / EDIT PROGRAM SOSIAL (MILESTONE 6) -->
     <!-- ========================================== -->
     <div x-show="showSocialProgramModal" x-cloak wire:ignore.self

@@ -318,22 +318,30 @@
                             </div>
                         </div>
 
-                        <div class="relative w-full sm:w-64" x-data="{
-                            clearSearch() {
-                                $wire.clearSocialParticipantSearch();
-                            }
-                        }">
-                            <i data-lucide="search"
-                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                            <input wire:model.live.debounce.300ms="socialParticipantSearch" type="text"
-                                placeholder="Cari nama peserta..."
-                                class="w-full pl-8 pr-9 py-1.5 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:border-gov-navy font-medium">
-                            <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                            <button type="button" @click="openPrintPernyataanModal()"
+                                class="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
+                                <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <span>Cetak Surat Pernyataan</span>
                             </button>
+
+                            <div class="relative w-full sm:w-64" x-data="{
+                                clearSearch() {
+                                    $wire.clearSocialParticipantSearch();
+                                }
+                            }">
+                                <i data-lucide="search"
+                                    class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                <input wire:model.live.debounce.300ms="socialParticipantSearch" type="text"
+                                    placeholder="Cari nama peserta..."
+                                    class="w-full pl-8 pr-9 py-1.5 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:border-gov-navy font-medium">
+                                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
+                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
 

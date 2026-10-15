@@ -5,6 +5,7 @@ use App\Http\Controllers\FinanceExportController;
 use App\Http\Controllers\KajianExportController;
 use App\Http\Controllers\PrayerDutyExportController;
 use App\Http\Controllers\SocialProgramExportController;
+use App\Http\Controllers\SocialProgramPrintController;
 use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Auth\ForgotPasswordPage;
 use App\Livewire\Auth\LoginPage;
@@ -84,6 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/agenda/export-excel', [AgendaExportController::class, 'exportExcel'])->name('admin.agenda.export-excel');
     Route::get('/admin/finance/export-excel', [FinanceExportController::class, 'exportExcel'])->name('admin.finance.export-excel');
     Route::get('/admin/programs/export-excel', [SocialProgramExportController::class, 'exportExcel'])->name('admin.programs.export-excel');
+    Route::get('/admin/programs/print-surat-pernyataan', [SocialProgramPrintController::class, 'printPdf'])->name('admin.programs.print-surat-pernyataan');
 
     Route::get('/admin', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/admin/poster-setting', \App\Livewire\Admin\PosterSettingManager::class)->name('admin.poster-setting');

@@ -659,6 +659,22 @@
         exportPotonganStartMonth: {{ now()->month }},
         exportPotonganEndMonth: {{ now()->month }},
         exportPotonganMonth: {{ now()->month }},
+        showPrintPernyataanModal: false,
+        printPernyataanMode: 'all',
+        printPernyataanEmployeeId: '',
+        printPernyataanEmployeeName: '',
+        printPernyataanYear: {{ now()->year }},
+        printPernyataanDateLetter: '',
+        printPernyataanEffectiveMonth: '',
+        printPernyataanEffectiveYear: {{ now()->year }},
+        printPernyataanSecretaryName: 'Deril Amrizal Kholid',
+        printPernyataanSecretarySection: 'Seksi Penjaminan Kualitas Data',
+        openPrintPernyataanModal() {
+            this.showPrintPernyataanModal = true;
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
+        },
         showParticipantModal: false,
         isEditingParticipant: false,
         openCreateParticipant() {
@@ -823,6 +839,8 @@
     @close-import-potongan-modal.window="showImportPotonganModal = false"
     @open-export-potongan-modal.window="showExportPotonganModal = true"
     @close-export-potongan-modal.window="showExportPotonganModal = false"
+    @open-print-pernyataan-modal.window="openPrintPernyataanModal()"
+    @close-print-pernyataan-modal.window="showPrintPernyataanModal = false"
     @open-delete-modal.window="openDeleteModal($event.detail)"
     @close-delete-modal.window="confirmDeleteModal.show = false"
     @open-receipt-modal.window="openReceiptModal($event.detail)"

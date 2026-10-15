@@ -1,0 +1,135 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Employee;
+use App\Models\ProgramParticipant;
+use App\Models\SocialProgram;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class SocialProgramPrintTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $admin;
+    protected Employee $employee;
+    protected SocialProgram $yatimProgram;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->admin = User::factory()->create([
+            'role' => 'Master',
+            'status' => 'Aktif',
+            'email' => 'admin.print@masjid.id',
+        ]);
+
+        $this->employee = Employee::create([
+            'name' => 'Ichtiar Rachmatullah',
+            'nip_panjang' => '198101012006041001',
+            'nip_pendek' => '060098765',
+            'jabatan' => 'Pelaksana (Seksi Pengawasan IV)',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+        ]);
+
+        $this->yatimProgram = SocialProgram::create([
+            'name' => 'Program Santunan Anak Yatim',
+            'slug' => 'program-santunan-anak-yatim',
+            'category' => 'yatim',
+            'period_type' => 'bulanan',
+            'status' => 'AKTIF',
+        ]);
+    }
+
+    public function test_guest_cannot_access_print_surat_pernyataan(): void
+    {
+        $response = $this->get('/admin/programs/print-surat-pernyataan');
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_admin_can_access_print_surat_pernyataan_all_mode(): void
+    {
+        $this->actingAs($this->admin);
+
+        ProgramParticipant::create([
+            'name' => $this->employee->name,
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 150000,
+            'period' => 'Periode 3/2026',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=all&year=2026');
+
+        $response->assertStatus(200);
+        $response->assertSee('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja');
+        $response->assertSee($this->employee->name);
+        $response->assertSee('198101012006041001');
+        $response->assertSee('Pelaksana');
+        $response->assertSee('Seksi Pengawasan IV');
+        $response->assertSee('Riwayat Potongan');
+        $response->assertSee('Deril Amrizal Kholid');
+        $response->assertSee('Seksi Penjaminan Kualitas Data');
+    }
+
+    public function test_admin_can_print_single_employee_with_history(): void
+    {
+        $this->actingAs($this->admin);
+
+        ProgramParticipant::create([
+            'name' => $this->employee->name,
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=single&year=2026&employee_id=' . $this->employee->id . '&date_letter=15 Oktober 2026&effective_month=Januari&effective_year=2026');
+
+        $response->assertStatus(200);
+        $response->assertSee($this->employee->name);
+        $response->assertSee('15 Oktober 2026');
+        $response->assertSee('Januari');
+        $response->assertSee('100k');
+        $response->assertSee('Riwayat Potongan Tahun 2026');
+    }
+
+    public function test_admin_can_print_new_employee_form_without_history(): void
+    {
+        $this->actingAs($this->admin);
+
+        $newEmp = Employee::create([
+            'name' => 'Budi Santoso',
+            'nip_panjang' => '199001012015021002',
+            'jabatan' => 'Fungsional Pemeriksa (Seksi Pemeriksaan)',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=new&employee_id=' . $newEmp->id);
+
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        $response->assertSee('199001012015021002');
+        $response->assertSee('Fungsional Pemeriksa');
+        $response->assertSee('Seksi Pemeriksaan');
+        // Riwayat Potongan harus disembunyikan
+        $response->assertDontSee('Riwayat Potongan Tahun');
+        $response->assertSee('Belum Tercatat Riwayat Pemotongan Sebelumnya');
+    }
+
+    public function test_admin_can_print_blank_form(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=blank');
+
+        $response->assertStatus(200);
+        $response->assertSee('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja');
+        $response->assertDontSee('Riwayat Potongan Tahun');
+    }
+}
