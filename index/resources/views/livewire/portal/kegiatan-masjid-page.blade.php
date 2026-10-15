@@ -118,43 +118,36 @@
 
                     <!-- Filter Bulan (w-full sm:w-48) -->
                     <div class="w-full sm:w-48 shrink-0">
-                        <label for="filter-activity-month" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                             Filter Bulan
                         </label>
-                        <div class="relative">
-                            <div class="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center" wire:ignore>
-                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600 shrink-0 inline-block"></i>
-                            </div>
-                            <select 
-                                id="filter-activity-month" 
-                                wire:model.live="selectedMonth" 
-                                class="w-full pl-8 pr-8 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs font-medium text-gov-textMain cursor-pointer transition shadow-2xs">
-                                <option value="all">Semua Bulan</option>
-                                @foreach($months as $num => $name)
-                                    <option value="{{ $num }}">{{ $name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @php
+                            $actMonthOptions = array_merge(
+                                [['value' => 'all', 'label' => 'Semua Bulan']],
+                                collect($months)->map(fn($name, $num) => ['value' => (string)$num, 'label' => (string)$name])->values()->all()
+                            );
+                        @endphp
+                        <x-custom-select 
+                            id="filter-activity-month" 
+                            wire:model.live="selectedMonth" 
+                            :options="$actMonthOptions"
+                            placeholder="Semua Bulan"
+                            icon="calendar"
+                        />
                     </div>
 
                     <!-- Filter Tahun (w-full sm:w-36) -->
                     <div class="w-full sm:w-36 shrink-0">
-                        <label for="filter-activity-year" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                             Tahun
                         </label>
-                        <div class="relative">
-                            <div class="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center" wire:ignore>
-                                <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-indigo-600 shrink-0 inline-block"></i>
-                            </div>
-                            <select 
-                                id="filter-activity-year" 
-                                wire:model.live="selectedYear" 
-                                class="w-full pl-8 pr-8 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs font-medium text-gov-textMain cursor-pointer transition shadow-2xs">
-                                @foreach($years as $yr)
-                                    <option value="{{ $yr }}">{{ $yr }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <x-custom-select 
+                            id="filter-activity-year" 
+                            wire:model.live="selectedYear" 
+                            :options="$years"
+                            placeholder="Pilih Tahun"
+                            icon="calendar-days"
+                        />
                     </div>
 
                     <!-- Reset Filter Button (w-full sm:w-auto) -->

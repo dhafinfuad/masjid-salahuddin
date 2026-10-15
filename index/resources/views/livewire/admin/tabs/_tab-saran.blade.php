@@ -38,27 +38,33 @@
 
             <!-- Status Filter -->
             <div class="sm:col-span-3">
-                <select wire:model.live="saranStatusFilter"
-                    class="w-full px-3 py-2 text-xs border border-gov-border rounded-lg bg-slate-50/70 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition cursor-pointer">
-                    <option value="all">Semua Status</option>
-                    <option value="baru">Baru / Belum Dibaca</option>
-                    <option value="dibaca">Telah Dibaca</option>
-                    <option value="ditindaklanjuti">Ditindaklanjuti</option>
-                    <option value="arsip">Diarsipkan</option>
-                </select>
+                <x-custom-select 
+                    wire:model.live="saranStatusFilter"
+                    :options="[
+                        'all' => 'Semua Status',
+                        'baru' => 'Baru / Belum Dibaca',
+                        'dibaca' => 'Telah Dibaca',
+                        'ditindaklanjuti' => 'Ditindaklanjuti',
+                        'arsip' => 'Diarsipkan',
+                    ]"
+                    placeholder="Semua Status"
+                />
             </div>
 
             <!-- Category Filter -->
             <div class="sm:col-span-3">
-                <select wire:model.live="saranCategoryFilter"
-                    class="w-full px-3 py-2 text-xs border border-gov-border rounded-lg bg-slate-50/70 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition cursor-pointer">
-                    <option value="all">Semua Kategori</option>
-                    <option value="Fasilitas & Kebersihan">Fasilitas & Kebersihan</option>
-                    <option value="Ibadah & Kajian">Ibadah & Kajian</option>
-                    <option value="Pelayanan DKM">Pelayanan DKM</option>
-                    <option value="Kas & Sosial">Kas & Sosial</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
+                <x-custom-select 
+                    wire:model.live="saranCategoryFilter"
+                    :options="[
+                        'all' => 'Semua Kategori',
+                        'Fasilitas & Kebersihan' => 'Fasilitas & Kebersihan',
+                        'Ibadah & Kajian' => 'Ibadah & Kajian',
+                        'Pelayanan DKM' => 'Pelayanan DKM',
+                        'Kas & Sosial' => 'Kas & Sosial',
+                        'Lainnya' => 'Lainnya',
+                    ]"
+                    placeholder="Semua Kategori"
+                />
             </div>
 
         </div>

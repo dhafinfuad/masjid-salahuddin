@@ -68,32 +68,56 @@
                 <div
                     class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full md:flex md:items-center md:w-auto text-xs">
-                        <select wire:model.live="prayerDutyFilterWeek"
-                            class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                            <option value="all">Semua Pekan</option>
-                            <option value="1">Pekan 1 {{ $currentWeekNumber === 1 ? '⭐ (Hari Ini)' : '' }}</option>
-                            <option value="2">Pekan 2 {{ $currentWeekNumber === 2 ? '⭐ (Hari Ini)' : '' }}</option>
-                            <option value="3">Pekan 3 {{ $currentWeekNumber === 3 ? '⭐ (Hari Ini)' : '' }}</option>
-                            <option value="4">Pekan 4 {{ $currentWeekNumber === 4 ? '⭐ (Hari Ini)' : '' }}</option>
-                            <option value="5">Pekan 5 {{ $currentWeekNumber === 5 ? '⭐ (Hari Ini)' : '' }}</option>
-                        </select>
+                        @php
+                            $dutyWeekOptions = [
+                                ['value' => 'all', 'label' => 'Semua Pekan'],
+                                ['value' => '1', 'label' => 'Pekan 1' . ($currentWeekNumber === 1 ? ' ⭐ (Hari Ini)' : '')],
+                                ['value' => '2', 'label' => 'Pekan 2' . ($currentWeekNumber === 2 ? ' ⭐ (Hari Ini)' : '')],
+                                ['value' => '3', 'label' => 'Pekan 3' . ($currentWeekNumber === 3 ? ' ⭐ (Hari Ini)' : '')],
+                                ['value' => '4', 'label' => 'Pekan 4' . ($currentWeekNumber === 4 ? ' ⭐ (Hari Ini)' : '')],
+                                ['value' => '5', 'label' => 'Pekan 5' . ($currentWeekNumber === 5 ? ' ⭐ (Hari Ini)' : '')],
+                            ];
+                            $dutyMonthOptions = [];
+                            foreach($dutyMonths as $mNum => $mName) {
+                                $isThisMonth = (int) $mNum === (int) Carbon\Carbon::now('Asia/Jakarta')->month;
+                                $dutyMonthOptions[] = [
+                                    'value' => (string)$mNum, 
+                                    'label' => $mName . ($isThisMonth ? ' ⭐ (Bulan Ini)' : ''),
+                                ];
+                            }
+                            $dutyYearOptions = [['value' => 'all', 'label' => 'Semua Tahun']];
+                            foreach($availableDutyYears as $yr) {
+                                $isThisYear = (string) $yr === (string) Carbon\Carbon::now('Asia/Jakarta')->year;
+                                $dutyYearOptions[] = [
+                                    'value' => (string)$yr, 
+                                    'label' => $yr . ($isThisYear ? ' (Tahun Ini)' : ''),
+                                ];
+                            }
+                        @endphp
+
+                        <x-custom-select 
+                            wire:model.live="prayerDutyFilterWeek" 
+                            :options="$dutyWeekOptions"
+                            placeholder="Semua Pekan"
+                            class="w-full sm:w-36"
+                        />
 
                         <span class="sr-only">BULAN:</span>
-                        <select wire:model.live="prayerDutyFilterMonth"
-                            class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                            @foreach($dutyMonths as $mNum => $mName)
-                                <option value="{{ $mNum }}">{{ $mName }}{{ (int) $mNum === (int) Carbon\Carbon::now('Asia/Jakarta')->month ? ' ⭐ (Bulan Ini)' : '' }}</option>
-                            @endforeach
-                        </select>
+                        <x-custom-select 
+                            wire:model.live="prayerDutyFilterMonth" 
+                            :options="$dutyMonthOptions"
+                            placeholder="Pilih Bulan"
+                            icon="calendar"
+                            class="w-full sm:w-36"
+                        />
 
                         <span class="sr-only">TAHUN:</span>
-                        <select wire:model.live="prayerDutyFilterYear"
-                            class="col-span-2 sm:col-span-1 w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                            <option value="all">Semua Tahun</option>
-                            @foreach($availableDutyYears as $yr)
-                                <option value="{{ $yr }}">{{ $yr }}{{ (string) $yr === (string) Carbon\Carbon::now('Asia/Jakarta')->year ? ' (Tahun Ini)' : '' }}</option>
-                            @endforeach
-                        </select>
+                        <x-custom-select 
+                            wire:model.live="prayerDutyFilterYear" 
+                            :options="$dutyYearOptions"
+                            placeholder="Semua Tahun"
+                            class="col-span-2 sm:col-span-1 w-full sm:w-32"
+                        />
                     </div>
 
                     <!-- Search Input -->

@@ -34,23 +34,31 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
             <!-- Filter Status Kepegawaian -->
             <div class="w-full sm:w-auto">
-                <select wire:model.live="employeeFilterStatus"
-                    class="w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy">
-                    <option value="all">Semua Status Kantor</option>
-                    <option value="AKTIF">Aktif di KPP Madya</option>
-                    <option value="MUTASI">Mutasi / Pindah</option>
-                    <option value="NONAKTIF">Nonaktif</option>
-                </select>
+                <x-custom-select 
+                    wire:model.live="employeeFilterStatus"
+                    :options="[
+                        'all' => 'Semua Status Kantor',
+                        'AKTIF' => 'Aktif di KPP Madya',
+                        'MUTASI' => 'Mutasi / Pindah',
+                        'NONAKTIF' => 'Nonaktif',
+                    ]"
+                    placeholder="Semua Status Kantor"
+                    class="w-full sm:w-44"
+                />
             </div>
 
             <!-- Filter Status Akun Aplikasi -->
             <div class="w-full sm:w-auto">
-                <select wire:model.live="employeeFilterLink"
-                    class="w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy">
-                    <option value="all">Semua Status Akun</option>
-                    <option value="linked">Sudah Punya Akun</option>
-                    <option value="unlinked">Belum Terdaftar Akun</option>
-                </select>
+                <x-custom-select 
+                    wire:model.live="employeeFilterLink"
+                    :options="[
+                        'all' => 'Semua Status Akun',
+                        'linked' => 'Sudah Punya Akun',
+                        'unlinked' => 'Belum Terdaftar Akun',
+                    ]"
+                    placeholder="Semua Status Akun"
+                    class="w-full sm:w-44"
+                />
             </div>
 
             <!-- Search Input -->

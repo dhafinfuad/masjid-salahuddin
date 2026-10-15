@@ -74,38 +74,30 @@
                 
                 <!-- Filter Bulan -->
                 <div class="w-full sm:w-48">
-                    <label for="filter-duty-month" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                         Bulan
                     </label>
-                    <div class="relative">
-                        <div class="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center" wire:ignore>
-                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600 shrink-0 inline-block"></i>
-                        </div>
-                        <select id="filter-duty-month" wire:model.live="selectedMonth"
-                            class="w-full pl-8 pr-8 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                            @foreach($months as $num => $name)
-                                <option value="{{ $num }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-custom-select 
+                        id="filter-duty-month"
+                        wire:model.live="selectedMonth"
+                        :options="$months"
+                        placeholder="Pilih Bulan"
+                        icon="calendar"
+                    />
                 </div>
 
                 <!-- Filter Tahun -->
                 <div class="w-full sm:w-36">
-                    <label for="filter-duty-year" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                         Tahun
                     </label>
-                    <div class="relative">
-                        <div class="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center" wire:ignore>
-                            <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-indigo-600 shrink-0 inline-block"></i>
-                        </div>
-                        <select id="filter-duty-year" wire:model.live="selectedYear"
-                            class="w-full pl-8 pr-8 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs">
-                            @foreach($years as $yr)
-                                <option value="{{ $yr }}">{{ $yr }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-custom-select 
+                        id="filter-duty-year"
+                        wire:model.live="selectedYear"
+                        :options="$years"
+                        placeholder="Pilih Tahun"
+                        icon="calendar-days"
+                    />
                 </div>
 
                 <!-- Tombol Cetak PDF Resmi & QR Code -->

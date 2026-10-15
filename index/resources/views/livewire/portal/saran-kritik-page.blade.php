@@ -108,12 +108,11 @@
                             <label class="block font-semibold text-slate-700 mb-1">
                                 Kategori Masukan <span class="text-rose-500">*</span>
                             </label>
-                            <select wire:model="category"
-                                class="w-full px-3 py-2 border border-gov-border rounded-lg bg-slate-50/70 hover:bg-slate-100/70 focus:bg-white text-gov-textMain text-xs font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs cursor-pointer">
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat }}">{{ $cat }}</option>
-                                @endforeach
-                            </select>
+                            <x-custom-select 
+                                wire:model="category"
+                                :options="$categories"
+                                placeholder="Pilih Kategori Masukan"
+                            />
                             @error('category') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
 

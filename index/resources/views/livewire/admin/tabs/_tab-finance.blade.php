@@ -311,12 +311,17 @@
 
                                     <!-- Year Filter -->
                                     <div class="w-full sm:w-40">
-                                        <select wire:model.live="financeYearFilter"
-                                            class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer">
-                                            <option value="all">Semua Tahun</option>
-                                            <option value="2026">2026</option>
-                                            <option value="2025">2025</option>
-                                        </select>
+                                        <x-custom-select 
+                                            wire:model.live="financeYearFilter"
+                                            :options="[
+                                                'all' => 'Semua Tahun',
+                                                '2026' => 'Tahun 2026',
+                                                '2025' => 'Tahun 2025',
+                                                '2024' => 'Tahun 2024',
+                                            ]"
+                                            placeholder="Semua Tahun"
+                                            icon="calendar"
+                                        />
                                     </div>
                                 </div>
 
@@ -756,13 +761,18 @@
 
                             <!-- Kelompok / Status Filter Dropdown -->
                             <div class="w-full sm:w-auto">
-                                <select x-model="catFilter"
-                                    class="w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                                    <option value="all">Semua Pos ({{ $financeCategories->count() }})</option>
-                                    <option value="penerimaan">Penerimaan ({{ $penerimaanCats->count() }})</option>
-                                    <option value="pengeluaran_rutin">Pengeluaran Rutin ({{ $pengeluaranRutinCats->count() }})</option>
-                                    <option value="pengeluaran_nonrutin">Non-Rutin ({{ $pengeluaranNonRutinCats->count() }})</option>
-                                </select>
+                                <x-custom-select 
+                                    x-model="catFilter"
+                                    :options="[
+                                        'all' => 'Semua Pos Anggaran',
+                                        'penerimaan' => 'Penerimaan',
+                                        'pengeluaran_rutin' => 'Pengeluaran Rutin',
+                                        'pengeluaran_nonrutin' => 'Non-Rutin',
+                                    ]"
+                                    placeholder="Semua Pos Anggaran"
+                                    icon="filter"
+                                    class="w-full sm:w-52"
+                                />
                             </div>
                         </div>
 

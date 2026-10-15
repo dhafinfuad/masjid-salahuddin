@@ -37,17 +37,21 @@
                 class="w-full pl-9 pr-3.5 py-1.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
         </div>
 
-        <!-- Filter Tahun & Counter -->
+        <!-- Filter Tahun -->
         <div class="flex items-center gap-2.5">
-            <div class="flex items-center gap-1.5 text-xs text-slate-500 shrink-0">
-                <select wire:model.live="galleryYearFilter"
-                    class="p-1.5 border border-gov-border rounded-lg bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white font-medium text-xs text-gov-textMain outline-none transition">
-                    <option value="all">Semua Tahun</option>
-                    @foreach($galleryYearsList ?? [date('Y')] as $yr)
-                        <option value="{{ $yr }}">{{ $yr }}</option>
-                    @endforeach
-                </select>
-            </div>
+            @php
+                $galYears = array_merge(
+                    [['value' => 'all', 'label' => 'Semua Tahun']],
+                    collect($galleryYearsList ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
+                );
+            @endphp
+            <x-custom-select 
+                wire:model.live="galleryYearFilter"
+                :options="$galYears"
+                placeholder="Semua Tahun"
+                icon="calendar"
+                class="w-36"
+            />
         </div>
     </div>
 

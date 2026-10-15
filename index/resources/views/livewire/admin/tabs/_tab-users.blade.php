@@ -168,15 +168,20 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
             <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
                 <div class="w-full sm:w-auto">
-                    <select wire:model.live="userFilterRole"
-                        class="w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy">
-                        <option value="all">Semua Role</option>
-                        <option value="Master">Master Admin</option>
-                        <option value="Ketua">Ketua DKM</option>
-                        <option value="Sekretaris">Sekretaris</option>
-                        <option value="Bendahara">Bendahara</option>
-                        <option value="Jamaah">Jamaah (Viewer)</option>
-                    </select>
+                    <x-custom-select 
+                        wire:model.live="userFilterRole"
+                        :options="[
+                            'all' => 'Semua Role',
+                            'Master' => 'Master Admin',
+                            'Ketua' => 'Ketua DKM',
+                            'Sekretaris' => 'Sekretaris',
+                            'Bendahara' => 'Bendahara',
+                            'Jamaah' => 'Jamaah (Viewer)',
+                        ]"
+                        placeholder="Semua Role"
+                        icon="shield"
+                        class="w-full sm:w-44"
+                    />
                 </div>
 
                 <!-- Search Input -->

@@ -937,12 +937,11 @@
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Program yang Diikuti <span class="text-rose-500">*</span></label>
-                        <select wire:model="socialParticipantProgram"
-                            class="w-full px-3.5 py-1.5 border border-gov-border rounded-lg bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white font-medium text-xs text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
-                            @foreach($socialPrograms as $prog)
-                                <option value="{{ $prog->name }}">{{ $prog->name }}</option>
-                            @endforeach
-                        </select>
+                        <x-custom-select 
+                            wire:model="socialParticipantProgram"
+                            :options="collect($socialPrograms)->map(fn($p) => ['value' => $p->name, 'label' => $p->name])->values()->all()"
+                            placeholder="Pilih Program Sosial"
+                        />
                         @error('socialParticipantProgram') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                     </div>
 
@@ -956,12 +955,11 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Periode Komitmen</label>
-                            <select wire:model="socialParticipantPeriod"
-                                class="w-full px-3.5 py-1.5 border border-gov-border rounded-lg bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white font-medium text-xs text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
-                                <option value="Bulanan">Bulanan</option>
-                                <option value="Tahunan">Tahunan</option>
-                                <option value="Satu Kali">Satu Kali</option>
-                            </select>
+                            <x-custom-select 
+                                wire:model="socialParticipantPeriod"
+                                :options="['Bulanan' => 'Bulanan', 'Tahunan' => 'Tahunan', 'Satu Kali' => 'Satu Kali']"
+                                placeholder="Pilih Periode Komitmen"
+                            />
                         </div>
                     </div>
 

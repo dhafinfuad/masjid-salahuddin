@@ -218,13 +218,18 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
                         <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
                             <div class="w-full sm:w-56">
-                                <select wire:model.live="socialProgramFilter"
-                                    class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer focus:outline-none focus:border-gov-navy truncate">
-                                    <option value="all">Semua Program Sosial</option>
-                                    @foreach($allSocialPrograms as $sp)
-                                        <option value="{{ $sp->id }}">{{ $sp->name }}</option>
-                                    @endforeach
-                                </select>
+                                @php
+                                    $programFilterOptions = array_merge(
+                                        [['value' => 'all', 'label' => 'Semua Program Sosial']],
+                                        $allSocialPrograms->map(fn($sp) => ['value' => (string)$sp->id, 'label' => $sp->name])->values()->all()
+                                    );
+                                @endphp
+                                <x-custom-select 
+                                    wire:model.live="socialProgramFilter"
+                                    :options="$programFilterOptions"
+                                    placeholder="Semua Program Sosial"
+                                    icon="heart-handshake"
+                                />
                             </div>
 
                             <div class="relative w-full sm:w-56" x-data="{

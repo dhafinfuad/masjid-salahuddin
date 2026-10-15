@@ -188,21 +188,35 @@
                         </button>
                     </div>
                     <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                        <select wire:key="kajian-month-filter" wire:model.live="kajianMonthFilter" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                            <option value="all">Semua Bulan</option>
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}">
-                                    {{ Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
-                                </option>
-                            @endfor
-                        </select>
+                        @php
+                            $kajianMonthOptions = [['value' => 'all', 'label' => 'Semua Bulan']];
+                            for ($m = 1; $m <= 12; $m++) {
+                                $kajianMonthOptions[] = [
+                                    'value' => (string)$m,
+                                    'label' => Carbon\Carbon::create(null, $m, 1)->translatedFormat('F'),
+                                ];
+                            }
+                            $kajianYearOptions = array_merge(
+                                [['value' => 'all', 'label' => 'Semua Tahun']],
+                                collect($availableKajianYears)->map(fn($yr) => ['value' => (string)$yr, 'label' => (string)$yr])->values()->all()
+                            );
+                        @endphp
+                        <x-custom-select 
+                            wire:key="kajian-month-filter" 
+                            wire:model.live="kajianMonthFilter" 
+                            :options="$kajianMonthOptions"
+                            placeholder="Semua Bulan"
+                            icon="calendar"
+                            class="w-full sm:w-36"
+                        />
 
-                        <select wire:key="kajian-year-filter" wire:model.live="kajianYearFilter" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                            <option value="all">Semua Tahun</option>
-                            @foreach($availableKajianYears as $yr)
-                                <option value="{{ $yr }}">{{ $yr }}</option>
-                            @endforeach
-                        </select>
+                        <x-custom-select 
+                            wire:key="kajian-year-filter" 
+                            wire:model.live="kajianYearFilter" 
+                            :options="$kajianYearOptions"
+                            placeholder="Semua Tahun"
+                            class="w-full sm:w-32"
+                        />
 
                         @if($kajianMonthFilter !== 'all' || $kajianYearFilter !== 'all' || !empty($pekananSearch) || !empty($jumatSearch) || !empty($search))
                             <button type="button" wire:click="resetKajianFilters"
@@ -1184,13 +1198,18 @@
                             </button>
                         </div>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <select wire:key="agenda-status-filter" wire:model.live="agendaFilterStatus"
-                                class="w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-gov-navy cursor-pointer">
-                                <option value="all">Semua Status</option>
-                                <option value="Direncanakan">Direncanakan</option>
-                                <option value="Berjalan">Berjalan</option>
-                                <option value="SELESAI">Selesai</option>
-                            </select>
+                            <x-custom-select 
+                                wire:key="agenda-status-filter" 
+                                wire:model.live="agendaFilterStatus"
+                                :options="[
+                                    'all' => 'Semua Status',
+                                    'Direncanakan' => 'Direncanakan',
+                                    'Berjalan' => 'Berjalan',
+                                    'SELESAI' => 'Selesai',
+                                ]"
+                                placeholder="Semua Status"
+                                class="w-full sm:w-36"
+                            />
 
                             @if($agendaFilterStatus !== 'all' || !empty($agendaSearch))
                                 <button type="button" wire:click="resetAgendaFilters"

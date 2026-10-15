@@ -563,17 +563,21 @@
                     @endif
                 </div>
 
-                <!-- Year Filter & Count text -->
+                <!-- Year Filter -->
                 <div class="flex items-center justify-between sm:justify-end gap-3">
-                    <div class="flex items-center gap-2 text-xs text-slate-600">
-                        <select wire:model.live="galleryYear"
-                                class="px-3 py-1.5 border border-gov-border rounded-lg bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white font-medium text-xs text-gov-textMain outline-none transition cursor-pointer">
-                            <option value="all">Semua Tahun</option>
-                            @foreach($galleryYears as $yr)
-                                <option value="{{ $yr }}">{{ $yr }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    @php
+                        $profilGalleryYears = array_merge(
+                            [['value' => 'all', 'label' => 'Semua Tahun']],
+                            collect($galleryYears ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
+                        );
+                    @endphp
+                    <x-custom-select 
+                        wire:model.live="galleryYear"
+                        :options="$profilGalleryYears"
+                        placeholder="Semua Tahun"
+                        icon="calendar"
+                        class="w-36"
+                    />
                 </div>
             </div>
 
