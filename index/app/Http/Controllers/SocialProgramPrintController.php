@@ -7,7 +7,9 @@ use App\Models\MasjidSetting;
 use App\Models\ProgramParticipant;
 use App\Models\SocialProgram;
 use App\Models\User;
+use App\Services\EmployeeStatusSyncService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class SocialProgramPrintController extends Controller
@@ -60,6 +62,113 @@ class SocialProgramPrintController extends Controller
             'order' => 5,
         ],
     ];
+
+    /**
+     * Format nama pegawai ke Kapital per Kata (Title Case) dan mempertahankan format gelar akademik
+     */
+    public static function formatTitleCaseName(?string $name): ?string
+    {
+        if (blank($name)) {
+            return null;
+        }
+
+        $trimmed = trim($name);
+        $titled = Str::title(strtolower($trimmed));
+
+        // Format gelar akademik dan singkatan umum yang harus kapital / kombinasi khusus
+        $replacements = [
+            '/\b(s|m)\.(kom|pd|e|t|si|ag|sn|sos|h|ak|st|sa|mn)\b/i' => fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])),
+            '/\b(a)\.(md|p)\b/i' => fn ($m) => strtoupper($m[1]) . '.' . ucfirst(strtolower($m[2])),
+            '/\b(s|m)\.(e)\.(i)\b/i' => 'S.E.I.',
+            '/\b(ph)\.(d)\b/i' => 'Ph.D.',
+            '/\b(drs)\b/i' => 'Drs.',
+            '/\b(dra)\b/i' => 'Dra.',
+            '/\b(ir)\b/i' => 'Ir.',
+            '/\b(prof)\b/i' => 'Prof.',
+            '/\b(dr)\b/i' => 'Dr.',
+            '/\b(sh)\b/i' => 'S.H.',
+            '/\b(se)\b/i' => 'S.E.',
+            '/\b(st)\b/i' => 'S.T.',
+            '/\b(si)\b/i' => 'S.I.',
+            '/\b(mm)\b/i' => 'M.M.',
+            '/\b(msi)\b/i' => 'M.Si.',
+            '/\b(mh)\b/i' => 'M.H.',
+            '/\b(ak)\b/i' => 'Ak.',
+            '/\b(cpa)\b/i' => 'CPA',
+            '/\b(bkn)\b/i' => 'BKN',
+            '/\b(djp)\b/i' => 'DJP',
+            '/\b(kpp)\b/i' => 'KPP',
+        ];
+
+        foreach ($replacements as $pattern => $replacement) {
+            if (is_callable($replacement)) {
+                $titled = preg_replace_callback($pattern, $replacement, $titled);
+            } else {
+                $titled = preg_replace($pattern, $replacement, $titled);
+            }
+        }
+
+        return $titled;
+    }
+
+    /**
+     * Pencarian cerdas profil Pegawai di database (Exact, Normalized, Substring, hingga User Link)
+     */
+    protected function findEmployee(?string $name, $employees, $usersByName, $usersByNip): ?Employee
+    {
+        if (blank($name)) {
+            return null;
+        }
+
+        $trimmed = trim($name);
+        $lower = strtolower($trimmed);
+        $normalized = EmployeeStatusSyncService::normalizeName($trimmed);
+
+        // 1. Cocokkan Nama Lengkap Persis
+        $exact = $employees->first(fn ($e) => strtolower(trim($e->name)) === $lower);
+        if ($exact) {
+            return $exact;
+        }
+
+        // 2. Cocokkan Nama Ternormalisasi (menghapus gelar , S.Kom., Drs., Ir., spasi ganda, dll)
+        $normMatch = $employees->first(fn ($e) => EmployeeStatusSyncService::normalizeName($e->name) === $normalized);
+        if ($normMatch) {
+            return $normMatch;
+        }
+
+        // 3. Cocokkan Substring (jika nama di peserta merupakan bagian nama di master atau sebaliknya)
+        if (strlen($normalized) >= 5) {
+            $subMatch = $employees->first(function ($e) use ($normalized) {
+                $eNorm = EmployeeStatusSyncService::normalizeName($e->name);
+                return str_contains($eNorm, $normalized) || str_contains($normalized, $eNorm);
+            });
+            if ($subMatch) {
+                return $subMatch;
+            }
+        }
+
+        // 4. Cari via tabel User (jika User terhubung dengan data Pegawai via user_id atau NIP)
+        $user = $usersByName->get($lower);
+        if (! $user && ! empty($normalized)) {
+            $user = User::all()->first(fn ($u) => EmployeeStatusSyncService::normalizeName($u->name) === $normalized);
+        }
+
+        if ($user) {
+            $linked = $employees->first(fn ($e) => $e->user_id === $user->id);
+            if ($linked) {
+                return $linked;
+            }
+            if (! empty($user->nip)) {
+                $cleanNip = preg_replace('/\D/', '', (string) $user->nip);
+                $byNip = $employees->first(fn ($e) => preg_replace('/\D/', '', (string) ($e->nip_panjang ?: $e->nip_pendek)) === $cleanNip);
+                if ($byNip) {
+                    return $byNip;
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Map participant record to canonical program key
@@ -124,9 +233,9 @@ class SocialProgramPrintController extends Controller
         $secretaryName = trim((string) $request->query('secretary_name', 'Deril Amrizal Kholid'));
         $secretarySection = trim((string) $request->query('secretary_section', 'Seksi Penjaminan Kualitas Data'));
 
-        // Fetch master employees index for fast lookup
-        $employeesByName = Employee::all()->keyBy(fn ($e) => strtolower(trim($e->name)));
-        $employeesById = Employee::all()->keyBy('id');
+        // Fetch master employees and users for fast matching
+        $allEmployees = Employee::all();
+        $employeesById = $allEmployees->keyBy('id');
         $usersByNip = User::whereNotNull('nip')->get()->keyBy(fn ($u) => preg_replace('/\D/', '', (string)$u->nip));
         $usersByName = User::all()->keyBy(fn ($u) => strtolower(trim($u->name)));
 
@@ -150,7 +259,7 @@ class SocialProgramPrintController extends Controller
             if ($employeeId && isset($employeesById[$employeeId])) {
                 $emp = $employeesById[$employeeId];
             } elseif ($employeeNameQuery) {
-                $emp = $employeesByName->get(strtolower($employeeNameQuery));
+                $emp = $this->findEmployee($employeeNameQuery, $allEmployees, $usersByName, $usersByNip);
             }
 
             $parsedData = $this->extractEmployeeData($emp, $employeeNameQuery, $usersByNip, $usersByName);
@@ -175,11 +284,18 @@ class SocialProgramPrintController extends Controller
                 abort(404, 'Nama pegawai tidak ditentukan.');
             }
 
-            $emp = $employeesByName->get(strtolower($targetName)) ?? ($employeeId ? ($employeesById[$employeeId] ?? null) : null);
+            $emp = ($employeeId && isset($employeesById[$employeeId]))
+                ? $employeesById[$employeeId]
+                : $this->findEmployee($targetName, $allEmployees, $usersByName, $usersByNip);
+
             $parsedData = $this->extractEmployeeData($emp, $targetName, $usersByNip, $usersByName);
 
             // Ambil semua partisipasi pegawai tersebut
             $participants = ProgramParticipant::where('name', $targetName)->get();
+            if ($participants->isEmpty() && $emp) {
+                $participants = ProgramParticipant::where('name', 'like', '%' . $emp->name . '%')->get();
+            }
+
             $commitments = $this->buildProgramCommitments($participants);
             $history = $this->buildProgramHistory($participants, $year);
 
@@ -195,7 +311,6 @@ class SocialProgramPrintController extends Controller
             ];
         } else {
             // Mode 'all': Mail-merge seluruh pegawai yang memiliki riwayat potongan
-            // Group by distinct participant names
             $allParticipants = ProgramParticipant::all()->groupBy(fn ($p) => trim($p->name));
 
             // Urutkan nama pegawai secara alfabetis
@@ -206,7 +321,7 @@ class SocialProgramPrintController extends Controller
                     continue;
                 }
                 $records = $allParticipants->get($name);
-                $emp = $employeesByName->get(strtolower($name));
+                $emp = $this->findEmployee($name, $allEmployees, $usersByName, $usersByNip);
                 $parsedData = $this->extractEmployeeData($emp, $name, $usersByNip, $usersByName);
 
                 $commitments = $this->buildProgramCommitments($records);
@@ -257,44 +372,57 @@ class SocialProgramPrintController extends Controller
      */
     protected function extractEmployeeData(?Employee $emp, string $fallbackName, $usersByNip, $usersByName): array
     {
-        $name = $emp ? $emp->name : ($fallbackName ?: null);
-        $nip = $emp ? ($emp->nip_panjang ?: $emp->nip_pendek) : null;
+        $rawName = $emp ? $emp->name : ($fallbackName ?: null);
+        $name = self::formatTitleCaseName($rawName);
+
+        $rawNip = $emp ? ($emp->nip_panjang ?: $emp->nip_pendek) : null;
         $rawJabatan = $emp ? $emp->jabatan : null;
 
         $jabatan = null;
         $seksi = null;
 
         if ($rawJabatan) {
+            // Pola umum: "Jabatan (Seksi ...)"
             if (preg_match('/^(.*?)\s*\((.*?)\)$/', $rawJabatan, $matches)) {
                 $jabatan = trim($matches[1]);
                 $seksi = trim($matches[2]);
+            } elseif (preg_match('/(seksi|subbag|kelompok)/i', $rawJabatan)) {
+                $jabatan = 'Pelaksana';
+                $seksi = $rawJabatan;
             } else {
                 $jabatan = $rawJabatan;
                 $seksi = $emp->unit_kerja ?: 'KPP Madya Malang';
             }
         } elseif ($emp) {
+            $jabatan = 'Pelaksana';
             $seksi = $emp->unit_kerja ?: 'KPP Madya Malang';
         }
 
         // WhatsApp / Phone resolution
         $phone = null;
-        if ($nip) {
-            $cleanNip = preg_replace('/\D/', '', (string)$nip);
+        if ($rawNip) {
+            $cleanNip = preg_replace('/\D/', '', (string)$rawNip);
             $user = $usersByNip->get($cleanNip);
             if ($user && !empty($user->phone)) {
                 $phone = $user->phone;
             }
         }
-        if (!$phone && $name) {
-            $user = $usersByName->get(strtolower(trim($name)));
+        if (!$phone && $rawName) {
+            $norm = EmployeeStatusSyncService::normalizeName($rawName);
+            $user = User::all()->first(fn($u) => EmployeeStatusSyncService::normalizeName($u->name) === $norm);
             if ($user && !empty($user->phone)) {
                 $phone = $user->phone;
             }
+            if ($user && !empty($user->nip) && empty($rawNip)) {
+                $rawNip = $user->nip;
+            }
         }
+
+        $formattedNip = $rawNip;
 
         return [
             'name' => $name,
-            'nip' => $nip,
+            'nip' => $formattedNip,
             'jabatan' => $jabatan,
             'seksi' => $seksi,
             'phone' => $phone,
@@ -319,7 +447,6 @@ class SocialProgramPrintController extends Controller
             foreach ($records as $r) {
                 $key = $this->resolveProgramKey($r->program_name, $r->social_program_id);
                 if ($key && isset($commitments[$key])) {
-                    // Simpan nominal komitmen terbesar atau terkini
                     if ((float)$r->monthly_amount > $commitments[$key]['amount']) {
                         $commitments[$key]['amount'] = (float)$r->monthly_amount;
                     }
@@ -361,7 +488,6 @@ class SocialProgramPrintController extends Controller
 
         if ($records) {
             foreach ($records as $r) {
-                // Parse month and year from period string: 'Periode 3/2026', 'Periode 03/2026', '3/2026'
                 if (preg_match('/(?:Periode\s+)?(\d{1,2})\/(\d{4})/i', (string)$r->period, $m)) {
                     $mNum = (int)$m[1];
                     $yNum = (int)$m[2];

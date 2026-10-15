@@ -191,7 +191,7 @@
         <!-- 3. Tanda Tangan Yang Menyatakan -->
         <section class="flex justify-end text-center text-sm leading-[1.55]">
           <div>
-            Malang, {{ $dateLetter ?: '____________ 20____' }}<br>
+            Malang, {{ $dateLetter ?: '______________ 20 ______________' }}<br>
             Yang menyatakan,
             <div class="h-12"></div>
             ( <span class="font-bold underline underline-offset-2">{{ $page['name'] ?: '______________________' }}</span> )
@@ -202,7 +202,7 @@
         @if($page['show_history'])
           <section>
             <div class="flex items-center justify-between mb-2">
-              <h2 class="text-sm font-bold uppercase tracking-[0.1em] text-[#06172e]">
+              <h2 class="text-sm font-bold text-[#06172e]">
                 Riwayat Potongan Tahun {{ $year }}
               </h2>
               <span class="text-[11px] text-slate-500 italic">*Nominal dalam ribuan rupiah</span>

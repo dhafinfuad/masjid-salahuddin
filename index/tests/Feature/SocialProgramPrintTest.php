@@ -131,5 +131,44 @@ class SocialProgramPrintTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja');
         $response->assertDontSee('Riwayat Potongan Tahun');
+        $response->assertSee('Malang, ______________ 20 ______________', false);
+    }
+
+    public function test_fuzzy_matching_and_title_casing_for_employee_data(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Buat employee dengan gelar akademik dan seksi
+        $emp = Employee::create([
+            'name' => 'Bimo Heriyanto, S.E.',
+            'nip_panjang' => '198501152010121001',
+            'jabatan' => 'Account Representative (Seksi Pengawasan II)',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+        ]);
+
+        // Buat participant dengan nama huruf kapital semua tanpa gelar (seperti hasil import Excel potongan)
+        ProgramParticipant::create([
+            'name' => 'BIMO HERIYANTO',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 200000,
+            'period' => 'Periode 2/2026',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=all&year=2026');
+
+        $response->assertStatus(200);
+        // Nama pegawai diformat Title Case Kapital per kata
+        $response->assertSee('Bimo Heriyanto, S.E.');
+        // NIP, Jabatan, dan Seksi/Kelompok otomatis terisi
+        $response->assertSee('198501152010121001');
+        $response->assertSee('Account Representative');
+        $response->assertSee('Seksi Pengawasan II');
+        // Tanggal default garis kosong yang baru
+        $response->assertSee('Malang, ______________ 20 ______________', false);
+        // Header Riwayat Potongan tidak ada uppercase tracking
+        $response->assertDontSee('uppercase tracking-[0.1em]', false);
+        $response->assertSee('Riwayat Potongan Tahun 2026');
     }
 }
