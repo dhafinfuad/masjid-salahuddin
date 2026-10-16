@@ -6454,8 +6454,12 @@ class AdminDashboard extends Component
             $financesList = $financeQuery->paginate(15, ['*'], 'financePage');
             $totalFinancesCount = Finance::count();
 
-            $totalKasMasuk = Finance::pemasukan()->sum('amount');
-            $totalKasKeluar = Finance::pengeluaran()->sum('amount');
+            $finAgg = Finance::toBase()->selectRaw("
+                COALESCE(SUM(CASE WHEN type = 'pemasukan' THEN amount ELSE 0 END), 0) as total_masuk,
+                COALESCE(SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END), 0) as total_keluar
+            ")->first();
+            $totalKasMasuk = (float) ($finAgg->total_masuk ?? 0);
+            $totalKasKeluar = (float) ($finAgg->total_keluar ?? 0);
             $saldoSaatIni = $totalKasMasuk - $totalKasKeluar;
 
             if (!empty($selectedMonths) && count($selectedMonths) === 1 && $this->financeYearFilter !== 'all' && is_numeric($this->financeYearFilter)) {

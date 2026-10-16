@@ -182,21 +182,32 @@
                     <!-- Filter & Search Toolbar Card -->
                     <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-4">
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                            <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto">
-                                <!-- Type Pills (Matching Sub-tab Pattern) -->
-                                <button type="button" wire:click="$set('financeTypeFilter', 'all')"
+                            <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto"
+                                x-data="{ activeType: '{{ $financeTypeFilter }}' }"
+                                x-effect="activeType = '{{ $financeTypeFilter }}'">
+                                <!-- Type Pills (Optimistic UI 0ms transition) -->
+                                <button type="button" 
+                                    @click="activeType = 'all'"
+                                    wire:click="$set('financeTypeFilter', 'all')"
+                                    wire:loading.attr="disabled"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
-                                    :class="'{{ $financeTypeFilter }}' === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    :class="activeType === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Semua
                                 </button>
-                                <button type="button" wire:click="$set('financeTypeFilter', 'pemasukan')"
+                                <button type="button" 
+                                    @click="activeType = 'pemasukan'"
+                                    wire:click="$set('financeTypeFilter', 'pemasukan')"
+                                    wire:loading.attr="disabled"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
-                                    :class="'{{ $financeTypeFilter }}' === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    :class="activeType === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pemasukan
                                 </button>
-                                <button type="button" wire:click="$set('financeTypeFilter', 'pengeluaran')"
+                                <button type="button" 
+                                    @click="activeType = 'pengeluaran'"
+                                    wire:click="$set('financeTypeFilter', 'pengeluaran')"
+                                    wire:loading.attr="disabled"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
-                                    :class="'{{ $financeTypeFilter }}' === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    :class="activeType === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pengeluaran
                                 </button>
                             </div>
@@ -387,7 +398,7 @@
                                         <th class="p-3.5 text-center w-24">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
+                                <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="financeTypeFilter, financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
                                     @forelse($financesList as $fin)
                                         <tr wire:key="fin-row-{{ $fin->id }}" class="hover:bg-slate-50/80 transition">
                                             <td class="p-3.5 pl-5 whitespace-nowrap">
@@ -507,7 +518,7 @@
                     </div>
 
                     <!-- Mobile Standalone Responsive Cards -->
-                    <div class="md:hidden space-y-3" wire:loading.class="opacity-50 pointer-events-none" wire:target="gotoPage, nextPage, previousPage">
+                    <div class="md:hidden space-y-3" wire:loading.class="opacity-50 pointer-events-none" wire:target="financeTypeFilter, financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage">
                         @forelse($financesList as $fin)
                             <div wire:key="fin-card-{{ $fin->id }}" class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3">
                                 <div class="flex items-start justify-between gap-2">

@@ -653,6 +653,48 @@ class FinanceManagementTest extends TestCase
             'description' => 'Beli Nasi Bungkus Jumat Berkah Test',
         ]);
     }
+
+    public function test_finance_type_filter_filtering_and_aggregates(): void
+    {
+        Finance::create([
+            'transaction_date' => Carbon::now(),
+            'type' => 'pemasukan',
+            'category_id' => $this->categoryInfaq->id,
+            'amount' => 1000000,
+            'description' => 'Infaq Masuk A',
+            'recorded_by' => $this->bendahara->id,
+        ]);
+
+        Finance::create([
+            'transaction_date' => Carbon::now(),
+            'type' => 'pengeluaran',
+            'category_id' => $this->categoryOperasional->id,
+            'amount' => 400000,
+            'description' => 'Operasional Keluar B',
+            'recorded_by' => $this->bendahara->id,
+        ]);
+
+        $component = Livewire::actingAs($this->bendahara)
+            ->test(AdminDashboard::class, ['tab' => 'finance'])
+            ->assertSet('financeTypeFilter', 'all')
+            ->assertSee('Infaq Masuk A')
+            ->assertSee('Operasional Keluar B')
+            ->assertSee('Rp 1.000.000')
+            ->assertSee('Rp 400.000')
+            ->assertSee('Rp 600.000'); // saldo saat ini = 1.000.000 - 400.000
+
+        // Filter to pemasukan
+        $component->set('financeTypeFilter', 'pemasukan')
+            ->assertSet('financeTypeFilter', 'pemasukan')
+            ->assertSee('Infaq Masuk A')
+            ->assertDontSee('Operasional Keluar B');
+
+        // Filter to pengeluaran
+        $component->set('financeTypeFilter', 'pengeluaran')
+            ->assertSet('financeTypeFilter', 'pengeluaran')
+            ->assertSee('Operasional Keluar B')
+            ->assertDontSee('Infaq Masuk A');
+    }
 }
 
 
