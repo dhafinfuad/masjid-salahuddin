@@ -597,6 +597,7 @@
             this.showFinanceModal = true;
             const fileInput = document.getElementById('financeReceiptFilesInput');
             if (fileInput) fileInput.value = '';
+            this.$dispatch('finance-modal-reset');
             $wire.call('openFinanceModal');
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();

@@ -96,6 +96,7 @@
         }
     }"
     @custom-select-opened.window="if ($event.detail.id !== id) open = false"
+    @custom-select-set-options.window="if (!$event.detail.name || $event.detail.name === '{{ $wireModel ? $wireModel->value() : '' }}') { options = $event.detail.options; if (typeof $event.detail.selected !== 'undefined') { selected = $event.detail.selected; } }"
     @click.outside="open = false"
     @keydown.escape.window="open = false"
     class="relative {{ $attributes->get('class', 'w-full') }}"
