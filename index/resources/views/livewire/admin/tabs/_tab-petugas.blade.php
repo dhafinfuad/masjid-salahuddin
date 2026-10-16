@@ -295,91 +295,75 @@
                                                 @if($isWeekend)
                                                     <span class="text-slate-400 italic text-[11px]">-</span>
                                                 @else
-                                                    <div class="flex flex-col gap-1.5 items-center justify-center">
-                                                        <!-- Dzuhur Actions Row -->
-                                                        <div class="inline-flex items-center gap-1">
-                                                            <span class="text-[10px] text-slate-400 font-medium w-7 text-right">Dzh:</span>
-                                                            @if($isFriday)
-                                                                <button type="button"
-                                                                    wire:click="openFridayKajianFromPetugas({{ $row['friday_kajian']?->id ? $row['friday_kajian']->id : 'null' }})"
-                                                                    wire:loading.attr="disabled"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer disabled:opacity-50"
-                                                                    title="Edit Khutbah Jumat (Halaman Kegiatan)">
-                                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
-                                                                </button>
-                                                            @elseif($row['dzuhur_duty'])
-                                                                <button type="button" @click="openEditPrayerDuty({{ Js::from([
-                                                                    'id' => $row['dzuhur_duty']->id,
-                                                                    'day_name' => $row['dzuhur_duty']->day_name,
-                                                                    'prayer_time' => 'dzuhur',
-                                                                    'week_pattern' => $row['dzuhur_duty']->week_pattern,
-                                                                    'tahun' => $row['dzuhur_duty']->tahun,
-                                                                    'imam_name' => $row['dzuhur_duty']->imam_name,
-                                                                    'muadzin_name' => $row['dzuhur_duty']->muadzin_name,
-                                                                ]) }})"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
-                                                                    title="Edit Penugasan Dzuhur">
-                                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
-                                                                </button>
-                                                                <button type="button"
-                                                                    @click="openDeleteModal({{ Js::from([
-                                                                        'action' => 'deletePrayerDuty',
-                                                                        'id' => $row['dzuhur_duty']->id,
-                                                                        'title' => 'Hapus Penugasan Shalat',
-                                                                        'message' => 'Apakah Anda yakin ingin menghapus jadwal penugasan Dzuhur ini?',
-                                                                        'itemName' => 'DZUHUR - ' . $row['day_name'] . ' (Imam: ' . ($row['dzuhur_duty']->imam_name ?: '-') . ')',
-                                                                    ]) }})"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs transition cursor-pointer disabled:opacity-50"
-                                                                    title="Hapus Penugasan Dzuhur">
-                                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                                                </button>
-                                                            @else
-                                                                <button type="button" @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs transition cursor-pointer"
-                                                                    title="Tambah Petugas Dzuhur">
-                                                                    <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-500"></i>
-                                                                </button>
-                                                            @endif
-                                                        </div>
+                                                    @php
+                                                        $hasDzuhurDuty = (bool) $row['dzuhur_duty'];
+                                                        $hasAsharDuty = (bool) $row['ashar_duty'];
+                                                        $hasAnyDuty = $hasDzuhurDuty || $hasAsharDuty || ($isFriday && $row['friday_kajian']);
 
-                                                        <!-- Ashar Actions Row -->
-                                                        <div class="inline-flex items-center gap-1">
-                                                            <span class="text-[10px] text-slate-400 font-medium w-7 text-right">Ash:</span>
-                                                            @if($row['ashar_duty'])
-                                                                <button type="button" @click="openEditPrayerDuty({{ Js::from([
-                                                                    'id' => $row['ashar_duty']->id,
-                                                                    'day_name' => $row['ashar_duty']->day_name,
-                                                                    'prayer_time' => 'ashar',
-                                                                    'week_pattern' => $row['ashar_duty']->week_pattern,
-                                                                    'tahun' => $row['ashar_duty']->tahun,
-                                                                    'imam_name' => (!empty($row['ashar_kajian_title']) && !empty($row['ashar_imam']) && $row['ashar_imam'] !== '-') ? $row['ashar_imam'] : $row['ashar_duty']->imam_name,
-                                                                    'muadzin_name' => $row['ashar_duty']->muadzin_name,
+                                                        $deleteIds = [];
+                                                        if ($hasDzuhurDuty) {
+                                                            $deleteIds[] = $row['dzuhur_duty']->id;
+                                                        }
+                                                        if ($hasAsharDuty) {
+                                                            $deleteIds[] = $row['ashar_duty']->id;
+                                                        }
+
+                                                        $deleteItemName = $row['day_name'] . ', ' . $row['formatted_date'];
+                                                        $deleteMessage = 'Apakah Anda yakin ingin menghapus jadwal penugasan petugas ibadah hari ' . $row['day_name'] . ' ini' . (($hasDzuhurDuty && $hasAsharDuty) ? ' (Dzuhur & Ashar)?' : '?');
+                                                    @endphp
+
+                                                    @if($hasAnyDuty)
+                                                        <div class="inline-flex items-center justify-center gap-1.5">
+                                                            <button type="button"
+                                                                @click="openEditPrayerDutyRow({{ Js::from([
+                                                                    'day_name' => $row['day_name'],
+                                                                    'week_pattern' => $row['dzuhur_duty']?->week_pattern ?? $row['ashar_duty']?->week_pattern ?? ('pekan_' . $row['week_number']),
+                                                                    'tahun' => $row['dzuhur_duty']?->tahun ?? $row['ashar_duty']?->tahun ?? ((int) Carbon\Carbon::parse($row['date'])->year),
+                                                                    'dzuhur' => $row['dzuhur_duty'] ? [
+                                                                        'id' => $row['dzuhur_duty']->id,
+                                                                        'imam_name' => $row['dzuhur_duty']->imam_name,
+                                                                        'muadzin_name' => $row['dzuhur_duty']->muadzin_name,
+                                                                        'week_pattern' => $row['dzuhur_duty']->week_pattern,
+                                                                        'tahun' => $row['dzuhur_duty']->tahun,
+                                                                    ] : null,
+                                                                    'ashar' => $row['ashar_duty'] ? [
+                                                                        'id' => $row['ashar_duty']->id,
+                                                                        'imam_name' => (!empty($row['ashar_kajian_title']) && !empty($row['ashar_imam']) && $row['ashar_imam'] !== '-') ? $row['ashar_imam'] : $row['ashar_duty']->imam_name,
+                                                                        'muadzin_name' => $row['ashar_duty']->muadzin_name,
+                                                                        'week_pattern' => $row['ashar_duty']->week_pattern,
+                                                                        'tahun' => $row['ashar_duty']->tahun,
+                                                                    ] : null,
+                                                                    'is_friday' => $isFriday,
+                                                                    'friday_kajian_id' => $row['friday_kajian']?->id,
                                                                 ]) }})"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
-                                                                    title="Edit Penugasan Ashar">
-                                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
-                                                                </button>
+                                                                class="inline-flex items-center justify-center p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
+                                                                title="Edit Penugasan Petugas">
+                                                                <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                            </button>
+
+                                                            @if(!empty($deleteIds))
                                                                 <button type="button"
                                                                     @click="openDeleteModal({{ Js::from([
                                                                         'action' => 'deletePrayerDuty',
-                                                                        'id' => $row['ashar_duty']->id,
-                                                                        'title' => 'Hapus Penugasan Shalat',
-                                                                        'message' => 'Apakah Anda yakin ingin menghapus jadwal penugasan Ashar ini?',
-                                                                        'itemName' => 'ASHAR - ' . $row['day_name'] . ' (Imam: ' . ($row['ashar_duty']->imam_name ?: '-') . ')',
+                                                                        'id' => count($deleteIds) === 1 ? $deleteIds[0] : $deleteIds,
+                                                                        'title' => 'Hapus Penugasan Petugas',
+                                                                        'message' => $deleteMessage,
+                                                                        'itemName' => $deleteItemName,
                                                                     ]) }})"
                                                                     class="inline-flex items-center justify-center p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs transition cursor-pointer disabled:opacity-50"
-                                                                    title="Hapus Penugasan Ashar">
+                                                                    title="Hapus Penugasan Petugas">
                                                                     <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                                                </button>
-                                                            @else
-                                                                <button type="button" @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'ashar')"
-                                                                    class="inline-flex items-center justify-center p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs transition cursor-pointer"
-                                                                    title="Tambah Petugas Ashar">
-                                                                    <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-500"></i>
                                                                 </button>
                                                             @endif
                                                         </div>
-                                                    </div>
+                                                    @else
+                                                        <button type="button"
+                                                            @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
+                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 shadow-2xs transition cursor-pointer"
+                                                            title="Tambah Petugas">
+                                                            <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-500"></i>
+                                                        </button>
+                                                    @endif
                                                 @endif
                                             @else
                                                 <span class="text-slate-400 italic text-xs">Read-only</span>
@@ -427,14 +411,86 @@
                                             <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-slate-100 text-slate-500 border-slate-200">
                                                 Libur
                                             </span>
-                                        @elseif($isFriday)
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-400">
-                                                Pekan {{ $row['week_number'] }}
-                                            </span>
                                         @else
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">
-                                                Pekan {{ $row['week_number'] }}
-                                            </span>
+                                            @if($isFriday)
+                                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-emerald-50 text-emerald-700 border-emerald-400">
+                                                    Pekan {{ $row['week_number'] }}
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">
+                                                    Pekan {{ $row['week_number'] }}
+                                                </span>
+                                            @endif
+
+                                            @if(Auth::user()->canManage())
+                                                @php
+                                                    $mHasDzuhurDuty = (bool) $row['dzuhur_duty'];
+                                                    $mHasAsharDuty = (bool) $row['ashar_duty'];
+                                                    $mHasAnyDuty = $mHasDzuhurDuty || $mHasAsharDuty || ($isFriday && $row['friday_kajian']);
+
+                                                    $mDeleteIds = [];
+                                                    if ($mHasDzuhurDuty) {
+                                                        $mDeleteIds[] = $row['dzuhur_duty']->id;
+                                                    }
+                                                    if ($mHasAsharDuty) {
+                                                        $mDeleteIds[] = $row['ashar_duty']->id;
+                                                    }
+
+                                                    $mDeleteItemName = $row['day_name'] . ', ' . $row['formatted_date'];
+                                                    $mDeleteMessage = 'Apakah Anda yakin ingin menghapus jadwal penugasan petugas ibadah hari ' . $row['day_name'] . ' ini' . (($mHasDzuhurDuty && $mHasAsharDuty) ? ' (Dzuhur & Ashar)?' : '?');
+                                                @endphp
+
+                                                @if($mHasAnyDuty)
+                                                    <button type="button"
+                                                        @click="openEditPrayerDutyRow({{ Js::from([
+                                                            'day_name' => $row['day_name'],
+                                                            'week_pattern' => $row['dzuhur_duty']?->week_pattern ?? $row['ashar_duty']?->week_pattern ?? ('pekan_' . $row['week_number']),
+                                                            'tahun' => $row['dzuhur_duty']?->tahun ?? $row['ashar_duty']?->tahun ?? ((int) Carbon\Carbon::parse($row['date'])->year),
+                                                            'dzuhur' => $row['dzuhur_duty'] ? [
+                                                                'id' => $row['dzuhur_duty']->id,
+                                                                'imam_name' => $row['dzuhur_duty']->imam_name,
+                                                                'muadzin_name' => $row['dzuhur_duty']->muadzin_name,
+                                                                'week_pattern' => $row['dzuhur_duty']->week_pattern,
+                                                                'tahun' => $row['dzuhur_duty']->tahun,
+                                                            ] : null,
+                                                            'ashar' => $row['ashar_duty'] ? [
+                                                                'id' => $row['ashar_duty']->id,
+                                                                'imam_name' => (!empty($row['ashar_kajian_title']) && !empty($row['ashar_imam']) && $row['ashar_imam'] !== '-') ? $row['ashar_imam'] : $row['ashar_duty']->imam_name,
+                                                                'muadzin_name' => $row['ashar_duty']->muadzin_name,
+                                                                'week_pattern' => $row['ashar_duty']->week_pattern,
+                                                                'tahun' => $row['ashar_duty']->tahun,
+                                                            ] : null,
+                                                            'is_friday' => $isFriday,
+                                                            'friday_kajian_id' => $row['friday_kajian']?->id,
+                                                        ]) }})"
+                                                        class="inline-flex items-center justify-center p-1 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
+                                                        title="Edit Penugasan Petugas">
+                                                        <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                    </button>
+
+                                                    @if(!empty($mDeleteIds))
+                                                        <button type="button"
+                                                            @click="openDeleteModal({{ Js::from([
+                                                                'action' => 'deletePrayerDuty',
+                                                                'id' => count($mDeleteIds) === 1 ? $mDeleteIds[0] : $mDeleteIds,
+                                                                'title' => 'Hapus Penugasan Petugas',
+                                                                'message' => $mDeleteMessage,
+                                                                'itemName' => $mDeleteItemName,
+                                                            ]) }})"
+                                                            class="inline-flex items-center justify-center p-1 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs transition cursor-pointer disabled:opacity-50"
+                                                            title="Hapus Penugasan Petugas">
+                                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                        </button>
+                                                    @endif
+                                                @else
+                                                    <button type="button"
+                                                        @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
+                                                        class="inline-flex items-center justify-center p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-300 shadow-2xs transition cursor-pointer"
+                                                        title="Tambah Petugas">
+                                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-500"></i>
+                                                    </button>
+                                                @endif
+                                            @endif
                                         @endif
                                     </div>
                                 </div>
@@ -448,55 +504,11 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                                         <!-- Kolom Dzuhur -->
                                         <div class="p-2.5 rounded-lg bg-slate-50/80 border border-slate-200/70 space-y-1.5">
-                                            <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                                            <div class="pb-1 border-b border-slate-200/60">
                                                 <span class="font-bold text-gov-navy text-[11px]">
                                                     {{ $isFriday ? 'SHALAT JUMAT' : 'DZUHUR' }}
                                                 </span>
-                                                @if(Auth::user()->canManage())
-                                                    <div class="flex items-center gap-1">
-                                                        @if($isFriday)
-                                                            <button type="button"
-                                                                wire:click="openFridayKajianFromPetugas({{ $row['friday_kajian']?->id ? $row['friday_kajian']->id : 'null' }})"
-                                                                wire:loading.attr="disabled"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
-                                                                title="Edit Khutbah Jumat">
-                                                                <i data-lucide="edit-3" class="w-3 h-3 text-amber-600"></i>
-                                                            </button>
-                                                        @elseif($row['dzuhur_duty'])
-                                                            <button type="button" @click="openEditPrayerDuty({{ Js::from([
-                                                                'id' => $row['dzuhur_duty']->id,
-                                                                'day_name' => $row['dzuhur_duty']->day_name,
-                                                                'prayer_time' => 'dzuhur',
-                                                                'week_pattern' => $row['dzuhur_duty']->week_pattern,
-                                                                'tahun' => $row['dzuhur_duty']->tahun,
-                                                                'imam_name' => $row['dzuhur_duty']->imam_name,
-                                                                'muadzin_name' => $row['dzuhur_duty']->muadzin_name,
-                                                            ]) }})"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
-                                                                title="Edit Dzuhur">
-                                                                <i data-lucide="edit-3" class="w-3 h-3 text-amber-600"></i>
-                                                            </button>
-                                                            <button type="button"
-                                                                @click="openDeleteModal({{ Js::from([
-                                                                    'action' => 'deletePrayerDuty',
-                                                                    'id' => $row['dzuhur_duty']->id,
-                                                                    'title' => 'Hapus Penugasan Shalat',
-                                                                    'message' => 'Apakah Anda yakin ingin menghapus jadwal penugasan Dzuhur ini?',
-                                                                    'itemName' => 'DZUHUR - ' . $row['day_name'] . ' (Imam: ' . ($row['dzuhur_duty']->imam_name ?: '-') . ')',
-                                                                ]) }})"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs transition cursor-pointer"
-                                                                title="Hapus Dzuhur">
-                                                                <i data-lucide="trash-2" class="w-3 h-3 text-rose-600"></i>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-300 shadow-2xs transition cursor-pointer"
-                                                                title="Tambah Dzuhur">
-                                                                <i data-lucide="plus" class="w-3 h-3 text-slate-500"></i>
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                @endif
+
                                             </div>
                                             @if($isFriday)
                                                 <div class="space-y-0.5 text-[11px]">
@@ -516,45 +528,8 @@
 
                                         <!-- Kolom Ashar -->
                                         <div class="p-2.5 rounded-lg bg-slate-50/80 border border-slate-200/70 space-y-1.5">
-                                            <div class="flex items-center justify-between pb-1 border-b border-slate-200/60">
+                                            <div class="pb-1 border-b border-slate-200/60">
                                                 <span class="font-bold text-gov-navy text-[11px]">ASHAR</span>
-                                                @if(Auth::user()->canManage())
-                                                    <div class="flex items-center gap-1">
-                                                        @if($row['ashar_duty'])
-                                                            <button type="button" @click="openEditPrayerDuty({{ Js::from([
-                                                                'id' => $row['ashar_duty']->id,
-                                                                'day_name' => $row['ashar_duty']->day_name,
-                                                                'prayer_time' => 'ashar',
-                                                                'week_pattern' => $row['ashar_duty']->week_pattern,
-                                                                'tahun' => $row['ashar_duty']->tahun,
-                                                                'imam_name' => (!empty($row['ashar_kajian_title']) && !empty($row['ashar_imam']) && $row['ashar_imam'] !== '-') ? $row['ashar_imam'] : $row['ashar_duty']->imam_name,
-                                                                'muadzin_name' => $row['ashar_duty']->muadzin_name,
-                                                            ]) }})"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 shadow-2xs transition cursor-pointer"
-                                                                title="Edit Ashar">
-                                                                <i data-lucide="edit-3" class="w-3 h-3 text-amber-600"></i>
-                                                            </button>
-                                                            <button type="button"
-                                                                @click="openDeleteModal({{ Js::from([
-                                                                    'action' => 'deletePrayerDuty',
-                                                                    'id' => $row['ashar_duty']->id,
-                                                                    'title' => 'Hapus Penugasan Shalat',
-                                                                    'message' => 'Apakah Anda yakin ingin menghapus jadwal penugasan Ashar ini?',
-                                                                    'itemName' => 'ASHAR - ' . $row['day_name'] . ' (Imam: ' . ($row['ashar_duty']->imam_name ?: '-') . ')',
-                                                                ]) }})"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 shadow-2xs transition cursor-pointer"
-                                                                title="Hapus Ashar">
-                                                                <i data-lucide="trash-2" class="w-3 h-3 text-rose-600"></i>
-                                                            </button>
-                                                        @else
-                                                            <button type="button" @click="openCreatePrayerDuty('{{ $row['day_name'] }}', 'ashar')"
-                                                                class="inline-flex items-center justify-center p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-300 shadow-2xs transition cursor-pointer"
-                                                                title="Tambah Ashar">
-                                                                <i data-lucide="plus" class="w-3 h-3 text-slate-500"></i>
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                @endif
                                             </div>
                                             <div class="space-y-0.5 text-[11px]">
                                                 <div>

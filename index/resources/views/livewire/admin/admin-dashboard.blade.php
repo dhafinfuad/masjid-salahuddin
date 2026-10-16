@@ -129,7 +129,7 @@
          ustadzPhotoMap: {{ Js::from($ustadzPhotoMap) }},
          ustadzDirectory: {{ Js::from($ustadzListForDatalist ?? []) }},
          importKajianTab: 'paste',
-         showPrayerDutyModal: false,
+         showPrayerDutyModal: {{ $showPrayerDutyModal ? 'true' : 'false' }},
          showImportDutyModal: false,
          importDutyTab: 'paste',
          isEditingKajian: false,
@@ -292,6 +292,7 @@
                   $wire.set('youtubeUrl', data.youtube_url || '', false);
               }
           },
+          dutyRowData: null,
           isEditingPrayerDuty: false,
           dutyForm: {
               id: null,
@@ -303,6 +304,7 @@
               muadzin_name: ''
           },
           openCreatePrayerDuty(day = 'Senin', time = 'dzuhur') {
+              this.dutyRowData = null;
               this.isEditingPrayerDuty = false;
               this.dutyForm = {
                   id: null,
@@ -314,8 +316,57 @@
                   muadzin_name: ''
               };
               this.showPrayerDutyModal = true;
+              this.$nextTick(() => {
+                  if (window.createLucideIcons) window.createLucideIcons();
+              });
+          },
+          openEditPrayerDutyRow(data) {
+              this.dutyRowData = {
+                  day_name: data.day_name || 'Senin',
+                  week_pattern: data.week_pattern || 'semua',
+                  tahun: data.tahun || {{ Carbon\Carbon::now('Asia/Jakarta')->year }},
+                  dzuhur: data.dzuhur || null,
+                  ashar: data.ashar || null,
+                  is_friday: !!data.is_friday,
+                  friday_kajian_id: data.friday_kajian_id || null,
+              };
+
+              let initialTime = 'dzuhur';
+              if (data.is_friday) {
+                  initialTime = data.ashar ? 'ashar' : 'dzuhur';
+              } else {
+                  initialTime = data.dzuhur ? 'dzuhur' : (data.ashar ? 'ashar' : 'dzuhur');
+              }
+
+              this.switchDutyTime(initialTime);
+              this.showPrayerDutyModal = true;
+              this.$nextTick(() => {
+                  if (window.createLucideIcons) window.createLucideIcons();
+              });
+          },
+          switchDutyTime(time) {
+              this.dutyForm.prayer_time = time;
+              if (this.dutyRowData) {
+                  this.dutyForm.day_name = this.dutyRowData.day_name || this.dutyForm.day_name || 'Senin';
+                  this.dutyForm.tahun = this.dutyRowData.tahun || this.dutyForm.tahun || {{ Carbon\Carbon::now('Asia/Jakarta')->year }};
+                  const targetDuty = (time === 'dzuhur') ? this.dutyRowData.dzuhur : this.dutyRowData.ashar;
+                  if (targetDuty && targetDuty.id) {
+                      this.isEditingPrayerDuty = true;
+                      this.dutyForm.id = targetDuty.id;
+                      this.dutyForm.week_pattern = targetDuty.week_pattern || this.dutyRowData.week_pattern || 'semua';
+                      this.dutyForm.imam_name = targetDuty.imam_name || '';
+                      this.dutyForm.muadzin_name = targetDuty.muadzin_name || '';
+                  } else {
+                      this.isEditingPrayerDuty = false;
+                      this.dutyForm.id = null;
+                      this.dutyForm.week_pattern = this.dutyRowData.week_pattern || 'semua';
+                      this.dutyForm.imam_name = '';
+                      this.dutyForm.muadzin_name = '';
+                  }
+              }
           },
           openEditPrayerDuty(data) {
+              this.dutyRowData = null;
               this.isEditingPrayerDuty = true;
               this.dutyForm = {
                   id: data.id,
@@ -327,6 +378,9 @@
                   muadzin_name: data.muadzin_name || ''
              };
              this.showPrayerDutyModal = true;
+             this.$nextTick(() => {
+                 if (window.createLucideIcons) window.createLucideIcons();
+             });
          },
         agendaSubTab: '{{ $agendaSubTab }}',
         agendaViewMode: 'grid',

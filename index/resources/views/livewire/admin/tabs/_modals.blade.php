@@ -868,7 +868,29 @@
             </div>
 
             <form @submit.prevent="$wire.savePrayerDuty(dutyForm)" class="space-y-4 text-xs">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Waktu Shalat Toggle -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1.5">Waktu Shalat *</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button"
+                            @click="switchDutyTime('dzuhur')"
+                            :class="dutyForm.prayer_time === 'dzuhur' ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
+                            class="p-2.5 rounded-lg border text-center text-xs cursor-pointer flex items-center justify-center transition-colors">
+                            Dzuhur
+                        </button>
+                        <button type="button"
+                            @click="switchDutyTime('ashar')"
+                            :class="dutyForm.prayer_time === 'ashar' ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
+                            class="p-2.5 rounded-lg border text-center text-xs cursor-pointer flex items-center justify-center transition-colors">
+                            Ashar
+                        </button>
+                    </div>
+                    @error('dutyPrayerTime') <span
+                    class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Hari & Tahun Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari *</label>
                         <x-custom-select
@@ -885,22 +907,6 @@
                             buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('dutyDayName') <span
-                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Waktu Shalat *</label>
-                        <x-custom-select
-                            x-model="dutyForm.prayer_time"
-                            :options="[
-                                ['value' => 'dzuhur', 'label' => 'Shalat Dzuhur'],
-                                ['value' => 'ashar', 'label' => 'Shalat Ashar'],
-                            ]"
-                            placeholder="Pilih Waktu..."
-                            class="w-full text-xs"
-                            buttonClass="p-2.5 bg-slate-50/50"
-                        />
-                        @error('dutyPrayerTime') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
@@ -966,6 +972,17 @@
                     nama Imam dan Muadzin akan otomatis disinkronkan dengan nama Khatib dan Muadzin Shalat Jumat pada
                     modul Kajian Jumat.
                 </div>
+
+                <template x-if="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur' && dutyRowData.friday_kajian_id">
+                    <div class="p-2.5 bg-amber-100/60 rounded-lg border border-amber-300 text-amber-900 text-xs flex items-center justify-between">
+                        <span>Ingin memperbarui Khatib & Muadzin Jumat?</span>
+                        <button type="button"
+                            @click="showPrayerDutyModal = false; $wire.openFridayKajianFromPetugas(dutyRowData.friday_kajian_id)"
+                            class="font-bold text-amber-800 hover:text-amber-950 underline cursor-pointer">
+                            Edit di Modul Kegiatan &rarr;
+                        </button>
+                    </div>
+                </template>
 
                 <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showPrayerDutyModal = false"

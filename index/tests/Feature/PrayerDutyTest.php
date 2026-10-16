@@ -112,7 +112,7 @@ class PrayerDutyTest extends TestCase
 
         // Create Friday Kajian with Khatib and Muadzin
         $now = Carbon::now();
-        $upcomingFriday = $now->copy()->next(Carbon::FRIDAY)->format('Y-m-d');
+        $upcomingFriday = $now->isFriday() ? $now->format('Y-m-d') : $now->copy()->next(Carbon::FRIDAY)->format('Y-m-d');
 
         Kajian::create([
             'type' => 'jumat',
@@ -722,6 +722,58 @@ class PrayerDutyTest extends TestCase
             }
         }
         $this->assertTrue($foundFriday16Dzuhur, 'Friday 16 October Dzuhur must be present in Semua Pekan export');
+    }
+
+    public function test_admin_can_delete_multiple_prayer_duties_at_once_using_array_id(): void
+    {
+        $this->actingAs($this->admin);
+
+        $dutyDzuhur = PrayerDuty::create([
+            'day_name' => 'Senin',
+            'prayer_time' => 'dzuhur',
+            'week_pattern' => 'semua',
+            'imam_name' => 'Imam Dzuhur',
+            'muadzin_name' => 'Muadzin Dzuhur',
+        ]);
+
+        $dutyAshar = PrayerDuty::create([
+            'day_name' => 'Senin',
+            'prayer_time' => 'ashar',
+            'week_pattern' => 'semua',
+            'imam_name' => 'Imam Ashar',
+            'muadzin_name' => 'Muadzin Ashar',
+        ]);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('deletePrayerDuty', [$dutyDzuhur->id, $dutyAshar->id]);
+
+        $this->assertDatabaseMissing('prayer_duties', ['id' => $dutyDzuhur->id]);
+        $this->assertDatabaseMissing('prayer_duties', ['id' => $dutyAshar->id]);
+    }
+
+    public function test_admin_can_save_prayer_duty_passing_form_array(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('savePrayerDuty', [
+                'day_name' => 'Kamis',
+                'prayer_time' => 'ashar',
+                'week_pattern' => 'pekan_2',
+                'tahun' => 2026,
+                'imam_name' => 'Ust. Penugasan Baru',
+                'muadzin_name' => 'Muadzin Baru',
+            ])
+            ->assertDispatched('close-duty-modal');
+
+        $this->assertDatabaseHas('prayer_duties', [
+            'day_name' => 'Kamis',
+            'prayer_time' => 'ashar',
+            'week_pattern' => 'pekan_2',
+            'tahun' => 2026,
+            'imam_name' => 'Ust. Penugasan Baru',
+            'muadzin_name' => 'Muadzin Baru',
+        ]);
     }
 }
 

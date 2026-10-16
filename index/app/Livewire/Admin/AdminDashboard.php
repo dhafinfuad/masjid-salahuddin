@@ -2863,10 +2863,19 @@ class AdminDashboard extends Component
         $this->dispatch('close-duty-modal');
     }
 
-    public function deletePrayerDuty(int $id): void
+    public function deletePrayerDuty(int|array $id): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
+            return;
+        }
+
+        if (is_array($id)) {
+            $ids = array_values(array_filter($id));
+            if (!empty($ids)) {
+                PrayerDuty::whereIn('id', $ids)->delete();
+                $this->notify('Jadwal penugasan berhasil dihapus.');
+            }
             return;
         }
 
