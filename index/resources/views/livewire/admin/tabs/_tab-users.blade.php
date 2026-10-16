@@ -108,7 +108,7 @@
 
             <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ url('/profil') }}" target="_blank"
-                    class="px-3 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                    class="px-3 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                     <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
                     <span>Lihat di Portal</span>
                 </a>
@@ -117,7 +117,7 @@
                     <button type="button" 
                         wire:click="resetTakmirToDefault"
                         wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
-                        class="px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        class="px-3 py-2 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-500"></i>
                         <span>Reset ke Default SK</span>
                     </button>
