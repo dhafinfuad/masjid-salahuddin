@@ -20,19 +20,19 @@
             <!-- Period Filter Segmented Control (Responsive: Full-width 4-column Grid on Mobile, Inline Flex on Desktop) -->
             <div class="grid grid-cols-4 sm:flex sm:items-center gap-1 bg-[#06172E]/90 backdrop-blur-sm p-1 rounded-xl border border-white/10 w-full lg:w-auto shrink-0 text-xs shadow-inner">
                 <button type="button" wire:click="setStatsPeriod('today')"
-                    class="py-2 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs {{ $statsPeriod === 'today' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    class="h-8 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs inline-flex items-center justify-center {{ $statsPeriod === 'today' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                     Hari Ini
                 </button>
                 <button type="button" wire:click="setStatsPeriod('7_days')"
-                    class="py-2 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs {{ $statsPeriod === '7_days' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    class="h-8 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs inline-flex items-center justify-center {{ $statsPeriod === '7_days' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                     7 Hari
                 </button>
                 <button type="button" wire:click="setStatsPeriod('30_days')"
-                    class="py-2 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs {{ $statsPeriod === '30_days' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    class="h-8 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs inline-flex items-center justify-center {{ $statsPeriod === '30_days' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                     30 Hari
                 </button>
                 <button type="button" wire:click="setStatsPeriod('all')"
-                    class="py-2 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs {{ $statsPeriod === 'all' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    class="h-8 px-2 sm:px-3.5 rounded-lg font-semibold text-center transition cursor-pointer whitespace-nowrap text-[11px] sm:text-xs inline-flex items-center justify-center {{ $statsPeriod === 'all' ? 'bg-amber-400 text-gov-navy shadow-xs font-bold' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                     Semua
                 </button>
             </div>

@@ -455,3 +455,10 @@ tr.border-l-amber-500,
 .border-emerald-400 {
     border-color: #34d399 !important;
 }
+
+/* Standarisasi Presisi Ketinggian Search Bar, Filter Controls & Top Header Buttons (36px / 2.25rem) */
+.h-9 {
+    height: 2.25rem !important;
+    box-sizing: border-box !important;
+}
+

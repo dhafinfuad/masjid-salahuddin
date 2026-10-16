@@ -185,18 +185,18 @@
                             <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto">
                                 <!-- Type Pills (Matching Sub-tab Pattern) -->
                                 <button type="button" wire:click="$set('financeTypeFilter', 'all')"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-center"
-                                    :class="'{{ $financeTypeFilter }}' === 'all' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white border border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
+                                    :class="'{{ $financeTypeFilter }}' === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Semua
                                 </button>
                                 <button type="button" wire:click="$set('financeTypeFilter', 'pemasukan')"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-center"
-                                    :class="'{{ $financeTypeFilter }}' === 'pemasukan' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white border border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
+                                    :class="'{{ $financeTypeFilter }}' === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pemasukan
                                 </button>
                                 <button type="button" wire:click="$set('financeTypeFilter', 'pengeluaran')"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg text-xs transition cursor-pointer text-center"
-                                    :class="'{{ $financeTypeFilter }}' === 'pengeluaran' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white border border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs transition cursor-pointer text-center inline-flex items-center border"
+                                    :class="'{{ $financeTypeFilter }}' === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pengeluaran
                                 </button>
                             </div>
@@ -208,7 +208,7 @@
                                         open: false
                                     }">
                                         <button type="button" @click="open = !open"
-                                            class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1.5 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none"
+                                            class="w-full h-9 px-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1.5 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none"
                                             title="Pilih satu atau beberapa bulan">
                                         <div class="flex items-center gap-1.5 min-w-0">
                                             <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
