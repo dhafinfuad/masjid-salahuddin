@@ -874,13 +874,13 @@
                     <div class="grid grid-cols-2 gap-3">
                         <button type="button"
                             @click="switchDutyTime('dzuhur')"
-                            :class="dutyForm.prayer_time === 'dzuhur' ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
+                            :class="dutyForm.prayer_time === 'dzuhur' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
                             class="p-2.5 rounded-lg border text-center text-xs cursor-pointer flex items-center justify-center transition-colors">
                             Dzuhur
                         </button>
                         <button type="button"
                             @click="switchDutyTime('ashar')"
-                            :class="dutyForm.prayer_time === 'ashar' ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
+                            :class="dutyForm.prayer_time === 'ashar' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border font-medium hover:bg-slate-50'"
                             class="p-2.5 rounded-lg border text-center text-xs cursor-pointer flex items-center justify-center transition-colors">
                             Ashar
                         </button>
