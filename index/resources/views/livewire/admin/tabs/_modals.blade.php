@@ -283,8 +283,8 @@
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (MILESTONE 1) -->
     <!-- ======================================================== -->
-    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="showKajianModal = false"
-        @click="if (window.isBackdropClick($event, $el)) showKajianModal = false"
+    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="closeKajianModal()"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) closeKajianModal()"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;">
         <div
@@ -297,7 +297,7 @@
                             x-text="kajianForm.type === 'jumat' ? 'Shalat Jumat & Khutbah' : (kajianForm.type === 'tematik' ? 'Kajian Tematik' : 'Kajian Pekanan Rutin')"></strong>
                     </p>
                 </div>
-                <button type="button" @click="showKajianModal = false"
+                <button type="button" @click="closeKajianModal()"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
                         data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -655,7 +655,7 @@
                 </div>
 
                 <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showKajianModal = false"
+                    <button type="button" @click="closeKajianModal()"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">

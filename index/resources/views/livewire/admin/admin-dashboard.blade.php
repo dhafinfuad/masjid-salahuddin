@@ -57,9 +57,9 @@
              if (tab === 'pekanan' || tab === 'jumat') this.kajianSubTab = tab;
              if (tab === 'agenda' || tab === 'odoj') this.agendaSubTab = tab;
              if (typeof $wire !== 'undefined') {
-                 $wire.kegiatanSubTab = tab;
-                 if (tab === 'pekanan' || tab === 'jumat') $wire.kajianSubTab = tab;
-                 if (tab === 'agenda' || tab === 'odoj') $wire.agendaSubTab = tab;
+                 $wire.set('kegiatanSubTab', tab, false);
+                 if (tab === 'pekanan' || tab === 'jumat') $wire.set('kajianSubTab', tab, false);
+                 if (tab === 'agenda' || tab === 'odoj') $wire.set('agendaSubTab', tab, false);
              }
              this.updateDocumentTitle();
              this.$nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); });
@@ -123,7 +123,7 @@
          showEmployeeModal: false,
          showImportEmployeeModal: false,
          showUploadDocModal: false,
-         showKajianModal: false,
+         showKajianModal: {{ $showKajianModal ? 'true' : 'false' }},
          showImportKajianModal: false,
          showUstadzModal: {{ $showUstadzModal ? 'true' : 'false' }},
          ustadzPhotoMap: {{ Js::from($ustadzPhotoMap) }},
@@ -166,15 +166,20 @@
                  muadzin_name: '',
                  khatib_phone: '',
                  mc_notes: '',
+                 speaker_photo: '',
                  youtube_url: '',
              };
-             if (window.Livewire) {
-                 @this.set('editingKajianId', null);
-                 @this.set('kajianSpeakerPhoto', null);
-                 @this.set('kajianExistingPhoto', null);
-                 @this.set('kajianYoutubeUrl', null);
+             if (typeof $wire !== 'undefined') {
+                 $wire.set('editingKajianId', null, false);
+                 $wire.set('kajianSpeakerPhoto', null, false);
+                 $wire.set('kajianExistingPhoto', null, false);
+                 $wire.set('kajianYoutubeUrl', null, false);
+                 $wire.set('showKajianModal', true, false);
              }
              this.showKajianModal = true;
+             this.$nextTick(() => {
+                 if (window.createLucideIcons) window.createLucideIcons();
+             });
          },
          openEditKajian(data) {
              this.isEditingKajian = true;
@@ -195,13 +200,24 @@
                  speaker_photo: data.speaker_photo || '',
                  youtube_url: data.youtube_url || '',
              };
-             if (window.Livewire) {
-                 @this.set('editingKajianId', data.id);
-                 @this.set('kajianSpeakerPhoto', null);
-                 @this.set('kajianExistingPhoto', data.speaker_photo || null);
-                 @this.set('kajianYoutubeUrl', data.youtube_url || null);
+             if (typeof $wire !== 'undefined') {
+                 $wire.set('editingKajianId', data.id, false);
+                 $wire.set('kajianSpeakerPhoto', null, false);
+                 $wire.set('kajianExistingPhoto', data.speaker_photo || null, false);
+                 $wire.set('kajianYoutubeUrl', data.youtube_url || null, false);
+                 $wire.set('showKajianModal', true, false);
              }
              this.showKajianModal = true;
+             this.$nextTick(() => {
+                 if (window.createLucideIcons) window.createLucideIcons();
+             });
+         },
+         closeKajianModal() {
+             this.showKajianModal = false;
+             if (typeof $wire !== 'undefined') {
+                 $wire.set('showKajianModal', false, false);
+                 $wire.set('kajianSpeakerPhoto', null, false);
+             }
          },
           showNotulaModal: false,
           notulaActiveTab: 'preview',
@@ -826,7 +842,8 @@
         }
         openCreateKajian($event.detail.type || 'jumat');
     "
-    @open-kajian-modal.window="showKajianModal = true" @close-kajian-modal.window="showKajianModal = false"
+    @open-kajian-modal.window="showKajianModal = true; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', true, false); }"
+    @close-kajian-modal.window="showKajianModal = false; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', false, false); }"
     @open-ustadz-modal.window="showUstadzModal = true; $wire.set('showUstadzModal', true, false)" @close-ustadz-modal.window="showUstadzModal = false; $wire.set('showUstadzModal', false, false)"
     @open-import-kajian-modal.window="showImportKajianModal = true"
     @close-import-kajian-modal.window="showImportKajianModal = false"

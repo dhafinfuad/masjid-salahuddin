@@ -1750,6 +1750,13 @@ class AdminDashboard extends Component
         $this->dispatch('close-kajian-modal');
     }
 
+    public function closeKajianModal(): void
+    {
+        $this->showKajianModal = false;
+        $this->kajianSpeakerPhoto = null;
+        $this->dispatch('close-kajian-modal');
+    }
+
     public function deleteKajian(int $id): void
     {
         if (! Auth::user()->canManage()) {
@@ -2777,8 +2784,10 @@ class AdminDashboard extends Component
                 'mc_notes' => $k->mc_notes ?? '',
             ];
 
+            $this->showKajianModal = true;
             $this->dispatch('open-edit-kajian-modal', data: $data);
         } else {
+            $this->showKajianModal = true;
             $this->dispatch('open-create-kajian-modal', type: 'jumat');
         }
     }
