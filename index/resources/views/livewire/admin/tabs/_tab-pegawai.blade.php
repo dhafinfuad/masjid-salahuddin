@@ -71,7 +71,7 @@
                 <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <input wire:model.live.debounce.300ms="employeeSearch" type="text"
                     placeholder="Cari nama, NIP 9/18 digit, jabatan..."
-                    class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                    class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                 <button type="button" @click="clearEmpSearch()"
                     class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-600 transition cursor-pointer flex items-center justify-center"
                     title="Reset pencarian">

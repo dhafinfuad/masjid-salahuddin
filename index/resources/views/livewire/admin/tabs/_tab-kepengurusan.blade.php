@@ -65,7 +65,7 @@
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
                     <a href="{{ asset('resources/' . ($takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf')) }}" 
                        target="_blank"
-                       class="px-3 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
                         <span>Lihat PDF</span>
                     </a>
@@ -73,7 +73,7 @@
                     @if(Auth::user()->canManage())
                         <button type="button"
                             wire:click="openUploadDoc('sk')"
-                            class="px-3 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                            class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="upload" class="w-3.5 h-3.5 text-amber-400"></i>
                             <span>Unggah PDF Baru</span>
                         </button>
@@ -111,7 +111,7 @@
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
                     <a href="{{ asset('resources/' . ($takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf')) }}" 
                        target="_blank"
-                       class="px-3 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
                         <span>Lihat PDF</span>
                     </a>
@@ -119,7 +119,7 @@
                     @if(Auth::user()->canManage())
                         <button type="button"
                             wire:click="openUploadDoc('lampiran1')"
-                            class="px-3 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                            class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="upload" class="w-3.5 h-3.5 text-amber-400"></i>
                             <span>Unggah PDF Baru</span>
                         </button>
@@ -157,7 +157,7 @@
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
                     <a href="{{ asset('resources/' . ($takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf')) }}" 
                        target="_blank"
-                       class="px-3 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
                         <span>Lihat PDF</span>
                     </a>
@@ -165,7 +165,7 @@
                     @if(Auth::user()->canManage())
                         <button type="button"
                             wire:click="openUploadDoc('lampiran2')"
-                            class="px-3 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                            class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="upload" class="w-3.5 h-3.5 text-amber-400"></i>
                             <span>Unggah PDF Baru</span>
                         </button>

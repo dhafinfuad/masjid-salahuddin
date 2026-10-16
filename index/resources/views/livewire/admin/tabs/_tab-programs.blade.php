@@ -16,24 +16,24 @@
                     <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
                         @if(Auth::user()->canManage())
                             <button type="button" @click="showImportPotonganModal = true; $wire.call('openImportPotonganModal'); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-600"></i>
                                 <span>Import</span>
                             </button>
                             <button type="button" @click="showExportPotonganModal = true; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                 <i data-lucide="download" class="w-3.5 h-3.5 text-blue-600"></i>
                                 <span>Export</span>
                             </button>
                         @endif
                         <button type="button" @click="openCreateParticipant()"
-                            class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                            class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                             <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-400"></i>
                             <span>Peserta</span>
                         </button>
                         @if(Auth::user()->canManage())
                             <button type="button" @click="openCreateSocialProgram()"
-                                class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                 <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                 <span>Program</span>
                             </button>
@@ -44,7 +44,7 @@
                 <!-- Sub-tab Navigation Bar (Strict Mandate Class) -->
                 <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-start gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
                     <button type="button" @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                        class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
                         :class="socialSubTab === 'katalog' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                         <i data-lucide="heart-handshake" class="w-4 h-4"></i>
                         <span>Katalog Program Sosial</span>
@@ -52,14 +52,14 @@
 
                     @if(Auth::user()->canManage())
                         <button type="button" @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                            class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
                             :class="socialSubTab === 'peserta' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                             <i data-lucide="users" class="w-4 h-4"></i>
                             <span>Rekapitulasi Peserta</span>
                         </button>
 
                         <button type="button" @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                            class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
                             :class="socialSubTab === 'setoran' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                             <i data-lucide="landmark" class="w-4 h-4"></i>
                             <span>Setoran Kantor</span>
@@ -236,7 +236,7 @@
                                 open: false
                             }">
                                 <button type="button" @click="open = !open"
-                                    class="w-full px-2 sm:px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none"
+                                    class="w-full h-9 px-2 sm:px-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none"
                                     title="Pilih satu atau beberapa periode">
                                     <div class="flex items-center gap-1 min-w-0">
                                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
@@ -325,7 +325,7 @@
 
                         <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
                             <button type="button" @click="openPrintPernyataanModal()"
-                                class="w-full sm:w-auto justify-center px-3.5 py-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
+                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
                                 <span>Cetak Surat Pernyataan</span>
                             </button>
@@ -339,7 +339,7 @@
                                     class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                                 <input wire:model.live.debounce.300ms="socialParticipantSearch" type="text"
                                     placeholder="Cari nama peserta..."
-                                    class="w-full pl-8 pr-9 py-1.5 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:border-gov-navy font-medium">
+                                    class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:border-gov-navy font-medium">
                                 <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                                     <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -559,7 +559,7 @@
                             </div>
                             @if(Auth::user()->canManage())
                                 <button type="button" @click="showLumpSumModal = true; $wire.openLumpSumModal()"
-                                    class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5 self-start sm:self-auto">
+                                    class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5 self-start sm:self-auto">
                                     <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                     <span>Catat Setoran Kliring</span>
                                 </button>

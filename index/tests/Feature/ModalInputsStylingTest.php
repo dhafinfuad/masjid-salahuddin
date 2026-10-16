@@ -45,7 +45,7 @@ class ModalInputsStylingTest extends TestCase
     {
         $rendered = $this->blade('<x-custom-select :options="[\'a\' => \'A\', \'b\' => \'B\']" />');
 
-        $this->assertStringContainsString('px-2.5 py-1.5', $rendered);
+        $this->assertStringContainsString('h-9 px-2.5', $rendered);
         $this->assertStringContainsString('bg-white', $rendered);
     }
 

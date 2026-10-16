@@ -22,7 +22,7 @@
             @if(Auth::user()->canManage())
                 <div class="flex items-center gap-2">
                     <button type="button" @click="openEmployeeStatusModal()"
-                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        class="h-9 px-3.5 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
                         <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
@@ -31,7 +31,7 @@
                         <span>Status Pegawai</span>
                     </button>
                     <button type="button" @click="openCreateUser()"
-                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
+                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
                         <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
                         <span>Tambah Pengguna</span>
                     </button>
@@ -39,7 +39,7 @@
             @else
                 <div>
                     <span
-                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 text-slate-500 text-xs font-medium border border-gov-border">
+                        class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-slate-100 text-slate-500 text-xs font-medium border border-gov-border">
                         <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i>
                         <span>Mode Lihat Saja</span>
                     </span>
@@ -69,7 +69,7 @@
             @if(Auth::user()->canManage())
                 <div class="flex items-center gap-2.5 shrink-0 flex-nowrap">
                     <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
-                        class="px-3.5 py-2 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
+                        class="h-9 px-3.5 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
                         <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
@@ -79,7 +79,7 @@
                         <span>Impor Berkas Pegawai</span>
                     </button>
                     <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
-                        class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
+                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
                         <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -108,7 +108,7 @@
 
             <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ url('/profil') }}" target="_blank"
-                    class="px-3 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                    class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                     <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
                     <span>Lihat di Portal</span>
                 </a>
@@ -117,7 +117,7 @@
                     <button type="button" 
                         wire:click="resetTakmirToDefault"
                         wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
-                        class="px-3 py-2 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        class="h-9 px-3.5 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-500"></i>
                         <span>Reset ke Default SK</span>
                     </button>
@@ -131,14 +131,14 @@
         <div class="flex flex-wrap items-center gap-2">
             <button type="button"
                 @click="userSubTab = 'pengguna'; $wire.set('userSubTab', 'pengguna', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer inline-flex items-center gap-2"
                 :class="userSubTab === 'pengguna' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                 <i data-lucide="users" class="w-4 h-4"></i>
                 <span>Anggota</span>
             </button>
             <button type="button"
                 @click="userSubTab = 'pegawai'; $wire.set('userSubTab', 'pegawai', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer inline-flex items-center gap-2"
                 :class="userSubTab === 'pegawai' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -151,7 +151,7 @@
             </button>
             <button type="button"
                 @click="userSubTab = 'kepengurusan'; $wire.set('userSubTab', 'kepengurusan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
+                class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer inline-flex items-center gap-2"
                 :class="userSubTab === 'kepengurusan' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
                 <i data-lucide="shield-check" class="w-4 h-4"></i>
                 <span>Kepengurusan</span>
@@ -194,7 +194,7 @@
                         class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input wire:model.live.debounce.300ms="search" type="text"
                         placeholder="Cari nama, email..."
-                        class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                     <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                         <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                             <line x1="18" y1="6" x2="6" y2="18"></line>

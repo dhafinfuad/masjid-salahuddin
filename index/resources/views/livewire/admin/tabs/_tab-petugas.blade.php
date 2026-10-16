@@ -22,7 +22,7 @@
                         @if(Auth::user()->canManage())
                             <!-- Tombol Import Jadwal -->
                             <button type="button" @click="showImportDutyModal = true; $wire.openImportDuty()"
-                                class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                 <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
                                 <span>Import</span>
                             </button>
@@ -32,7 +32,7 @@
                         <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openDutyExport: false }"
                             @click.outside="openDutyExport = false">
                             <button type="button" @click="openDutyExport = !openDutyExport"
-                                class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                 <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
                                 <span>Export</span>
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -56,7 +56,7 @@
                         @if(Auth::user()->canManage())
                             <!-- Tombol Tambah Petugas -->
                             <button type="button" @click="openCreatePrayerDuty()"
-                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                 <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                 <span>Tambah Petugas</span>
                             </button>
@@ -130,7 +130,7 @@
                             class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input wire:model.live.debounce.300ms="search" type="text"
                             placeholder="Cari nama petugas / hari..."
-                            class="h-[32px] w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                            class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                         <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                             <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>

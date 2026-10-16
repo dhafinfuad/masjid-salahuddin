@@ -37,7 +37,7 @@
                             @if(Auth::user()->canManage())
                                 <button type="button"
                                     @click="showImportKajianModal = true; $wire.openImportKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                     <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
                                     <span>Import</span>
                                 </button>
@@ -45,7 +45,7 @@
 
                             <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openExport: false }" @click.outside="openExport = false">
                                 <button type="button" @click="openExport = !openExport"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                     <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
                                     <span>Export</span>
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -67,7 +67,7 @@
 
                             @if(Auth::user()->canManage())
                                 <button type="button" @click="openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
-                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                     <span>Tambah Jadwal</span>
                                 </button>
@@ -79,7 +79,7 @@
                             @if(Auth::user()->canManage())
                                 <button type="button"
                                     @click="showImportAgendaModal = true; if(window.createLucideIcons) window.createLucideIcons();"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                     <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
                                     <span>Import</span>
                                 </button>
@@ -87,7 +87,7 @@
 
                             <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openExport: false }" @click.outside="openExport = false">
                                 <button type="button" @click="openExport = !openExport"
-                                    class="w-full sm:w-auto justify-center px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                     <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
                                     <span>Export</span>
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -109,7 +109,7 @@
 
                             @if(Auth::user()->canManage())
                                 <button type="button" @click="openCreateAgenda()"
-                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                     <span>Tambah Agenda</span>
                                 </button>
@@ -120,13 +120,13 @@
                         <div x-show="kegiatanSubTab === 'odoj'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'odoj' }" class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
                             @if(Auth::user()->canManage())
                                 <button type="button" @click="openAssignOdoj(1, '')"
-                                    class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
                                     <span>Atur Juz</span>
                                 </button>
                             @endif
                             <button type="button" @click="copyOdojToClipboard({{ Js::from($odojWhatsappText) }})"
-                                class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
+                                class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
                                 title="Salin rekap ODOJ ke clipboard untuk WhatsApp">
                                 <i data-lucide="clipboard-copy" class="w-4 h-4 text-amber-400 shrink-0 inline-block"></i>
                                 <span class="whitespace-nowrap">Salin Rekap WA</span>
@@ -140,28 +140,28 @@
                     <button type="button"
                         @click="switchSubTab('pekanan')"
                         :class="kegiatanSubTab === 'pekanan' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
                         <i data-lucide="calendar-days" class="w-4 h-4"></i>
                         <span>Kajian</span>
                     </button>
                     <button type="button"
                         @click="switchSubTab('jumat')"
                         :class="kegiatanSubTab === 'jumat' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
                         <i data-lucide="mic" class="w-4 h-4"></i>
                         <span>Khutbah Jumat</span>
                     </button>
                     <button type="button"
                         @click="switchSubTab('agenda')"
                         :class="kegiatanSubTab === 'agenda' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
                         <i data-lucide="calendar-range" class="w-4 h-4"></i>
                         <span>Kegiatan Akbar</span>
                     </button>
                     <button type="button"
                         @click="switchSubTab('odoj')"
                         :class="kegiatanSubTab === 'odoj' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
                         <i data-lucide="book-open" class="w-4 h-4"></i>
                         <span>One Day One Juz</span>
                     </button>
@@ -178,8 +178,8 @@
                         }
                     }">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                         <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                             <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -220,7 +220,7 @@
 
                         @if($kajianMonthFilter !== 'all' || $kajianYearFilter !== 'all' || !empty($pekananSearch) || !empty($jumatSearch) || !empty($search))
                             <button type="button" wire:click="resetKajianFilters"
-                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
+                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center h-9 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
                                 title="Reset Filter ke Semua">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                 <span>Reset</span>
@@ -1189,7 +1189,7 @@
                                 class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                             <input wire:key="agenda-search-input" wire:model.live.debounce.300ms="agendaSearch" type="text"
                                 placeholder="Cari agenda kegiatan..."
-                                class="h-8 w-full pl-8 pr-9 py-1 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                             <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                                 <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1213,7 +1213,7 @@
 
                             @if($agendaFilterStatus !== 'all' || !empty($agendaSearch))
                                 <button type="button" wire:click="resetAgendaFilters"
-                                    class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
+                                    class="shrink-0 h-9 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
                                     title="Reset Filter ke Semua">
                                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                     <span class="hidden sm:inline">Reset</span>
@@ -1558,13 +1558,13 @@
                         <!-- Date Navigator: Previous, Input Date, Next -->
                         <div class="flex items-center gap-1.5 w-full sm:w-auto">
                             <button type="button" wire:click="previousOdojDate" title="Hari Sebelumnya"
-                                class="w-9 py-1.5 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
+                                class="w-9 h-9 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
                                 <i data-lucide="chevron-left" class="w-4 h-4"></i>
                             </button>
                             <input type="date" wire:model.live="odojDate"
-                                class="flex-1 sm:w-36 px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-slate-800 text-center focus:ring-1 focus:ring-gov-navy focus:outline-none cursor-pointer shadow-2xs">
+                                class="flex-1 sm:w-36 h-9 px-2.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-slate-800 text-center focus:ring-1 focus:ring-gov-navy focus:outline-none cursor-pointer shadow-2xs">
                             <button type="button" wire:click="nextOdojDate" title="Hari Berikutnya"
-                                class="w-9 py-1.5 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
+                                class="w-9 h-9 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
                                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1573,7 +1573,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2.5 w-full sm:w-auto">
                             <!-- Indicator Badge: 0/30 Juz Selesai -->
                             <div
-                                class="w-full sm:w-auto inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-slate-50 text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs shrink-0">
+                                class="w-full sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-slate-50 text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs shrink-0">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 shrink-0"></span>
                                 <span class="whitespace-nowrap">{{ $odojCompletedCount }}/30 Juz Selesai</span>
                             </div>
@@ -1582,12 +1582,12 @@
                                 <!-- Action Buttons: Grid 2 cols on Mobile, Inline on Desktop -->
                                 <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto shrink-0">
                                     <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
                                         <span class="whitespace-nowrap">Semua Sudah</span>
                                     </button>
                                     <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500 shrink-0 inline-block"></i>
                                         <span class="whitespace-nowrap">Reset Belum</span>
                                     </button>
@@ -1758,7 +1758,7 @@
                                 </div>
                             </div>
                             <button type="button" @click="copyOdojToClipboard({{ Js::from($odojWhatsappText) }})"
-                                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
+                                class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
                                 title="Salin pesan laporan WhatsApp ke clipboard">
                                 <i data-lucide="copy" class="w-4 h-4 text-amber-400 shrink-0 inline-block"></i>
                                 <span class="whitespace-nowrap">Salin Pesan WhatsApp</span>

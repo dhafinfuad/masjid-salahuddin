@@ -104,12 +104,13 @@
     @php
         $hasCustomPadding = (bool) preg_match('/\b(p[xytblr]?-\S+)\b/', $buttonClass);
         $hasCustomBg = (bool) preg_match('/\bbg-\S+\b/', $buttonClass);
+        $hasCustomHeight = (bool) preg_match('/\bh-\S+\b/', $buttonClass);
     @endphp
     <!-- Trigger Button -->
     <button 
         type="button" 
         @click="toggle()"
-        class="w-full {{ $hasCustomPadding ? '' : 'px-2.5 py-1.5' }} rounded-lg border border-gov-border {{ $hasCustomBg ? '' : 'bg-white' }} text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1.5 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none {{ $buttonClass }}"
+        class="w-full {{ $hasCustomHeight ? '' : ($hasCustomPadding ? '' : 'h-9') }} {{ $hasCustomPadding ? '' : 'px-2.5' }} rounded-lg border border-gov-border {{ $hasCustomBg ? '' : 'bg-white' }} text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1.5 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none {{ $buttonClass }}"
     >
         <div class="flex items-center gap-1.5 min-w-0 truncate">
             @if($icon)

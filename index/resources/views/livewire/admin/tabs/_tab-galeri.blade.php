@@ -19,7 +19,7 @@
         @if(Auth::user()->canManage())
             <div class="w-full sm:w-auto">
                 <button type="button" wire:click="openCreateGalleryModal"
-                    class="w-full sm:w-auto justify-center px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>Tambah Galeri</span>
                 </button>
@@ -34,7 +34,7 @@
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
             <input type="text" wire:model.live.debounce.300ms="gallerySearch"
                 placeholder="Cari judul kegiatan atau lokasi..."
-                class="w-full pl-9 pr-3.5 py-1.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
+                class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
         </div>
 
         <!-- Filter Tahun -->
@@ -193,7 +193,7 @@
             @if(Auth::user()->canManage())
                 <div class="pt-2">
                     <button type="button" wire:click="openCreateGalleryModal"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Tambah Dokumentasi Baru</span>
                     </button>

@@ -242,7 +242,7 @@
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 <input type="text" wire:model.live.debounce.300ms="statsSearch"
                     placeholder="Cari IP atau Halaman..."
-                    class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-gov-border rounded-lg focus:outline-none focus:ring-1 focus:ring-gov-navy focus:bg-white transition">
+                    class="h-9 w-full pl-9 pr-3 text-xs bg-slate-50 border border-gov-border rounded-lg focus:outline-none focus:ring-1 focus:ring-gov-navy focus:bg-white transition">
             </div>
         </div>
 

@@ -20,14 +20,14 @@
         <button type="button"
             @click="switchSettingsSubTab('masjid')"
             :class="settingsSubTab === 'masjid' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-            class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
             <i data-lucide="building-2" class="w-4 h-4"></i>
             <span>Pengaturan Masjid</span>
         </button>
         <button type="button"
             @click="switchSettingsSubTab('poster')"
             :class="settingsSubTab === 'poster' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-            class="px-3.5 py-2 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
+            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
             <i data-lucide="palette" class="w-4 h-4"></i>
             <span>Template & Studio Poster Kajian</span>
         </button>
