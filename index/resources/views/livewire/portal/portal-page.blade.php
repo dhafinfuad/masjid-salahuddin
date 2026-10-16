@@ -841,11 +841,11 @@
             <!-- Search City Input -->
             <div class="pt-3 pb-2">
                 <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                     <input x-model="searchCity" 
                            type="text" 
                            placeholder="Ketik nama kota / kabupaten..." 
-                           class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                           class="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
                 </div>
             </div>
 
@@ -931,7 +931,7 @@
                         <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
                         <input type="text" wire:model="socialParticipantName"
                             placeholder="Nama sesuai KTP / Pegawai"
-                            class="w-full px-3.5 py-2 border border-gov-border rounded-lg text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
+                            class="w-full p-2.5 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition text-xs font-medium">
                         @error('socialParticipantName') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                     </div>
 
@@ -941,6 +941,7 @@
                             wire:model="socialParticipantProgram"
                             :options="collect($socialPrograms)->map(fn($p) => ['value' => $p->name, 'label' => $p->name])->values()->all()"
                             placeholder="Pilih Program Sosial"
+                            buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('socialParticipantProgram') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                     </div>
@@ -950,7 +951,7 @@
                             <label class="block font-semibold text-slate-700 mb-1">Nominal Komitmen (Rp) <span class="text-rose-500">*</span></label>
                             <input type="text" inputmode="numeric" wire:model="socialParticipantAmount" x-ribuan="$wire.socialParticipantAmount"
                                 placeholder="Contoh: 250.000"
-                                class="w-full px-3.5 py-1.5 border border-gov-border rounded-lg bg-white text-gov-textMain font-bold focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                                class="w-full p-2.5 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain font-bold focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition text-xs shadow-2xs">
                             @error('socialParticipantAmount') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                         </div>
                         <div>
@@ -959,6 +960,7 @@
                                 wire:model="socialParticipantPeriod"
                                 :options="['Bulanan' => 'Bulanan', 'Tahunan' => 'Tahunan', 'Satu Kali' => 'Satu Kali']"
                                 placeholder="Pilih Periode Komitmen"
+                                buttonClass="p-2.5 bg-slate-50/50"
                             />
                         </div>
                     </div>

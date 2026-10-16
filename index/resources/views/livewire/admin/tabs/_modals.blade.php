@@ -882,6 +882,7 @@
                             ]"
                             placeholder="Pilih Hari..."
                             class="w-full text-xs"
+                            buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('dutyDayName') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
@@ -897,6 +898,7 @@
                             ]"
                             placeholder="Pilih Waktu..."
                             class="w-full text-xs"
+                            buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('dutyPrayerTime') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
@@ -927,6 +929,7 @@
                         ]"
                         placeholder="Pilih Pola Pekan..."
                         class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
                     />
                     @error('dutyWeekPattern') <span
                     class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
@@ -1214,6 +1217,7 @@
                                 ]"
                                 placeholder="Pilih Status..."
                                 class="w-full text-xs"
+                                buttonClass="p-2.5 bg-slate-50/50"
                             />
                         </div>
 
@@ -1552,6 +1556,7 @@
                         :options="$juzOptions"
                         placeholder="Pilih Juz..."
                         class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
                     />
                     @error('assignJuzNumber') <span
                         class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
@@ -2745,7 +2750,7 @@
                                 wire:model.live="printMonth"
                                 :options="$printMonthOptions"
                                 placeholder="Semua Bulan (Setahun)"
-                                buttonClass="p-2 bg-white"
+                                buttonClass="p-2.5 bg-white"
                             />
                         </div>
                         <div>
@@ -2760,7 +2765,7 @@
                                 wire:model.live="printYear"
                                 :options="$printYearOptions"
                                 placeholder="Semua Tahun"
-                                buttonClass="p-2 bg-white"
+                                buttonClass="p-2.5 bg-white"
                             />
                         </div>
                     </div>
@@ -2786,7 +2791,7 @@
                             wire:model.live="printAgendaId"
                             :options="$printAgendaOptions"
                             placeholder="Pilih Agenda / Program"
-                            buttonClass="p-2 bg-white"
+                            buttonClass="p-2.5 bg-white"
                         />
                     </div>
                 </div>
@@ -3491,6 +3496,7 @@
                         :options="$exportYearOptions"
                         placeholder="Pilih Tahun..."
                         class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
                     />
                 </div>
 
@@ -3537,6 +3543,7 @@
                                 :options="$monthOptions"
                                 placeholder="Bulan Mulai..."
                                 class="w-full text-xs"
+                                buttonClass="p-2.5 bg-slate-50/50"
                             />
                         </div>
                         <div>
@@ -3546,6 +3553,7 @@
                                 :options="$monthOptions"
                                 placeholder="Bulan Selesai..."
                                 class="w-full text-xs"
+                                buttonClass="p-2.5 bg-slate-50/50"
                             />
                         </div>
                     </div>
@@ -3666,7 +3674,7 @@
                     <div class="relative" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'z-40' : 'z-10'"
                         @click.outside="if (printPernyataanOpenDropdown === 'singleEmp') closePrintDropdowns()">
                         <button type="button" @click.stop="togglePrintDropdown('singleEmp')"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
                             <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai yang Ada di Rekapitulasi --'"></span>
                             <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="m6 9 6 6 6-6"/>
@@ -3709,7 +3717,7 @@
                         <div class="relative" :class="printPernyataanOpenDropdown === 'newEmp' ? 'z-40' : 'z-10'"
                             @click.outside="if (printPernyataanOpenDropdown === 'newEmp') closePrintDropdowns()">
                             <button type="button" @click.stop="togglePrintDropdown('newEmp')"
-                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
+                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
                                 <span class="truncate" x-text="printPernyataanEmployeeId && printPernyataanSelectedNewName ? printPernyataanSelectedNewName : '-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --'"></span>
                                 <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'newEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m6 9 6 6 6-6"/>
@@ -3796,7 +3804,7 @@
                             <label class="block font-semibold text-slate-600 mb-1">Tanggal Surat</label>
                             <input x-model="printPernyataanDateLetter" type="text"
                                 placeholder="Contoh: 15 Oktober 2026 (kosong = titik-titik)"
-                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
@@ -3805,7 +3813,7 @@
                                 <div class="relative" :class="printPernyataanOpenDropdown === 'month' ? 'z-40' : 'z-10'"
                                     @click.outside="if (printPernyataanOpenDropdown === 'month') closePrintDropdowns()">
                                     <button type="button" @click.stop="togglePrintDropdown('month')"
-                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
                                         <span class="truncate" x-text="printPernyataanEffectiveMonth ? printPernyataanEffectiveMonth : '-- Kosongkan --'"></span>
                                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'month' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="m6 9 6 6 6-6"/>
@@ -3842,7 +3850,7 @@
                                 <div class="relative" :class="printPernyataanOpenDropdown === 'year' ? 'z-40' : 'z-10'"
                                     @click.outside="if (printPernyataanOpenDropdown === 'year') closePrintDropdowns()">
                                     <button type="button" @click.stop="togglePrintDropdown('year')"
-                                        class="w-full px-2.5 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
+                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
                                         <span class="truncate" x-text="printPernyataanEffectiveYear ? printPernyataanEffectiveYear : '-- Kosongkan --'"></span>
                                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'year' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="m6 9 6 6 6-6"/>
@@ -3885,13 +3893,13 @@
                             <label class="block font-semibold text-slate-600 mb-1">Nama Sekretaris</label>
                             <input x-model="printPernyataanSecretaryName" type="text"
                                 placeholder="Deril Amrizal Kholid"
-                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-600 mb-1">Seksi / Unit Sekretaris</label>
                             <input x-model="printPernyataanSecretarySection" type="text"
                                 placeholder="Seksi Penjaminan Kualitas Data"
-                                class="w-full p-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
+                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
                         </div>
                     </div>
                 </div>
@@ -3964,6 +3972,7 @@
                             ]"
                             placeholder="Pilih Periode..."
                             class="w-full text-xs"
+                            buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('socialProgramPeriodType') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -3978,6 +3987,7 @@
                             ]"
                             placeholder="Pilih Status..."
                             class="w-full text-xs"
+                            buttonClass="p-2.5 bg-slate-50/50"
                         />
                         @error('socialProgramStatus') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -3998,6 +4008,7 @@
                         ]"
                         placeholder="Pilih Ikon..."
                         class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
                     />
                 </div>
 
@@ -4320,7 +4331,7 @@
                     <label class="block font-semibold text-slate-700 mb-1">Judul Kegiatan <span class="text-rose-500">*</span></label>
                     <input type="text" wire:model="galleryTitle"
                         placeholder="Contoh: Kajian Rutin Ba'da Ashar Bersama Ustadz..."
-                        class="w-full px-3.5 py-2 border border-gov-border rounded-lg text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
+                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition text-xs font-medium text-gov-textMain">
                     @error('galleryTitle') <span class="text-rose-600 text-[11px] mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -4329,14 +4340,14 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Tanggal Kegiatan <span class="text-rose-500">*</span></label>
                         <input type="date" wire:model="galleryDate"
-                            class="w-full px-3.5 py-1.5 border border-gov-border rounded-lg text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition text-xs font-medium text-gov-textMain cursor-pointer shadow-2xs">
                         @error('galleryDate') <span class="text-rose-600 text-[11px] mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Lokasi Kegiatan <span class="text-rose-500">*</span></label>
                         <input type="text" wire:model="galleryLocation"
                             placeholder="Contoh: Ruang Utama Masjid"
-                            class="w-full px-3.5 py-2 border border-gov-border rounded-lg text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition text-xs font-medium text-gov-textMain">
                         @error('galleryLocation') <span class="text-rose-600 text-[11px] mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
@@ -4559,6 +4570,7 @@
                                         ]"
                                         placeholder="Pilih Status..."
                                         class="w-full text-xs"
+                                        buttonClass="p-2.5 bg-slate-50/50"
                                     />
                                 </div>
 
@@ -4580,7 +4592,7 @@
                                 </label>
                                 <textarea wire:model="saranReplyText" rows="4"
                                     placeholder="Tuliskan tanggapan resmi atau informasi aksi tindak lanjut yang telah dilakukan Takmir DKM..."
-                                    class="w-full px-3 py-2 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition resize-y leading-relaxed"></textarea>
+                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition resize-y leading-relaxed"></textarea>
                             </div>
                         </div>
                     @else

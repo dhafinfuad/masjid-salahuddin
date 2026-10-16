@@ -112,6 +112,7 @@
                                 wire:model="category"
                                 :options="$categories"
                                 placeholder="Pilih Kategori Masukan"
+                                buttonClass="p-2.5 bg-white"
                             />
                             @error('category') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
@@ -131,7 +132,7 @@
                                     <label class="block text-[11px] font-medium text-slate-600 mb-1">Nama Pengirim</label>
                                     <input type="text" wire:model="name"
                                         placeholder="Contoh: Ahmad Fauzi / Jamaah Pegawai KPP"
-                                        class="w-full px-3 py-2 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                                        class="w-full p-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs font-medium">
                                     @error('name') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                                 </div>
                             @else
@@ -149,7 +150,7 @@
                             <p class="text-[11px] text-slate-500 mb-1">Diisi jika Anda berkenan dihubungi pengurus perihal tindak lanjut.</p>
                             <input type="text" wire:model="contact"
                                 placeholder="Contoh: 081234567890 atau email@kemenkeu.go.id"
-                                class="w-full px-3 py-2 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                                class="w-full p-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs font-medium">
                             @error('contact') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
 
@@ -160,7 +161,7 @@
                             </label>
                             <input type="text" wire:model="title"
                                 placeholder="Contoh: Usulan Penambahan Rak Sandal Sisi Timur"
-                                class="w-full px-3 py-2 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                                class="w-full p-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs font-medium">
                             @error('title') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
 
@@ -175,7 +176,7 @@
                             <textarea wire:model="message" rows="5"
                                 @input="updateCount($event.target.value)"
                                 placeholder="Tuliskan secara jelas saran, kritik konstruktif, pengaduan fasilitas, atau usulan kegiatan Anda di sini..."
-                                class="w-full px-3 py-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs leading-relaxed resize-y"></textarea>
+                                class="w-full p-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs leading-relaxed resize-y"></textarea>
                             @error('message') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
 
