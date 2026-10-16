@@ -94,3 +94,26 @@ Always adhere strictly to [UI_GUIDELINES.md](UI_GUIDELINES.md) for all styling a
 1. **Eksekusi Langsung (Direct Execution)**: Setiap kali menerima permintaan perbaikan bug, penyesuaian UI, atau penambahan fitur, **LANGSUNG eksekusi** modifikasi kode pada berkas terkait dan jalankan verifikasi pengujian secara mandiri tanpa jeda.
 2. **Dilarang Memblokir untuk Review Rencana**: JANGAN membuat dokumen rencana pelaksanaan (seperti `implementation_plan.md` dengan `RequestFeedback: true`) yang memblokir proses kerja hanya untuk meminta konfirmasi/approval tombol perantara dari user, kecuali jika user secara eksplisit meminta ("buatkan rencana terlebih dahulu").
 3. **Hasil Akhir yang Siap Pakai**: Selesaikan seluruh pengubahan berkas, pastikan sintaks dan pengujian lulus 100%, lalu langsung sajikan laporan ringkas hasil akhir kepada pengguna.
+
+## Mandat Mutlak: Pencegahan Regresi & Pengujian Interaksi Menyeluruh (Zero-Regression & End-to-End Verification)
+
+> [!IMPORTANT]
+> **Setiap kali melakukan perbaikan bug, penyesuaian styling, atau penambahan fitur baru, AI WAJIB menjamin bahwa seluruh fitur lama yang telah berfungsi TIDAK RUSAK, TIDAK BERUBAH PERILAKUNYA, dan TIDAK MENGALAMI REGRESI. Pengguna tidak mentolerir perbaikan yang menghasilkan bug baru di fitur lain.**
+
+### Protokol Kerja Wajib AI:
+1. **Dilarang Keras Melakukan Perubahan Sempit Berorientasi Visual Saja (*Anti-Myopic Visual Edits*)**:
+   - Saat mengubah kelas CSS, styling, padding (misal `p-2.5`), atau mengganti elemen HTML/Blade ke komponen kustom, AI **DILARANG HANYA** memeriksa tampilan visual statisnya.
+   - AI **WAJIB** menelusuri logika interaktivitas dan *lifecycle* data elemen tersebut: *Bagaimana data mengalir? Apakah elemen tersebut terikat pada state dinamis (seperti tombol switch, filter bergantung, atau dropdown bertingkat)?*
+2. **Audit Dampak Komponen Bersama (*Shared Component Impact Analysis*)**:
+   - Jika mengubah komponen bersama (*reusable component* seperti `custom-select`, modal wrapper, form controls, pagination, filter bar, dll.), AI **WAJIB** menguji seluruh variasi penggunaannya di berbagai tab/modal:
+     - Dropdown dengan data statis vs data dinamis bertingkat (dependent dropdown).
+     - Komponen dengan entangle `wire:model` vs Alpine `x-model`.
+     - Pengaruh pergantian state induk terhadap rendering ulang komponen anak (pastikan isolasi `wire:key` dan jangan gunakan `wire:ignore` sembarangan pada elemen yang datanya dinamis).
+3. **Pengujian Alur Interaksi Penuh (*Full-Cycle Interactive Verification*)**:
+   Sebelum menganggap suatu tugas selesai, AI **WAJIB** memvalidasi skenario interaksi pengguna secara menyeluruh:
+   - *Buka modal/halaman $\rightarrow$ Lakukan perubahan state (misal: klik toggle Pemasukan $\leftrightarrow$ Pengeluaran) $\rightarrow$ Verifikasi data turunan ikut ter-refresh secara benar $\rightarrow$ Cek tombol simpan/aksi $\rightarrow$ Pastikan pesan error/validasi tetap bekerja.*
+4. **Wajib Tambahkan Regression Test Otomatis**:
+   - Setiap bug interaktivitas atau regresi yang ditemukan **WAJIB** langsung dibuatkan unit/feature test otomatis pada direktori `tests/Feature/` untuk mengunci perilaku yang benar, sehingga bug yang sama mustahil muncul kembali di kemudian hari.
+   - Semua pengujian test suite terkait (`vendor\bin\phpunit`) **WAJIB** lulus 100% sebelum commit dan lapor ke pengguna.
+5. **Standar Kualitas & Eksekusi Teliti (*High-Rigor Delivery*)**:
+   - Pahami kebutuhan pengguna secara menyeluruh (holistik), antisipasi detail-detail penting yang saling berkaitan, dan pastikan hasil akhir bekerja sempurna dari sisi visual maupun fungsionalitas tanpa ada kompromi.
