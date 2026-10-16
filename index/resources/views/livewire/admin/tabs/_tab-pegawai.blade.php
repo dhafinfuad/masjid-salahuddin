@@ -182,7 +182,7 @@
                                                 wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
                                                 class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 hover:bg-gov-navy hover:text-white text-gov-navy border border-gov-navy/20 transition cursor-pointer"
                                                 title="Tautkan otomatis jika akun sudah ada, atau buatkan akun baru">
-                                                Tautkan / Buat Akun
+                                                Buat Akun
                                             </button>
                                         @endif
                                     </div>
@@ -307,7 +307,7 @@
                             <button type="button" wire:click="createUserFromEmployee({{ $emp->id }})"
                                 wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
                                 class="text-[10px] font-bold text-gov-navy hover:underline">
-                                Tautkan / Buat Akun
+                                Buat Akun
                             </button>
                         @endif
                     </div>

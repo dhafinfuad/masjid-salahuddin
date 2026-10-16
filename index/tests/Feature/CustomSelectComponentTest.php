@@ -71,4 +71,40 @@ class CustomSelectComponentTest extends TestCase
         $this->assertStringContainsString('is_header', $html);
         $this->assertStringContainsString('Infaq Rutin', $html);
     }
+
+    public function test_custom_select_generates_dynamic_wire_key_based_on_options_hash()
+    {
+        $optionsA = [
+            ['value' => '1', 'label' => 'Infaq Rutin'],
+        ];
+        $optionsB = [
+            ['value' => '2', 'label' => 'Biaya Listrik'],
+        ];
+
+        $htmlA = Blade::render('<x-custom-select wire:key="cat-select" :options="$options" />', [
+            'options' => $optionsA
+        ]);
+        $htmlB = Blade::render('<x-custom-select wire:key="cat-select" :options="$options" />', [
+            'options' => $optionsB
+        ]);
+
+        preg_match('/wire:key="([^"]+)"/', $htmlA, $matchA);
+        preg_match('/wire:key="([^"]+)"/', $htmlB, $matchB);
+
+        $this->assertNotEmpty($matchA[1] ?? null);
+        $this->assertNotEmpty($matchB[1] ?? null);
+        $this->assertNotEquals($matchA[1], $matchB[1], 'wire:key must change when options change to force Livewire DOM refresh');
+    }
+
+    public function test_custom_select_forwards_custom_attributes()
+    {
+        $options = ['A', 'B'];
+
+        $html = Blade::render('<x-custom-select :options="$options" id="my-select-id" data-testid="custom-sel" />', [
+            'options' => $options
+        ]);
+
+        $this->assertStringContainsString('id="my-select-id"', $html);
+        $this->assertStringContainsString('data-testid="custom-sel"', $html);
+    }
 }

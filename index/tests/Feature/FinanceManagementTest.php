@@ -576,6 +576,22 @@ class FinanceManagementTest extends TestCase
         \App\Services\TteSignatureService::unsign('monthly-2026-1');
         \App\Services\TteSignatureService::unsign('monthly-2026-2');
     }
+
+    public function test_finance_modal_category_dropdown_switches_between_pemasukan_and_pengeluaran(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        $component = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->call('openFinanceModal')
+            ->assertSet('financeType', 'pemasukan')
+            ->assertSeeHtml('PENERIMAAN')
+            ->assertSeeHtml($this->categoryInfaq->name)
+            ->call('setFinanceType', 'pengeluaran')
+            ->assertSet('financeType', 'pengeluaran')
+            ->assertSeeHtml('PENGELUARAN')
+            ->assertSeeHtml($this->categoryOperasional->name)
+            ->assertSeeHtml('finance-cat-select-pengeluaran');
+    }
 }
 
 

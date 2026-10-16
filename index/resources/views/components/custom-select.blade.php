@@ -47,15 +47,23 @@
             }
         }
     }
+    $optionsHash = substr(md5(json_encode($normalizedOptions)), 0, 8);
+    $passedWireKey = $attributes->get('wire:key');
+    $modelKey = ($wireModel && $wireModel->value()) ? $wireModel->value() : ($xModel ?: 'sel');
+    $wireKey = $passedWireKey 
+        ? ($passedWireKey . '-' . $optionsHash)
+        : ('csel-' . $modelKey . '-' . $optionsHash);
 @endphp
 
 <div 
+    wire:key="{{ $wireKey }}"
+    {{ $attributes->whereDoesntStartWith('wire:model')->whereDoesntStartWith('x-model')->except(['class', 'buttonClass', 'dropdownClass', 'wire:key']) }}
     x-data="{
         id: 'csel_' + Math.random().toString(36).substring(2, 9),
         open: false,
         search: '',
         searchable: {{ $searchable ? 'true' : 'false' }},
-        @if($wireModel->value())
+        @if($wireModel && $wireModel->value())
             selected: @entangle($attributes->wire('model')),
         @elseif($xModel)
             get selected() { return {{ $xModel }}; },
@@ -91,7 +99,6 @@
     @click.outside="open = false"
     @keydown.escape.window="open = false"
     class="relative {{ $attributes->get('class', 'w-full') }}"
-    wire:ignore.self
 >
     @php
         $hasCustomPadding = (bool) preg_match('/\b(p[xytblr]?-\S+)\b/', $buttonClass);
@@ -119,6 +126,7 @@
         x-show="open" 
         x-cloak 
         @click.stop
+        wire:ignore.self
         class="absolute {{ $align === 'right' ? 'right-0' : 'left-0' }} top-full mt-1 w-full min-w-[170px] bg-white rounded-xl shadow-xl border border-gov-border py-1 z-50 max-h-60 overflow-hidden flex flex-col {{ $dropdownClass }}"
         style="display: none;"
     >

@@ -2308,22 +2308,49 @@
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Jenis Transaksi Kas *</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button type="button"
-                            wire:click="setFinanceType('pemasukan')"
-                            @click="$wire.financeType = 'pemasukan'"
-                            class="p-2.5 rounded-lg border text-center font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2"
-                            :class="$wire.financeType === 'pemasukan' ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs' : 'bg-slate-50 text-slate-700 border-gov-border hover:bg-slate-100'">
-                            <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
-                            <span>Pemasukan (Masuk)</span>
-                        </button>
-                        <button type="button"
-                            wire:click="setFinanceType('pengeluaran')"
-                            @click="$wire.financeType = 'pengeluaran'"
-                            class="p-2.5 rounded-lg border text-center font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2"
-                            :class="$wire.financeType === 'pengeluaran' ? 'bg-rose-600 text-white border-rose-600 shadow-2xs' : 'bg-slate-50 text-slate-700 border-gov-border hover:bg-slate-100'">
-                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                            <span>Pengeluaran (Keluar)</span>
-                        </button>
+                        @if($financeType === 'pemasukan')
+                            <button type="button"
+                                wire:key="fin-btn-type-masuk-active"
+                                wire:click="setFinanceType('pemasukan')"
+                                class="p-2.5 rounded-lg border text-center font-bold text-xs cursor-pointer flex items-center justify-center gap-2 bg-emerald-600 text-white border-emerald-600 shadow-2xs">
+                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 7 7 17"/>
+                                    <path d="M17 17H7V7"/>
+                                </svg>
+                                <span>Pemasukan (Masuk)</span>
+                            </button>
+                            <button type="button"
+                                wire:key="fin-btn-type-keluar-inactive"
+                                wire:click="setFinanceType('pengeluaran')"
+                                class="p-2.5 rounded-lg border text-center font-bold text-xs cursor-pointer flex items-center justify-center gap-2 bg-slate-50 text-slate-700 border-gov-border hover:bg-slate-100">
+                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 17 17 7"/>
+                                    <path d="M7 7h10v10"/>
+                                </svg>
+                                <span>Pengeluaran (Keluar)</span>
+                            </button>
+                        @else
+                            <button type="button"
+                                wire:key="fin-btn-type-masuk-inactive"
+                                wire:click="setFinanceType('pemasukan')"
+                                class="p-2.5 rounded-lg border text-center font-bold text-xs cursor-pointer flex items-center justify-center gap-2 bg-slate-50 text-slate-700 border-gov-border hover:bg-slate-100">
+                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 7 7 17"/>
+                                    <path d="M17 17H7V7"/>
+                                </svg>
+                                <span>Pemasukan (Masuk)</span>
+                            </button>
+                            <button type="button"
+                                wire:key="fin-btn-type-keluar-active"
+                                wire:click="setFinanceType('pengeluaran')"
+                                class="p-2.5 rounded-lg border text-center font-bold text-xs cursor-pointer flex items-center justify-center gap-2 bg-rose-600 text-white border-rose-600 shadow-2xs">
+                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 17 17 7"/>
+                                    <path d="M7 7h10v10"/>
+                                </svg>
+                                <span>Pengeluaran (Keluar)</span>
+                            </button>
+                        @endif
                     </div>
                     @error('financeType') <span
                     class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
@@ -2383,6 +2410,7 @@
                             }
                         @endphp
                         <x-custom-select 
+                            wire:key="finance-cat-select-{{ $financeType }}"
                             wire:model="financeCategoryId"
                             :options="$catOptions"
                             placeholder="-- Pilih Pos Kategori --"
