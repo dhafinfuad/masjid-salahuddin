@@ -592,6 +592,67 @@ class FinanceManagementTest extends TestCase
             ->assertSeeHtml($this->categoryOperasional->name)
             ->assertSeeHtml('finance-cat-select-pengeluaran');
     }
+
+    public function test_finance_modal_defaults_to_infaq_rutin_pegawai_and_konsumsi_jumat_berkah(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        $catInfaqRutin = FinanceCategory::create([
+            'name' => 'Infaq Rutin Pegawai (Tukin)',
+            'type' => 'pemasukan',
+            'group' => 'penerimaan',
+            'color' => 'blue',
+        ]);
+
+        $catKonsumsiJumat = FinanceCategory::create([
+            'name' => 'Konsumsi Jumat Berkah',
+            'type' => 'pengeluaran',
+            'group' => 'pengeluaran_rutin',
+            'color' => 'amber',
+        ]);
+
+        $component = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->call('openFinanceModal')
+            ->assertSet('financeType', 'pemasukan')
+            ->assertSet('financeCategoryId', $catInfaqRutin->id);
+
+        // Switch to pengeluaran -> default should automatically become Konsumsi Jumat Berkah
+        $component->call('setFinanceType', 'pengeluaran')
+            ->assertSet('financeType', 'pengeluaran')
+            ->assertSet('financeCategoryId', $catKonsumsiJumat->id);
+
+        // Switch back to pemasukan -> default should automatically return to Infaq Rutin Pegawai (Tukin)
+        $component->call('setFinanceType', 'pemasukan')
+            ->assertSet('financeType', 'pemasukan')
+            ->assertSet('financeCategoryId', $catInfaqRutin->id);
+
+        // Test saving with default category for pemasukan
+        $component->set('financeAmount', '500000')
+            ->set('financeDescription', 'Setoran Infaq Pegawai Rutin Test')
+            ->call('saveFinance');
+
+        $this->assertDatabaseHas('finances', [
+            'type' => 'pemasukan',
+            'category_id' => $catInfaqRutin->id,
+            'amount' => 500000,
+            'description' => 'Setoran Infaq Pegawai Rutin Test',
+        ]);
+
+        // Open modal again and switch to pengeluaran to save with default category for pengeluaran
+        $component->call('openFinanceModal')
+            ->call('setFinanceType', 'pengeluaran')
+            ->assertSet('financeCategoryId', $catKonsumsiJumat->id)
+            ->set('financeAmount', '250000')
+            ->set('financeDescription', 'Beli Nasi Bungkus Jumat Berkah Test')
+            ->call('saveFinance');
+
+        $this->assertDatabaseHas('finances', [
+            'type' => 'pengeluaran',
+            'category_id' => $catKonsumsiJumat->id,
+            'amount' => 250000,
+            'description' => 'Beli Nasi Bungkus Jumat Berkah Test',
+        ]);
+    }
 }
 
 

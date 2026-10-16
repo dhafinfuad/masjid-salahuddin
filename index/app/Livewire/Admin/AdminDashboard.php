@@ -530,6 +530,7 @@ class AdminDashboard extends Component
         $this->lumpSumDate = Carbon::today()->format('Y-m-d');
         $this->financeMonthFilter = [(string) Carbon::today()->month];
         $this->financeYearFilter = (string) Carbon::today()->year;
+        $this->financeCategoryId = $this->getDefaultFinanceCategoryId('pemasukan');
 
         $this->agendaDate = Carbon::now()->addDays(7)->format('Y-m-d');
         $this->odojDate = Carbon::today()->format('Y-m-d');
@@ -4710,7 +4711,7 @@ class AdminDashboard extends Component
         $this->isEditingFinance = false;
         $this->editingFinanceId = null;
         $this->financeType = 'pemasukan';
-        $this->financeCategoryId = FinanceCategory::where('group', 'penerimaan')->first()?->id ?? FinanceCategory::first()?->id;
+        $this->financeCategoryId = $this->getDefaultFinanceCategoryId('pemasukan');
         $this->financeAgendaId = null;
         $this->financeProgramName = 'Kas Umum';
         $this->financeAmount = '';
@@ -4741,13 +4742,28 @@ class AdminDashboard extends Component
 
         if ($type === 'pemasukan') {
             if (! $currentCategory || $currentCategory->group !== 'penerimaan') {
-                $this->financeCategoryId = FinanceCategory::where('group', 'penerimaan')->first()?->id;
+                $this->financeCategoryId = $this->getDefaultFinanceCategoryId('pemasukan');
             }
         } else {
             if (! $currentCategory || $currentCategory->group === 'penerimaan') {
-                $this->financeCategoryId = FinanceCategory::whereIn('group', ['pengeluaran_rutin', 'pengeluaran_nonrutin'])->first()?->id;
+                $this->financeCategoryId = $this->getDefaultFinanceCategoryId('pengeluaran');
             }
         }
+    }
+
+    protected function getDefaultFinanceCategoryId(string $type): ?int
+    {
+        if ($type === 'pemasukan') {
+            return FinanceCategory::where('name', 'Infaq Rutin Pegawai (Tukin)')->value('id')
+                ?? FinanceCategory::where('name', 'like', '%Infaq Rutin%')->where('group', 'penerimaan')->value('id')
+                ?? FinanceCategory::where('group', 'penerimaan')->value('id')
+                ?? FinanceCategory::value('id');
+        }
+
+        return FinanceCategory::where('name', 'Konsumsi Jumat Berkah')->value('id')
+            ?? FinanceCategory::where('name', 'like', '%Konsumsi Jumat%')->whereIn('group', ['pengeluaran_rutin', 'pengeluaran_nonrutin'])->value('id')
+            ?? FinanceCategory::whereIn('group', ['pengeluaran_rutin', 'pengeluaran_nonrutin'])->value('id')
+            ?? FinanceCategory::value('id');
     }
 
     public function editFinance(int $id): void
