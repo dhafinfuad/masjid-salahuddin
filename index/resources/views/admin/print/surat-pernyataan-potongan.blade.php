@@ -181,13 +181,7 @@
                 <tr>
                   <td class="text-center font-semibold text-slate-700">{{ $p['order'] }}</td>
                   <td class="font-semibold text-slate-900">{{ $p['label'] }}</td>
-                  <td class="font-bold text-slate-900">
-                    @if($p['amount'] > 0)
-                      Rp {{ number_format($p['amount'], 0, ',', '.') }}
-                    @else
-                      Rp
-                    @endif
-                  </td>
+                  <td></td>
                 </tr>
               @endforeach
             </tbody>

@@ -74,6 +74,29 @@ class SocialProgramPrintTest extends TestCase
         $response->assertSee('Riwayat Potongan');
         $response->assertSee('Deril Amrizal Kholid');
         $response->assertSee('Seksi Penjaminan Kualitas Data');
+        // Kolom Nominal per Bulan wajib kosong untuk diisi manual dengan bolpen
+        $response->assertDontSee('Rp 150.000');
+    }
+
+    public function test_nominal_per_bulan_column_is_blank_for_manual_pen_filling(): void
+    {
+        $this->actingAs($this->admin);
+
+        ProgramParticipant::create([
+            'name' => $this->employee->name,
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 250000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=single&employee_id=' . $this->employee->id);
+
+        $response->assertStatus(200);
+        $response->assertSee('Nominal per Bulan');
+        $response->assertDontSee('Rp 250.000');
+        // Kolom harus berupa td kosong tanpa teks nominal
+        $response->assertSee('<td></td>', false);
     }
 
     public function test_admin_can_print_single_employee_with_history(): void
