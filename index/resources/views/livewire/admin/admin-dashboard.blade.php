@@ -742,10 +742,12 @@
             5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
         ];
-        $bulanIniIndo = $daftarBulanIndo[(int) now()->month] ?? 'Oktober';
+        $nextMonthDate = now()->startOfMonth()->addMonth();
+        $bulanDepanIndo = $daftarBulanIndo[(int) $nextMonthDate->month] ?? 'Januari';
+        $tahunDepanIndo = (string) $nextMonthDate->year;
 @endphp
-        printPernyataanEffectiveMonth: '{{ $bulanIniIndo }}',
-        printPernyataanEffectiveYear: '{{ now()->year }}',
+        printPernyataanEffectiveMonth: '{{ $bulanDepanIndo }}',
+        printPernyataanEffectiveYear: '{{ $tahunDepanIndo }}',
         printPernyataanSecretaryName: 'Deril Amrizal Kholid',
         printPernyataanSecretarySection: 'Seksi Penjaminan Kualitas Data',
         printPernyataanOpenDropdown: null,
@@ -764,10 +766,10 @@
             this.printPernyataanSearchNewEmp = '';
             this.printPernyataanSelectedNewName = '';
             if (!this.printPernyataanEffectiveMonth) {
-                this.printPernyataanEffectiveMonth = '{{ $bulanIniIndo }}';
+                this.printPernyataanEffectiveMonth = '{{ $bulanDepanIndo }}';
             }
             if (!this.printPernyataanEffectiveYear) {
-                this.printPernyataanEffectiveYear = '{{ now()->year }}';
+                this.printPernyataanEffectiveYear = '{{ $tahunDepanIndo }}';
             }
             this.showPrintPernyataanModal = true;
             this.$nextTick(() => {

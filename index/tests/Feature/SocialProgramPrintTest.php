@@ -273,5 +273,24 @@ class SocialProgramPrintTest extends TestCase
         $response->assertDontSee('Bambang Mutasi');
         $response->assertDontSee('Cahyo Pensiun');
     }
+
+    public function test_default_effective_month_and_year_in_admin_modal_is_next_month(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Kasus 1: Misal saat ini bulan Oktober 2026, maka default adalah bulan November 2026
+        \Carbon\Carbon::setTestNow('2026-10-21 12:00:00');
+        $response = \Livewire\Livewire::test(\App\Livewire\Admin\AdminDashboard::class, ['tab' => 'programs']);
+        $response->assertSee("printPernyataanEffectiveMonth: 'November'", false);
+        $response->assertSee("printPernyataanEffectiveYear: '2026'", false);
+
+        // Kasus 2: Misal saat ini bulan Desember 2026, maka tertampil secara otomatis adalah bulan Januari 2027
+        \Carbon\Carbon::setTestNow('2026-12-15 12:00:00');
+        $responseDec = \Livewire\Livewire::test(\App\Livewire\Admin\AdminDashboard::class, ['tab' => 'programs']);
+        $responseDec->assertSee("printPernyataanEffectiveMonth: 'Januari'", false);
+        $responseDec->assertSee("printPernyataanEffectiveYear: '2027'", false);
+
+        \Carbon\Carbon::setTestNow();
+    }
 }
 
