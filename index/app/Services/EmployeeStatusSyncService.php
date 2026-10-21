@@ -279,6 +279,11 @@ class EmployeeStatusSyncService
         $userEmail = strtolower(trim((string) $user->email));
         $emailPrefix = explode('@', $userEmail)[0] ?? '';
 
+        // 0. Cocokkan via user_id langsung jika ada
+        if (!empty($entry['user_id']) && (int) $user->id === (int) $entry['user_id']) {
+            return true;
+        }
+
         // 1. Cocokkan via NIP 18
         if (!empty($entry['nip18'])) {
             if ($userNip === $entry['nip18']) {
@@ -415,5 +420,129 @@ class EmployeeStatusSyncService
             'deactivated_names' => array_map(fn($u) => $u->name, $deactivated),
             'unmatched_rows' => array_slice($unmatchedRows, 0, 15), // Batasi 15 contoh untuk preview
         ];
+    }
+
+    /**
+     * Sinkronkan status seluruh akun User secara otomatis berdasarkan data tabel employees.
+     * Pegawai yang berstatus 'AKTIF' di tabel employees akan membuat akun User pasangannya AKTIF.
+     * Pengguna yang tidak terdapat di tabel employees (atau statusnya bukan AKTIF) akan diset NONAKTIF.
+     * Akun Master Admin dilindungi dari penonaktifan.
+     *
+     * @param int|null $currentUserId
+     * @return array
+     */
+    public static function syncFromEmployeesTable(?int $currentUserId = null): array
+    {
+        if (! \Illuminate\Support\Facades\Schema::hasTable('employees') || \App\Models\Employee::count() === 0) {
+            return [
+                'total_input_rows' => 0,
+                'activated_count' => 0,
+                'deactivated_count' => 0,
+                'unmatched_input_count' => 0,
+                'activated_names' => [],
+                'deactivated_names' => [],
+                'unmatched_rows' => [],
+            ];
+        }
+
+        $activeEmployees = \App\Models\Employee::where('status', 'AKTIF')->get();
+
+        $entries = [];
+        foreach ($activeEmployees as $emp) {
+            $entries[] = [
+                'raw' => trim(($emp->nip_panjang ?? '') . ' ' . ($emp->nip_pendek ?? '') . ' ' . $emp->name),
+                'nip18' => $emp->nip_panjang ?: null,
+                'nip9' => $emp->nip_pendek ?: null,
+                'name' => $emp->name ?: null,
+                'user_id' => $emp->user_id ?: null,
+            ];
+        }
+
+        return self::sync($entries, true, $currentUserId);
+    }
+
+    /**
+     * Periksa apakah satu User tertentu tergolong pegawai aktif di tabel employees.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public static function isUserActiveEmployee(User $user): bool
+    {
+        // 1. Akun Master Admin selalu dianggap aktif
+        if ($user->isMaster()) {
+            if ($user->status !== 'AKTIF') {
+                $user->update(['status' => 'AKTIF']);
+            }
+            return true;
+        }
+
+        if (! \Illuminate\Support\Facades\Schema::hasTable('employees') || \App\Models\Employee::count() === 0) {
+            return ($user->status ?? 'AKTIF') === 'AKTIF';
+        }
+
+        // 2. Cek relasi user_id langsung ke pegawai aktif
+        $linkedEmp = \App\Models\Employee::where('user_id', $user->id)->first();
+        if ($linkedEmp) {
+            $isActive = strtoupper($linkedEmp->status) === 'AKTIF';
+            $expectedStatus = $isActive ? 'AKTIF' : 'NONAKTIF';
+            if ($user->status !== $expectedStatus) {
+                $user->update(['status' => $expectedStatus]);
+            }
+            return $isActive;
+        }
+
+        // 3. Cek via NIP jika ada
+        $userNip = !empty($user->nip) ? preg_replace('/\D/', '', (string) $user->nip) : null;
+        if ($userNip) {
+            $empNip = \App\Models\Employee::where(function ($q) use ($userNip) {
+                    $q->where('nip_panjang', $userNip)
+                        ->orWhere('nip_pendek', $userNip);
+                })
+                ->first();
+
+            if ($empNip) {
+                $isActive = strtoupper($empNip->status) === 'AKTIF';
+                $expectedStatus = $isActive ? 'AKTIF' : 'NONAKTIF';
+                if ($user->status !== $expectedStatus) {
+                    $user->update(['status' => $expectedStatus]);
+                }
+                if (!$empNip->user_id) {
+                    $empNip->update(['user_id' => $user->id]);
+                }
+                return $isActive;
+            }
+        }
+
+        // 4. Cek via Nama yang dinormalisasi pada semua data pegawai
+        $employees = \App\Models\Employee::all();
+        foreach ($employees as $emp) {
+            $entry = [
+                'raw' => $emp->name,
+                'nip18' => $emp->nip_panjang,
+                'nip9' => $emp->nip_pendek,
+                'name' => $emp->name,
+                'user_id' => $emp->user_id,
+            ];
+
+            if (self::isUserMatch($user, $entry)) {
+                $isActive = strtoupper($emp->status) === 'AKTIF';
+                $expectedStatus = $isActive ? 'AKTIF' : 'NONAKTIF';
+                if ($user->status !== $expectedStatus) {
+                    $user->update(['status' => $expectedStatus]);
+                }
+                if (!$emp->user_id) {
+                    $emp->update(['user_id' => $user->id]);
+                }
+                return $isActive;
+            }
+        }
+
+        // Jika tidak ditemukan di tabel employees sama sekali
+        if ($user->status !== 'NONAKTIF') {
+            $user->update(['status' => 'NONAKTIF']);
+        }
+
+        return false;
     }
 }

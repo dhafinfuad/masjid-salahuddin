@@ -4,10 +4,11 @@ namespace Tests\Feature;
 
 use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Auth\LoginPage;
+use App\Models\Employee;
 use App\Models\MasjidSetting;
 use App\Models\User;
+use App\Services\EmployeeStatusSyncService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -42,60 +43,117 @@ class EmployeeStatusSyncTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_sync_employee_status_via_text(): void
+    public function test_user_status_is_automatically_synced_from_employees_table(): void
     {
-        $this->actingAs($this->admin);
-
-        // Buat 3 user pegawai di database
+        // 1. Pegawai Aktif
         $pegawai1 = User::factory()->create([
             'name' => 'Deril Amrizal Kholid',
             'email' => '817931806@pajak.go.id',
             'nip' => '198501152010121001',
-            'status' => 'AKTIF',
-        ]);
-
-        $pegawai2 = User::factory()->create([
-            'name' => 'Bimo Heriyanto',
-            'email' => 'bimo.heriyanto@pajak.go.id',
-            'nip' => null,
+            'role' => 'Jamaah',
             'status' => 'NONAKTIF', // Sebelumnya nonaktif
         ]);
 
-        $pegawai3Mutasi = User::factory()->create([
-            'name' => 'Ichtiar Rachmatullah',
-            'email' => 'ichtiar.r@pajak.go.id',
-            'nip' => '198703122011011002',
-            'status' => 'AKTIF', // Pegawai yang sudah mutasi/keluar
+        Employee::create([
+            'name' => 'Deril Amrizal Kholid, S.E.',
+            'nip_pendek' => '817931806',
+            'nip_panjang' => '198501152010121001',
+            'status' => 'AKTIF',
+            'user_id' => $pegawai1->id,
         ]);
 
-        // Input text hanya berisikan pegawai 1 dan pegawai 2
-        $pastedText = "817931806\t198501152010121001\tDeril Amrizal Kholid\nBimo Heriyanto, S.E.";
+        // 2. Pegawai Mutasi / Nonaktif di tabel employees
+        $pegawai2Mutasi = User::factory()->create([
+            'name' => 'Ichtiar Rachmatullah',
+            'email' => '060098765@pajak.go.id',
+            'nip' => '198703122011011002',
+            'role' => 'Jamaah',
+            'status' => 'AKTIF', // Awalnya aktif
+        ]);
 
-        Livewire::test(AdminDashboard::class)
-            ->set('employeeStatusInputMode', 'text')
-            ->set('employeeStatusText', $pastedText)
-            ->set('deactivateMissingEmployees', true)
-            ->call('syncEmployeeStatus')
-            ->assertHasNoErrors();
+        Employee::create([
+            'name' => 'Ichtiar Rachmatullah',
+            'nip_pendek' => '060098765',
+            'nip_panjang' => '198703122011011002',
+            'status' => 'MUTASI',
+            'user_id' => $pegawai2Mutasi->id,
+        ]);
 
-        // Pegawai 1 dan 2 harus AKTIF
+        // 3. Pegawai yang sama sekali tidak ada di tabel employees
+        $pegawai3TidakAda = User::factory()->create([
+            'name' => 'Bimo Heriyanto',
+            'email' => 'bimo.heriyanto@pajak.go.id',
+            'role' => 'Jamaah',
+            'status' => 'AKTIF',
+        ]);
+
+        // Jalankan sinkronisasi otomatis
+        $result = EmployeeStatusSyncService::syncFromEmployeesTable($this->admin->id);
+
+        // Pegawai 1 harus otomatis AKTIF
         $this->assertEquals('AKTIF', $pegawai1->fresh()->status);
-        $this->assertEquals('AKTIF', $pegawai2->fresh()->status);
 
-        // Pegawai 3 tidak ada di daftar, harus menjadi NONAKTIF
-        $this->assertEquals('NONAKTIF', $pegawai3Mutasi->fresh()->status);
+        // Pegawai 2 yang mutasi harus otomatis NONAKTIF
+        $this->assertEquals('NONAKTIF', $pegawai2Mutasi->fresh()->status);
 
-        // Admin yang sedang login tidak boleh dinonaktifkan
+        // Pegawai 3 yang tidak ada di tabel employees harus otomatis NONAKTIF
+        $this->assertEquals('NONAKTIF', $pegawai3TidakAda->fresh()->status);
+
+        // Akun Master Admin dilindungi, harus tetap AKTIF
         $this->assertEquals('AKTIF', $this->admin->fresh()->status);
+    }
+
+    public function test_toggle_employee_status_automatically_updates_user_account_status(): void
+    {
+        $this->actingAs($this->admin);
+
+        $user = User::factory()->create([
+            'name' => 'Ahmad Fulan',
+            'email' => 'ahmad.fulan@pajak.go.id',
+            'nip' => '199001012015011001',
+            'role' => 'Jamaah',
+            'status' => 'AKTIF',
+        ]);
+
+        $employee = Employee::create([
+            'name' => 'Ahmad Fulan',
+            'nip_pendek' => '060012345',
+            'nip_panjang' => '199001012015011001',
+            'status' => 'AKTIF',
+            'user_id' => $user->id,
+        ]);
+
+        // Toggle status pegawai menjadi MUTASI
+        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+            ->call('toggleEmployeeStatus', $employee->id);
+
+        $this->assertEquals('MUTASI', $employee->fresh()->status);
+        $this->assertEquals('NONAKTIF', $user->fresh()->status);
+
+        // Toggle kembali status pegawai menjadi AKTIF
+        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+            ->call('toggleEmployeeStatus', $employee->id);
+
+        $this->assertEquals('AKTIF', $employee->fresh()->status);
+        $this->assertEquals('AKTIF', $user->fresh()->status);
     }
 
     public function test_inactive_employee_cannot_login_and_sees_notification(): void
     {
-        $pegawaiNonaktif = User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Mantan Pegawai KPP',
             'email' => 'mantan.pegawai@pajak.go.id',
-            'status' => 'NONAKTIF',
+            'status' => 'AKTIF', // di database akun sempat AKTIF
             'password' => Hash::make('password123'),
+        ]);
+
+        // Namun di tabel employees statusnya MUTASI
+        Employee::create([
+            'name' => 'Mantan Pegawai KPP',
+            'nip_pendek' => '060055555',
+            'nip_panjang' => '198801012010011005',
+            'status' => 'MUTASI',
+            'user_id' => $user->id,
         ]);
 
         Livewire::test(LoginPage::class)
@@ -104,16 +162,27 @@ class EmployeeStatusSyncTest extends TestCase
             ->call('login')
             ->assertSet('errorMessage', 'Anda sudah bukan lagi pegawai KPP Madya Malang.');
 
+        // Status user otomatis tersinkronisasi menjadi NONAKTIF di database
+        $this->assertEquals('NONAKTIF', $user->fresh()->status);
         $this->assertGuest();
     }
 
-    public function test_active_employee_can_login_successfully(): void
+    public function test_active_employee_with_previously_inactive_account_can_login_and_auto_activates(): void
     {
-        $pegawaiAktif = User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'Pegawai Aktif KPP',
             'email' => 'pegawai.aktif@pajak.go.id',
-            'status' => 'AKTIF',
+            'status' => 'NONAKTIF', // Sebelumnya status akun NONAKTIF
             'password' => Hash::make('password123'),
+        ]);
+
+        // Namun di tabel employees statusnya AKTIF
+        Employee::create([
+            'name' => 'Pegawai Aktif KPP',
+            'nip_pendek' => '060077777',
+            'nip_panjang' => '199501012018011007',
+            'status' => 'AKTIF',
+            'user_id' => $user->id,
         ]);
 
         Livewire::test(LoginPage::class)
@@ -123,39 +192,9 @@ class EmployeeStatusSyncTest extends TestCase
             ->assertHasNoErrors()
             ->assertRedirect('/admin');
 
-        $this->assertAuthenticatedAs($pegawaiAktif);
-    }
-
-    public function test_admin_can_sync_employee_status_via_csv_file(): void
-    {
-        $this->actingAs($this->admin);
-
-        $pegawai = User::factory()->create([
-            'name' => 'Sukirman',
-            'email' => 'sukirman@pajak.go.id',
-            'status' => 'NONAKTIF',
-        ]);
-
-        $csvContent = "No,NIP Pendek,NIP Panjang,Nama Pegawai\n1,060012345,198001012005011001,Sukirman";
-        $file = UploadedFile::fake()->createWithContent('daftar_pegawai.csv', $csvContent);
-
-        Livewire::test(AdminDashboard::class)
-            ->set('employeeStatusInputMode', 'file')
-            ->set('employeeStatusFile', $file)
-            ->call('syncEmployeeStatus')
-            ->assertHasNoErrors();
-
-        $this->assertEquals('AKTIF', $pegawai->fresh()->status);
-    }
-
-    public function test_viewer_cannot_sync_employee_status(): void
-    {
-        $this->actingAs($this->viewer);
-
-        Livewire::test(AdminDashboard::class)
-            ->set('employeeStatusText', 'Nama Pegawai')
-            ->call('syncEmployeeStatus')
-            ->assertSet('toastMessage', 'Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
+        // Status user otomatis dipulihkan menjadi AKTIF
+        $this->assertEquals('AKTIF', $user->fresh()->status);
+        $this->assertAuthenticatedAs($user);
     }
 
     public function test_employee_with_academic_degree_is_automatically_linked_to_user_account(): void
@@ -172,7 +211,7 @@ class EmployeeStatusSyncTest extends TestCase
         ]);
 
         // Buat record pegawai dengan penulisan resmi SIKKA bergelar akademik
-        $employee = \App\Models\Employee::create([
+        $employee = Employee::create([
             'name' => 'DHAFIN FUAD MAHATHIR, A.Md.Pjk.',
             'nip_pendek' => '817931806',
             'nip_panjang' => '199802122018011003',
@@ -205,7 +244,7 @@ class EmployeeStatusSyncTest extends TestCase
             'status' => 'AKTIF',
         ]);
 
-        $employee = \App\Models\Employee::create([
+        $employee = Employee::create([
             'name' => 'DHAFIN FUAD MAHATHIR, A.Md.Pjk.',
             'nip_pendek' => '817931806',
             'nip_panjang' => '199802122018011003',

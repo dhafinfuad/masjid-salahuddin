@@ -150,19 +150,6 @@
                         />
                     </div>
 
-                    <!-- Reset Filter Button (w-full sm:w-auto) -->
-                    <div class="w-full sm:w-auto shrink-0">
-                        <span class="hidden sm:block text-xs font-bold uppercase text-transparent select-none mb-1.5">&nbsp;</span>
-                        <button 
-                            type="button" 
-                            wire:click="resetFilters" 
-                            class="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                            title="Reset seluruh filter">
-                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
-                            <span>Reset</span>
-                        </button>
-                    </div>
-
                 </div>
             </div>
         </div>

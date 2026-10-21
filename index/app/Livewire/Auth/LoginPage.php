@@ -85,8 +85,8 @@ class LoginPage extends Component
             return;
         }
 
-        // Cek status keaktifan pegawai
-        if (strtoupper($user->status ?? 'AKTIF') !== 'AKTIF') {
+        // Cek status keaktifan pegawai secara otomatis via tabel employees
+        if (! \App\Services\EmployeeStatusSyncService::isUserActiveEmployee($user)) {
             RateLimiter::hit($throttleKey, 60);
             $this->errorMessage = 'Anda sudah bukan lagi pegawai KPP Madya Malang.';
             return;
@@ -141,7 +141,7 @@ class LoginPage extends Component
         $targetRoles = $roleMap[strtolower($role)] ?? [$role];
         $user = User::whereIn('role', $targetRoles)->first();
         if ($user) {
-            if (strtoupper($user->status ?? 'AKTIF') !== 'AKTIF') {
+            if (! \App\Services\EmployeeStatusSyncService::isUserActiveEmployee($user)) {
                 $this->errorMessage = 'Anda sudah bukan lagi pegawai KPP Madya Malang.';
                 return;
             }

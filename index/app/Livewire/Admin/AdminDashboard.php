@@ -288,15 +288,6 @@ class AdminDashboard extends Component
     public string $userStatus = 'AKTIF';
     public string $userFilterRole = 'all';
 
-    // ==========================================
-    // Employee Status Sync State
-    // ==========================================
-    public bool $showEmployeeStatusModal = false;
-    public string $employeeStatusInputMode = 'text'; // 'text' | 'file'
-    public string $employeeStatusText = '';
-    public mixed $employeeStatusFile = null;
-    public bool $deactivateMissingEmployees = true;
-    public ?array $employeeStatusSyncResult = null;
 
     // ==========================================
     // Takmir & Kepengurusan State (Subtab under /admin/users)
@@ -580,6 +571,14 @@ class AdminDashboard extends Component
         }
 
         $this->loadTakmirDataFromSettings();
+
+        if ($this->currentTab === 'users') {
+            try {
+                \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+            } catch (\Throwable $e) {
+                // Abaikan jika tabel employees belum siap
+            }
+        }
     }
 
     public function switchTab(string $tab): void
@@ -589,6 +588,12 @@ class AdminDashboard extends Component
             $this->kegiatanSubTab = 'pekanan';
         } elseif ($tab === 'agenda') {
             $this->kegiatanSubTab = 'agenda';
+        } elseif ($tab === 'users') {
+            try {
+                \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+            } catch (\Throwable $e) {
+                // Abaikan jika tabel employees belum siap
+            }
         }
         $this->search = '';
         $this->toastMessage = '';
@@ -3747,80 +3752,6 @@ class AdminDashboard extends Component
         $this->notify("Status {$user->name} diubah menjadi {$user->status}.");
     }
 
-    public function openEmployeeStatusModal(): void
-    {
-        if (! Auth::user()->canManage()) {
-            $this->notify('Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
-            return;
-        }
-
-        $this->resetEmployeeStatusModal();
-        $this->showEmployeeStatusModal = true;
-        $this->dispatch('open-employee-status-modal');
-    }
-
-    public function resetEmployeeStatusModal(): void
-    {
-        $this->employeeStatusText = '';
-        $this->employeeStatusFile = null;
-        $this->employeeStatusInputMode = 'text';
-        $this->deactivateMissingEmployees = true;
-        $this->employeeStatusSyncResult = null;
-        $this->resetValidation([
-            'employeeStatusText',
-            'employeeStatusFile',
-        ]);
-    }
-
-    public function syncEmployeeStatus(): void
-    {
-        if (! Auth::user()->canManage()) {
-            $this->notify('Akses ditolak: Hanya pengurus yang berwenang memperbarui status pegawai.');
-            return;
-        }
-
-        $entries = [];
-
-        if ($this->employeeStatusInputMode === 'text') {
-            $this->validate([
-                'employeeStatusText' => 'required|string|min:3',
-            ], [
-                'employeeStatusText.required' => 'Daftar nama atau NIP pegawai wajib diisi.',
-                'employeeStatusText.min' => 'Daftar nama atau NIP pegawai minimal 3 karakter.',
-            ]);
-
-            $entries = \App\Services\EmployeeStatusSyncService::parseText($this->employeeStatusText);
-        } else {
-            $this->validate([
-                'employeeStatusFile' => 'required|file|mimes:xlsx,xls,csv,txt|max:10240',
-            ], [
-                'employeeStatusFile.required' => 'Silakan pilih berkas Excel atau CSV terlebih dahulu.',
-                'employeeStatusFile.mimes' => 'Berkas harus berformat .xlsx, .xls, atau .csv.',
-                'employeeStatusFile.max' => 'Ukuran berkas maksimal 10 MB.',
-            ]);
-
-            $tempPath = $this->employeeStatusFile->getRealPath();
-            $entries = \App\Services\EmployeeStatusSyncService::parseFile($tempPath);
-        }
-
-        if (empty($entries)) {
-            $this->addError(
-                $this->employeeStatusInputMode === 'text' ? 'employeeStatusText' : 'employeeStatusFile',
-                'Tidak ditemukan data nama atau NIP yang valid pada input yang diberikan. Pastikan format sudah sesuai.'
-            );
-            return;
-        }
-
-        $result = \App\Services\EmployeeStatusSyncService::sync(
-            $entries,
-            $this->deactivateMissingEmployees,
-            Auth::id()
-        );
-
-        $this->employeeStatusSyncResult = $result;
-        $this->notify("Status pegawai berhasil disinkronkan: {$result['activated_count']} aktif, {$result['deactivated_count']} dinonaktifkan.");
-    }
-
     // ==========================================
     // Master Data Pegawai Actions
     // ==========================================
@@ -4155,6 +4086,12 @@ class AdminDashboard extends Component
             $this->notify("Pegawai {$employee->name} berhasil ditambahkan ke database.");
         }
 
+        try {
+            \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+        } catch (\Throwable $e) {
+            Log::warning('syncFromEmployeesTable in saveEmployee warning: ' . $e->getMessage());
+        }
+
         $this->showEmployeeModal = false;
         $this->editingEmployeeId = null;
         $this->dispatch('close-employee-modal');
@@ -4182,6 +4119,13 @@ class AdminDashboard extends Component
         $employee = Employee::findOrFail($id);
         $name = $employee->name;
         $employee->delete();
+
+        try {
+            \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+        } catch (\Throwable $e) {
+            Log::warning('syncFromEmployeesTable in deleteEmployee warning: ' . $e->getMessage());
+        }
+
         $this->notify("Data pegawai {$name} telah dihapus dari database.");
     }
 
@@ -4200,6 +4144,13 @@ class AdminDashboard extends Component
         $employee = Employee::findOrFail($id);
         $employee->status = ($employee->status === 'AKTIF') ? 'MUTASI' : 'AKTIF';
         $employee->save();
+
+        try {
+            \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+        } catch (\Throwable $e) {
+            Log::warning('syncFromEmployeesTable in toggleEmployeeStatus warning: ' . $e->getMessage());
+        }
+
         $this->notify("Status {$employee->name} diubah menjadi {$employee->status}.");
     }
 
@@ -4272,6 +4223,13 @@ class AdminDashboard extends Component
 
         $employee = Employee::findOrFail($employeeId);
         $employee->update(['user_id' => null]);
+
+        try {
+            \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+        } catch (\Throwable $e) {
+            Log::warning('syncFromEmployeesTable in unlinkEmployeeFromUser warning: ' . $e->getMessage());
+        }
+
         $this->notify("Tautan akun pengguna untuk {$employee->name} telah dilepas.");
     }
 
@@ -4419,6 +4377,12 @@ class AdminDashboard extends Component
         ];
 
         $this->importEmployeeFile = null;
+
+        try {
+            \App\Services\EmployeeStatusSyncService::syncFromEmployeesTable(Auth::id());
+        } catch (\Throwable $e) {
+            Log::warning('syncFromEmployeesTable in importEmployees warning: ' . $e->getMessage());
+        }
 
         $notifMsg = "Impor pegawai sukses: {$imported} baru, {$updated} diperbarui, {$linked} tertaut akun pengguna.";
         if ($parseResult['skipped_non_muslim'] > 0) {
