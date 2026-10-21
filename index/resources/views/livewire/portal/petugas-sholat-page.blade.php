@@ -1,24 +1,40 @@
 <div x-data="{ 
         showQrModal: false,
+        renderQr() {
+            const container = document.getElementById('portalQrcodeContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            const url = '{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}';
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(container, {
+                    text: url,
+                    width: 176,
+                    height: 176,
+                    colorDark: '#06172e',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        },
         openQr() {
             this.showQrModal = true;
             this.$nextTick(() => {
-                const container = document.getElementById('portalQrcodeContainer');
-                if (!container) return;
-                container.innerHTML = '';
-                const url = '{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}';
-                if (typeof QRCode !== 'undefined') {
-                    new QRCode(container, {
-                        text: url,
-                        width: 176,
-                        height: 176,
-                        colorDark: '#06172e',
-                        colorLight: '#ffffff',
-                        correctLevel: QRCode.CorrectLevel.M
-                    });
-                }
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
+                if (typeof QRCode === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = '{{ asset('vendor/qrcode.min.js') }}';
+                    script.onload = () => this.renderQr();
+                    script.onerror = () => {
+                        const cdnScript = document.createElement('script');
+                        cdnScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+                        cdnScript.onload = () => this.renderQr();
+                        document.head.appendChild(cdnScript);
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    this.renderQr();
                 }
             });
         }
@@ -397,13 +413,4 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Script Library QR Code -->
-    <script src="{{ asset('vendor/qrcode.min.js') }}"></script>
-    <script>
-        if (typeof QRCode === 'undefined') {
-            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>');
-        }
-    </script>
 </div>

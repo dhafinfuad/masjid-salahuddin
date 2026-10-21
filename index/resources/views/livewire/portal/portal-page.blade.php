@@ -1049,91 +1049,92 @@
             </div>
         </div>
     </div>
-</div>
-
-@push('scripts')
-<script>
-    function updateDigitalClock() {
-        const now = new Date();
-        const hrs = String(now.getHours()).padStart(2, '0');
-        const mins = String(now.getMinutes()).padStart(2, '0');
-        const secs = String(now.getSeconds()).padStart(2, '0');
-        const timeStr = `${hrs}:${mins}:${secs}`;
-
-        const clockEl = document.getElementById('digital-clock');
-        if (clockEl) clockEl.textContent = timeStr;
-
-        const portalClock = document.getElementById('portal-live-clock');
-        if (portalClock) portalClock.textContent = timeStr;
-    }
-
-    function copyRekening(text, btnElement) {
-        if (window.copyTextToClipboard) {
-            window.copyTextToClipboard(text, () => {
-                window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Nomor rekening berhasil disalin!' } }));
-            });
-        } else if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text);
-        } else {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-            } catch (err) {}
-            document.body.removeChild(textArea);
-        }
-    }
-
-    function updatePortalCountdown() {
-        const targetTimeStr = "{{ $nextPrayer['target_time'] ?? ($nextPrayer['prayer']['adzan'] ?? '') }}";
-        if (!targetTimeStr) return;
-
-        const now = new Date();
-        const parts = targetTimeStr.split(':');
-        if (parts.length < 2) return;
-
-        const targetH = parseInt(parts[0], 10);
-        const targetM = parseInt(parts[1], 10);
-
-        let targetDate = new Date();
-        targetDate.setHours(targetH, targetM, 0, 0);
-
-        @if(!empty($nextPrayer['is_tomorrow']))
-            targetDate.setDate(targetDate.getDate() + 1);
-        @endif
-
-        const diffMs = targetDate - now;
-        const el = document.getElementById('subuh-countdown') || document.getElementById('portal-countdown-display');
-        if (el && diffMs > 0) {
-            const totalSecs = Math.floor(diffMs / 1000);
-            const hrs = Math.floor(totalSecs / 3600);
-            const mins = Math.floor((totalSecs % 3600) / 60);
-            const secs = totalSecs % 60;
-
-            if (hrs > 0) {
-                el.textContent = `${hrs} jam ${mins} menit lagi`;
+    @script
+    <script>
+        window.copyRekening = function(text, btnElement) {
+            if (window.copyTextToClipboard) {
+                window.copyTextToClipboard(text, () => {
+                    window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Nomor rekening berhasil disalin!' } }));
+                });
+            } else if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text);
             } else {
-                el.textContent = `${mins} menit lagi`;
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (err) {}
+                document.body.removeChild(textArea);
             }
-        } else if (diffMs <= 0 && window.Livewire) {
-            if (!window._portalRefreshTriggered) {
-                window._portalRefreshTriggered = true;
-                $wire.call('loadPrayers');
-                setTimeout(() => { window._portalRefreshTriggered = false; }, 8000);
+        };
+
+        function updateDigitalClock() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            const secs = String(now.getSeconds()).padStart(2, '0');
+            const timeStr = `${hrs}:${mins}:${secs}`;
+
+            const clockEl = document.getElementById('digital-clock');
+            if (clockEl) clockEl.textContent = timeStr;
+
+            const portalClock = document.getElementById('portal-live-clock');
+            if (portalClock) portalClock.textContent = timeStr;
+        }
+
+        function updatePortalCountdown() {
+            const targetTimeStr = "{{ $nextPrayer['target_time'] ?? ($nextPrayer['prayer']['adzan'] ?? '') }}";
+            if (!targetTimeStr) return;
+
+            const now = new Date();
+            const parts = targetTimeStr.split(':');
+            if (parts.length < 2) return;
+
+            const targetH = parseInt(parts[0], 10);
+            const targetM = parseInt(parts[1], 10);
+
+            let targetDate = new Date();
+            targetDate.setHours(targetH, targetM, 0, 0);
+
+            @if(!empty($nextPrayer['is_tomorrow']))
+                targetDate.setDate(targetDate.getDate() + 1);
+            @endif
+
+            const diffMs = targetDate - now;
+            const el = document.getElementById('subuh-countdown') || document.getElementById('portal-countdown-display');
+            if (el && diffMs > 0) {
+                const totalSecs = Math.floor(diffMs / 1000);
+                const hrs = Math.floor(totalSecs / 3600);
+                const mins = Math.floor((totalSecs % 3600) / 60);
+                const secs = totalSecs % 60;
+
+                if (hrs > 0) {
+                    el.textContent = `${hrs} jam ${mins} menit lagi`;
+                } else {
+                    el.textContent = `${mins} menit lagi`;
+                }
+            } else if (diffMs <= 0 && window.Livewire) {
+                if (!window._portalRefreshTriggered) {
+                    window._portalRefreshTriggered = true;
+                    $wire.call('loadPrayers');
+                    setTimeout(() => { window._portalRefreshTriggered = false; }, 8000);
+                }
             }
         }
-    }
 
-    updateDigitalClock();
-    setInterval(updateDigitalClock, 1000);
+        updateDigitalClock();
+        if (window._portalClockInterval) clearInterval(window._portalClockInterval);
+        window._portalClockInterval = setInterval(updateDigitalClock, 1000);
 
-    updatePortalCountdown();
-    setInterval(updatePortalCountdown, 1000);
-</script>
-@endpush
+        updatePortalCountdown();
+        if (window._portalCountdownInterval) clearInterval(window._portalCountdownInterval);
+        window._portalCountdownInterval = setInterval(updatePortalCountdown, 1000);
+    </script>
+    @endscript
+</div>

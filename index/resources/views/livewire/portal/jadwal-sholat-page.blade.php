@@ -98,7 +98,7 @@
                     <button type="button" 
                             id="filter-city"
                             @click="open = !open; if (open) $nextTick(() => { $refs.citySearchInput.focus(); if (window.createLucideIcons) window.createLucideIcons(); })"
-                            class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain flex items-center justify-between gap-2 shadow-2xs text-left">
+                            class="w-full px-2.5 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:border-gov-navy transition cursor-pointer font-medium text-xs text-gov-textMain flex items-center justify-between gap-2 shadow-2xs text-left">
                         <div class="flex items-center gap-2 min-w-0 flex-1">
                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-600 shrink-0 inline-block"></i>
                             <span x-text="selectedName" class="truncate font-medium text-gov-textMain leading-tight">{{ $cityName }}</span>

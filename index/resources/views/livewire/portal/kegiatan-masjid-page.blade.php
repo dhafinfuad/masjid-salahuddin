@@ -103,7 +103,7 @@
                                 id="search-activity-input"
                                 wire:model.live.debounce.300ms="search" 
                                 placeholder="Cari judul kajian, pemateri, khatib, muadzin, MC..." 
-                                class="w-full pl-9 pr-8 py-1.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"
+                                class="w-full pl-9 pr-8 py-2.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:bg-white focus:outline-none focus:border-gov-navy transition"
                             >
                             @if(!empty($search))
                                 <button type="button" 
@@ -156,7 +156,7 @@
                         <button 
                             type="button" 
                             wire:click="resetFilters" 
-                            class="w-full sm:w-auto px-4 py-1.5 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                            class="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                             title="Reset seluruh filter">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
                             <span>Reset</span>
@@ -577,7 +577,7 @@
                 </p>
                 <div class="pt-2">
                     <button type="button" wire:click="resetFilters"
-                            class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
+                            class="px-4 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                         <span>Tampilkan Semua Kegiatan</span>
                     </button>

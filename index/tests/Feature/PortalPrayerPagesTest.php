@@ -365,6 +365,23 @@ class PortalPrayerPagesTest extends TestCase
             \Carbon\Carbon::setTestNow();
         }
     }
+
+    public function test_petugas_sholat_page_does_not_contain_document_write_and_supports_spa_navigation(): void
+    {
+        $response = $this->get(route('portal.petugas-sholat'));
+        $response->assertOk();
+        $response->assertDontSee('document.write', false);
+        $response->assertSee('renderQr()', false);
+        $response->assertSee('wire:navigate', false);
+    }
+
+    public function test_portal_home_page_scripts_use_livewire_script_directive_for_spa_navigation(): void
+    {
+        $response = $this->get(route('portal'));
+        $response->assertOk();
+        $response->assertSee(route('portal.petugas-sholat'));
+        $response->assertSee('wire:navigate', false);
+    }
 }
 
 
