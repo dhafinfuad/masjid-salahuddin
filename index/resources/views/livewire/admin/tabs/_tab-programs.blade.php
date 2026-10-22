@@ -619,6 +619,7 @@
                         @endif
                     </div>
                 </div>
+                @endif
 
                 <!-- ==================================================== -->
                 <!-- SUB-VIEW 3: SURAT PERNYATAAN POTONGAN TUKIN -->
@@ -1110,16 +1111,14 @@
                                          hasImages: {{ !empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                                          isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                                          pdfError: '',
-                                         isMobile: window.innerWidth < 1024,
+                                         _isManualSelecting: false,
+                                         _manualSelectTimer: null,
                                          pageRotations: {},
                                          rotatePage(idx) {
                                              const current = this.pageRotations[idx] || 0;
                                              this.pageRotations = { ...this.pageRotations, [idx]: (current + 180) % 360 };
                                          },
                                          init() {
-                                             window.addEventListener('resize', () => {
-                                                 this.isMobile = window.innerWidth < 1024;
-                                             });
                                              this.$nextTick(() => {
                                                  if (window.createLucideIcons) window.createLucideIcons();
                                                  this.setupContinuousScrollObserver();
@@ -1192,6 +1191,7 @@
                                              }
 
                                              this._scrollListener = () => {
+                                                 if (this._isManualSelecting) return;
                                                  const containerRect = container.getBoundingClientRect();
                                                  const targetY = containerRect.top + containerRect.height * 0.35;
 
@@ -1215,7 +1215,7 @@
                                                  });
 
                                                  if (selectedIdx !== null && !isNaN(selectedIdx) && this.activeScanIdx !== selectedIdx) {
-                                                     this.activeScanIdx = selectedIdx;
+                                                      this.activeScanIdx = selectedIdx;
                                                  }
                                              };
 
@@ -1233,21 +1233,25 @@
                                              }
                                          },
                                          selectPage(idx) {
+                                             if (idx < 0 || idx >= this.totalPages) return;
                                              this.activeScanIdx = idx;
-                                             if (!this.isMobile) {
-                                                 const card = document.getElementById('scan-page-card-' + idx);
-                                                 if (card) {
-                                                     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                                 }
+                                             this._isManualSelecting = true;
+                                             const card = document.getElementById('scan-page-card-' + idx);
+                                             if (card) {
+                                                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                                              }
+                                             clearTimeout(this._manualSelectTimer);
+                                             this._manualSelectTimer = setTimeout(() => {
+                                                 this._isManualSelecting = false;
+                                             }, 450);
                                          }
                                      }">
 
                                     <!-- Split View Container (Side-by-Side di Desktop, Full Flow di Mobile) -->
                                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
                                         <!-- Sisi Kiri: Pindaian Dokumen Asli -->
-                                        <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[620px] xl:h-[680px] 2xl:h-[760px] overflow-hidden flex flex-col'"
-                                             class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3.5 justify-between relative shadow-2xs">
+                                        <div class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3.5 flex flex-col justify-between relative shadow-2xs overflow-hidden"
+                                             style="height: 640px; max-height: calc(100vh - 220px); min-height: 480px;">
                                             <!-- Header Controls -->
                                             <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 text-xs text-gov-textMain shrink-0">
                                                 <div class="flex items-center gap-2">
@@ -1275,9 +1279,9 @@
 
                                             <!-- Continuous Scroll Container for All PDF Pages -->
                                             <div wire:ignore
+                                                 wire:key="scan-pdf-continuous-container-{{ count($scanPages) }}"
                                                  id="pdfContinuousScrollContainer"
-                                                 :class="isMobile ? 'space-y-4' : 'flex-1 min-h-0 overflow-y-auto space-y-4 pr-1 scroll-smooth'"
-                                                 class="py-2.5 relative">
+                                                 class="flex-1 min-h-0 w-full overflow-y-auto space-y-4 pr-1 scroll-smooth py-2.5 relative">
                                                 
                                                 <!-- Loading Placeholder -->
                                                 <div x-show="isPdfLoading" class="p-8 text-center text-slate-400 space-y-2">
@@ -1295,8 +1299,9 @@
                                                 @foreach($scanPages as $pIdx => $pageData)
                                                 <div id="scan-page-card-{{ $pIdx }}"
                                                      data-page-index="{{ $pIdx }}"
-                                                     class="scan-pdf-page-card bg-white rounded-xl border p-2 shadow-2xs transition-all duration-150"
-                                                     :class="activeScanIdx === {{ $pIdx }} ? 'border-gov-navy ring-2 ring-gov-navy/20' : 'border-slate-200 hover:border-slate-300'">
+                                                     @click="selectPage({{ $pIdx }})"
+                                                     class="scan-pdf-page-card bg-white rounded-xl border p-2 shadow-2xs transition-all duration-150 cursor-pointer"
+                                                     :class="activeScanIdx === {{ $pIdx }} ? 'border-gov-navy ring-2 ring-gov-navy/30 shadow-md' : 'border-slate-200 hover:border-slate-300 opacity-85 hover:opacity-100'">
                                                     <!-- Mini Card Header with Page Number & Name -->
                                                     <div class="flex items-center justify-between px-1.5 pb-1.5 mb-1.5 border-b border-slate-100 text-[11px]">
                                                         <div class="flex items-center gap-1.5">
@@ -1309,11 +1314,11 @@
                                                             </span>
                                                         </div>
                                                         <div class="flex items-center gap-2">
-                                                            <button type="button" @click="selectPage({{ $pIdx }})"
-                                                                    class="text-[10px] font-semibold text-blue-600 hover:underline cursor-pointer">
-                                                                Fokus Halaman Ini
-                                                            </button>
-                                                            <button type="button" wire:click="removeScanPage({{ $pIdx }})"
+                                                            <span class="text-[10px] font-semibold"
+                                                                  :class="activeScanIdx === {{ $pIdx }} ? 'text-gov-navy font-bold' : 'text-blue-600 hover:underline'">
+                                                                <span x-text="activeScanIdx === {{ $pIdx }} ? 'Sedang Aktif' : 'Fokus Halaman Ini'"></span>
+                                                            </span>
+                                                            <button type="button" @click.stop="$wire.removeScanPage({{ $pIdx }})"
                                                                     title="Hapus Lembar Halaman Ini"
                                                                     class="text-[10px] font-semibold text-rose-500 hover:text-rose-700 hover:underline cursor-pointer">
                                                                 Hapus
@@ -1326,6 +1331,7 @@
                                                         @if(!empty($pageData['image_path']))
                                                             <img src="{{ asset('storage/' . $pageData['image_path']) }}"
                                                                  alt="Halaman {{ $pIdx + 1 }}"
+                                                                 @load="setupContinuousScrollObserver()"
                                                                  class="max-w-full h-auto object-contain rounded shadow-xs transition-transform duration-200"
                                                                  :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg);'">
                                                         @else
@@ -1357,8 +1363,8 @@
                                         </div>
 
                                         <!-- Sisi Kanan: Form Hasil Ekstraksi & Verifikasi -->
-                                        <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[620px] xl:h-[680px] 2xl:h-[760px] overflow-hidden flex flex-col'"
-                                             class="lg:col-span-5 flex flex-col justify-between space-y-3">
+                                        <div class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs flex flex-col justify-between overflow-hidden"
+                                             style="height: 640px; max-height: calc(100vh - 220px); min-height: 480px;">
                                             <!-- Header Form -->
                                             <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs shrink-0">
                                                 <div class="flex items-center gap-2">
@@ -1375,9 +1381,10 @@
                                             </div>
 
                                             <!-- Dynamic Form Stack -->
-                                            <div :class="isMobile ? 'space-y-4' : 'flex-1 min-h-0 overflow-y-auto space-y-4 pr-1'">
+                                            <div class="flex-1 min-h-0 overflow-y-auto space-y-4 pr-1 pt-1">
                                                 @foreach($scanPages as $index => $page)
                                                 <div x-show="activeScanIdx === {{ $index }}"
+                                                     x-cloak
                                                      wire:key="scan-page-form-{{ $index }}"
                                                      x-data="{
                                                          nip: '{{ $page['nip'] ?? '' }}',
@@ -1523,6 +1530,7 @@
                     @endif
                 </div>
 
+                @if(Auth::user()->canManage())
                 <!-- ==================================================== -->
                 <!-- SUB-VIEW 4: SETORAN KANTOR (KLIRING TRANSFER KANTOR) -->
                 <!-- ==================================================== -->

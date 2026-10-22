@@ -370,5 +370,22 @@ class SocialProgramPrintTest extends TestCase
         // Tabel riwayat potongan tahun 2026 wajib ditampilkan karena ada potongan di 2026
         $response->assertSee('Riwayat Potongan Tahun 2026');
     }
+
+    public function test_jamaah_sees_surat_pernyataan_content_in_programs_tab(): void
+    {
+        $jamaah = User::factory()->create([
+            'name' => 'Adelina Kholifah Putri',
+            'role' => 'Jamaah',
+            'status' => 'Aktif',
+        ]);
+
+        $component = \Livewire\Livewire::actingAs($jamaah)
+            ->test(\App\Livewire\Admin\AdminDashboard::class, ['tab' => 'programs'])
+            ->set('socialSubTab', 'pernyataan');
+
+        $component->assertSee('Surat Pernyataan Potongan Tukin');
+        $component->assertSee('Adelina Kholifah Putri');
+        $component->assertSee('Buka Dokumen Cetak');
+    }
 }
 
