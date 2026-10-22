@@ -229,4 +229,24 @@ No  Program                 Nominal per Bulan
         $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
         $this->assertStringContainsString('max-age=86400', $response->headers->get('Cache-Control'));
     }
+
+    public function test_modal_pindaian_renders_with_locked_height_and_continuous_scroll_container(): void
+    {
+        $this->actingAs($this->admin);
+
+        $fakePdf = UploadedFile::fake()->create('scan_mesin.pdf', 500, 'application/pdf');
+
+        $component = Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->set('scanPernyataanFile', $fakePdf)
+            ->call('processScanPernyataan')
+            ->assertHasNoErrors()
+            ->assertSee('pdfContinuousScrollContainer')
+            ->assertSee('Data Verifikasi Pegawai')
+            ->assertSee('Unduh Excel')
+            ->assertSee('scan-pdf-page-card');
+
+        // Uji penghapusan lembar halaman scan
+        $component->call('removeScanPage', 0)
+            ->assertCount('scanPages', 4);
+    }
 }

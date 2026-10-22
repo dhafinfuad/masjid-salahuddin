@@ -3864,10 +3864,10 @@
         x-transition:leave="transition ease-in duration-50"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-start sm:items-center p-2 sm:p-4 lg:p-6"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-center p-3 sm:p-5"
         style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
-        <div class="relative bg-white rounded-2xl w-full p-4 sm:p-6 text-left shadow-2xl border border-gov-border space-y-4 my-2 sm:my-auto transition-all duration-150"
-            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? 'max-w-[90vw] xl:max-w-[1280px]' : (pernyataanModalTab === 'impor' ? 'max-w-2xl' : 'max-w-xl')"
+        <div class="relative bg-white rounded-2xl w-full p-4 sm:p-5 text-left shadow-2xl border border-gov-border space-y-3 my-auto transition-all duration-150 overflow-hidden"
+            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? 'max-w-5xl max-h-[92vh] flex flex-col' : (pernyataanModalTab === 'impor' ? 'max-w-2xl max-h-[90vh] overflow-y-auto' : 'max-w-xl max-h-[90vh] overflow-y-auto')"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
             x-transition:enter-end="opacity-100 scale-100"
@@ -4199,7 +4199,7 @@
             </div>
 
             <!-- TAB 2: IMPOR PERNYATAAN DARI SCAN PDF -->
-            <div x-show="pernyataanModalTab === 'impor'" class="space-y-4 text-xs">
+            <div x-show="pernyataanModalTab === 'impor'" class="flex-1 min-h-0 flex flex-col space-y-3 text-xs">
                 @if(empty($scanPages))
                     <!-- Upload Area -->
                     <div class="space-y-3">
@@ -4272,14 +4272,30 @@
                     </div>
                 @else
                     <!-- Verification Split-Screen -->
-                    <div class="space-y-4"
+                    <div class="flex-1 min-h-0 flex flex-col justify-between space-y-3"
                          x-data="{
                              activeScanIdx: @entangle('activeScanPageIndex').live,
                              pdfBaseUrl: '{{ route('admin.programs.preview-scan-pernyataan') }}',
                              totalPages: {{ count($scanPages) }},
-                             isPdfLoading: true,
+                             scanEmpNames: {{ json_encode(array_map(fn($p) => $p['nama'] ?? 'Pegawai', $scanPages)) }},
+                             hasImages: {{ !empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
+                             isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
+                             init() {
+                                 this.$nextTick(() => {
+                                     this.setupContinuousScrollObserver();
+                                     if (!this.hasImages) {
+                                         this.initContinuousPdf();
+                                     } else {
+                                         this.isPdfLoading = false;
+                                     }
+                                 });
+                             },
                              async initContinuousPdf() {
+                                 if (this.hasImages) {
+                                     this.isPdfLoading = false;
+                                     return;
+                                 }
                                  this.isPdfLoading = true;
                                  this.pdfError = '';
                                  try {
@@ -4325,49 +4341,64 @@
                                  const container = document.getElementById('pdfContinuousScrollContainer');
                                  if (!container) return;
 
-                                 const cards = container.querySelectorAll('.scan-pdf-page-card');
-                                 if (!cards.length) return;
+                                 if (this._scrollListener) {
+                                     container.removeEventListener('scroll', this._scrollListener);
+                                 }
 
-                                 const checkActivePage = () => {
+                                 this._scrollListener = () => {
                                      const containerRect = container.getBoundingClientRect();
-                                     const targetCenter = containerRect.top + containerRect.height * 0.45;
+                                     // Target focus line: 35% from the top of the container
+                                     const targetY = containerRect.top + containerRect.height * 0.35;
 
-                                     let closestIdx = 0;
+                                     let selectedIdx = null;
                                      let minDistance = Infinity;
 
+                                     const cards = container.querySelectorAll('.scan-pdf-page-card');
                                      cards.forEach((card) => {
                                          const rect = card.getBoundingClientRect();
-                                         const cardCenter = rect.top + rect.height * 0.5;
-                                         const dist = Math.abs(cardCenter - targetCenter);
+                                         if (rect.top <= targetY && rect.bottom >= targetY) {
+                                             selectedIdx = parseInt(card.dataset.pageIndex, 10);
+                                         }
+                                         const cardCenter = (rect.top + rect.bottom) / 2;
+                                         const dist = Math.abs(cardCenter - targetY);
                                          if (dist < minDistance) {
                                              minDistance = dist;
-                                             closestIdx = parseInt(card.dataset.pageIndex, 10);
+                                             if (selectedIdx === null) {
+                                                 selectedIdx = parseInt(card.dataset.pageIndex, 10);
+                                             }
                                          }
                                      });
 
-                                     if (!isNaN(closestIdx) && this.activeScanIdx !== closestIdx) {
-                                         this.activeScanIdx = closestIdx;
+                                     if (selectedIdx !== null && !isNaN(selectedIdx) && this.activeScanIdx !== selectedIdx) {
+                                         this.activeScanIdx = selectedIdx;
                                      }
                                  };
 
-                                 container.addEventListener('scroll', checkActivePage, { passive: true });
+                                 container.addEventListener('scroll', this._scrollListener, { passive: true });
+                                 this._scrollListener();
+                             },
+                             selectPage(idx) {
+                                 this.activeScanIdx = idx;
+                                 const card = document.getElementById('scan-page-card-' + idx);
+                                 if (card) {
+                                     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                 }
                              }
-                         }"
-                         x-init="$nextTick(() => { initContinuousPdf(); })">
+                         }">
 
                         <!-- Split View Container (Continuous Vertical Scroll) -->
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-                            <!-- Sisi Kiri: Pindaian Dokumen Asli (Continuous Scroll Stream) -->
-                            <div class="lg:col-span-7 xl:col-span-8 bg-slate-50 rounded-xl border border-gov-border p-3.5 flex flex-col justify-between h-[640px] xl:h-[740px] relative overflow-hidden shadow-2xs">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0 items-stretch">
+                            <!-- Sisi Kiri: Pindaian Dokumen Asli (Continuous Scroll Stream dengan Ketinggian Terkunci) -->
+                            <div class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3 flex flex-col justify-between h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] relative overflow-hidden shadow-2xs">
                                 <!-- Header Controls -->
-                                <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 text-xs text-gov-textMain">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs text-gov-textMain shrink-0">
                                     <div class="flex items-center gap-2">
                                         <div class="w-6 h-6 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center">
                                             <i data-lucide="file-search" class="w-3.5 h-3.5"></i>
                                         </div>
                                         <div>
                                             <span class="font-bold text-slate-800">Pindaian Dokumen Asli</span>
-                                            <span class="text-slate-500 font-medium text-[11px] ml-1.5" x-text="'(Hal ' + (activeScanIdx + 1) + ' dari ' + totalPages + ')'"></span>
+                                            <span class="text-gov-navy font-bold text-xs ml-1.5 font-mono" x-text="'(Halaman ' + (activeScanIdx + 1) + ' dari ' + totalPages + ')'"></span>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -4379,11 +4410,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Continuous Scroll Container for All PDF Pages -->
+                                <!-- Continuous Scroll Container for All PDF Pages (EXPLICIT HEIGHT: NO OVERFLOW) -->
                                 <div wire:ignore
                                      wire:key="scan-pdf-continuous-container-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
                                      id="pdfContinuousScrollContainer"
-                                     class="flex-1 overflow-y-auto notula-scrollable my-2 rounded-lg bg-slate-200/90 p-3 space-y-4 border border-slate-300 shadow-inner relative">
+                                     class="flex-1 min-h-0 w-full overflow-y-auto notula-scrollable my-1.5 rounded-lg bg-slate-200/90 p-3 space-y-3.5 border border-slate-300 shadow-inner relative">
                                     
                                     <!-- Loading State Overlay -->
                                     <div x-show="isPdfLoading" class="absolute inset-0 bg-slate-100/95 flex flex-col items-center justify-center gap-2 z-20">
@@ -4399,24 +4430,27 @@
                                             $targetPage = (int) ($pItem['page_number'] ?? ($pIdx + 1));
                                             $pageEmpName = $pItem['nama'] ?? 'Pegawai';
                                         @endphp
-                                        <div class="scan-pdf-page-card bg-white rounded-xl shadow-xs border border-slate-300 overflow-hidden transition"
-                                             :class="activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy/40 border-gov-navy' : ''"
+                                        <div class="scan-pdf-page-card bg-white rounded-xl shadow-xs border overflow-hidden transition cursor-pointer"
+                                             :class="activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md' : 'border-slate-300 opacity-75 hover:opacity-100'"
                                              data-page-index="{{ $pIdx }}"
-                                             id="scan-page-card-{{ $pIdx }}">
+                                             id="scan-page-card-{{ $pIdx }}"
+                                             @click="selectPage({{ $pIdx }})">
                                             <!-- Card Header -->
-                                            <div class="bg-slate-50 px-3.5 py-1.5 border-b border-slate-200 flex items-center justify-between text-xs text-slate-600">
-                                                <div class="flex items-center gap-1.5 font-bold">
-                                                    <span class="w-2 h-2 rounded-full" :class="activeScanIdx === {{ $pIdx }} ? 'bg-amber-500' : 'bg-slate-400'"></span>
+                                            <div class="px-3.5 py-1.5 border-b flex items-center justify-between text-xs transition"
+                                                 :class="activeScanIdx === {{ $pIdx }} ? 'bg-sky-50 text-gov-navy font-bold border-sky-200' : 'bg-slate-50 text-slate-600 border-slate-200'">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="w-2.5 h-2.5 rounded-full" :class="activeScanIdx === {{ $pIdx }} ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-slate-300'"></span>
                                                     <span>Halaman {{ $targetPage }}</span>
                                                     <span class="text-slate-400 font-normal">dari {{ count($scanPages) }}</span>
+                                                    <span x-show="activeScanIdx === {{ $pIdx }}" class="text-[10px] bg-gov-navy text-white px-1.5 py-0.5 rounded font-semibold ml-1">Aktif</span>
                                                 </div>
-                                                <span class="font-semibold text-gov-navy text-[11px] truncate max-w-[200px]">
+                                                <span class="font-semibold text-[11px] truncate max-w-[200px]" :class="activeScanIdx === {{ $pIdx }} ? 'text-gov-navy font-bold' : 'text-slate-600'">
                                                     {{ $pageEmpName }}
                                                 </span>
                                             </div>
 
                                             <!-- Content: High-Res Poppler Image OR PDF.js Canvas -->
-                                            <div class="bg-white flex items-center justify-center p-2 min-h-[350px]">
+                                            <div class="bg-white flex items-center justify-center p-2 min-h-[280px]">
                                                 @if(!empty($pItem['image_path']))
                                                     <img src="{{ $pItem['image_path'] }}"
                                                          alt="Halaman {{ $targetPage }}"
@@ -4432,29 +4466,47 @@
                                 </div>
 
                                 <!-- Bottom Footer info -->
-                                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200">
+                                <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200 shrink-0">
                                     <span class="flex items-center gap-1">
                                         <i data-lucide="mouse-pointer" class="w-3 h-3 text-slate-400"></i>
-                                        <span>Gulir ke bawah untuk memverifikasi halaman berikutnya.</span>
+                                        <span>Gulir lembar atau klik kartu untuk beralih halaman.</span>
                                     </span>
-                                    <span class="font-mono text-slate-600 font-semibold" x-text="'Hal ' + (activeScanIdx + 1) + ' dari ' + totalPages"></span>
+                                    <span class="font-mono text-gov-navy font-bold text-xs" x-text="'Hal ' + (activeScanIdx + 1) + ' dari ' + totalPages"></span>
                                 </div>
                             </div>
 
-                            <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Instant Tab Switching & Thousand Separator) -->
-                            <div class="lg:col-span-5 xl:col-span-4 bg-white rounded-xl border border-gov-border p-4 sm:p-5 shadow-2xs space-y-4 h-[640px] xl:h-[740px] overflow-y-auto">
-                                @foreach($scanPages as $idx => $cur)
-                                    <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-4">
-                                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
-                                            </div>
-                                            <button type="button" wire:click="removeScanPage({{ $idx }})"
-                                                class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                                <span>Hapus Lembar Ini</span>
-                                            </button>
-                                        </div>
+                            <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Tinggi Terkunci & Indikator Halaman Jelas) -->
+                            <div class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs flex flex-col h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden">
+                                <!-- Fixed Header -->
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100/80 text-gov-navy border border-sky-300 font-mono">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            <span x-text="'Lembar ' + (activeScanIdx + 1) + ' dari ' + totalPages"></span>
+                                        </span>
+                                    </div>
+                                    <button type="button" @click="$wire.removeScanPage(activeScanIdx)"
+                                        class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        <span>Hapus Lembar Ini</span>
+                                    </button>
+                                </div>
+
+                                <!-- Dynamic Active Banner -->
+                                <div class="my-2 p-2 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs shrink-0">
+                                    <span class="text-slate-500 font-medium">Formulir Aktif:</span>
+                                    <span class="font-bold text-gov-navy truncate max-w-[200px]"
+                                          x-text="'Halaman ' + (activeScanIdx + 1) + ' — ' + (scanEmpNames[activeScanIdx] || 'Pegawai')"></span>
+                                </div>
+
+                                <!-- Scrollable Form Content -->
+                                <div class="flex-1 min-h-0 overflow-y-auto notula-scrollable pr-1 space-y-3.5">
+                                    @foreach($scanPages as $idx => $cur)
+                                        <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-3.5"
+                                             x-transition:enter="transition ease-out duration-100"
+                                             x-transition:enter-start="opacity-0 translate-y-1"
+                                             x-transition:enter-end="opacity-100 translate-y-0">
 
                                         <!-- Identitas Fields -->
                                         <div class="space-y-2.5">
@@ -4590,12 +4642,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
 
                         <!-- Footer for Verification Screen -->
-                        <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-200 text-xs">
+                        <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-200 text-xs shrink-0">
                             <button type="button" wire:click="resetScanPernyataan"
                                 class="px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer inline-flex items-center gap-1.5">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
