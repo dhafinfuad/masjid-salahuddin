@@ -4282,13 +4282,7 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
-                             pageRotations: (() => {
-                                 const isIOS = typeof navigator !== 'undefined' && (
-                                     /iPad|iPhone|iPod/.test(navigator.userAgent || '') || 
-                                     (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1)
-                                 );
-                                 return isIOS ? { 0: 180 } : {};
-                             })(),
+                             pageRotations: {},
                              rotatePage(idx) {
                                  const current = this.pageRotations[idx] || 0;
                                  this.pageRotations = { ...this.pageRotations, [idx]: (current + 180) % 360 };
@@ -4327,7 +4321,7 @@
 
                                      window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}';
                                      const loadingTask = window.pdfjsLib.getDocument({
-                                         url: this.pdfBaseUrl,
+                                         url: this.pdfBaseUrl + (this.pdfBaseUrl.includes('?') ? '&' : '?') + 't=' + Date.now(),
                                          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
                                          cMapPacked: true,
                                      });
@@ -4338,11 +4332,18 @@
                                          const page = await pdf.getPage(pNum);
                                          const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
                                          if (canvas) {
+                                             if (canvas._renderTask) {
+                                                 try { canvas._renderTask.cancel(); } catch(e){}
+                                             }
                                              const viewport = page.getViewport({ scale: 1.5 });
                                              canvas.height = viewport.height;
                                              canvas.width = viewport.width;
                                              const ctx = canvas.getContext('2d');
-                                             await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                                             ctx.setTransform(1, 0, 0, 1, 0, 0);
+                                             ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                             canvas._renderTask = page.render({ canvasContext: ctx, viewport: viewport });
+                                             await canvas._renderTask.promise;
+                                             canvas._renderTask = null;
                                          }
                                      }
                                      this.isPdfLoading = false;
