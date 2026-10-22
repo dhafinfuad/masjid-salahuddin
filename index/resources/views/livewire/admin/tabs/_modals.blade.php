@@ -3867,7 +3867,7 @@
         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-start sm:items-center p-2 sm:p-4 lg:p-6"
         style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
         <div class="relative bg-white rounded-2xl w-full p-4 sm:p-6 text-left shadow-2xl border border-gov-border space-y-4 my-2 sm:my-auto transition-all duration-150"
-            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? 'max-w-[96vw] xl:max-w-[1440px]' : (pernyataanModalTab === 'impor' ? 'max-w-2xl' : 'max-w-xl')"
+            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? 'max-w-[90vw] xl:max-w-[1280px]' : (pernyataanModalTab === 'impor' ? 'max-w-2xl' : 'max-w-xl')"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
             x-transition:enter-end="opacity-100 scale-100"
@@ -4276,34 +4276,89 @@
                          x-data="{
                              activeScanIdx: @entangle('activeScanPageIndex').live,
                              pdfBaseUrl: '{{ route('admin.programs.preview-scan-pernyataan') }}',
-                             switchScanPage(idx) {
-                                 this.activeScanIdx = idx;
-                             }
-                         }">
-                        <!-- Top Navigation Bar for Pages (Instant Client-Side Switching) -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200">
-                            <div class="flex items-center gap-2 overflow-x-auto py-1 max-w-full">
-                                <span class="font-bold text-gov-textMain text-xs shrink-0">Lembar:</span>
-                                @foreach($scanPages as $idx => $page)
-                                    <button type="button" @click="switchScanPage({{ $idx }})"
-                                        class="h-7 px-2.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 inline-flex items-center gap-1.5 border"
-                                        :class="activeScanIdx === {{ $idx }} ? 'bg-gov-navy border-gov-navy text-white shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'">
-                                        <span>Hal {{ $idx + 1 }}</span>
-                                        <span class="max-w-[100px] truncate text-[11px] font-normal opacity-90">
-                                            {{ $page['nama'] ? Str::words($page['nama'], 1, '') : 'Pegawai' }}
-                                        </span>
-                                    </button>
-                                @endforeach
-                            </div>
-                            <div class="text-[11px] text-slate-500 font-medium shrink-0">
-                                Total {{ count($scanPages) }} lembar terdeteksi
-                            </div>
-                        </div>
+                             totalPages: {{ count($scanPages) }},
+                             isPdfLoading: true,
+                             pdfError: '',
+                             async initContinuousPdf() {
+                                 this.isPdfLoading = true;
+                                 this.pdfError = '';
+                                 try {
+                                     let retries = 0;
+                                     while (typeof window.pdfjsLib === 'undefined' && retries < 40) {
+                                         await new Promise(r => setTimeout(r, 50));
+                                         retries++;
+                                     }
+                                     if (typeof window.pdfjsLib === 'undefined') {
+                                         this.isPdfLoading = false;
+                                         return;
+                                     }
 
-                        <!-- Split View Container -->
+                                     window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}';
+                                     const loadingTask = window.pdfjsLib.getDocument({
+                                         url: this.pdfBaseUrl,
+                                         cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+                                         cMapPacked: true,
+                                     });
+                                     const pdf = await loadingTask.promise;
+                                     const numPages = Math.min(pdf.numPages, this.totalPages);
+
+                                     for (let pNum = 1; pNum <= numPages; pNum++) {
+                                         const page = await pdf.getPage(pNum);
+                                         const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
+                                         if (canvas) {
+                                             const viewport = page.getViewport({ scale: 1.5 });
+                                             canvas.height = viewport.height;
+                                             canvas.width = viewport.width;
+                                             const ctx = canvas.getContext('2d');
+                                             await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                                         }
+                                     }
+                                     this.isPdfLoading = false;
+                                     this.setupContinuousScrollObserver();
+                                 } catch (err) {
+                                     console.error('PDF.js render error:', err);
+                                     this.isPdfLoading = false;
+                                     this.pdfError = 'Gagal memuat pratinjau dokumen pindaian.';
+                                 }
+                             },
+                             setupContinuousScrollObserver() {
+                                 const container = document.getElementById('pdfContinuousScrollContainer');
+                                 if (!container) return;
+
+                                 const cards = container.querySelectorAll('.scan-pdf-page-card');
+                                 if (!cards.length) return;
+
+                                 const checkActivePage = () => {
+                                     const containerRect = container.getBoundingClientRect();
+                                     const targetCenter = containerRect.top + containerRect.height * 0.45;
+
+                                     let closestIdx = 0;
+                                     let minDistance = Infinity;
+
+                                     cards.forEach((card) => {
+                                         const rect = card.getBoundingClientRect();
+                                         const cardCenter = rect.top + rect.height * 0.5;
+                                         const dist = Math.abs(cardCenter - targetCenter);
+                                         if (dist < minDistance) {
+                                             minDistance = dist;
+                                             closestIdx = parseInt(card.dataset.pageIndex, 10);
+                                         }
+                                     });
+
+                                     if (!isNaN(closestIdx) && this.activeScanIdx !== closestIdx) {
+                                         this.activeScanIdx = closestIdx;
+                                     }
+                                 };
+
+                                 container.addEventListener('scroll', checkActivePage, { passive: true });
+                             }
+                         }"
+                         x-init="$nextTick(() => { initContinuousPdf(); })">
+
+                        <!-- Split View Container (Continuous Vertical Scroll) -->
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-                            <!-- Sisi Kiri: Pindaian Dokumen Asli (Lebar & Leluasa, STABLE FRAME) -->
-                            <div class="lg:col-span-7 xl:col-span-8 bg-slate-50 rounded-xl border border-gov-border p-3.5 flex flex-col justify-between h-[620px] xl:h-[720px] relative overflow-hidden shadow-2xs">
+                            <!-- Sisi Kiri: Pindaian Dokumen Asli (Continuous Scroll Stream) -->
+                            <div class="lg:col-span-7 xl:col-span-8 bg-slate-50 rounded-xl border border-gov-border p-3.5 flex flex-col justify-between h-[640px] xl:h-[740px] relative overflow-hidden shadow-2xs">
                                 <!-- Header Controls -->
                                 <div class="flex items-center justify-between pb-2.5 border-b border-slate-200 text-xs text-gov-textMain">
                                     <div class="flex items-center gap-2">
@@ -4312,7 +4367,7 @@
                                         </div>
                                         <div>
                                             <span class="font-bold text-slate-800">Pindaian Dokumen Asli</span>
-                                            <span class="text-slate-500 font-medium text-[11px] ml-1.5" x-text="'(Hal ' + (activeScanIdx + 1) + ' dari {{ count($scanPages) }})'"></span>
+                                            <span class="text-slate-500 font-medium text-[11px] ml-1.5" x-text="'(Hal ' + (activeScanIdx + 1) + ' dari ' + totalPages + ')'"></span>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -4324,58 +4379,74 @@
                                     </div>
                                 </div>
 
-                                <!-- Embedded Native PDF Page Viewer (STABLE DOM, SYNCHRONIZED MULTI-PAGE VIEW) -->
+                                <!-- Continuous Scroll Container for All PDF Pages -->
                                 <div wire:ignore
-                                     wire:key="scan-pdf-viewer-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
-                                     class="flex-1 overflow-hidden rounded-lg bg-slate-100 my-2 relative border border-slate-200 shadow-2xs">
+                                     wire:key="scan-pdf-continuous-container-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
+                                     id="pdfContinuousScrollContainer"
+                                     class="flex-1 overflow-y-auto notula-scrollable my-2 rounded-lg bg-slate-200/90 p-3 space-y-4 border border-slate-300 shadow-inner relative">
+                                    
+                                    <!-- Loading State Overlay -->
+                                    <div x-show="isPdfLoading" class="absolute inset-0 bg-slate-100/95 flex flex-col items-center justify-center gap-2 z-20">
+                                        <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span class="text-xs font-semibold text-slate-700">Menyiapkan halaman dokumen pindaian...</span>
+                                    </div>
+
                                     @foreach($scanPages as $pIdx => $pItem)
                                         @php
                                             $targetPage = (int) ($pItem['page_number'] ?? ($pIdx + 1));
+                                            $pageEmpName = $pItem['nama'] ?? 'Pegawai';
                                         @endphp
-                                        <div class="absolute inset-0 w-full h-full transition-opacity duration-100"
-                                             :class="activeScanIdx === {{ $pIdx }} ? 'z-10 opacity-100 pointer-events-auto' : 'z-0 opacity-0 pointer-events-none'">
-                                            @if(!empty($pItem['image_path']))
-                                                <!-- High-Res Page Image if Extracted by Poppler -->
-                                                <div class="w-full h-full overflow-auto bg-slate-200 flex items-start justify-center p-2">
+                                        <div class="scan-pdf-page-card bg-white rounded-xl shadow-xs border border-slate-300 overflow-hidden transition"
+                                             :class="activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy/40 border-gov-navy' : ''"
+                                             data-page-index="{{ $pIdx }}"
+                                             id="scan-page-card-{{ $pIdx }}">
+                                            <!-- Card Header -->
+                                            <div class="bg-slate-50 px-3.5 py-1.5 border-b border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                                                <div class="flex items-center gap-1.5 font-bold">
+                                                    <span class="w-2 h-2 rounded-full" :class="activeScanIdx === {{ $pIdx }} ? 'bg-amber-500' : 'bg-slate-400'"></span>
+                                                    <span>Halaman {{ $targetPage }}</span>
+                                                    <span class="text-slate-400 font-normal">dari {{ count($scanPages) }}</span>
+                                                </div>
+                                                <span class="font-semibold text-gov-navy text-[11px] truncate max-w-[200px]">
+                                                    {{ $pageEmpName }}
+                                                </span>
+                                            </div>
+
+                                            <!-- Content: High-Res Poppler Image OR PDF.js Canvas -->
+                                            <div class="bg-white flex items-center justify-center p-2 min-h-[350px]">
+                                                @if(!empty($pItem['image_path']))
                                                     <img src="{{ $pItem['image_path'] }}"
                                                          alt="Halaman {{ $targetPage }}"
-                                                         class="max-w-full h-auto rounded shadow-xs object-contain bg-white">
-                                                </div>
-                                            @else
-                                                <!-- Native Browser PDF Plugin Formatted for Specific Page -->
-                                                <iframe id="scanPdfPreviewFrame_{{ $pIdx }}"
-                                                        src="{{ route('admin.programs.preview-scan-pernyataan') }}?p={{ $targetPage }}&t={{ session('temp_scan_pdf_time', 1) }}#page={{ $targetPage }}&toolbar=1&navpanes=0&view=FitH"
-                                                        class="w-full h-full rounded-lg bg-white border-0">
-                                                    <div class="h-full flex flex-col items-center justify-center p-4 text-center text-xs text-slate-500 bg-white">
-                                                        <i data-lucide="file-text" class="w-8 h-8 text-slate-400 mb-2"></i>
-                                                        <p class="font-medium text-slate-700">Pratinjau PDF tidak didukung otomatis pada perangkat ini.</p>
-                                                        <a :href="pdfBaseUrl + '#page={{ $targetPage }}'" target="_blank"
-                                                           class="mt-2 text-blue-600 hover:text-blue-800 underline font-semibold">
-                                                            Buka Dokumen di Tab Baru
-                                                        </a>
-                                                    </div>
-                                                </iframe>
-                                            @endif
+                                                         class="w-full h-auto block rounded shadow-2xs object-contain"
+                                                         loading="lazy">
+                                                @else
+                                                    <canvas id="scan-pdf-canvas-{{ $pIdx }}"
+                                                            class="w-full h-auto block rounded shadow-2xs bg-white"></canvas>
+                                                @endif
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
 
                                 <!-- Bottom Footer info -->
                                 <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200">
-                                    <span>Gunakan pindaian untuk memverifikasi nominal tulisan tangan pegawai.</span>
-                                    <span class="font-mono text-slate-500 font-semibold" x-text="'Hal ' + (activeScanIdx + 1) + ' dari {{ count($scanPages) }}'"></span>
+                                    <span class="flex items-center gap-1">
+                                        <i data-lucide="mouse-pointer" class="w-3 h-3 text-slate-400"></i>
+                                        <span>Gulir ke bawah untuk memverifikasi halaman berikutnya.</span>
+                                    </span>
+                                    <span class="font-mono text-slate-600 font-semibold" x-text="'Hal ' + (activeScanIdx + 1) + ' dari ' + totalPages"></span>
                                 </div>
                             </div>
 
                             <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Instant Tab Switching & Thousand Separator) -->
-                            <div class="lg:col-span-5 xl:col-span-4 bg-white rounded-xl border border-gov-border p-4 sm:p-5 shadow-2xs space-y-4 h-[620px] xl:h-[720px] overflow-y-auto">
+                            <div class="lg:col-span-5 xl:col-span-4 bg-white rounded-xl border border-gov-border p-4 sm:p-5 shadow-2xs space-y-4 h-[640px] xl:h-[740px] overflow-y-auto">
                                 @foreach($scanPages as $idx => $cur)
                                     <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-4">
                                         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                             <div class="flex items-center gap-1.5">
-                                                <div class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs border border-emerald-200">
-                                                    {{ $idx + 1 }}
-                                                </div>
                                                 <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
                                             </div>
                                             <button type="button" wire:click="removeScanPage({{ $idx }})"
@@ -4538,9 +4609,9 @@
                                 </button>
                                 <button type="button" wire:click="exportScanPernyataanExcel"
                                     wire:loading.attr="disabled"
-                                    class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
-                                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-200"></i>
-                                    <span>Unduh Rekap Excel ({{ count($scanPages) }} Pegawai)</span>
+                                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i>
+                                    <span>Unduh Excel</span>
                                 </button>
                             </div>
                         </div>
