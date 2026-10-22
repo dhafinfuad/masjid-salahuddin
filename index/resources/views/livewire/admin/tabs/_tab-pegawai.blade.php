@@ -93,9 +93,8 @@
     </div>
 
     <!-- Desktop Table Card -->
-    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
+    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-visible">
+        <table class="w-full text-left border-collapse text-xs">
                 <thead class="bg-slate-50/80 text-gov-textMuted uppercase font-bold border-b border-slate-300 tracking-wider text-[11px]">
                     <tr>
                         <th class="py-3 px-3.5 w-12 text-center">No</th>
@@ -118,7 +117,7 @@
                                 <x-sort-icon field="status" table="employees" />
                             </div>
                         </th>
-                        <th class="py-3 px-4 text-right">Aksi</th>
+                        <th class="py-3 px-4 text-center w-20 rounded-tr-xl">Aksi</th>
                     </tr>
                 </thead>
                 <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="employeeFilterStatus, employeeFilterLink, employeeSearch, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
@@ -207,24 +206,58 @@
                             </td>
 
                             <!-- Aksi -->
-                            <td class="py-3 px-4 text-right">
-                                <div class="inline-flex items-center space-x-1">
-                                    @if(Auth::user()->canManage())
-                                        <button type="button" @click="showEmployeeModal = true" wire:click="openEditEmployeeModal({{ $emp->id }})"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 shadow-2xs transition cursor-pointer"
-                                            title="Ubah Data Pegawai">
-                                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            <td class="py-3 px-4 text-center whitespace-nowrap relative" x-data="{ openMenu: false }">
+                                @if(Auth::user()->canManage())
+                                    <div class="inline-flex items-center justify-center">
+                                        <!-- Tombol Titik Tiga Vertikal -->
+                                        <button type="button" 
+                                            @click="openMenu = !openMenu" 
+                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center"
+                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''"
+                                            title="Menu Aksi">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+                                            </svg>
                                         </button>
-                                        <button type="button" wire:click="deleteEmployee({{ $emp->id }})"
-                                            wire:confirm="Yakin ingin menghapus data pegawai {{ $emp->name }} dari database?"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-rose-50 text-rose-600 shadow-2xs transition cursor-pointer"
-                                            title="Hapus Pegawai">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    @else
-                                        <span class="text-xs text-slate-400 italic">Lihat saja</span>
-                                    @endif
-                                </div>
+
+                                        <!-- Dropdown Menu Aksi -->
+                                        <div x-show="openMenu" 
+                                            x-cloak
+                                            x-transition:enter="transition ease-out duration-50"
+                                            x-transition:enter-start="transform opacity-0 scale-98"
+                                            x-transition:enter-end="transform opacity-100 scale-100"
+                                            x-transition:leave="transition ease-in duration-50"
+                                            x-transition:leave-start="transform opacity-100 scale-100"
+                                            x-transition:leave-end="transform opacity-0 scale-98"
+                                            @click.outside="openMenu = false"
+                                            @keydown.escape.window="openMenu = false"
+                                            class="absolute right-3 top-full mt-1 w-48 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
+                                            
+                                            <div class="py-1">
+                                                <!-- Ubah Data Pegawai -->
+                                                <button type="button" 
+                                                    @click="openMenu = false; showEmployeeModal = true"
+                                                    wire:click="openEditEmployeeModal({{ $emp->id }})"
+                                                    class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition font-medium text-xs cursor-pointer">
+                                                    <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Ubah Data Pegawai</div>
+                                                </button>
+
+                                                <!-- Hapus Pegawai -->
+                                                <button type="button" 
+                                                    @click="openMenu = false"
+                                                    wire:click="deleteEmployee({{ $emp->id }})"
+                                                    wire:confirm="Yakin ingin menghapus data pegawai {{ $emp->name }} dari database?"
+                                                    class="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition font-medium text-xs cursor-pointer">
+                                                    <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Pegawai</div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-xs text-slate-400 italic">Lihat saja</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -260,7 +293,6 @@
                     @endforelse
                 </tbody>
             </table>
-        </div>
 
         @if(method_exists($employeesList, 'hasPages') && $employeesList->hasPages())
             <div class="p-3 border-t border-slate-200">
@@ -312,16 +344,45 @@
                         @endif
                     </div>
                     @if(Auth::user()->canManage())
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" @click="showEmployeeModal = true" wire:click="openEditEmployeeModal({{ $emp->id }})"
-                                class="p-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        <div class="relative inline-flex items-center" x-data="{ openMenu: false }">
+                            <button type="button" 
+                                @click="openMenu = !openMenu" 
+                                class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center"
+                                :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''"
+                                title="Menu Aksi">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+                                </svg>
                             </button>
-                            <button type="button" wire:click="deleteEmployee({{ $emp->id }})"
-                                wire:confirm="Hapus {{ $emp->name }}?"
-                                class="p-1 rounded bg-rose-50 text-rose-600 hover:bg-rose-100">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
+                            <div x-show="openMenu" 
+                                x-cloak
+                                x-transition:enter="transition ease-out duration-50"
+                                x-transition:enter-start="transform opacity-0 scale-98"
+                                x-transition:enter-end="transform opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-50"
+                                x-transition:leave-start="transform opacity-100 scale-100"
+                                x-transition:leave-end="transform opacity-0 scale-98"
+                                @click.outside="openMenu = false"
+                                @keydown.escape.window="openMenu = false"
+                                class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
+                                <div class="py-1">
+                                    <button type="button" 
+                                        @click="openMenu = false; showEmployeeModal = true"
+                                        wire:click="openEditEmployeeModal({{ $emp->id }})"
+                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition font-medium text-xs cursor-pointer">
+                                        <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Ubah Data Pegawai</div>
+                                    </button>
+                                    <button type="button" 
+                                        @click="openMenu = false"
+                                        wire:click="deleteEmployee({{ $emp->id }})"
+                                        wire:confirm="Hapus {{ $emp->name }}?"
+                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition font-medium text-xs cursor-pointer">
+                                        <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Pegawai</div>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     @endif
                 </div>

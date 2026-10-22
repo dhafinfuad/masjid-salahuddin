@@ -179,24 +179,46 @@
                                             <span>Lihat Peserta ({{ $prog->active_participants_count }})</span>
                                         </button>
 
-                                        <div class="flex items-center space-x-1.5">
-                                            <button type="button" @click="openEditSocialProgram({{ $prog->id }})"
-                                                class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 shadow-2xs transition cursor-pointer"
-                                                title="Edit Program Sosial">
-                                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                        <div x-data="{ openMenu: false }" class="relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                            <button type="button" @click="openMenu = !openMenu" 
+                                                class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                                :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                                title="Menu Aksi">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                                </svg>
                                             </button>
-                                            <button type="button"
-                                                @click="openDeleteModal({{ Js::from([
-                                                    'title' => 'Hapus Program Sosial',
-                                                    'message' => 'Apakah Anda yakin ingin menghapus program sosial \'' . $prog->name . '\'? Seluruh data terkait program ini akan terdampak.',
-                                                    'itemName' => $prog->name,
-                                                    'action' => 'deleteSocialProgram',
-                                                    'id' => $prog->id,
-                                                ]) }})"
-                                                class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                                title="Hapus Program">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                            </button>
+
+                                            <!-- Dropdown Popover -->
+                                            <div x-show="openMenu" 
+                                                x-transition:enter="transition ease-out duration-100" 
+                                                x-transition:enter-start="opacity-0 scale-95" 
+                                                x-transition:enter-end="opacity-100 scale-100" 
+                                                x-transition:leave="transition ease-in duration-75" 
+                                                x-transition:leave-start="opacity-100 scale-100" 
+                                                x-transition:leave-end="opacity-0 scale-95" 
+                                                class="absolute right-0 bottom-full mb-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                                style="display: none;">
+                                                <button type="button" 
+                                                    @click="openMenu = false; openEditSocialProgram({{ $prog->id }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                    <span>Edit Program</span>
+                                                </button>
+                                                <div class="my-1 border-t border-slate-100"></div>
+                                                <button type="button" 
+                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                        'title' => 'Hapus Program Sosial',
+                                                        'message' => 'Apakah Anda yakin ingin menghapus program sosial \'' . $prog->name . '\'? Seluruh data terkait program ini akan terdampak.',
+                                                        'itemName' => $prog->name,
+                                                        'action' => 'deleteSocialProgram',
+                                                        'id' => $prog->id,
+                                                    ]) }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                    <span>Hapus Program</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
@@ -351,8 +373,8 @@
                     </div>
 
                     <!-- Desktop Table -->
-                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
-                        <div class="overflow-x-auto">
+                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-visible">
+                        <div>
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50/80 text-slate-600 font-semibold border-b border-slate-300">
                                     <tr>
@@ -409,43 +431,69 @@
                                             </td>
 
                                             <!-- Aksi (Rule 3) -->
-                                            <td class="py-3 px-4 text-center">
-                                                <div class="flex items-center justify-center space-x-1.5">
-                                                    @php
-                                                        $canEditThisParticipant = Auth::user()->canManage() || (Auth::user()->isJamaah() && (
-                                                            (strtolower(trim($p->name)) === strtolower(trim(Auth::user()->name)))
-                                                        ));
-                                                    @endphp
-                                                    @if($canEditThisParticipant)
-                                                        <button type="button"
-                                                            @click="openEditParticipant({{ Js::from([
-                                                                'id' => $p->id,
-                                                                'name' => $p->name,
-                                                                'program_name' => $p->program_name,
-                                                                'monthly_amount' => (int) $p->monthly_amount,
-                                                                'period' => $p->period ?? '',
-                                                            ]) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 shadow-2xs transition cursor-pointer"
-                                                            title="Edit Data Peserta">
-                                                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                            <td x-data="{ openMenu: false }" class="py-3 px-4 text-center relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                                @php
+                                                    $canEditThisParticipant = Auth::user()->canManage() || (Auth::user()->isJamaah() && (
+                                                        (strtolower(trim($p->name)) === strtolower(trim(Auth::user()->name)))
+                                                    ));
+                                                @endphp
+                                                @if($canEditThisParticipant || Auth::user()->canManage())
+                                                    <div class="inline-flex items-center justify-center">
+                                                        <button type="button" @click="openMenu = !openMenu" 
+                                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                                            title="Menu Aksi">
+                                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                                            </svg>
                                                         </button>
-                                                    @endif
 
-                                                    @if(Auth::user()->canManage())
-                                                        <button type="button"
-                                                            @click="openDeleteModal({{ Js::from([
-                                                                'title' => 'Hapus Peserta Program',
-                                                                'message' => 'Apakah Anda yakin ingin menghapus data peserta \'' . $p->name . '\' dari program ini?',
-                                                                'itemName' => $p->name,
-                                                                'action' => 'deleteParticipant',
-                                                                'id' => $p->id,
-                                                            ]) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                                            title="Hapus Peserta">
-                                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                                        </button>
-                                                    @endif
-                                                </div>
+                                                        <!-- Dropdown Popover -->
+                                                        <div x-show="openMenu" 
+                                                            x-transition:enter="transition ease-out duration-100" 
+                                                            x-transition:enter-start="opacity-0 scale-95" 
+                                                            x-transition:enter-end="opacity-100 scale-100" 
+                                                            x-transition:leave="transition ease-in duration-75" 
+                                                            x-transition:leave-start="opacity-100 scale-100" 
+                                                            x-transition:leave-end="opacity-0 scale-95" 
+                                                            class="absolute right-4 top-full mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                                            style="display: none;">
+                                                            @if($canEditThisParticipant)
+                                                                <button type="button" 
+                                                                    @click="openMenu = false; openEditParticipant({{ Js::from([
+                                                                        'id' => $p->id,
+                                                                        'name' => $p->name,
+                                                                        'program_name' => $p->program_name,
+                                                                        'monthly_amount' => (int) $p->monthly_amount,
+                                                                        'period' => $p->period ?? '',
+                                                                    ]) }})" 
+                                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                                    <span>Edit Peserta</span>
+                                                                </button>
+                                                            @endif
+                                                            @if(Auth::user()->canManage())
+                                                                @if($canEditThisParticipant)
+                                                                    <div class="my-1 border-t border-slate-100"></div>
+                                                                @endif
+                                                                <button type="button" 
+                                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                                        'title' => 'Hapus Peserta Program',
+                                                                        'message' => 'Apakah Anda yakin ingin menghapus data peserta \'' . $p->name . '\' dari program ini?',
+                                                                        'itemName' => $p->name,
+                                                                        'action' => 'deleteParticipant',
+                                                                        'id' => $p->id,
+                                                                    ]) }})" 
+                                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                                    <span>Hapus Peserta</span>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <span class="text-slate-300">-</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -490,40 +538,64 @@
                                     <span class="font-mono font-bold text-gov-navy text-sm">Rp {{ number_format($p->monthly_amount, 0, ',', '.') }}</span>
                                 </div>
 
-                                <div class="flex items-center justify-end space-x-1.5 pt-2 border-t border-slate-100">
+                                <div x-data="{ openMenu: false }" class="flex items-center justify-end pt-2 border-t border-slate-100 relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
                                     @php
                                         $canEditMobileParticipant = Auth::user()->canManage() || (Auth::user()->isJamaah() && (
                                             (strtolower(trim($p->name)) === strtolower(trim(Auth::user()->name)))
                                         ));
                                     @endphp
-                                    @if($canEditMobileParticipant)
-                                        <button type="button"
-                                            @click="openEditParticipant({{ Js::from([
-                                                'id' => $p->id,
-                                                'name' => $p->name,
-                                                'program_name' => $p->program_name,
-                                                'monthly_amount' => (int) $p->monthly_amount,
-                                                'period' => $p->period ?? '',
-                                            ]) }})"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 shadow-2xs transition cursor-pointer"
-                                            title="Edit Data Peserta">
-                                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                    @if($canEditMobileParticipant || Auth::user()->canManage())
+                                        <button type="button" @click="openMenu = !openMenu" 
+                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                            title="Menu Aksi">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                            </svg>
                                         </button>
-                                    @endif
 
-                                    @if(Auth::user()->canManage())
-                                        <button type="button"
-                                            @click="openDeleteModal({{ Js::from([
-                                                'title' => 'Hapus Peserta Program',
-                                                'message' => 'Apakah Anda yakin ingin menghapus data peserta \'' . $p->name . '\' dari program ini?',
-                                                'itemName' => $p->name,
-                                                'action' => 'deleteParticipant',
-                                                'id' => $p->id,
-                                            ]) }})"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                            title="Hapus Peserta">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                        </button>
+                                        <!-- Dropdown Popover -->
+                                        <div x-show="openMenu" 
+                                            x-transition:enter="transition ease-out duration-100" 
+                                            x-transition:enter-start="opacity-0 scale-95" 
+                                            x-transition:enter-end="opacity-100 scale-100" 
+                                            x-transition:leave="transition ease-in duration-75" 
+                                            x-transition:leave-start="opacity-100 scale-100" 
+                                            x-transition:leave-end="opacity-0 scale-95" 
+                                            class="absolute right-0 bottom-full mb-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                            style="display: none;">
+                                            @if($canEditMobileParticipant)
+                                                <button type="button" 
+                                                    @click="openMenu = false; openEditParticipant({{ Js::from([
+                                                        'id' => $p->id,
+                                                        'name' => $p->name,
+                                                        'program_name' => $p->program_name,
+                                                        'monthly_amount' => (int) $p->monthly_amount,
+                                                        'period' => $p->period ?? '',
+                                                    ]) }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                    <span>Edit Peserta</span>
+                                                </button>
+                                            @endif
+                                            @if(Auth::user()->canManage())
+                                                @if($canEditMobileParticipant)
+                                                    <div class="my-1 border-t border-slate-100"></div>
+                                                @endif
+                                                <button type="button" 
+                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                        'title' => 'Hapus Peserta Program',
+                                                        'message' => 'Apakah Anda yakin ingin menghapus data peserta \'' . $p->name . '\' dari program ini?',
+                                                        'itemName' => $p->name,
+                                                        'action' => 'deleteParticipant',
+                                                        'id' => $p->id,
+                                                    ]) }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                    <span>Hapus Peserta</span>
+                                                </button>
+                                            @endif
+                                        </div>
                                     @endif
                                 </div>
                             </div>

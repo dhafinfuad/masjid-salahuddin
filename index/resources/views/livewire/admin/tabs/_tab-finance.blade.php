@@ -359,8 +359,8 @@
                     </div>
 
                     <!-- Desktop Executive Table Card -->
-                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
-                        <div class="overflow-x-auto">
+                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-visible">
+                        <div>
                             <table class="w-full text-left text-xs border-collapse">
                                 <thead
                                     class="bg-slate-50 border-b border-gov-border text-xs font-semibold uppercase text-slate-500 tracking-wider">
@@ -445,55 +445,80 @@
                                                 {{ $fin->type === 'pemasukan' ? '+' : '-' }}Rp
                                                 {{ number_format($fin->amount, 0, ',', '.') }}
                                             </td>
-                                            <td class="p-3.5 whitespace-nowrap text-center">
-                                                <div class="inline-flex items-center justify-center gap-1.5">
-                                                    @php
-                                                        $receiptUrls = $fin->receipt_urls;
-                                                        $receiptCount = count($receiptUrls);
-                                                    @endphp
-                                                    @if($receiptCount > 0)
-                                                        <button type="button"
-                                                            @click="openReceiptModal({{ Js::from([
-                                                                'items' => $receiptUrls,
-                                                                'description' => $fin->description,
-                                                                'date' => $fin->transaction_date ? $fin->transaction_date->translatedFormat('d F Y') : '-',
-                                                                'amount' => ($fin->type === 'pemasukan' ? '+' : '-') . 'Rp ' . number_format($fin->amount, 0, ',', '.'),
-                                                                'type' => $fin->type,
-                                                            ]) }})"
-                                                            class="inline-flex items-center justify-center gap-1 p-1.5 px-2 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 shadow-2xs transition cursor-pointer"
-                                                            title="Lihat Bukti Transfer / Kwitansi ({{ $receiptCount }} berkas)">
-                                                            <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                                                <circle cx="12" cy="12" r="3"/>
+                                            <td x-data="{ openMenu: false }" class="p-3.5 whitespace-nowrap text-center relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                                @php
+                                                    $receiptUrls = $fin->receipt_urls;
+                                                    $receiptCount = count($receiptUrls);
+                                                @endphp
+                                                @if($receiptCount > 0 || Auth::user()->canManage())
+                                                    <div class="inline-flex items-center justify-center">
+                                                        <button type="button" @click="openMenu = !openMenu" 
+                                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                                            title="Menu Aksi">
+                                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
                                                             </svg>
-                                                            @if($receiptCount > 1)
-                                                                <span class="text-[11px] font-bold text-sky-800 leading-none">{{ $receiptCount }}</span>
-                                                            @endif
                                                         </button>
-                                                    @endif
 
-                                                    @if(Auth::user()->canManage())
-                                                        <button type="button" @click="openEditFinance({{ Js::from($fin) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer"
-                                                            title="Edit Transaksi">
-                                                            <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
-                                                        </button>
-                                                        <button type="button"
-                                                            @click="openDeleteModal({{ Js::from([
-                                                                'title' => 'Hapus Transaksi Kas',
-                                                                'message' => 'Yakin ingin menghapus catatan transaksi kas ini?',
-                                                                'itemName' => $fin->description . ' (Rp ' . number_format($fin->amount, 0, ',', '.') . ')',
-                                                                'action' => 'deleteFinance',
-                                                                'id' => $fin->id,
-                                                            ]) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                                            title="Hapus Transaksi">
-                                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                                        </button>
-                                                    @elseif($receiptCount === 0)
-                                                        <span class="text-slate-300">-</span>
-                                                    @endif
-                                                </div>
+                                                        <!-- Dropdown Popover -->
+                                                        <div x-show="openMenu" 
+                                                            x-transition:enter="transition ease-out duration-100" 
+                                                            x-transition:enter-start="opacity-0 scale-95" 
+                                                            x-transition:enter-end="opacity-100 scale-100" 
+                                                            x-transition:leave="transition ease-in duration-75" 
+                                                            x-transition:leave-start="opacity-100 scale-100" 
+                                                            x-transition:leave-end="opacity-0 scale-95" 
+                                                            class="absolute right-3 top-full mt-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                                            style="display: none;">
+                                                            @if($receiptCount > 0)
+                                                                <button type="button" 
+                                                                    @click="openMenu = false; openReceiptModal({{ Js::from([
+                                                                        'items' => $receiptUrls,
+                                                                        'description' => $fin->description,
+                                                                        'date' => $fin->transaction_date ? $fin->transaction_date->translatedFormat('d F Y') : '-',
+                                                                        'amount' => ($fin->type === 'pemasukan' ? '+' : '-') . 'Rp ' . number_format($fin->amount, 0, ',', '.'),
+                                                                        'type' => $fin->type,
+                                                                    ]) }})" 
+                                                                    class="w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                                    <div class="flex items-center gap-2">
+                                                                        <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                                                            <circle cx="12" cy="12" r="3"/>
+                                                                        </svg>
+                                                                        <span>Lihat Bukti Kwitansi</span>
+                                                                    </div>
+                                                                    @if($receiptCount > 1)
+                                                                        <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-1.5 py-0.5 rounded-full">{{ $receiptCount }}</span>
+                                                                    @endif
+                                                                </button>
+                                                            @endif
+                                                            @if(Auth::user()->canManage())
+                                                                <button type="button" 
+                                                                    @click="openMenu = false; openEditFinance({{ Js::from($fin) }})" 
+                                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                                    <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                                    <span>Edit Transaksi</span>
+                                                                </button>
+                                                                <div class="my-1 border-t border-slate-100"></div>
+                                                                <button type="button" 
+                                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                                        'title' => 'Hapus Transaksi Kas',
+                                                                        'message' => 'Yakin ingin menghapus catatan transaksi kas ini?',
+                                                                        'itemName' => $fin->description . ' (Rp ' . number_format($fin->amount, 0, ',', '.') . ')',
+                                                                        'action' => 'deleteFinance',
+                                                                        'id' => $fin->id,
+                                                                    ]) }})" 
+                                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                                    <span>Hapus Transaksi</span>
+                                                                </button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <span class="text-slate-300">-</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -563,46 +588,70 @@
                                     $receiptCount = count($receiptUrls);
                                 @endphp
                                 @if($receiptCount > 0 || Auth::user()->canManage())
-                                    <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
-                                        @if($receiptCount > 0)
-                                            <button type="button"
-                                                @click="openReceiptModal({{ Js::from([
-                                                    'items' => $receiptUrls,
-                                                    'description' => $fin->description,
-                                                    'date' => $fin->transaction_date ? $fin->transaction_date->translatedFormat('d F Y') : '-',
-                                                    'amount' => ($fin->type === 'pemasukan' ? '+' : '-') . 'Rp ' . number_format($fin->amount, 0, ',', '.'),
-                                                    'type' => $fin->type,
-                                                ]) }})"
-                                                class="inline-flex items-center justify-center gap-1 p-1.5 px-2 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 shadow-2xs transition cursor-pointer"
-                                                title="Lihat Bukti Transfer / Kwitansi ({{ $receiptCount }} berkas)">
-                                                <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                                                    <circle cx="12" cy="12" r="3"/>
-                                                </svg>
-                                                @if($receiptCount > 1)
-                                                    <span class="text-[11px] font-bold text-sky-800 leading-none">{{ $receiptCount }}</span>
-                                                @endif
-                                            </button>
-                                        @endif
-                                        @if(Auth::user()->canManage())
-                                            <button type="button" @click="openEditFinance({{ Js::from($fin) }})"
-                                                class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer"
-                                                title="Edit Transaksi">
-                                                <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
-                                            </button>
-                                            <button type="button"
-                                                @click="openDeleteModal({{ Js::from([
-                                                    'title' => 'Hapus Transaksi Kas',
-                                                    'message' => 'Yakin ingin menghapus catatan transaksi kas ini?',
-                                                    'itemName' => $fin->description . ' (Rp ' . number_format($fin->amount, 0, ',', '.') . ')',
-                                                    'action' => 'deleteFinance',
-                                                    'id' => $fin->id,
-                                                ]) }})"
-                                                class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                                title="Hapus Transaksi">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                            </button>
-                                        @endif
+                                    <div x-data="{ openMenu: false }" class="pt-2 border-t border-slate-100 flex items-center justify-end relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                        <button type="button" @click="openMenu = !openMenu" 
+                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                            title="Menu Aksi">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                            </svg>
+                                        </button>
+
+                                        <!-- Dropdown Popover -->
+                                        <div x-show="openMenu" 
+                                            x-transition:enter="transition ease-out duration-100" 
+                                            x-transition:enter-start="opacity-0 scale-95" 
+                                            x-transition:enter-end="opacity-100 scale-100" 
+                                            x-transition:leave="transition ease-in duration-75" 
+                                            x-transition:leave-start="opacity-100 scale-100" 
+                                            x-transition:leave-end="opacity-0 scale-95" 
+                                            class="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                            style="display: none;">
+                                            @if($receiptCount > 0)
+                                                <button type="button" 
+                                                    @click="openMenu = false; openReceiptModal({{ Js::from([
+                                                        'items' => $receiptUrls,
+                                                        'description' => $fin->description,
+                                                        'date' => $fin->transaction_date ? $fin->transaction_date->translatedFormat('d F Y') : '-',
+                                                        'amount' => ($fin->type === 'pemasukan' ? '+' : '-') . 'Rp ' . number_format($fin->amount, 0, ',', '.'),
+                                                        'type' => $fin->type,
+                                                    ]) }})" 
+                                                    class="w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                    <div class="flex items-center gap-2">
+                                                        <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                                            <circle cx="12" cy="12" r="3"/>
+                                                        </svg>
+                                                        <span>Lihat Bukti Kwitansi</span>
+                                                    </div>
+                                                    @if($receiptCount > 1)
+                                                        <span class="text-[11px] font-bold text-sky-800 bg-sky-100 px-1.5 py-0.5 rounded-full">{{ $receiptCount }}</span>
+                                                    @endif
+                                                </button>
+                                            @endif
+                                            @if(Auth::user()->canManage())
+                                                <button type="button" 
+                                                    @click="openMenu = false; openEditFinance({{ Js::from($fin) }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                    <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                    <span>Edit Transaksi</span>
+                                                </button>
+                                                <div class="my-1 border-t border-slate-100"></div>
+                                                <button type="button" 
+                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                        'title' => 'Hapus Transaksi Kas',
+                                                        'message' => 'Yakin ingin menghapus catatan transaksi kas ini?',
+                                                        'itemName' => $fin->description . ' (Rp ' . number_format($fin->amount, 0, ',', '.') . ')',
+                                                        'action' => 'deleteFinance',
+                                                        'id' => $fin->id,
+                                                    ]) }})" 
+                                                    class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                    <span>Hapus Transaksi</span>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -801,8 +850,8 @@
 
                     <!-- Tabel Daftar Pos Anggaran Lengkap (Full-Width Card) -->
                     <!-- Desktop Table of Categories -->
-                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
-                        <div class="overflow-x-auto">
+                    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-visible">
+                        <div>
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr
@@ -872,27 +921,48 @@
                                             <td class="p-3.5 text-right font-bold text-gov-textMain">
                                                 Rp {{ number_format($fc->finances_sum_amount ?? 0, 0, ',', '.') }}
                                             </td>
-                                            <td class="p-3.5 text-right pr-4">
-                                                <div class="flex items-center justify-end gap-1.5">
+                                            <td x-data="{ openMenu: false }" class="p-3.5 text-right pr-4 relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                                <div class="flex items-center justify-end">
                                                     @if(Auth::user()->canManage())
-                                                        <button type="button"
-                                                            @click="openEditFinanceCategory({{ Js::from(['id' => $fc->id, 'name' => $fc->name, 'group' => $fc->group, 'type' => $fc->type, 'color' => $fc->color]) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer"
-                                                            title="Edit Pos Anggaran">
-                                                            <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                        <button type="button" @click="openMenu = !openMenu" 
+                                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                                            title="Menu Aksi">
+                                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                                            </svg>
                                                         </button>
-                                                        <button type="button"
-                                                            @click="openDeleteModal({{ Js::from([
-                                                                'title' => 'Hapus Pos Anggaran',
-                                                                'message' => 'Apakah Anda yakin ingin menghapus pos kategori ini? Transaksi yang terhubung akan tetap tersimpan.',
-                                                                'itemName' => $fc->name,
-                                                                'action' => 'deleteFinanceCategory',
-                                                                'id' => $fc->id,
-                                                            ]) }})"
-                                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                                            title="Hapus Pos Anggaran">
-                                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                                        </button>
+
+                                                        <!-- Dropdown Popover -->
+                                                        <div x-show="openMenu" 
+                                                            x-transition:enter="transition ease-out duration-100" 
+                                                            x-transition:enter-start="opacity-0 scale-95" 
+                                                            x-transition:enter-end="opacity-100 scale-100" 
+                                                            x-transition:leave="transition ease-in duration-75" 
+                                                            x-transition:leave-start="opacity-100 scale-100" 
+                                                            x-transition:leave-end="opacity-0 scale-95" 
+                                                            class="absolute right-4 top-full mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                                            style="display: none;">
+                                                            <button type="button" 
+                                                                @click="openMenu = false; openEditFinanceCategory({{ Js::from(['id' => $fc->id, 'name' => $fc->name, 'group' => $fc->group, 'type' => $fc->type, 'color' => $fc->color]) }})" 
+                                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                                <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                                <span>Edit Pos</span>
+                                                            </button>
+                                                            <div class="my-1 border-t border-slate-100"></div>
+                                                            <button type="button" 
+                                                                @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                                    'title' => 'Hapus Pos Anggaran',
+                                                                    'message' => 'Apakah Anda yakin ingin menghapus pos kategori ini? Transaksi yang terhubung akan tetap tersimpan.',
+                                                                    'itemName' => $fc->name,
+                                                                    'action' => 'deleteFinanceCategory',
+                                                                    'id' => $fc->id,
+                                                                ]) }})" 
+                                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                                <span>Hapus Pos</span>
+                                                            </button>
+                                                        </div>
                                                     @else
                                                         <span class="text-[11px] text-slate-400 italic">Hanya Lihat</span>
                                                     @endif
@@ -934,26 +1004,47 @@
                                     </span>
                                 </div>
 
-                                <div class="flex items-center justify-end gap-1.5 pt-2 border-t border-slate-100">
+                                <div x-data="{ openMenu: false }" class="flex items-center justify-end pt-2 border-t border-slate-100 relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
                                     @if(Auth::user()->canManage())
-                                        <button type="button"
-                                            @click="openEditFinanceCategory({{ Js::from(['id' => $fc->id, 'name' => $fc->name, 'group' => $fc->group, 'type' => $fc->type, 'color' => $fc->color]) }})"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer"
-                                            title="Edit Pos Anggaran">
-                                            <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                        <button type="button" @click="openMenu = !openMenu" 
+                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                            title="Menu Aksi">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                            </svg>
                                         </button>
-                                        <button type="button"
-                                            @click="openDeleteModal({{ Js::from([
-                                                'title' => 'Hapus Pos Anggaran',
-                                                'message' => 'Apakah Anda yakin ingin menghapus pos kategori ini? Transaksi yang terhubung akan tetap tersimpan.',
-                                                'itemName' => $fc->name,
-                                                'action' => 'deleteFinanceCategory',
-                                                'id' => $fc->id,
-                                            ]) }})"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer"
-                                            title="Hapus Pos Anggaran">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
-                                        </button>
+
+                                        <!-- Dropdown Popover -->
+                                        <div x-show="openMenu" 
+                                            x-transition:enter="transition ease-out duration-100" 
+                                            x-transition:enter-start="opacity-0 scale-95" 
+                                            x-transition:enter-end="opacity-100 scale-100" 
+                                            x-transition:leave="transition ease-in duration-75" 
+                                            x-transition:leave-start="opacity-100 scale-100" 
+                                            x-transition:leave-end="opacity-0 scale-95" 
+                                            class="absolute right-0 bottom-full mb-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                            style="display: none;">
+                                            <button type="button" 
+                                                @click="openMenu = false; openEditFinanceCategory({{ Js::from(['id' => $fc->id, 'name' => $fc->name, 'group' => $fc->group, 'type' => $fc->type, 'color' => $fc->color]) }})" 
+                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                <i data-lucide="edit-2" class="w-3.5 h-3.5 text-amber-600"></i>
+                                                <span>Edit Pos</span>
+                                            </button>
+                                            <div class="my-1 border-t border-slate-100"></div>
+                                            <button type="button" 
+                                                @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                    'title' => 'Hapus Pos Anggaran',
+                                                    'message' => 'Apakah Anda yakin ingin menghapus pos kategori ini? Transaksi yang terhubung akan tetap tersimpan.',
+                                                    'itemName' => $fc->name,
+                                                    'action' => 'deleteFinanceCategory',
+                                                    'id' => $fc->id,
+                                                ]) }})" 
+                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i>
+                                                <span>Hapus Pos</span>
+                                            </button>
+                                        </div>
                                     @else
                                         <span class="text-[11px] text-slate-400 italic">Hanya Lihat</span>
                                     @endif

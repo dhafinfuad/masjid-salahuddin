@@ -73,9 +73,8 @@
     <!-- ======================================================== -->
     <!-- DESKTOP VIEW: CLEAN TABLE (NO CATEGORY BADGE & VERIFIED ICON IN AKSI) -->
     <!-- ======================================================== -->
-    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-hidden">
-        
-        <div class="overflow-x-auto">
+    <div class="hidden md:block bg-white rounded-xl border border-gov-border shadow-2xs overflow-visible">
+        <div>
             <table class="w-full text-left text-xs border-collapse">
                 <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-gov-border uppercase tracking-wider text-[10px]">
                     <tr>
@@ -83,7 +82,7 @@
                         <th class="py-3 px-4 min-w-[340px]">Topik & Isi Masukan</th>
                         <th class="py-3 px-3 text-center whitespace-nowrap w-20">Publik</th>
                         <th class="py-3 px-4 text-center whitespace-nowrap w-36">Tanggal</th>
-                        <th class="py-3 px-4 text-right whitespace-nowrap w-32">Aksi</th>
+                        <th class="py-3 px-4 text-center whitespace-nowrap w-24">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -155,36 +154,57 @@
                             </td>
 
                             <!-- Aksi -->
-                            <td class="py-3.5 px-4 align-top text-right whitespace-nowrap w-32">
-                                <div class="inline-flex items-center justify-end gap-1.5">
-                                    <!-- Tombol Tanggapi / Detail -->
-                                    @if(Auth::check() && !Auth::user()->isJamaah())
-                                        <!-- Tombol Tanggapi: Khusus Pengurus/Takmir -->
-                                        <button type="button" wire:click="openSaranDetail({{ $item->id }})"
-                                            class="px-2.5 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-[11px] font-bold shadow-2xs transition inline-flex items-center gap-1 cursor-pointer shrink-0"
-                                            title="{{ !empty($item->admin_reply) ? 'Ubah tanggapan takmir' : 'Buka detail pesan & tulis tanggapan' }}">
-                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                            <span>Tanggapi</span>
-                                        </button>
-                                    @else
-                                        <!-- Role Jamaah: Hanya tombol Detail -->
-                                        <button type="button" wire:click="openSaranDetail({{ $item->id }})"
-                                            class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold border border-slate-200 transition inline-flex items-center gap-1 cursor-pointer shrink-0"
-                                            title="Lihat rincian pesan">
-                                            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                            <span>Detail</span>
-                                        </button>
-                                    @endif
+                            <td x-data="{ openMenu: false }" class="py-3.5 px-4 align-top text-center whitespace-nowrap relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                <div class="inline-flex items-center justify-center">
+                                    <button type="button" @click="openMenu = !openMenu" 
+                                        class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                        :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                        title="Menu Aksi">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                                        </svg>
+                                    </button>
 
-                                    <!-- Tombol Hapus: Tetap muncul baik belum maupun telah ditanggapi -->
-                                    @if(Auth::check() && Auth::user()->canManage())
-                                        <button type="button" wire:click="deleteSaran({{ $item->id }})"
-                                            wire:confirm="Yakin ingin menghapus catatan saran ini?"
-                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition cursor-pointer shrink-0"
-                                            title="Hapus saran ini (tetap tersedia untuk saran yang telah ditanggapi)">
-                                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                        </button>
-                                    @endif
+                                    <!-- Dropdown Popover -->
+                                    <div x-show="openMenu" 
+                                        x-transition:enter="transition ease-out duration-100" 
+                                        x-transition:enter-start="opacity-0 scale-95" 
+                                        x-transition:enter-end="opacity-100 scale-100" 
+                                        x-transition:leave="transition ease-in duration-75" 
+                                        x-transition:leave-start="opacity-100 scale-100" 
+                                        x-transition:leave-end="opacity-0 scale-95" 
+                                        class="absolute right-4 top-full mt-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                                        style="display: none;">
+                                        @if(Auth::check() && !Auth::user()->isJamaah())
+                                            <button type="button" 
+                                                @click="openMenu = false"
+                                                wire:click="openSaranDetail({{ $item->id }})" 
+                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                <svg class="w-3.5 h-3.5 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                                <span>{{ !empty($item->admin_reply) ? 'Ubah Tanggapan' : 'Tanggapi Saran' }}</span>
+                                            </button>
+                                        @else
+                                            <button type="button" 
+                                                @click="openMenu = false"
+                                                wire:click="openSaranDetail({{ $item->id }})" 
+                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                                <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                <span>Lihat Detail</span>
+                                            </button>
+                                        @endif
+
+                                        @if(Auth::check() && Auth::user()->canManage())
+                                            <div class="my-1 border-t border-slate-100"></div>
+                                            <button type="button" 
+                                                @click="openMenu = false"
+                                                wire:click="deleteSaran({{ $item->id }})" 
+                                                wire:confirm="Yakin ingin menghapus catatan saran ini?"
+                                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                                <svg class="w-3.5 h-3.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                                <span>Hapus Saran</span>
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
 
@@ -313,30 +333,53 @@
                 @endif
 
                 <!-- Card Actions -->
-                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-                    <div>
-                        @if(Auth::check() && Auth::user()->canManage())
-                            <button type="button" wire:click="deleteSaran({{ $item->id }})"
-                                wire:confirm="Yakin ingin menghapus catatan saran ini?"
-                                class="p-2 rounded-lg border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                                title="Hapus saran ini (tetap tersedia untuk saran yang telah ditanggapi)">
-                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            </button>
-                        @endif
-                    </div>
+                <div x-data="{ openMenu: false }" class="flex items-center justify-end pt-2 border-t border-slate-100 relative" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                    <button type="button" @click="openMenu = !openMenu" 
+                        class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                        :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                        title="Menu Aksi">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
 
-                    <div class="flex items-center gap-2">
+                    <!-- Dropdown Popover -->
+                    <div x-show="openMenu" 
+                        x-transition:enter="transition ease-out duration-100" 
+                        x-transition:enter-start="opacity-0 scale-95" 
+                        x-transition:enter-end="opacity-100 scale-100" 
+                        x-transition:leave="transition ease-in duration-75" 
+                        x-transition:leave-start="opacity-100 scale-100" 
+                        x-transition:leave-end="opacity-0 scale-95" 
+                        class="absolute right-0 bottom-full mb-1 w-44 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-40 text-left focus:outline-none" 
+                        style="display: none;">
                         @if(Auth::check() && !Auth::user()->isJamaah())
-                            <button type="button" wire:click="openSaranDetail({{ $item->id }})"
-                                class="px-3.5 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                <span>Tanggapi</span>
+                            <button type="button" 
+                                @click="openMenu = false"
+                                wire:click="openSaranDetail({{ $item->id }})" 
+                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                <span>{{ !empty($item->admin_reply) ? 'Ubah Tanggapan' : 'Tanggapi Saran' }}</span>
                             </button>
                         @else
-                            <button type="button" wire:click="openSaranDetail({{ $item->id }})"
-                                class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition inline-flex items-center gap-1.5 cursor-pointer">
+                            <button type="button" 
+                                @click="openMenu = false"
+                                wire:click="openSaranDetail({{ $item->id }})" 
+                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-gov-navy transition cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                <span>Detail</span>
+                                <span>Lihat Detail</span>
+                            </button>
+                        @endif
+
+                        @if(Auth::check() && Auth::user()->canManage())
+                            <div class="my-1 border-t border-slate-100"></div>
+                            <button type="button" 
+                                @click="openMenu = false"
+                                wire:click="deleteSaran({{ $item->id }})" 
+                                wire:confirm="Yakin ingin menghapus catatan saran ini?"
+                                class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>Hapus Saran</span>
                             </button>
                         @endif
                     </div>
