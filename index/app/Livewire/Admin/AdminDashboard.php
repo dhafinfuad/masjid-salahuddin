@@ -544,6 +544,13 @@ class AdminDashboard extends Component
         $this->agendaDate = Carbon::now()->addDays(7)->format('Y-m-d');
         $this->odojDate = Carbon::today()->format('Y-m-d');
 
+        if (! session()->has('temp_scan_pdf_path') || ! file_exists(session('temp_scan_pdf_path'))) {
+            $defaultScanPdf = storage_path('app/private/scan_mesin.pdf');
+            if (file_exists($defaultScanPdf)) {
+                session(['temp_scan_pdf_path' => $defaultScanPdf]);
+            }
+        }
+
         /** @var MasjidSetting $settings */
         $settings = MasjidSetting::getActive();
         $this->settingsName = $settings->name;
@@ -5601,14 +5608,21 @@ class AdminDashboard extends Component
 
         try {
             $filePath = $this->scanPernyataanFile->getRealPath();
-            session(['temp_scan_pdf_path' => $filePath]);
-
+            $destDir = storage_path('app/private/temp_scans');
+            if (! file_exists($destDir)) {
+                mkdir($destDir, 0755, true);
+            }
+            $destPath = $destDir . DIRECTORY_SEPARATOR . 'latest_scan.pdf';
             if (file_exists($filePath) && filesize($filePath) > 0) {
-                $this->scanPdfBase64 = base64_encode(file_get_contents($filePath));
+                copy($filePath, $destPath);
+                session(['temp_scan_pdf_path' => $destPath]);
+                $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
             } else {
                 $fallbackPdf = storage_path('app/private/scan_mesin.pdf');
                 if (file_exists($fallbackPdf)) {
-                    $this->scanPdfBase64 = base64_encode(file_get_contents($fallbackPdf));
+                    copy($fallbackPdf, $destPath);
+                    session(['temp_scan_pdf_path' => $destPath]);
+                    $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
                 }
             }
 

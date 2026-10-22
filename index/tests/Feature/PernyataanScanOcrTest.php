@@ -212,4 +212,15 @@ No  Program                 Nominal per Bulan
             ->call('processScanPernyataan')
             ->assertSet('scanError', 'Akses ditolak: Anda tidak memiliki wewenang mengimpor data komitmen.');
     }
+
+    public function test_admin_can_access_preview_scan_pernyataan_pdf(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get(route('admin.programs.preview-scan-pernyataan'));
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
+        $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+    }
 }

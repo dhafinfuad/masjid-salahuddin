@@ -94,6 +94,9 @@ Route::middleware('auth')->group(function () {
         }
         $path = session('temp_scan_pdf_path');
         if (! $path || ! file_exists($path)) {
+            $path = storage_path('app/private/temp_scans/latest_scan.pdf');
+        }
+        if (! $path || ! file_exists($path)) {
             $path = storage_path('app/private/scan_mesin.pdf');
         }
         if (! file_exists($path)) {
@@ -102,6 +105,10 @@ Route::middleware('auth')->group(function () {
         return response()->file($path, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="scan_pernyataan.pdf"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+            'X-Frame-Options' => 'SAMEORIGIN',
         ]);
     })->name('admin.programs.preview-scan-pernyataan');
 

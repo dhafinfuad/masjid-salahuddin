@@ -4299,118 +4299,49 @@
                                 $cur = $scanPages[$activeScanPageIndex];
                             @endphp
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                                <!-- Sisi Kiri: Pindaian Dokumen Asli (PDF.js Canvas Viewer) -->
-                                <div class="bg-slate-900 rounded-xl border border-slate-700 p-3 flex flex-col justify-between h-[520px] relative overflow-hidden"
-                                     x-data="{
-                                         scale: 1.2,
-                                         loading: false,
-                                         pdfDoc: null,
-                                         pdfBase64: @js($scanPdfBase64),
-                                         async initPdfViewer() {
-                                             let tries = 0;
-                                             while (!window.pdfjsLib && tries < 25) {
-                                                 await new Promise(r => setTimeout(r, 100));
-                                                 tries++;
-                                             }
-                                             if (!window.pdfjsLib) return;
-                                             window.pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.js';
-
-                                             let data = this.pdfBase64;
-                                             if (!data) return;
-
-                                             this.loading = true;
-                                             try {
-                                                 const binStr = atob(data);
-                                                 const bytes = new Uint8Array(binStr.length);
-                                                 for (let i = 0; i < binStr.length; i++) {
-                                                     bytes[i] = binStr.charCodeAt(i);
-                                                 }
-                                                 this.pdfDoc = await window.pdfjsLib.getDocument({ data: bytes }).promise;
-                                                 await this.renderPage({{ $activeScanPageIndex + 1 }});
-                                             } catch (e) {
-                                                 console.error('PDF.js loading error:', e);
-                                             } finally {
-                                                 this.loading = false;
-                                             }
-                                         },
-                                         async renderPage(num) {
-                                             if (!this.pdfDoc) return;
-                                             if (num < 1 || num > this.pdfDoc.numPages) return;
-                                             this.loading = true;
-                                             try {
-                                                 const page = await this.pdfDoc.getPage(num);
-                                                 const canvas = this.$refs.pdfCanvas;
-                                                 if (!canvas) return;
-                                                 const ctx = canvas.getContext('2d');
-                                                 const viewport = page.getViewport({ scale: this.scale });
-                                                 canvas.height = viewport.height;
-                                                 canvas.width = viewport.width;
-                                                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-                                             } catch (err) {
-                                                 console.error('Error rendering page:', err);
-                                             } finally {
-                                                 this.loading = false;
-                                             }
-                                         },
-                                         zoomIn() {
-                                             this.scale = Math.min(2.5, +(this.scale + 0.2).toFixed(1));
-                                             this.renderPage({{ $activeScanPageIndex + 1 }});
-                                         },
-                                         zoomOut() {
-                                             this.scale = Math.max(0.6, +(this.scale - 0.2).toFixed(1));
-                                             this.renderPage({{ $activeScanPageIndex + 1 }});
-                                         },
-                                         resetZoom() {
-                                             this.scale = 1.2;
-                                             this.renderPage({{ $activeScanPageIndex + 1 }});
-                                         }
-                                     }"
-                                     x-init=\"initPdfViewer(); \$watch('\$wire.activeScanPageIndex', (val) => renderPage(val + 1)); \$watch('\$wire.scanPdfBase64', (val) => { pdfBase64 = val; initPdfViewer(); })\">
-
-                                    <!-- Header Controls: Title & Zoom -->
-                                    <div class="flex items-center justify-between pb-2 border-b border-slate-700 text-xs text-white">
+                                <!-- Sisi Kiri: Pindaian Dokumen Asli -->
+                                <div class="bg-slate-50 rounded-xl border border-gov-border p-3 flex flex-col justify-between h-[520px] relative overflow-hidden">
+                                    <!-- Header Controls -->
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs text-gov-textMain">
                                         <span class="font-semibold flex items-center gap-1.5">
-                                            <i data-lucide="file-search" class="w-3.5 h-3.5 text-blue-400"></i>
+                                            <i data-lucide="file-search" class="w-3.5 h-3.5 text-blue-600"></i>
                                             <span>Pindaian Dokumen (Hal {{ $activeScanPageIndex + 1 }})</span>
                                         </span>
-                                        <div class="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5 border border-slate-700 text-[11px]">
-                                            <button type="button" @click="zoomOut()" title="Perkecil"
-                                                class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer">
-                                                <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                            <span class="px-1 font-mono text-[10px] text-slate-300" x-text="Math.round(scale * 100) + '%'">120%</span>
-                                            <button type="button" @click="zoomIn()" title="Perbesar"
-                                                class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer">
-                                                <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                            <button type="button" @click="resetZoom()" title="Reset Zoom"
-                                                class="px-1.5 h-6 rounded text-[10px] hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer">
-                                                Reset
-                                            </button>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[11px] text-slate-500 font-medium">Lembar formulir asli pegawai</span>
+                                            <a href="{{ route('admin.programs.preview-scan-pernyataan') }}#page={{ $activeScanPageIndex + 1 }}" target="_blank"
+                                                class="text-blue-600 hover:text-blue-800 text-[11px] font-semibold inline-flex items-center gap-1 hover:underline cursor-pointer">
+                                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                                                <span>Tab Baru</span>
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <!-- Canvas Scroll Container -->
-                                    <div class="flex-1 overflow-auto rounded-lg bg-slate-950 p-2 my-2 flex items-center justify-center relative notula-scrollable">
-                                        <div x-show="loading" class="absolute inset-0 bg-slate-950/80 backdrop-blur-2xs flex flex-col items-center justify-center gap-2 z-10 text-white text-xs">
-                                            <svg class="w-6 h-6 animate-spin text-blue-400" viewBox="0 0 24 24" fill="none">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <span>Memuat pindaian lembar {{ $activeScanPageIndex + 1 }}...</span>
-                                        </div>
-
-                                        <canvas x-ref="pdfCanvas" class="max-w-full rounded shadow-xl bg-white border border-slate-700 mx-auto transition-transform duration-100"></canvas>
+                                    <!-- Embedded Native PDF Page Viewer -->
+                                    <div class="flex-1 overflow-hidden rounded-lg bg-slate-100 my-2 relative border border-slate-200 shadow-2xs">
+                                        <object data="{{ route('admin.programs.preview-scan-pernyataan') }}?t={{ session('temp_scan_pdf_time', time()) }}#page={{ $activeScanPageIndex + 1 }}&toolbar=0&navpanes=0&view=FitH"
+                                                type="application/pdf"
+                                                class="w-full h-full rounded-lg">
+                                            <iframe wire:key="scan-pdf-frame-{{ $activeScanPageIndex }}"
+                                                    src="{{ route('admin.programs.preview-scan-pernyataan') }}?t={{ session('temp_scan_pdf_time', time()) }}#page={{ $activeScanPageIndex + 1 }}&toolbar=0&navpanes=0&view=FitH"
+                                                    class="w-full h-full rounded-lg bg-white border-0"
+                                                    loading="lazy">
+                                                <div class="h-full flex flex-col items-center justify-center p-4 text-center text-xs text-slate-500 bg-white">
+                                                    <i data-lucide="file-text" class="w-8 h-8 text-slate-400 mb-2"></i>
+                                                    <p class="font-medium text-slate-700">Pratinjau PDF tidak didukung otomatis pada perangkat ini.</p>
+                                                    <a href="{{ route('admin.programs.preview-scan-pernyataan') }}#page={{ $activeScanPageIndex + 1 }}" target="_blank"
+                                                       class="mt-2 text-blue-600 hover:text-blue-800 underline font-semibold">
+                                                        Buka Dokumen di Tab Baru
+                                                    </a>
+                                                </div>
+                                            </iframe>
+                                        </object>
                                     </div>
 
-                                    <!-- Bottom Footer bar -->
-                                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800">
-                                        <span>Tinjau nominal tulisan tangan pegawai</span>
-                                        <a href="{{ route('admin.programs.preview-scan-pernyataan') }}" target="_blank"
-                                            class="hover:text-blue-400 text-slate-400 inline-flex items-center gap-1 hover:underline">
-                                            <i data-lucide="external-link" class="w-3 h-3"></i>
-                                            <span>Buka PDF di Tab Baru</span>
-                                        </a>
+                                    <!-- Bottom Footer info -->
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                                        <span>Gunakan pindaian untuk memverifikasi nominal tulisan tangan pegawai.</span>
+                                        <span class="font-mono text-slate-400">Hal {{ $activeScanPageIndex + 1 }} dari {{ count($scanPages) }}</span>
                                     </div>
                                 </div>
 
