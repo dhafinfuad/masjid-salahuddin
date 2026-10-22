@@ -161,6 +161,7 @@ No  Program                 Nominal per Bulan
         Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
             ->set('scanPernyataanFile', $fakePdf)
             ->call('processScanPernyataan')
+            ->set('scanPages.1.commitments.infaq', '250.000')
             ->call('saveScanPernyataanCommitments')
             ->assertHasNoErrors();
 
@@ -182,7 +183,7 @@ No  Program                 Nominal per Bulan
         $this->assertDatabaseHas('program_participants', [
             'name' => 'Moh. Lukman Hakim',
             'program_name' => 'Infaq Rutin',
-            'monthly_amount' => 200000,
+            'monthly_amount' => 250000,
             'period' => 'Periode 11/2026',
         ]);
 

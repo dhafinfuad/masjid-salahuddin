@@ -5694,6 +5694,9 @@ class AdminDashboard extends Component
 
             // Simpan setiap program komitmen yang nominalnya > 0
             foreach ($page['commitments'] ?? [] as $progKey => $amount) {
+                if (is_string($amount)) {
+                    $amount = preg_replace('/[^\d]/', '', $amount);
+                }
                 $amt = (float) $amount;
                 if ($amt <= 0) continue;
 
