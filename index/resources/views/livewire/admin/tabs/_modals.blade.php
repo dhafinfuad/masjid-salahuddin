@@ -4398,7 +4398,6 @@
                                         </div>
                                         <div>
                                             <span class="font-bold text-slate-800">Pindaian Dokumen Asli</span>
-                                            <span class="text-gov-navy font-bold text-xs ml-1.5 font-mono" x-text="'(Halaman ' + (activeScanIdx + 1) + ' dari ' + totalPages + ')'"></span>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -4442,11 +4441,7 @@
                                                     <span class="w-2.5 h-2.5 rounded-full" :class="activeScanIdx === {{ $pIdx }} ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-slate-300'"></span>
                                                     <span>Halaman {{ $targetPage }}</span>
                                                     <span class="text-slate-400 font-normal">dari {{ count($scanPages) }}</span>
-                                                    <span x-show="activeScanIdx === {{ $pIdx }}" class="text-[10px] bg-gov-navy text-white px-1.5 py-0.5 rounded font-semibold ml-1">Aktif</span>
                                                 </div>
-                                                <span class="font-semibold text-[11px] truncate max-w-[200px]" :class="activeScanIdx === {{ $pIdx }} ? 'text-gov-navy font-bold' : 'text-slate-600'">
-                                                    {{ $pageEmpName }}
-                                                </span>
                                             </div>
 
                                             <!-- Content: High-Res Poppler Image OR PDF.js Canvas -->
@@ -4479,13 +4474,7 @@
                             <div class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs flex flex-col h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden">
                                 <!-- Fixed Header -->
                                 <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100/80 text-gov-navy border border-sky-300 font-mono">
-                                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            <span x-text="'Lembar ' + (activeScanIdx + 1) + ' dari ' + totalPages"></span>
-                                        </span>
-                                    </div>
+                                    <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
                                     <button type="button" @click="$wire.removeScanPage(activeScanIdx)"
                                         class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer">
                                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -4493,15 +4482,8 @@
                                     </button>
                                 </div>
 
-                                <!-- Dynamic Active Banner -->
-                                <div class="my-2 p-2 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs shrink-0">
-                                    <span class="text-slate-500 font-medium">Formulir Aktif:</span>
-                                    <span class="font-bold text-gov-navy truncate max-w-[200px]"
-                                          x-text="'Halaman ' + (activeScanIdx + 1) + ' — ' + (scanEmpNames[activeScanIdx] || 'Pegawai')"></span>
-                                </div>
-
                                 <!-- Scrollable Form Content -->
-                                <div class="flex-1 min-h-0 overflow-y-auto notula-scrollable pr-1 space-y-3.5">
+                                <div class="flex-1 min-h-0 overflow-y-auto notula-scrollable pr-1 space-y-3.5 pt-2">
                                     @foreach($scanPages as $idx => $cur)
                                         <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-3.5"
                                              x-transition:enter="transition ease-out duration-100"
