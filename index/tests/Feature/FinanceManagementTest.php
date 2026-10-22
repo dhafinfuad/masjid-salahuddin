@@ -695,6 +695,60 @@ class FinanceManagementTest extends TestCase
             ->assertSee('Operasional Keluar B')
             ->assertDontSee('Infaq Masuk A');
     }
+
+    public function test_finance_type_filter_syncs_pagination_properly(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        // Buat 1 pemasukan dan 15 pengeluaran (total 16 transaksi, memicu 2 halaman pada mode 'all')
+        Finance::create([
+            'transaction_date' => Carbon::now(),
+            'type' => 'pemasukan',
+            'category_id' => $this->categoryInfaq->id,
+            'amount' => 3970000,
+            'description' => 'Infaq Rutin Pegawai Oktober',
+            'recorded_by' => $this->bendahara->id,
+        ]);
+
+        for ($i = 1; $i <= 15; $i++) {
+            Finance::create([
+                'transaction_date' => Carbon::now(),
+                'type' => 'pengeluaran',
+                'category_id' => $this->categoryOperasional->id,
+                'amount' => 100000 * $i,
+                'description' => "Pengeluaran Operasional {$i}",
+                'recorded_by' => $this->bendahara->id,
+            ]);
+        }
+
+        // Mode 'all': total 16 transaksi, pagination aktif (hasPages = true, 16 results)
+        $component = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->assertSet('financeTypeFilter', 'all');
+
+        $paginatorAll = $component->viewData('financesList');
+        $this->assertEquals(16, $paginatorAll->total());
+        $this->assertTrue($paginatorAll->hasPages());
+
+        // Mode 'pemasukan': total 1 transaksi, pagination tidak lagi menampilkan 16 results
+        $component->set('financeTypeFilter', 'pemasukan')
+            ->assertSet('financeTypeFilter', 'pemasukan');
+
+        $paginatorPemasukan = $component->viewData('financesList');
+        $this->assertEquals(1, $paginatorPemasukan->total());
+        $this->assertFalse($paginatorPemasukan->hasPages());
+        $component->assertSee('Infaq Rutin Pegawai Oktober')
+            ->assertDontSee('Pengeluaran Operasional 1');
+
+        // Mode 'pengeluaran': total 15 transaksi, hasPages = false (pas 1 halaman)
+        $component->set('financeTypeFilter', 'pengeluaran')
+            ->assertSet('financeTypeFilter', 'pengeluaran');
+
+        $paginatorPengeluaran = $component->viewData('financesList');
+        $this->assertEquals(15, $paginatorPengeluaran->total());
+        $this->assertFalse($paginatorPengeluaran->hasPages());
+        $component->assertSee('Pengeluaran Operasional 1')
+            ->assertDontSee('Infaq Rutin Pegawai Oktober');
+    }
 }
 
 
