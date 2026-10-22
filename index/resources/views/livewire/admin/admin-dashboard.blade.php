@@ -123,6 +123,7 @@
          showEmployeeModal: false,
          showImportEmployeeModal: false,
          showUploadDocModal: false,
+         showTemplateKepModal: false,
          showKajianModal: {{ $showKajianModal ? 'true' : 'false' }},
          showImportKajianModal: false,
          showUstadzModal: {{ $showUstadzModal ? 'true' : 'false' }},
@@ -917,7 +918,10 @@
     @open-import-employee-modal.window="showImportEmployeeModal = true"
     @close-import-employee-modal.window="showImportEmployeeModal = false"
     @open-upload-doc-modal.window="showUploadDocModal = true"
-    @close-upload-doc-modal.window="showUploadDocModal = false" @open-finance-modal.window="showFinanceModal = true"
+    @close-upload-doc-modal.window="showUploadDocModal = false"
+    @open-template-kep-modal.window="showTemplateKepModal = true"
+    @close-template-kep-modal.window="showTemplateKepModal = false"
+    @open-finance-modal.window="showFinanceModal = true"
     @close-finance-modal.window="showFinanceModal = false"
     @open-finance-category-modal.window="showFinanceCategoryModal = true"
     @close-finance-category-modal.window="showFinanceCategoryModal = false"

@@ -1890,6 +1890,389 @@
     </div>
 
     <!-- ======================================================== -->
+    <!-- MODAL: TEMPLATE SURAT KEPUTUSAN KEPALA KPP MADYA MALANG -->
+    <!-- TENTANG PERUBAHAN SUSUNAN PENGURUS TAKMIR MASJID SALAHUDDIN -->
+    <!-- ======================================================== -->
+    <div x-show="showTemplateKepModal" x-cloak wire:ignore.self
+        @click="if (window.isBackdropClick($event, $el)) showTemplateKepModal = false"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+        style="display: none;" @keydown.escape.window="showTemplateKepModal = false">
+        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-gov-border flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+             x-data="{ kepActiveTab: 'identitas' }">
+            
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between gap-4 bg-slate-50/60">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gov-navy text-amber-400 flex items-center justify-center shadow-xs shrink-0">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gov-textMain leading-tight">
+                            Template Surat Keputusan Kepala KPP Madya Malang
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Tentang Perubahan Susunan Pengurus Takmir Masjid Salahuddin Periode {{ $docSkPeriode }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
+                       class="h-8 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                       title="Cetak atau Unduh Draf PDF Resmi Standar Naskah Dinas">
+                        <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-500"></i>
+                        <span class="hidden sm:inline">Cetak Draf PDF</span>
+                    </a>
+                    <button type="button" @click="showTemplateKepModal = false"
+                        class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-200/60 transition cursor-pointer">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Nav Tabs -->
+            <div class="border-b border-slate-200 bg-white px-5 pt-2">
+                <nav class="flex items-center gap-2 overflow-x-auto text-xs no-scrollbar" aria-label="Template KEP Tabs">
+                    <button type="button" @click="kepActiveTab = 'identitas'"
+                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
+                        :class="kepActiveTab === 'identitas' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
+                        <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
+                        <span>1. Identitas Dokumen SK</span>
+                    </button>
+                    <button type="button" @click="kepActiveTab = 'pimpinan'"
+                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
+                        :class="kepActiveTab === 'pimpinan' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        <span>2. Pimpinan Harian</span>
+                    </button>
+                    <button type="button" @click="kepActiveTab = 'bidang'"
+                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
+                        :class="kepActiveTab === 'bidang' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        <span>3. 4 Bidang Pengelola</span>
+                    </button>
+                    <button type="button" @click="kepActiveTab = 'tupoksi'"
+                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
+                        :class="kepActiveTab === 'tupoksi' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
+                        <span>4. Rincian Tupoksi</span>
+                    </button>
+                    <button type="button" @click="kepActiveTab = 'upload'"
+                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
+                        :class="kepActiveTab === 'upload' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
+                        <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+                        <span>5. Berkas PDF Final</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-6 overflow-y-auto max-h-[60vh] space-y-5 text-xs">
+                
+                <!-- TAB 1: IDENTITAS DOKUMEN SK -->
+                <div x-show="kepActiveTab === 'identitas'" class="space-y-4">
+                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2.5">
+                        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                        <p class="leading-relaxed">
+                            Data identitas di bawah ini menjadi konsiderans utama Surat Keputusan (SK) resmi yang diterbitkan dan ditandatangani oleh Kepala Kantor Pelayanan Pajak Madya Malang.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Nomor Keputusan (SK) *</label>
+                            <input type="text" wire:model.defer="docSkNumber" placeholder="Contoh: KEP-48/KPP.1209/2026"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy font-mono text-xs">
+                            @error('docSkNumber') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Tanggal Penetapan SK *</label>
+                            <input type="text" wire:model.defer="docSkDate" placeholder="Contoh: 14 April 2026"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs">
+                            @error('docSkDate') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Periode Masa Bakti *</label>
+                            <input type="text" wire:model.defer="docSkPeriode" placeholder="Contoh: 2026-2029"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-semibold">
+                            @error('docSkPeriode') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="sm:col-span-2 space-y-1.5">
+                            <label class="font-bold text-slate-700">Judul Utama Dokumen SK</label>
+                            <input type="text" wire:model.defer="docSkTitle" placeholder="Surat Keputusan Kepala KPP Madya Malang"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs">
+                        </div>
+
+                        <div class="space-y-1.5 sm:col-span-2 lg:col-span-1">
+                            <label class="font-bold text-slate-700">Nama Pembina (Kepala Kantor) *</label>
+                            <input type="text" wire:model.defer="pembinaName" placeholder="Teguh Iman Wirotomo"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs">
+                            @error('pembinaName') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="sm:col-span-2 lg:col-span-3 space-y-1.5">
+                            <label class="font-bold text-slate-700">Perihal / Tentang Keputusan</label>
+                            <textarea wire:model.defer="docSkDescription" rows="2"
+                                placeholder="Perubahan Susunan Pengurus Takmir Masjid Sholahuddin KPP Madya Malang Periode 2026-2029"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PIMPINAN HARIAN -->
+                <div x-show="kepActiveTab === 'pimpinan'" x-cloak class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Ketua Takmir *</label>
+                            <input type="text" wire:model.defer="ketuaName" placeholder="Nama lengkap Ketua Takmir"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-semibold">
+                            @error('ketuaName') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Wakil Ketua Takmir *</label>
+                            <input type="text" wire:model.defer="wakilKetuaName" placeholder="Nama lengkap Wakil Ketua Takmir"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-semibold">
+                            @error('wakilKetuaName') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Sekretaris * <span class="font-normal text-slate-400">(Satu nama per baris)</span></label>
+                            <textarea wire:model.defer="sekretarisNames" rows="3" placeholder="Nama Sekretaris 1&#10;Nama Sekretaris 2"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs"></textarea>
+                            @error('sekretarisNames') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="font-bold text-slate-700">Bendahara * <span class="font-normal text-slate-400">(Satu nama per baris)</span></label>
+                            <textarea wire:model.defer="bendaharaNames" rows="3" placeholder="Nama Bendahara 1&#10;Nama Bendahara 2"
+                                class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs"></textarea>
+                            @error('bendaharaNames') <span class="text-rose-600 text-[11px] block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: 4 BIDANG PENGELOLA -->
+                <div x-show="kepActiveTab === 'bidang'" x-cloak class="space-y-5">
+                    
+                    <!-- Bidang 1 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold flex items-center justify-center">1</span>
+                            <input type="text" wire:model.defer="bidang0Name" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-gov-textMain">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Pengelola / Koordinator <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang0Pengelola" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Anggota Bidang <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang0Anggota" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bidang 2 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-800 text-[11px] font-bold flex items-center justify-center">2</span>
+                            <input type="text" wire:model.defer="bidang1Name" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-gov-textMain">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Pengelola / Koordinator <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang1Pengelola" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Anggota Bidang <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang1Anggota" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bidang 3 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold flex items-center justify-center">3</span>
+                            <input type="text" wire:model.defer="bidang2Name" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-gov-textMain">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Pengelola / Koordinator <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang2Pengelola" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Anggota Bidang <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang2Anggota" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bidang 4 -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold flex items-center justify-center">4</span>
+                            <input type="text" wire:model.defer="bidang3Name" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-gov-textMain">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Pengelola / Koordinator <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang3Pengelola" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] font-bold text-slate-600">Anggota Bidang <span class="text-slate-400 font-normal">(1 per baris)</span></label>
+                                <textarea wire:model.defer="bidang3Anggota" rows="2" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-white text-xs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TAB 4: RINCIAN TUPOKSI -->
+                <div x-show="kepActiveTab === 'tupoksi'" x-cloak class="space-y-4">
+                    <p class="text-[11px] text-slate-500">Tuliskan butir tugas pokok dan fungsi per baris. Butir-butir ini akan dicetak otomatis pada Lampiran II SK Resmi.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi Pembina</label>
+                            <textarea wire:model.defer="pembinaTupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi Ketua Takmir</label>
+                            <textarea wire:model.defer="ketuaTupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi Wakil Ketua</label>
+                            <textarea wire:model.defer="wakilKetuaTupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi Sekretaris</label>
+                            <textarea wire:model.defer="sekretarisTupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi Bendahara</label>
+                            <textarea wire:model.defer="bendaharaTupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi {{ $bidang0Name }}</label>
+                            <textarea wire:model.defer="bidang0Tupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi {{ $bidang1Name }}</label>
+                            <textarea wire:model.defer="bidang1Tupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="font-bold text-slate-700">Tupoksi {{ $bidang2Name }}</label>
+                            <textarea wire:model.defer="bidang2Tupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                        <div class="space-y-1 sm:col-span-2">
+                            <label class="font-bold text-slate-700">Tupoksi {{ $bidang3Name }}</label>
+                            <textarea wire:model.defer="bidang3Tupoksi" rows="3" class="w-full px-2.5 py-1.5 rounded-lg border border-gov-border bg-slate-50 focus:bg-white text-xs"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: UNGGAH PDF KEP FINAL -->
+                <div x-show="kepActiveTab === 'upload'" x-cloak class="space-y-4">
+                    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-900 text-xs flex items-start gap-2.5">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+                        <div class="space-y-1">
+                            <p class="font-semibold text-blue-900">Unggah Berkas Pindaian PDF KEP yang Telah Bertanda Tangan</p>
+                            <p class="text-blue-700 text-[11px] leading-relaxed">
+                                Setelah draf dicetak dan ditandatangani secara resmi (basah maupun tersertifikasi), Anda dapat mengunggah hasil pindaian (.pdf) di sini. Sistem akan otomatis memperbarui file SK utama pada portal publik.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Pilih Berkas PDF KEP Final <span class="text-slate-400 font-normal">(Maksimal 20 MB, Opsional)</span></label>
+
+                        <div x-data="{ isDragging: false }"
+                             @dragenter.prevent="isDragging = true"
+                             @dragover.prevent="isDragging = true"
+                             @dragleave.prevent="isDragging = false"
+                             @drop="isDragging = false"
+                             :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                             class="relative border-2 border-dashed rounded-xl p-5 text-center transition cursor-pointer group">
+                            <input wire:model="templateKepPdfFile"
+                                   type="file"
+                                   accept="application/pdf"
+                                   @dragenter="isDragging = true"
+                                   @dragover.prevent="isDragging = true"
+                                   @dragleave="isDragging = false"
+                                   @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                            <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-gov-navy flex items-center justify-center shadow-2xs">
+                                    <i data-lucide="upload" class="w-5 h-5"></i>
+                                </div>
+                                <p class="text-xs text-slate-700 font-semibold mt-1">
+                                    <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file PDF</span> atau tarik berkas ke sini
+                                </p>
+                                <p class="text-[11px] text-slate-400">
+                                    Dokumen resmi format PDF (.pdf) hingga 20 MB
+                                </p>
+                            </div>
+                        </div>
+
+                        @error('templateKepPdfFile')
+                            <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
+                        @enderror
+
+                        <div wire:loading.inline-flex wire:target="templateKepPdfFile" style="display: none;"
+                            class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap mt-2">
+                            <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap leading-none">Memproses unggahan berkas...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
+                       class="h-9 px-3.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
+                        <span>Cetak / Unduh Draf PDF Resmi</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center justify-end gap-2">
+                    <button type="button" @click="showTemplateKepModal = false"
+                        class="h-9 px-4 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold text-xs transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="button" wire:click="saveTemplateKep" wire:loading.attr="disabled"
+                        class="h-9 px-5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        <div wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none;" class="inline-flex flex-row items-center gap-2 shrink-0 whitespace-nowrap">
+                            <svg class="w-3.5 h-3.5 animate-spin shrink-0 inline-block text-white" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap leading-none">Menyimpan...</span>
+                        </div>
+                        <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+                            <span>Simpan & Terapkan ke Database</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
     <!-- MODAL: KONFIRMASI HAPUS DATA (GLOBAL POP-UP) -->
     <!-- ======================================================== -->
     <div x-show="confirmDeleteModal.show" x-cloak wire:ignore

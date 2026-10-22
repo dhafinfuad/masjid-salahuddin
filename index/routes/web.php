@@ -6,6 +6,7 @@ use App\Http\Controllers\KajianExportController;
 use App\Http\Controllers\PrayerDutyExportController;
 use App\Http\Controllers\SocialProgramExportController;
 use App\Http\Controllers\SocialProgramPrintController;
+use App\Http\Controllers\TakmirDocController;
 use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Auth\ForgotPasswordPage;
 use App\Livewire\Auth\LoginPage;
@@ -77,6 +78,7 @@ Route::get('/admin/petugas/export-pdf', [PrayerDutyExportController::class, 'pri
 Route::get('/admin/agenda/export-pdf', [AgendaExportController::class, 'printPdf'])->name('admin.agenda.export-pdf');
 Route::get('/admin/agenda/lpj/{id}', [AgendaExportController::class, 'printLpj'])->name('admin.agenda.lpj');
 Route::get('/admin/finance/export-pdf', [FinanceExportController::class, 'printPdf'])->name('admin.finance.export-pdf');
+Route::get('/admin/kepengurusan/cetak-sk', [TakmirDocController::class, 'printOfficialSk'])->name('admin.kepengurusan.print-sk');
 
 // CMS Admin (Protected by auth middleware)
 Route::middleware('auth')->group(function () {

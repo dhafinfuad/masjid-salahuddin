@@ -289,6 +289,44 @@ class MasjidSetting extends Model
             return $defaults;
         }
 
-        return array_replace_recursive($defaults, $stored);
+        $merged = array_replace_recursive($defaults, $stored);
+
+        // Pastikan array list (nama personalia, tugas, tupoksi) menimpa list default secara utuh
+        if (isset($stored['pembina']['tugas'])) {
+            $merged['pembina']['tugas'] = $stored['pembina']['tugas'];
+        }
+        if (isset($stored['ketua']['tugas'])) {
+            $merged['ketua']['tugas'] = $stored['ketua']['tugas'];
+        }
+        if (isset($stored['wakil_ketua']['tugas'])) {
+            $merged['wakil_ketua']['tugas'] = $stored['wakil_ketua']['tugas'];
+        }
+        if (isset($stored['sekretaris']['names'])) {
+            $merged['sekretaris']['names'] = $stored['sekretaris']['names'];
+        }
+        if (isset($stored['sekretaris']['tugas'])) {
+            $merged['sekretaris']['tugas'] = $stored['sekretaris']['tugas'];
+        }
+        if (isset($stored['bendahara']['names'])) {
+            $merged['bendahara']['names'] = $stored['bendahara']['names'];
+        }
+        if (isset($stored['bendahara']['tugas'])) {
+            $merged['bendahara']['tugas'] = $stored['bendahara']['tugas'];
+        }
+        if (isset($stored['bidang']) && is_array($stored['bidang'])) {
+            foreach ($stored['bidang'] as $idx => $b) {
+                if (isset($b['pengelola'])) {
+                    $merged['bidang'][$idx]['pengelola'] = $b['pengelola'];
+                }
+                if (isset($b['anggota'])) {
+                    $merged['bidang'][$idx]['anggota'] = $b['anggota'];
+                }
+                if (isset($b['tupoksi'])) {
+                    $merged['bidang'][$idx]['tupoksi'] = $b['tupoksi'];
+                }
+            }
+        }
+
+        return $merged;
     }
 }

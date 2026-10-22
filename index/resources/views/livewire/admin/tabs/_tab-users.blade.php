@@ -98,6 +98,16 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
+                @if(Auth::user()->canManage())
+                    <button type="button" 
+                        wire:click="openTemplateKepModal"
+                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                        title="Buka Template & Perbarui Surat KEP Kepala KPP Madya Malang">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span>Template Surat KEP Takmir</span>
+                    </button>
+                @endif
+
                 <a href="{{ url('/profil') }}" target="_blank"
                     class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                     <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>

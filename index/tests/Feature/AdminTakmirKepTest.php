@@ -1,0 +1,147 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Livewire\Admin\AdminDashboard;
+use App\Models\MasjidSetting;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class AdminTakmirKepTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $master;
+    protected User $jamaah;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->master = User::create([
+            'name' => 'Dr. H. Bambang Irawan',
+            'email' => 'master@masjidsalahuddin.id',
+            'password' => Hash::make('password'),
+            'role' => 'Master',
+            'status' => 'AKTIF',
+        ]);
+
+        $this->jamaah = User::create([
+            'name' => 'Haji Mansyur',
+            'email' => 'jamaah@masjidsalahuddin.id',
+            'password' => Hash::make('password'),
+            'role' => 'Jamaah',
+            'status' => 'AKTIF',
+        ]);
+    }
+
+    public function test_can_access_print_official_sk_route(): void
+    {
+        $this->actingAs($this->master);
+
+        $response = $this->get(route('admin.kepengurusan.print-sk'));
+        $response->assertStatus(200);
+        $response->assertSee('KEPUTUSAN KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG');
+        $response->assertSee('SUSUNAN PENGURUS TAKMIR MASJID SALAHUDDIN');
+        $response->assertSee('PENJABARAN TUGAS POKOK DAN FUNGSI');
+    }
+
+    public function test_can_open_and_close_template_kep_modal(): void
+    {
+        $this->actingAs($this->master);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openTemplateKepModal')
+            ->assertSet('showTemplateKepModal', true)
+            ->assertDispatched('open-template-kep-modal')
+            ->call('closeTemplateKepModal')
+            ->assertSet('showTemplateKepModal', false)
+            ->assertDispatched('close-template-kep-modal');
+    }
+
+    public function test_save_template_kep_validates_required_fields(): void
+    {
+        $this->actingAs($this->master);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openTemplateKepModal')
+            ->set('docSkNumber', '')
+            ->set('docSkDate', '')
+            ->set('docSkPeriode', '')
+            ->set('pembinaName', '')
+            ->set('ketuaName', '')
+            ->set('wakilKetuaName', '')
+            ->set('sekretarisNames', '')
+            ->set('bendaharaNames', '')
+            ->call('saveTemplateKep')
+            ->assertHasErrors([
+                'docSkNumber',
+                'docSkDate',
+                'docSkPeriode',
+                'pembinaName',
+                'ketuaName',
+                'wakilKetuaName',
+                'sekretarisNames',
+                'bendaharaNames',
+            ]);
+    }
+
+    public function test_save_template_kep_updates_database(): void
+    {
+        $this->actingAs($this->master);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openTemplateKepModal')
+            ->set('docSkNumber', 'KEP-99/KPP.1209/2027')
+            ->set('docSkDate', '25 Mei 2027')
+            ->set('docSkPeriode', '2027-2030')
+            ->set('docSkTitle', 'Surat Keputusan Kepala KPP Madya Malang 2027')
+            ->set('docSkDescription', 'Perubahan Susunan Pengurus Periode 2027-2030')
+            ->set('pembinaName', 'Dr. Pembina Baru, M.Si.')
+            ->set('ketuaName', 'Ketua Terpilih Baru')
+            ->set('wakilKetuaName', 'Wakil Ketua Baru')
+            ->set('sekretarisNames', "Sekretaris Satu\nSekretaris Dua")
+            ->set('bendaharaNames', "Bendahara Satu\nBendahara Dua")
+            ->set('bidang0Name', 'Bidang Dakwah & Syiar Islam')
+            ->set('bidang0Pengelola', 'Koordinator Dakwah')
+            ->set('bidang0Anggota', "Anggota 1\nAnggota 2")
+            ->set('bidang0Tupoksi', "Mengatur kajian pekanan\nMenyelenggarakan PHBI")
+            ->call('saveTemplateKep')
+            ->assertHasNoErrors()
+            ->assertSet('showTemplateKepModal', false)
+            ->assertDispatched('close-template-kep-modal');
+
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+        $struct = $settings->getTakmirStructure();
+
+        $this->assertEquals('KEP-99/KPP.1209/2027', $docs['sk']['number']);
+        $this->assertEquals('25 Mei 2027', $docs['sk']['date']);
+        $this->assertEquals('Dr. Pembina Baru, M.Si.', $struct['pembina']['name']);
+        $this->assertEquals('Ketua Terpilih Baru', $struct['ketua']['name']);
+        $this->assertEquals('Wakil Ketua Baru', $struct['wakil_ketua']['name']);
+        $this->assertEquals(['Sekretaris Satu', 'Sekretaris Dua'], $struct['sekretaris']['names']);
+        $this->assertEquals(['Bendahara Satu', 'Bendahara Dua'], $struct['bendahara']['names']);
+        $this->assertEquals('Bidang Dakwah & Syiar Islam', $struct['bidang'][0]['name']);
+        $this->assertEquals(['Koordinator Dakwah'], $struct['bidang'][0]['pengelola']);
+        $this->assertEquals(['Anggota 1', 'Anggota 2'], $struct['bidang'][0]['anggota']);
+        $this->assertEquals(['Mengatur kajian pekanan', 'Menyelenggarakan PHBI'], $struct['bidang'][0]['tupoksi']);
+    }
+
+    public function test_jamaah_cannot_save_template_kep(): void
+    {
+        $this->actingAs($this->jamaah);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('saveTemplateKep');
+
+        // Nilai default tidak boleh berubah
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+        $this->assertNotEquals('KEP-999/KPP.1209/2099', $docs['sk']['number'] ?? '');
+    }
+}
