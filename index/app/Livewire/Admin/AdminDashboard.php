@@ -5674,61 +5674,38 @@ class AdminDashboard extends Component
         $this->pernyataanModalTab = 'impor';
     }
 
-    public function saveScanPernyataanCommitments(): void
+    public function exportScanPernyataanExcel(): mixed
     {
         if (! Auth::user()?->canManage()) {
             $this->notify('Akses ditolak.');
-            return;
+            return null;
         }
 
         if (empty($this->scanPages)) {
-            $this->notify('Tidak ada data hasil scan untuk disimpan.');
-            return;
+            $this->notify('Tidak ada data hasil scan untuk diekspor.');
+            return null;
         }
 
         $service = app(\App\Services\PernyataanScanOcrService::class);
-        $programsMap = $service->getSocialProgramsMap();
-        $totalRecorded = 0;
+        $tempPath = $service->generateScanExcel($this->scanPages);
 
-        foreach ($this->scanPages as $page) {
-            $nama = trim($page['nama'] ?? '');
-            if (empty($nama)) continue;
+        $dateStr = now()->format('Y-m-d');
+        $fileName = "Rekap Potongan Tukin - {$dateStr}.xlsx";
 
-            // Pencocokan data pegawai ke tabel employees berdasarkan nama
-            $emp = \App\Models\Employee::where('name', 'like', $nama)
-                ->orWhere('name', 'like', '%' . $nama . '%')
-                ->first();
-
-            $period = !empty($page['effective_period']) ? $page['effective_period'] : ('Periode ' . now()->month . '/' . now()->year);
-
-            // Simpan setiap program komitmen yang nominalnya > 0
-            foreach ($page['commitments'] ?? [] as $progKey => $amount) {
-                if (is_string($amount)) {
-                    $amount = preg_replace('/[^\d]/', '', $amount);
-                }
-                $amt = (float) $amount;
-                if ($amt <= 0) continue;
-
-                $progModel = $programsMap[$progKey] ?? null;
-                if ($progModel) {
-                    \App\Models\ProgramParticipant::updateOrCreate([
-                        'social_program_id' => $progModel->id,
-                        'name' => $nama,
-                        'period' => $period,
-                    ], [
-                        'program_name' => $progModel->name,
-                        'monthly_amount' => $amt,
-                        'status' => 'AKTIF',
-                    ]);
-                    $totalRecorded++;
-                }
-            }
-        }
-
-        $this->notify("Berhasil merekap {$totalRecorded} komitmen program sosial dari hasil scan ke database.");
-        $this->resetScanPernyataan();
+        $this->notify('Berkas Excel rekap potongan berhasil diunduh.');
         $this->showPrintPernyataanModal = false;
         $this->dispatch('close-print-pernyataan-modal');
+
+        return response()->download($tempPath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+        ])->deleteFileAfterSend(true);
+    }
+
+    public function saveScanPernyataanCommitments(): mixed
+    {
+        return $this->exportScanPernyataanExcel();
     }
 
     // ==========================================

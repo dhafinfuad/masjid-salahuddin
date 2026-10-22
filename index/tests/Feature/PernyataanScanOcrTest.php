@@ -152,54 +152,58 @@ No  Program                 Nominal per Bulan
         $this->assertEquals('198404172006021003', $test->get('scanPages')[1]['nip']);
     }
 
-    public function test_admin_can_save_scan_pernyataan_commitments_to_database(): void
+    public function test_admin_can_export_scan_pernyataan_commitments_to_excel(): void
     {
         $this->actingAs($this->admin);
 
         $fakePdf = UploadedFile::fake()->create('scan_mesin.pdf', 500, 'application/pdf');
 
-        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+        $component = Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
             ->set('scanPernyataanFile', $fakePdf)
             ->call('processScanPernyataan')
             ->set('scanPages.1.commitments.infaq', '250.000')
-            ->call('saveScanPernyataanCommitments')
-            ->assertHasNoErrors();
+            ->call('exportScanPernyataanExcel')
+            ->assertHasNoErrors()
+            ->assertFileDownloaded();
 
-        // Verifikasi tabel program_participants
-        $this->assertDatabaseHas('program_participants', [
-            'name' => 'Dilla Wahyu Permatasari',
-            'program_name' => 'Infaq Rutin',
-            'monthly_amount' => 50000,
-            'period' => 'Periode 11/2026',
-        ]);
+        // Verifikasi bahwa data TIDAK disimpan ke database (sesuai instruksi: bukan menyimpan ke database)
+        $this->assertDatabaseCount('program_participants', 0);
 
-        $this->assertDatabaseHas('program_participants', [
-            'name' => 'Dilla Wahyu Permatasari',
-            'program_name' => 'Program Santunan Anak Yatim',
-            'monthly_amount' => 50000,
-            'period' => 'Periode 11/2026',
-        ]);
+        // Uji pembuatan file Excel oleh service
+        $service = app(PernyataanScanOcrService::class);
+        $tempPath = $service->generateScanExcel($component->get('scanPages'));
 
-        $this->assertDatabaseHas('program_participants', [
-            'name' => 'Moh. Lukman Hakim',
-            'program_name' => 'Infaq Rutin',
-            'monthly_amount' => 250000,
-            'period' => 'Periode 11/2026',
-        ]);
+        $this->assertFileExists($tempPath);
 
-        $this->assertDatabaseHas('program_participants', [
-            'name' => 'Alfan Machrus Afandi',
-            'program_name' => 'Program Zakat Mal Rutin',
-            'monthly_amount' => 100000,
-            'period' => 'Periode 10/2026',
-        ]);
+        // Buka zip archive Excel untuk validasi OpenXML
+        $zip = new \ZipArchive();
+        $this->assertTrue($zip->open($tempPath));
 
-        // Verifikasi tabel employees
-        $this->assertDatabaseHas('employees', [
-            'nip_panjang' => '199712172018122001',
-            'name' => 'Dilla Wahyu Permatasari',
-            'jabatan' => 'Pelaksana',
-        ]);
+        // Pastikan file-file XML wajib ada
+        $this->assertNotFalse($zip->locateName('[Content_Types].xml'));
+        $this->assertNotFalse($zip->locateName('xl/workbook.xml'));
+        $this->assertNotFalse($zip->locateName('xl/worksheets/sheet1.xml'));
+        $this->assertNotFalse($zip->locateName('xl/sharedStrings.xml'));
+
+        $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
+        // Validasi kolom 3 tepat: Nama Pegawai, Nama Program, Jumlah Potongan
+        $this->assertStringContainsString('Nama Pegawai', $sharedStringsXml);
+        $this->assertStringContainsString('Nama Program', $sharedStringsXml);
+        $this->assertStringContainsString('Jumlah Potongan', $sharedStringsXml);
+
+        // Validasi data pegawai dan label program
+        $this->assertStringContainsString('Dilla Wahyu Permatasari', $sharedStringsXml);
+        $this->assertStringContainsString('Infaq &amp; Sedekah', $sharedStringsXml);
+        $this->assertStringContainsString('Santunan Anak Yatim', $sharedStringsXml);
+        $this->assertStringContainsString('Alfan Machrus Afandi', $sharedStringsXml);
+        $this->assertStringContainsString('Tabungan Qurban', $sharedStringsXml);
+
+        $sheet1Xml = $zip->getFromName('xl/worksheets/sheet1.xml');
+        // Pastikan nominal 250000 ada di worksheet
+        $this->assertStringContainsString('<v>250000</v>', $sheet1Xml);
+
+        $zip->close();
+        @unlink($tempPath);
     }
 
     public function test_non_admin_cannot_process_scan_pernyataan(): void

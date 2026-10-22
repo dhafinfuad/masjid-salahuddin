@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
+use ZipArchive;
 
 class PernyataanScanOcrService
 {
@@ -267,6 +268,187 @@ class PernyataanScanOcrService
             'yatim' => $programs->first(fn($p) => Str::contains(strtolower($p->name . ' ' . $p->category), 'yatim')),
             'dhuafa' => $programs->first(fn($p) => Str::contains(strtolower($p->name . ' ' . $p->category), 'dhuafa')),
         ];
+    }
+
+    /**
+     * Buat berkas spreadsheet Excel (.xlsx) rekap komitmen dari data hasil pindaian scan.
+     * Kolom: Nama Pegawai, Nama Program, Jumlah Potongan
+     * Baris dengan nominal 0 diabaikan sesuai permintaan pengguna.
+     *
+     * @param array<int, array<string, mixed>> $scanPages
+     * @return string Path ke berkas sementara .xlsx
+     */
+    public function generateScanExcel(array $scanPages): string
+    {
+        $tempZip = tempnam(sys_get_temp_dir(), 'rekap_scan_');
+        $zip = new ZipArchive();
+        if ($zip->open($tempZip, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new \RuntimeException('Gagal membuat berkas arsip Excel.');
+        }
+
+        $headers = ['Nama Pegawai', 'Nama Program', 'Jumlah Potongan'];
+
+        $programLabels = [
+            'zakat' => 'Zakat',
+            'infaq' => 'Infaq & Sedekah',
+            'qurban' => 'Tabungan Qurban',
+            'yatim' => 'Santunan Anak Yatim',
+            'dhuafa' => 'Santunan Dhuafa',
+        ];
+
+        // Shared strings dictionary
+        $sharedStrings = [];
+        $stringIndexMap = [];
+        $addString = function (string $str) use (&$sharedStrings, &$stringIndexMap): int {
+            if (isset($stringIndexMap[$str])) {
+                return $stringIndexMap[$str];
+            }
+            $idx = count($sharedStrings);
+            $sharedStrings[] = $str;
+            $stringIndexMap[$str] = $idx;
+            return $idx;
+        };
+
+        // Header row
+        $sheetRowsXml = [];
+        $rNum = 1;
+        $cXml = [];
+        $cols = ['A', 'B', 'C'];
+        foreach ($headers as $cIdx => $h) {
+            $sIdx = $addString($h);
+            $cXml[] = '<c r="' . $cols[$cIdx] . $rNum . '" t="s" s="1"><v>' . $sIdx . '</v></c>';
+        }
+        $sheetRowsXml[] = '<row r="' . $rNum . '">' . implode('', $cXml) . '</row>';
+
+        // Data rows
+        foreach ($scanPages as $page) {
+            $nama = trim($page['nama'] ?? '');
+            if (empty($nama)) {
+                continue;
+            }
+
+            foreach ($programLabels as $progKey => $progLabel) {
+                $amount = $page['commitments'][$progKey] ?? 0;
+                if (is_string($amount)) {
+                    $amount = preg_replace('/[^\d]/', '', $amount);
+                }
+                $amt = (float) $amount;
+                if ($amt <= 0) {
+                    continue;
+                }
+
+                $rNum++;
+                $sNameIdx = $addString($nama);
+                $sProgIdx = $addString($progLabel);
+
+                $sheetRowsXml[] = '<row r="' . $rNum . '">' .
+                    '<c r="A' . $rNum . '" t="s"><v>' . $sNameIdx . '</v></c>' .
+                    '<c r="B' . $rNum . '" t="s"><v>' . $sProgIdx . '</v></c>' .
+                    '<c r="C' . $rNum . '" s="2"><v>' . $amt . '</v></c>' .
+                    '</row>';
+            }
+        }
+
+        // 1. [Content_Types].xml
+        $contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' .
+            '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' .
+            '<Default Extension="xml" ContentType="application/xml"/>' .
+            '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' .
+            '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' .
+            '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' .
+            '<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>' .
+            '</Types>';
+        $zip->addFromString('[Content_Types].xml', $contentTypes);
+
+        // 2. _rels/.rels
+        $rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' .
+            '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' .
+            '</Relationships>';
+        $zip->addFromString('_rels/.rels', $rels);
+
+        // 3. xl/_rels/workbook.xml.rels
+        $wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' .
+            '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' .
+            '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' .
+            '<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>' .
+            '</Relationships>';
+        $zip->addFromString('xl/_rels/workbook.xml.rels', $wbRels);
+
+        // 4. xl/workbook.xml
+        $wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' .
+            '<sheets>' .
+            '<sheet name="Rekap Potongan" sheetId="1" r:id="rId1"/>' .
+            '</sheets>' .
+            '</workbook>';
+        $zip->addFromString('xl/workbook.xml', $wb);
+
+        // 5. xl/styles.xml
+        $styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' .
+            '<numFmts count="1">' .
+            '<numFmt numFmtId="164" formatCode="#,##0"/>' .
+            '</numFmts>' .
+            '<fonts count="2">' .
+            '<font><name val="Calibri"/><sz val="11"/></font>' .
+            '<font><b/><name val="Calibri"/><sz val="11"/><color rgb="FFFFFFFF"/></font>' .
+            '</fonts>' .
+            '<fills count="3">' .
+            '<fill><patternFill patternType="none"/></fill>' .
+            '<fill><patternFill patternType="gray125"/></fill>' .
+            '<fill><patternFill patternType="solid"><fgColor rgb="FF003366"/></patternFill></fill>' .
+            '</fills>' .
+            '<borders count="2">' .
+            '<border><left/><right/><top/><bottom/></border>' .
+            '<border>' .
+            '<left style="thin"><color rgb="FFD1D5DB"/></left>' .
+            '<right style="thin"><color rgb="FFD1D5DB"/></right>' .
+            '<top style="thin"><color rgb="FFD1D5DB"/></top>' .
+            '<bottom style="thin"><color rgb="FFD1D5DB"/></bottom>' .
+            '</border>' .
+            '</borders>' .
+            '<cellStyleXfs count="1">' .
+            '<xf numFmtId="0" fontId="0" fillId="0" borderId="0"/>' .
+            '</cellStyleXfs>' .
+            '<cellXfs count="3">' .
+            '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0"/>' .
+            '<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>' .
+            '<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>' .
+            '</cellXfs>' .
+            '</styleSheet>';
+        $zip->addFromString('xl/styles.xml', $styles);
+
+        // 6. xl/sharedStrings.xml
+        $sstItems = [];
+        foreach ($sharedStrings as $str) {
+            $sstItems[] = '<si><t>' . htmlspecialchars($str, ENT_XML1, 'UTF-8') . '</t></si>';
+        }
+        $sst = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="' . count($sharedStrings) . '" uniqueCount="' . count($sharedStrings) . '">' .
+            implode('', $sstItems) .
+            '</sst>';
+        $zip->addFromString('xl/sharedStrings.xml', $sst);
+
+        // 7. xl/worksheets/sheet1.xml
+        $ws = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' .
+            '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' .
+            '<cols>' .
+            '<col min="1" max="1" width="32" customWidth="1"/>' .
+            '<col min="2" max="2" width="26" customWidth="1"/>' .
+            '<col min="3" max="3" width="20" customWidth="1"/>' .
+            '</cols>' .
+            '<sheetData>' .
+            implode('', $sheetRowsXml) .
+            '</sheetData>' .
+            '</worksheet>';
+        $zip->addFromString('xl/worksheets/sheet1.xml', $ws);
+
+        $zip->close();
+
+        return $tempZip;
     }
 
     /**

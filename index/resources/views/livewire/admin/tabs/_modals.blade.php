@@ -4536,11 +4536,11 @@
                                     class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
                                     Tutup
                                 </button>
-                                <button type="button" wire:click="saveScanPernyataanCommitments"
+                                <button type="button" wire:click="exportScanPernyataanExcel"
                                     wire:loading.attr="disabled"
-                                    class="px-5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
-                                    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
-                                    <span>Simpan & Rekap ke Peserta ({{ count($scanPages) }} Pegawai)</span>
+                                    class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-200"></i>
+                                    <span>Unduh Rekap Excel ({{ count($scanPages) }} Pegawai)</span>
                                 </button>
                             </div>
                         </div>
