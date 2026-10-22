@@ -218,10 +218,11 @@ No  Program                 Nominal per Bulan
     {
         $this->actingAs($this->admin);
 
-        $response = $this->get(route('admin.programs.preview-scan-pernyataan'));
+        $response = $this->get(route('admin.programs.preview-scan-pernyataan', ['p' => 4]));
 
         $response->assertStatus(200);
         $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
         $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+        $this->assertStringContainsString('max-age=86400', $response->headers->get('Cache-Control'));
     }
 }

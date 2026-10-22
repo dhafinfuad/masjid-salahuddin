@@ -547,7 +547,10 @@ class AdminDashboard extends Component
         if (! session()->has('temp_scan_pdf_path') || ! file_exists(session('temp_scan_pdf_path'))) {
             $defaultScanPdf = storage_path('app/private/scan_mesin.pdf');
             if (file_exists($defaultScanPdf)) {
-                session(['temp_scan_pdf_path' => $defaultScanPdf]);
+                session([
+                    'temp_scan_pdf_path' => $defaultScanPdf,
+                    'temp_scan_pdf_time' => time(),
+                ]);
             }
         }
 
@@ -5615,13 +5618,19 @@ class AdminDashboard extends Component
             $destPath = $destDir . DIRECTORY_SEPARATOR . 'latest_scan.pdf';
             if (file_exists($filePath) && filesize($filePath) > 0) {
                 copy($filePath, $destPath);
-                session(['temp_scan_pdf_path' => $destPath]);
+                session([
+                    'temp_scan_pdf_path' => $destPath,
+                    'temp_scan_pdf_time' => time(),
+                ]);
                 $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
             } else {
                 $fallbackPdf = storage_path('app/private/scan_mesin.pdf');
                 if (file_exists($fallbackPdf)) {
                     copy($fallbackPdf, $destPath);
-                    session(['temp_scan_pdf_path' => $destPath]);
+                    session([
+                        'temp_scan_pdf_path' => $destPath,
+                        'temp_scan_pdf_time' => time(),
+                    ]);
                     $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
                 }
             }

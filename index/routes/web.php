@@ -105,9 +105,8 @@ Route::middleware('auth')->group(function () {
         return response()->file($path, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="scan_pernyataan.pdf"',
-            'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache',
-            'Expires' => '0',
+            'Cache-Control' => 'private, max-age=86400, must-revalidate',
+            'ETag' => '"' . md5_file($path) . '"',
             'X-Frame-Options' => 'SAMEORIGIN',
         ]);
     })->name('admin.programs.preview-scan-pernyataan');

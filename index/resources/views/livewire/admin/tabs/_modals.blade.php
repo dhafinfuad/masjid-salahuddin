@@ -4278,10 +4278,6 @@
                              pdfBaseUrl: '{{ route('admin.programs.preview-scan-pernyataan') }}',
                              switchScanPage(idx) {
                                  this.activeScanIdx = idx;
-                                 const frame = document.getElementById('scanPdfPreviewFrame');
-                                 if (frame) {
-                                     frame.src = this.pdfBaseUrl + '#page=' + (idx + 1) + '&toolbar=1&navpanes=0&view=FitH';
-                                 }
                              }
                          }">
                         <!-- Top Navigation Bar for Pages (Instant Client-Side Switching) -->
@@ -4328,21 +4324,40 @@
                                     </div>
                                 </div>
 
-                                <!-- Embedded Native PDF Page Viewer (STABLE DOM, NEVER DESTROYED) -->
-                                <div wire:ignore class="flex-1 overflow-hidden rounded-lg bg-slate-100 my-2 relative border border-slate-200 shadow-2xs">
-                                    <iframe id="scanPdfPreviewFrame"
-                                            src="{{ route('admin.programs.preview-scan-pernyataan') }}#page={{ $activeScanPageIndex + 1 }}&toolbar=1&navpanes=0&view=FitH"
-                                            class="w-full h-full rounded-lg bg-white border-0"
-                                            loading="lazy">
-                                        <div class="h-full flex flex-col items-center justify-center p-4 text-center text-xs text-slate-500 bg-white">
-                                            <i data-lucide="file-text" class="w-8 h-8 text-slate-400 mb-2"></i>
-                                            <p class="font-medium text-slate-700">Pratinjau PDF tidak didukung otomatis pada perangkat ini.</p>
-                                            <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
-                                               class="mt-2 text-blue-600 hover:text-blue-800 underline font-semibold">
-                                                Buka Dokumen di Tab Baru
-                                            </a>
+                                <!-- Embedded Native PDF Page Viewer (STABLE DOM, SYNCHRONIZED MULTI-PAGE VIEW) -->
+                                <div wire:ignore
+                                     wire:key="scan-pdf-viewer-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
+                                     class="flex-1 overflow-hidden rounded-lg bg-slate-100 my-2 relative border border-slate-200 shadow-2xs">
+                                    @foreach($scanPages as $pIdx => $pItem)
+                                        @php
+                                            $targetPage = (int) ($pItem['page_number'] ?? ($pIdx + 1));
+                                        @endphp
+                                        <div class="absolute inset-0 w-full h-full transition-opacity duration-100"
+                                             :class="activeScanIdx === {{ $pIdx }} ? 'z-10 opacity-100 pointer-events-auto' : 'z-0 opacity-0 pointer-events-none'">
+                                            @if(!empty($pItem['image_path']))
+                                                <!-- High-Res Page Image if Extracted by Poppler -->
+                                                <div class="w-full h-full overflow-auto bg-slate-200 flex items-start justify-center p-2">
+                                                    <img src="{{ $pItem['image_path'] }}"
+                                                         alt="Halaman {{ $targetPage }}"
+                                                         class="max-w-full h-auto rounded shadow-xs object-contain bg-white">
+                                                </div>
+                                            @else
+                                                <!-- Native Browser PDF Plugin Formatted for Specific Page -->
+                                                <iframe id="scanPdfPreviewFrame_{{ $pIdx }}"
+                                                        src="{{ route('admin.programs.preview-scan-pernyataan') }}?p={{ $targetPage }}&t={{ session('temp_scan_pdf_time', 1) }}#page={{ $targetPage }}&toolbar=1&navpanes=0&view=FitH"
+                                                        class="w-full h-full rounded-lg bg-white border-0">
+                                                    <div class="h-full flex flex-col items-center justify-center p-4 text-center text-xs text-slate-500 bg-white">
+                                                        <i data-lucide="file-text" class="w-8 h-8 text-slate-400 mb-2"></i>
+                                                        <p class="font-medium text-slate-700">Pratinjau PDF tidak didukung otomatis pada perangkat ini.</p>
+                                                        <a :href="pdfBaseUrl + '#page={{ $targetPage }}'" target="_blank"
+                                                           class="mt-2 text-blue-600 hover:text-blue-800 underline font-semibold">
+                                                            Buka Dokumen di Tab Baru
+                                                        </a>
+                                                    </div>
+                                                </iframe>
+                                            @endif
                                         </div>
-                                    </iframe>
+                                    @endforeach
                                 </div>
 
                                 <!-- Bottom Footer info -->
