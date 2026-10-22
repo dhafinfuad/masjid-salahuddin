@@ -6559,7 +6559,7 @@ class AdminDashboard extends Component
             } else {
                 $financeQuery->orderBy('transaction_date', 'desc')->orderBy('id', 'desc');
             }
-            $financesList = $financeQuery->paginate(15, ['*'], 'financePage');
+            $financesList = $financeQuery->get();
             $totalFinancesCount = Finance::count();
 
             $finAgg = Finance::toBase()->selectRaw("

@@ -88,9 +88,13 @@
                 <div x-show="financeSubTab === 'utama'" x-cloak :class="{ 'hidden': financeSubTab !== 'utama' }"
                     class="space-y-6"
                     x-data="{
-                        activeFinanceType: '{{ $financeTypeFilter }}',
-                        matchesType(type) {
-                            return this.activeFinanceType === 'all' || this.activeFinanceType === type;
+                        activeFinanceType: 'all',
+                        financeSearch: '',
+                        matches(type, desc, cat, prog) {
+                            const matchType = (this.activeFinanceType === 'all' || this.activeFinanceType === type);
+                            const q = (this.financeSearch || '').toLowerCase().trim();
+                            const matchSearch = (!q || desc.includes(q) || cat.includes(q) || prog.includes(q));
+                            return matchType && matchSearch;
                         }
                     }">
 
@@ -189,21 +193,21 @@
                     <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-4">
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                             <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto">
-                                <!-- Type Pills (Optimistic Alpine UI 0ms + Livewire Server Sync) -->
+                                <!-- Type Pills (Pure Client-Side 0ms Instant - Matches Pos Anggaran Kategori Pattern) -->
                                 <button type="button" 
-                                    @click="activeFinanceType = 'all'; $wire.set('financeTypeFilter', 'all')"
+                                    @click="activeFinanceType = 'all'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Semua
                                 </button>
                                 <button type="button" 
-                                    @click="activeFinanceType = 'pemasukan'; $wire.set('financeTypeFilter', 'pemasukan')"
+                                    @click="activeFinanceType = 'pemasukan'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pemasukan
                                 </button>
                                 <button type="button" 
-                                    @click="activeFinanceType = 'pengeluaran'; $wire.set('financeTypeFilter', 'pengeluaran')"
+                                    @click="activeFinanceType = 'pengeluaran'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pengeluaran
@@ -334,15 +338,15 @@
                                     </div>
                                 </div>
 
-                                <!-- Search Input -->
+                                <!-- Search Input (Pure Client-Side 0ms Instant - Matches Kategori Pattern) -->
                                 <div class="relative w-full sm:w-64" x-data="{
                                     clearSearch() {
-                                        $wire.clearFinanceSearch();
+                                        financeSearch = '';
                                     }
                                 }">
                                     <i data-lucide="search"
                                         class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                    <input wire:model.live.debounce.300ms="financeSearch" type="text"
+                                    <input x-model="financeSearch" type="text"
                                         placeholder="Cari transaksi..."
                                         class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs font-medium focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy">
                                     <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
@@ -396,10 +400,10 @@
                                         <th class="p-3.5 text-center w-24">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
+                                <tbody class="divide-y divide-slate-300">
                                     @forelse($financesList as $fin)
                                         <tr wire:key="fin-row-{{ $fin->id }}" 
-                                            x-show="matchesType('{{ $fin->type }}')" 
+                                            x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }})" 
                                             class="hover:bg-slate-50/80 transition-colors">
                                             <td class="p-3.5 pl-5 whitespace-nowrap">
                                                 <div class="font-medium text-gov-textMain text-xs">
@@ -535,18 +539,12 @@
                                 </tbody>
                             </table>
                         </div>
-                        @if(method_exists($financesList, 'hasPages') && $financesList->hasPages())
-                            <div class="p-3 bg-white border-t border-gov-border">
-                                {{ $financesList->links(data: ['scrollTo' => false]) }}
-                            </div>
-                        @endif
-                    </div>
 
                     <!-- Mobile Standalone Responsive Cards -->
-                    <div class="md:hidden space-y-3" wire:loading.class="opacity-50 pointer-events-none" wire:target="financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage">
+                    <div class="md:hidden space-y-3">
                         @forelse($financesList as $fin)
                             <div wire:key="fin-card-{{ $fin->id }}" 
-                                x-show="matchesType('{{ $fin->type }}')" 
+                                x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }})" 
                                 class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="space-y-0.5">
@@ -667,11 +665,6 @@
                         @endforelse
 
 
-                        @if(method_exists($financesList, 'hasPages') && $financesList->hasPages())
-                            <div class="p-3 bg-white rounded-xl border border-gov-border shadow-2xs">
-                                {{ $financesList->links(data: ['scrollTo' => false]) }}
-                            </div>
-                        @endif
                     </div>
                 </div>
 

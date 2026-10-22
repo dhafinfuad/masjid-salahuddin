@@ -721,31 +721,28 @@ class FinanceManagementTest extends TestCase
             ]);
         }
 
-        // Mode 'all': total 16 transaksi, pagination aktif (hasPages = true, 16 results)
+        // Mode 'all': total 16 transaksi dimuat penuh ke collection
         $component = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
             ->assertSet('financeTypeFilter', 'all');
 
-        $paginatorAll = $component->viewData('financesList');
-        $this->assertEquals(16, $paginatorAll->total());
-        $this->assertTrue($paginatorAll->hasPages());
+        $listAll = $component->viewData('financesList');
+        $this->assertCount(16, $listAll);
 
-        // Mode 'pemasukan': total 1 transaksi, pagination tidak lagi menampilkan 16 results
+        // Mode 'pemasukan': total 1 transaksi
         $component->set('financeTypeFilter', 'pemasukan')
             ->assertSet('financeTypeFilter', 'pemasukan');
 
-        $paginatorPemasukan = $component->viewData('financesList');
-        $this->assertEquals(1, $paginatorPemasukan->total());
-        $this->assertFalse($paginatorPemasukan->hasPages());
+        $listPemasukan = $component->viewData('financesList');
+        $this->assertCount(1, $listPemasukan);
         $component->assertSee('Infaq Rutin Pegawai Oktober')
             ->assertDontSee('Pengeluaran Operasional 1');
 
-        // Mode 'pengeluaran': total 15 transaksi, hasPages = false (pas 1 halaman)
+        // Mode 'pengeluaran': total 15 transaksi
         $component->set('financeTypeFilter', 'pengeluaran')
             ->assertSet('financeTypeFilter', 'pengeluaran');
 
-        $paginatorPengeluaran = $component->viewData('financesList');
-        $this->assertEquals(15, $paginatorPengeluaran->total());
-        $this->assertFalse($paginatorPengeluaran->hasPages());
+        $listPengeluaran = $component->viewData('financesList');
+        $this->assertCount(15, $listPengeluaran);
         $component->assertSee('Pengeluaran Operasional 1')
             ->assertDontSee('Infaq Rutin Pegawai Oktober');
     }
