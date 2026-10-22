@@ -4282,11 +4282,6 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
-                             pageRotations: {},
-                             rotateCurrentPage() {
-                                 const idx = this.activeScanIdx;
-                                 this.pageRotations[idx] = ((this.pageRotations[idx] || 0) + 180) % 360;
-                             },
                              init() {
                                  window.addEventListener('resize', () => {
                                      this.isMobile = window.innerWidth < 1024;
@@ -4412,7 +4407,7 @@
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch"
                              :class="isMobile ? 'overflow-visible' : 'flex-1 min-h-0'">
                             <!-- Sisi Kiri: Pindaian Dokumen Asli (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden flex flex-col'"
+                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[470px] xl:h-[490px] 2xl:h-[570px] max-h-[calc(92vh-220px)] overflow-hidden flex flex-col'"
                                  class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3 justify-between relative shadow-2xs">
                                 <!-- Header Controls -->
                                 <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs text-gov-textMain shrink-0">
@@ -4425,12 +4420,6 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-1.5">
-                                        <button type="button" @click="rotateCurrentPage()"
-                                            title="Putar Dokumen 180°"
-                                            class="h-7 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
-                                            <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
-                                            <span>Putar</span>
-                                        </button>
                                         <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
                                             class="h-7 px-3 rounded-lg bg-white hover:bg-slate-100 text-blue-700 hover:text-blue-900 text-xs font-semibold inline-flex items-center gap-1.5 border border-slate-200 shadow-2xs transition cursor-pointer">
                                             <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -4480,12 +4469,10 @@
                                                 @if(!empty($pItem['image_path']))
                                                     <img src="{{ $pItem['image_path'] }}"
                                                          alt="Halaman {{ $targetPage }}"
-                                                         :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                          class="w-full h-auto block rounded shadow-2xs object-contain"
                                                          loading="lazy">
                                                 @else
                                                     <canvas id="scan-pdf-canvas-{{ $pIdx }}"
-                                                            :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                             class="w-full h-auto block rounded shadow-2xs bg-white"></canvas>
                                                 @endif
                                             </div>
@@ -4517,7 +4504,7 @@
                             </div>
 
                             <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden flex flex-col'"
+                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[470px] xl:h-[490px] 2xl:h-[570px] max-h-[calc(92vh-220px)] overflow-hidden flex flex-col'"
                                  class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs">
                                 <!-- Fixed Header -->
                                 <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
@@ -4673,7 +4660,7 @@
                         </div>
 
                         <!-- Footer for Verification Screen (Responsive: Rapih di Mobile & Desktop) -->
-                        <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-200 text-xs shrink-0">
+                        <div class="mt-4 pt-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-200 text-xs shrink-0">
                             <!-- Tombol Aksi Utama: Tutup & Unduh Excel (Berdampingan Proporsional di Mobile) -->
                             <div class="flex items-center gap-2 w-full sm:w-auto order-1 sm:order-2">
                                 <button type="button" @click="showPrintPernyataanModal = false"
