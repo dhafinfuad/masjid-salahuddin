@@ -472,7 +472,7 @@ class AdminDashboard extends Component
     // ==========================================
     // Social Programs State (Milestone 6)
     // ==========================================
-    public string $socialSubTab = 'katalog'; // 'katalog' | 'peserta' | 'setoran'
+    public string $socialSubTab = 'katalog'; // 'katalog' | 'peserta' | 'pernyataan' | 'setoran'
     public string $socialProgramFilter = 'all';
     public string $socialParticipantSearch = '';
     public array|string $socialParticipantPeriodFilter = [];
@@ -685,6 +685,7 @@ class AdminDashboard extends Component
             return match ($this->socialSubTab) {
                 'katalog' => 'Program Sosial > Katalog Program',
                 'peserta' => 'Program Sosial > Rekapitulasi Peserta',
+                'pernyataan' => 'Program Sosial > Surat Pernyataan',
                 'setoran' => 'Program Sosial > Setoran Kantor',
                 default => 'Program Sosial',
             };
@@ -735,6 +736,7 @@ class AdminDashboard extends Component
             },
             'programs' => match ($this->socialSubTab) {
                 'peserta' => 'Rekapitulasi Peserta',
+                'pernyataan' => 'Surat Pernyataan Potongan Tukin',
                 'setoran' => 'Setoran Kantor',
                 default => 'Program Sosial',
             },
@@ -5570,9 +5572,11 @@ class AdminDashboard extends Component
     // ==========================================
     public function openPrintPernyataanModal(string $tab = 'cetak'): void
     {
+        $this->currentTab = 'programs';
+        $this->socialSubTab = 'pernyataan';
         $this->pernyataanModalTab = in_array($tab, ['cetak', 'impor']) ? $tab : 'cetak';
-        $this->showPrintPernyataanModal = true;
-        $this->dispatch('open-print-pernyataan-modal', tab: $this->pernyataanModalTab);
+        $this->showPrintPernyataanModal = false;
+        $this->dispatch('open-print-pernyataan-tab', tab: $this->pernyataanModalTab);
     }
 
     public function closePrintPernyataanModal(): void
@@ -5594,7 +5598,9 @@ class AdminDashboard extends Component
         }
 
         $this->scanError = '';
-        $this->showPrintPernyataanModal = true;
+        $this->currentTab = 'programs';
+        $this->socialSubTab = 'pernyataan';
+        $this->showPrintPernyataanModal = false;
         $this->pernyataanModalTab = 'impor';
         $this->scanPages = [];
         $this->activeScanPageIndex = 0;

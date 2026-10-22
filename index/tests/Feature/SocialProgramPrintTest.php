@@ -292,5 +292,83 @@ class SocialProgramPrintTest extends TestCase
 
         \Carbon\Carbon::setTestNow();
     }
+
+    public function test_jamaah_can_print_surat_pernyataan_for_themselves_only(): void
+    {
+        $jamaah = User::factory()->create([
+            'name' => 'Fulan bin Fulan',
+            'role' => 'Jamaah',
+            'status' => 'Aktif',
+            'nip' => '199505052020011005',
+        ]);
+
+        $this->actingAs($jamaah);
+
+        // Sekalipun mencoba query mode=all, server wajib membatasi hanya untuk identitas dirinya sendiri
+        $response = $this->get('/admin/programs/print-surat-pernyataan?mode=all&year=2026');
+
+        $response->assertStatus(200);
+        $response->assertSee('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja');
+        $response->assertSee('Fulan Bin Fulan');
+        $response->assertSee('199505052020011005');
+        // Identitas pegawai lain tidak boleh ikut tercetak
+        $response->assertDontSee($this->employee->name);
+    }
+
+    public function test_show_history_is_hidden_when_no_deductions_in_selected_year(): void
+    {
+        $jamaah = User::factory()->create([
+            'name' => 'Hasan Al-Bashri',
+            'role' => 'Jamaah',
+            'status' => 'Aktif',
+            'nip' => '199202022018011002',
+        ]);
+
+        // Berikan riwayat potongan hanya di tahun 2025, BUKAN 2026
+        ProgramParticipant::create([
+            'name' => 'Hasan Al-Bashri',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2025',
+        ]);
+
+        $this->actingAs($jamaah);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?year=2026');
+
+        $response->assertStatus(200);
+        $response->assertSee('Hasan Al-Bashri');
+        // Tabel riwayat potongan tahun 2026 wajib disembunyikan karena belum ada riwayat di 2026
+        $response->assertDontSee('Riwayat Potongan Tahun 2026');
+    }
+
+    public function test_show_history_is_shown_when_deductions_exist_in_selected_year(): void
+    {
+        $jamaah = User::factory()->create([
+            'name' => 'Umar Faruq',
+            'role' => 'Jamaah',
+            'status' => 'Aktif',
+            'nip' => '199303032019011003',
+        ]);
+
+        // Berikan riwayat potongan di tahun 2026
+        ProgramParticipant::create([
+            'name' => 'Umar Faruq',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 150000,
+            'period' => 'Periode 2/2026',
+        ]);
+
+        $this->actingAs($jamaah);
+
+        $response = $this->get('/admin/programs/print-surat-pernyataan?year=2026');
+
+        $response->assertStatus(200);
+        $response->assertSee('Umar Faruq');
+        // Tabel riwayat potongan tahun 2026 wajib ditampilkan karena ada potongan di 2026
+        $response->assertSee('Riwayat Potongan Tahun 2026');
+    }
 }
 

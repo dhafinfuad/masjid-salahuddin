@@ -37,6 +37,7 @@
              } else if (this.activeTab === 'programs') {
                  const sub = this.socialSubTab || 'katalog';
                  if (sub === 'peserta') tabTitle = 'Rekapitulasi Peserta';
+                 else if (sub === 'pernyataan') tabTitle = 'Surat Pernyataan Potongan Tukin';
                  else if (sub === 'setoran') tabTitle = 'Setoran Kantor';
                  else tabTitle = 'Program Sosial';
              } else if (this.activeTab === 'users') {
@@ -97,6 +98,7 @@
                  const sub = this.socialSubTab || 'katalog';
                  if (sub === 'katalog') return 'Program Sosial > Katalog Program';
                  if (sub === 'peserta') return 'Program Sosial > Rekapitulasi Peserta';
+                 if (sub === 'pernyataan') return 'Program Sosial > Surat Pernyataan';
                  if (sub === 'setoran') return 'Program Sosial > Setoran Kantor';
                  return 'Program Sosial';
              }
@@ -771,6 +773,8 @@
             this.printPernyataanOpenDropdown = null;
         },
         openPrintPernyataanModal(tab = 'cetak') {
+            this.activeTab = 'programs';
+            this.socialSubTab = 'pernyataan';
             this.pernyataanModalTab = tab || 'cetak';
             this.printPernyataanOpenDropdown = null;
             this.printPernyataanSearchEmp = '';
@@ -782,8 +786,8 @@
             if (!this.printPernyataanEffectiveYear) {
                 this.printPernyataanEffectiveYear = '{{ $tahunDepanIndo }}';
             }
-            this.showPrintPernyataanModal = true;
-            $wire.set('showPrintPernyataanModal', true, false);
+            this.showPrintPernyataanModal = false;
+            $wire.set('socialSubTab', 'pernyataan', false);
             $wire.set('pernyataanModalTab', tab || 'cetak', false);
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
@@ -956,7 +960,8 @@
     @close-import-potongan-modal.window="showImportPotonganModal = false"
     @open-export-potongan-modal.window="showExportPotonganModal = true"
     @close-export-potongan-modal.window="showExportPotonganModal = false"
-    @open-print-pernyataan-modal.window="openPrintPernyataanModal()"
+    @open-print-pernyataan-modal.window="openPrintPernyataanModal($event.detail?.tab || 'cetak')"
+    @open-print-pernyataan-tab.window="openPrintPernyataanModal($event.detail?.tab || 'cetak')"
     @close-print-pernyataan-modal.window="showPrintPernyataanModal = false"
     @open-delete-modal.window="openDeleteModal($event.detail)"
     @close-delete-modal.window="confirmDeleteModal.show = false"

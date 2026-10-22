@@ -106,7 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function canManage(): bool
     {
-        return $this->isOfficer() && ($this->status ?? 'AKTIF') === 'AKTIF';
+        return $this->isOfficer() && strtoupper(trim((string) ($this->status ?? 'AKTIF'))) === 'AKTIF';
     }
 
     /**

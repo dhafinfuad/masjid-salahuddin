@@ -705,12 +705,12 @@
                 <button type="button" @click="importKajianTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importKajianTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📋 Copypaste Excel
+                    ðŸ“‹ Copypaste Excel
                 </button>
                 <button type="button" @click="importKajianTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importKajianTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📁 Upload File Excel
+                    ðŸ“ Upload File Excel
                 </button>
             </div>
 
@@ -1033,12 +1033,12 @@
                 <button type="button" @click="importDutyTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importDutyTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📋 Copypaste Excel
+                    ðŸ“‹ Copypaste Excel
                 </button>
                 <button type="button" @click="importDutyTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importDutyTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📁 Upload File Excel
+                    ðŸ“ Upload File Excel
                 </button>
             </div>
 
@@ -1406,12 +1406,12 @@
                 <button type="button" @click="importAgendaTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importAgendaTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📋 Copypaste Excel
+                    ðŸ“‹ Copypaste Excel
                 </button>
                 <button type="button" @click="importAgendaTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importAgendaTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📁 Upload File CSV
+                    ðŸ“ Upload File CSV
                 </button>
             </div>
 
@@ -2535,7 +2535,7 @@
 
                     if (isset($groupedFinanceCategories)) {
                         if (! $isTesting || $financeType === 'pemasukan') {
-                            $catOptionsPemasukan[] = ['label' => '📥 PENERIMAAN', 'is_header' => true];
+                            $catOptionsPemasukan[] = ['label' => 'ðŸ“¥ PENERIMAAN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Penerimaan'])) {
                                 foreach($groupedFinanceCategories['Penerimaan'] as $fc) {
                                     $catOptionsPemasukan[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2544,13 +2544,13 @@
                         }
 
                         if (! $isTesting || $financeType === 'pengeluaran') {
-                            $catOptionsPengeluaran[] = ['label' => '📤 PENGELUARAN RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => 'ðŸ“¤ PENGELUARAN RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
                                 }
                             }
-                            $catOptionsPengeluaran[] = ['label' => '🛠️ PENGELUARAN NON-RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => 'ðŸ› ï¸ PENGELUARAN NON-RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Non-Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Non-Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2658,9 +2658,9 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Alokasi Pembukuan Kas</label>
                         @php
-                            $agendaOptions = [['value' => '', 'label' => '🏢 Kas Umum Masjid (Rutin Bulanan)']];
+                            $agendaOptions = [['value' => '', 'label' => 'ðŸ¢ Kas Umum Masjid (Rutin Bulanan)']];
                             if (isset($allAgendas) && $allAgendas->isNotEmpty()) {
-                                $agendaOptions[] = ['label' => '🎯 PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
+                                $agendaOptions[] = ['label' => 'ðŸŽ¯ PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
                                 foreach($allAgendas as $ag) {
                                     $agendaOptions[] = ['value' => (string)$ag->id, 'label' => 'Kegiatan: ' . $ag->title];
                                 }
@@ -2669,7 +2669,7 @@
                         <x-custom-select 
                             wire:model="financeAgendaId"
                             :options="$agendaOptions"
-                            placeholder="🏢 Kas Umum Masjid (Rutin Bulanan)"
+                            placeholder="ðŸ¢ Kas Umum Masjid (Rutin Bulanan)"
                             buttonClass="p-2.5 bg-slate-50/50"
                         />
                     </div>
@@ -2898,9 +2898,9 @@
                         <x-custom-select 
                             x-model="financeCategoryForm.group"
                             :options="[
-                                ['value' => 'penerimaan', 'label' => '📥 Penerimaan (Kas Masuk)'],
-                                ['value' => 'pengeluaran_rutin', 'label' => '📤 Pengeluaran Rutin'],
-                                ['value' => 'pengeluaran_nonrutin', 'label' => '🛠️ Pengeluaran Non-Rutin'],
+                                ['value' => 'penerimaan', 'label' => 'ðŸ“¥ Penerimaan (Kas Masuk)'],
+                                ['value' => 'pengeluaran_rutin', 'label' => 'ðŸ“¤ Pengeluaran Rutin'],
+                                ['value' => 'pengeluaran_nonrutin', 'label' => 'ðŸ› ï¸ Pengeluaran Non-Rutin'],
                             ]"
                             placeholder="Pilih Kelompok Pos"
                             buttonClass="p-2.5 bg-slate-50/50"
@@ -3178,12 +3178,12 @@
                 <button type="button" @click="importFinanceTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importFinanceTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📋 Copypaste Excel
+                    ðŸ“‹ Copypaste Excel
                 </button>
                 <button type="button" @click="importFinanceTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importFinanceTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📁 Upload File CSV
+                    ðŸ“ Upload File CSV
                 </button>
             </div>
 
@@ -3854,867 +3854,6 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- MODAL: CETAK SURAT PERNYATAAN POTONGAN TUKIN -->
-    <!-- ========================================== -->
-    <div x-show="showPrintPernyataanModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showPrintPernyataanModal = false"
-        x-transition:enter="transition ease-out duration-75"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-50"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-center p-3 sm:p-5"
-        style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
-        <div class="relative bg-white rounded-2xl w-full p-4 sm:p-5 text-left shadow-2xl border border-gov-border space-y-3 my-auto transition-all duration-150 overflow-hidden"
-            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? (window.innerWidth < 1024 ? 'max-w-6xl max-h-[92vh] overflow-y-auto block' : 'max-w-6xl max-h-[92vh] flex flex-col overflow-hidden') : (pernyataanModalTab === 'impor' ? 'max-w-2xl max-h-[90vh] overflow-y-auto' : 'max-w-xl max-h-[90vh] overflow-y-auto')"
-            x-transition:enter="transition ease-out duration-75"
-            x-transition:enter-start="opacity-0 scale-98"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-50"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-98"
-            @click="closePrintDropdowns()">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200">
-                        <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-gov-textMain">Surat Pernyataan Potongan Tukin</h3>
-                        <p class="text-xs text-slate-500">Cetak lembar formulir atau impor pindaian (scan) kesediaan pemotongan tunjangan kinerja</p>
-                    </div>
-                </div>
-                <button type="button" @click="showPrintPernyataanModal = false"
-                    class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-
-            <!-- Tab Switcher (Cetak vs Impor) -->
-            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl text-xs">
-                <button type="button" @click="pernyataanModalTab = 'cetak'; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                    :class="pernyataanModalTab === 'cetak' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                    class="flex-1 py-1.5 px-3 rounded-lg transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                    <span>Cetak Pernyataan</span>
-                </button>
-                <button type="button" @click="pernyataanModalTab = 'impor'; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                    :class="pernyataanModalTab === 'impor' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                    class="flex-1 py-1.5 px-3 rounded-lg transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
-                    <span>Impor Pernyataan (Scan PDF)</span>
-                </button>
-            </div>
-
-            <!-- TAB 1: CETAK PERNYATAAN -->
-            <div x-show="pernyataanModalTab === 'cetak'" class="space-y-4 text-xs">
-                <!-- Mode Pemilihan Pegawai -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1.5">Mode Sasaran Pegawai *</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <button type="button" @click="printPernyataanMode = 'all'; closePrintDropdowns()"
-                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
-                            :class="printPernyataanMode === 'all' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
-                            <span class="flex items-center gap-1.5">
-                                <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
-                                <span>Semua Pegawai</span>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Mail-Merge seluruh pegawai aktif yang ada riwayat</span>
-                        </button>
-
-                        <button type="button" @click="printPernyataanMode = 'single'; closePrintDropdowns()"
-                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
-                            :class="printPernyataanMode === 'single' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
-                            <span class="flex items-center gap-1.5">
-                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
-                                <span>Pilih Pegawai</span>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Cetak spesifik 1 pegawai dari daftar</span>
-                        </button>
-
-                        <button type="button" @click="printPernyataanMode = 'new'; closePrintDropdowns()"
-                            class="p-2.5 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
-                            :class="printPernyataanMode === 'new' ? 'border-gov-navy bg-sky-50/70 text-gov-navy font-bold ring-1 ring-gov-navy/20' : 'border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium'">
-                            <span class="flex items-center gap-1.5">
-                                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
-                                <span>Pegawai Baru</span>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-normal mt-1 leading-tight">Tanpa tabel riwayat potongan</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Mode Single: Dropdown Pegawai yang Pernah Memotong -->
-                <div x-show="printPernyataanMode === 'single'" class="space-y-1">
-                    <label class="block font-semibold text-slate-700">Nama Pegawai (dari Riwayat) *</label>
-                    <div class="relative" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'z-40' : 'z-10'"
-                        @click.outside="if (printPernyataanOpenDropdown === 'singleEmp') closePrintDropdowns()">
-                        <button type="button" @click.stop="togglePrintDropdown('singleEmp')"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
-                            <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai yang Ada di Rekapitulasi --'"></span>
-                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m6 9 6 6 6-6"/>
-                            </svg>
-                        </button>
-
-                        <div x-show="printPernyataanOpenDropdown === 'singleEmp'" x-cloak @click.stop
-                            class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
-                            style="display: none;">
-                            <div class="p-1 pb-1.5 border-b border-slate-100">
-                                <input x-model="printPernyataanSearchEmp" type="text" placeholder="Ketik untuk mencari nama..."
-                                    class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
-                            </div>
-                            <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
-                                <button type="button" @click.stop="printPernyataanEmployeeName = ''; closePrintDropdowns()"
-                                    class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer text-slate-500 italic">
-                                    -- Batal Pilih --
-                                </button>
-                                @if(isset($distinctParticipantNames))
-                                    @foreach($distinctParticipantNames as $pName)
-                                        <button type="button"
-                                            x-show="!printPernyataanSearchEmp || '{{ strtolower(addslashes($pName)) }}'.includes(printPernyataanSearchEmp.toLowerCase())"
-                                            @click.stop="printPernyataanEmployeeName = '{{ addslashes($pName) }}'; closePrintDropdowns()"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                            :class="printPernyataanEmployeeName === '{{ addslashes($pName) }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
-                                            <span>{{ $pName }}</span>
-                                            <span x-show="printPernyataanEmployeeName === '{{ addslashes($pName) }}'" class="text-gov-navy font-bold">✓</span>
-                                        </button>
-                                    @endforeach
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mode New: Pilih dari Master Pegawai atau Formulir Kosong -->
-                <div x-show="printPernyataanMode === 'new'" class="space-y-3">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Pilih Pegawai Baru dari Master (Atau Kosongkan untuk Blanko) *</label>
-                        <div class="relative" :class="printPernyataanOpenDropdown === 'newEmp' ? 'z-40' : 'z-10'"
-                            @click.outside="if (printPernyataanOpenDropdown === 'newEmp') closePrintDropdowns()">
-                            <button type="button" @click.stop="togglePrintDropdown('newEmp')"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
-                                <span class="truncate" x-text="printPernyataanEmployeeId && printPernyataanSelectedNewName ? printPernyataanSelectedNewName : '-- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --'"></span>
-                                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'newEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6"/>
-                                </svg>
-                            </button>
-
-                            <div x-show="printPernyataanOpenDropdown === 'newEmp'" x-cloak @click.stop
-                                class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border p-1.5 z-50 max-h-60 overflow-hidden flex flex-col"
-                                style="display: none;">
-                                <div class="p-1 pb-1.5 border-b border-slate-100">
-                                    <input x-model="printPernyataanSearchNewEmp" type="text" placeholder="Ketik nama atau NIP pegawai..."
-                                        class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-gov-navy">
-                                </div>
-                                <div class="overflow-y-auto max-h-48 divide-y divide-slate-50 py-1">
-                                    <button type="button" @click.stop="printPernyataanEmployeeId = ''; printPernyataanSelectedNewName = ''; closePrintDropdowns()"
-                                        class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer text-slate-500 italic">
-                                        -- Formulir Blanko Kosong (Semua Data Titik-Titik Tulis Tangan) --
-                                    </button>
-                                    @if(isset($allEmployeesForPrint))
-                                        @foreach($allEmployeesForPrint as $empItem)
-                                            @php
-                                                $empDisplay = $empItem->name . ' (NIP: ' . ($empItem->nip_panjang ?: ($empItem->nip_pendek ?: '-')) . ')';
-                                            @endphp
-                                            <button type="button"
-                                                x-show="!printPernyataanSearchNewEmp || '{{ strtolower(addslashes($empDisplay)) }}'.includes(printPernyataanSearchNewEmp.toLowerCase())"
-                                                @click.stop="printPernyataanEmployeeId = '{{ $empItem->id }}'; printPernyataanSelectedNewName = '{{ addslashes($empDisplay) }}'; closePrintDropdowns()"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                                :class="printPernyataanEmployeeId == '{{ $empItem->id }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
-                                                <span>{{ $empDisplay }}</span>
-                                                <span x-show="printPernyataanEmployeeId == '{{ $empItem->id }}'" class="text-gov-navy font-bold">✓</span>
-                                            </button>
-                                        @endforeach
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-amber-800 flex items-start gap-2">
-                        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-                        <div class="text-[11px] leading-relaxed">
-                            <span class="font-bold">Informasi:</span> Pada mode Pegawai Baru, <span class="font-semibold underline">tabel Riwayat Potongan akan disembunyikan</span> sehingga formulir siap diisi dan ditandatangani untuk pendaftaran komitmen baru.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tahun Riwayat Potongan (Untuk Mode All & Single) -->
-                <div x-show="printPernyataanMode !== 'new'" class="space-y-1">
-                    <label class="block font-semibold text-slate-700">Tahun Riwayat Potongan *</label>
-                    <div class="relative" :class="printPernyataanOpenDropdown === 'historyYear' ? 'z-40' : 'z-10'"
-                        @click.outside="if (printPernyataanOpenDropdown === 'historyYear') closePrintDropdowns()">
-                        <button type="button" @click.stop="togglePrintDropdown('historyYear')"
-                            class="w-full px-3 py-2 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between text-left">
-                            <span class="truncate" x-text="'Tahun ' + printPernyataanYear"></span>
-                            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'historyYear' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m6 9 6 6 6-6"/>
-                            </svg>
-                        </button>
-
-                        <div x-show="printPernyataanOpenDropdown === 'historyYear'" x-cloak @click.stop
-                            class="absolute left-0 top-full mt-1 w-full bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
-                            style="display: none;">
-                            @for($y = (int)date('Y') + 1; $y >= 2024; $y--)
-                                <button type="button" @click.stop="printPernyataanYear = '{{ $y }}'; closePrintDropdowns()"
-                                    class="w-full text-left px-3 py-2 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                    :class="printPernyataanYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
-                                    <span>Tahun {{ $y }}</span>
-                                    <span x-show="printPernyataanYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>
-                                </button>
-                            @endfor
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Input Opsional: Tanggal Surat & Mulai Berlaku -->
-                <div class="border-t border-slate-200 pt-3 space-y-3">
-                    <div class="font-bold text-slate-700 flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-gov-navy"></i>
-                        <span>Keterangan Waktu Persuratan (Opsional)</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Tanggal Surat</label>
-                            <input x-model="printPernyataanDateLetter" type="text"
-                                placeholder="Contoh: 15 Oktober 2026 (kosong = titik-titik)"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Mulai Berlaku Bulan & Tahun</label>
-                            <div class="grid grid-cols-2 gap-1.5">
-                                <!-- Dropdown Bulan Custom (Seamless & Instan 0ms) -->
-                                <div class="relative" :class="printPernyataanOpenDropdown === 'month' ? 'z-40' : 'z-10'"
-                                    @click.outside="if (printPernyataanOpenDropdown === 'month') closePrintDropdowns()">
-                                    <button type="button" @click.stop="togglePrintDropdown('month')"
-                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
-                                        <span class="truncate" x-text="printPernyataanEffectiveMonth ? printPernyataanEffectiveMonth : '-- Kosongkan --'"></span>
-                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'month' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="m6 9 6 6 6-6"/>
-                                        </svg>
-                                    </button>
-
-                                    <div x-show="printPernyataanOpenDropdown === 'month'" x-cloak @click.stop
-                                        class="absolute left-0 top-full mt-1 w-full min-w-[140px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
-                                        style="display: none;">
-                                        <button type="button" @click.stop="printPernyataanEffectiveMonth = ''; closePrintDropdowns()"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                            :class="!printPernyataanEffectiveMonth ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
-                                            <span>-- Kosongkan --</span>
-                                            <span x-show="!printPernyataanEffectiveMonth" class="text-gov-navy font-bold">✓</span>
-                                        </button>
-                                        @php
-                                            $daftarBulan = [
-                                                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                                                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                            ];
-                                        @endphp
-                                        @foreach($daftarBulan as $bulan)
-                                            <button type="button" @click.stop="printPernyataanEffectiveMonth = '{{ $bulan }}'; closePrintDropdowns()"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                                :class="printPernyataanEffectiveMonth === '{{ $bulan }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
-                                                <span>{{ $bulan }}</span>
-                                                <span x-show="printPernyataanEffectiveMonth === '{{ $bulan }}'" class="text-gov-navy font-bold">✓</span>
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <!-- Dropdown Tahun Custom (Seamless & Instan 0ms) -->
-                                <div class="relative" :class="printPernyataanOpenDropdown === 'year' ? 'z-40' : 'z-10'"
-                                    @click.outside="if (printPernyataanOpenDropdown === 'year') closePrintDropdowns()">
-                                    <button type="button" @click.stop="togglePrintDropdown('year')"
-                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-1 text-left">
-                                        <span class="truncate" x-text="printPernyataanEffectiveYear ? printPernyataanEffectiveYear : '-- Kosongkan --'"></span>
-                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'year' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="m6 9 6 6 6-6"/>
-                                        </svg>
-                                    </button>
-
-                                    <div x-show="printPernyataanOpenDropdown === 'year'" x-cloak @click.stop
-                                        class="absolute right-0 top-full mt-1 w-full min-w-[110px] bg-white rounded-xl shadow-2xl border border-gov-border py-1 z-50 max-h-56 overflow-y-auto divide-y divide-slate-100"
-                                        style="display: none;">
-                                        <button type="button" @click.stop="printPernyataanEffectiveYear = ''; closePrintDropdowns()"
-                                            class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                            :class="!printPernyataanEffectiveYear ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-500 font-medium italic'">
-                                            <span>-- Kosongkan --</span>
-                                            <span x-show="!printPernyataanEffectiveYear" class="text-gov-navy font-bold">✓</span>
-                                        </button>
-                                        @for($y = (int)date('Y') + 2; $y >= 2024; $y--)
-                                            <button type="button" @click.stop="printPernyataanEffectiveYear = '{{ $y }}'; closePrintDropdowns()"
-                                                class="w-full text-left px-3 py-1.5 text-xs hover:bg-slate-50 cursor-pointer flex items-center justify-between"
-                                                :class="printPernyataanEffectiveYear == '{{ $y }}' ? 'bg-sky-50 text-gov-navy font-bold' : 'text-slate-700 font-medium'">
-                                                <span>{{ $y }}</span>
-                                                <span x-show="printPernyataanEffectiveYear == '{{ $y }}'" class="text-gov-navy font-bold">✓</span>
-                                            </button>
-                                        @endfor
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Petugas Sekretaris Pengumpul Berkas -->
-                <div class="border-t border-slate-200 pt-3 space-y-3">
-                    <div class="font-bold text-slate-700 flex items-center gap-1.5">
-                        <i data-lucide="user" class="w-3.5 h-3.5 text-gov-navy"></i>
-                        <span>Sekretaris Pengumpul Berkas (Footer Surat)</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Nama Sekretaris</label>
-                            <input x-model="printPernyataanSecretaryName" type="text"
-                                placeholder="Deril Amrizal Kholid"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-600 mb-1">Seksi / Unit Sekretaris</label>
-                            <input x-model="printPernyataanSecretarySection" type="text"
-                                placeholder="Seksi Penjaminan Kualitas Data"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer (Cetak) -->
-            <div x-show="pernyataanModalTab === 'cetak'" class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
-                <button type="button" @click="showPrintPernyataanModal = false"
-                    class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
-                    Batal
-                </button>
-                <a :href="'{{ route('admin.programs.print-surat-pernyataan') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection)"
-                    target="_blank"
-                    @click="setTimeout(() => { showPrintPernyataanModal = false; }, 300)"
-                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
-                    <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
-                    <span>Buka Dokumen Cetak</span>
-                </a>
-            </div>
-
-            <!-- TAB 2: IMPOR PERNYATAAN DARI SCAN PDF -->
-            <div x-show="pernyataanModalTab === 'impor'" class="flex-1 min-h-0 flex flex-col space-y-3 text-xs">
-                @if(empty($scanPages))
-                    <!-- Upload Area -->
-                    <div class="space-y-3">
-                        <div class="p-3.5 bg-blue-50/70 rounded-xl border border-blue-200 text-blue-900 leading-relaxed text-xs">
-                            <div class="flex items-start gap-2.5">
-                                <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-                                <div>
-                                    <span class="font-bold">Pemrosesan Dokumen Scan Lokal Server:</span>
-                                    <p class="mt-0.5 text-blue-800 text-[11px] leading-relaxed">
-                                        Unggah berkas pindaian multi-halaman PDF lembar formulir pemotongan tunjangan kinerja (seperti scan mesin). Sistem akan mengekstrak NIP, nama pegawai, dan nominal komitmen zakat/infaq/qurban/santunan secara otomatis untuk diverifikasi.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- File Input / Dropzone -->
-                        <div class="border-2 border-dashed rounded-2xl p-8 text-center space-y-2.5 transition relative overflow-hidden group"
-                             x-data="{ isDragging: false }"
-                             :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-slate-300 hover:border-gov-navy bg-slate-50/50 hover:bg-slate-50'">
-                            
-                            <!-- Full-Surface Native File Input -->
-                            <input id="scanPernyataanFileInput"
-                                   type="file"
-                                   wire:model.live="scanPernyataanFile"
-                                   accept="application/pdf"
-                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                   @dragenter="isDragging = true"
-                                   @dragover.prevent="isDragging = true"
-                                   @dragleave="isDragging = false"
-                                   @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
-
-                            <!-- Loading Overlay during file upload & parsing -->
-                            <div wire:loading.flex wire:target="scanPernyataanFile, processScanPernyataan" class="absolute inset-0 bg-white/95 backdrop-blur-xs rounded-2xl flex-col items-center justify-center gap-2.5 z-20">
-                                <svg class="w-8 h-8 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span class="text-xs font-bold text-gov-textMain">Sedang membaca berkas PDF & mengekstrak data formulir...</span>
-                                <span class="text-[11px] text-slate-500">Mempersiapkan pindaian dan lembar verifikasi</span>
-                            </div>
-
-                            <!-- Dropzone Visual Elements (pointer-events-none prevents child drag interference) -->
-                            <div class="pointer-events-none space-y-2">
-                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-2xs mb-2">
-                                    <i data-lucide="file-up" class="w-6 h-6 text-blue-600"></i>
-                                </div>
-                                <p class="text-sm font-bold text-gov-textMain">
-                                    <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau tarik scan PDF ke sini
-                                </p>
-                                <p class="text-xs text-slate-500">
-                                    Mendukung berkas PDF multi-halaman (hingga 20 MB)
-                                </p>
-                            </div>
-                        </div>
-
-                        @if($scanError)
-                            <div class="p-3 bg-rose-50 rounded-xl border border-rose-200 text-rose-700 flex items-center gap-2">
-                                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-rose-600"></i>
-                                <span class="text-xs font-medium">{{ $scanError }}</span>
-                            </div>
-                        @endif
-
-                        <!-- Action Buttons -->
-                        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-                            <button type="button" @click="showPrintPernyataanModal = false"
-                                class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
-                                Batal
-                            </button>
-                        </div>
-                    </div>
-                @else
-                    <!-- Verification Split-Screen -->
-                    <div class="flex-1 min-h-0 flex flex-col justify-between space-y-3"
-                         x-data="{
-                             activeScanIdx: @entangle('activeScanPageIndex').live,
-                             pdfBaseUrl: '{{ route('admin.programs.preview-scan-pernyataan') }}',
-                             totalPages: {{ count($scanPages) }},
-                             scanEmpNames: {{ json_encode(array_map(fn($p) => $p['nama'] ?? 'Pegawai', $scanPages)) }},
-                             hasImages: {{ !empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
-                             isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
-                             pdfError: '',
-                             isMobile: window.innerWidth < 1024,
-                             pageRotations: {},
-                             rotatePage(idx) {
-                                 const current = this.pageRotations[idx] || 0;
-                                 this.pageRotations = { ...this.pageRotations, [idx]: (current + 180) % 360 };
-                             },
-                             init() {
-                                 window.addEventListener('resize', () => {
-                                     this.isMobile = window.innerWidth < 1024;
-                                 });
-                                 this.$nextTick(() => {
-                                     if (window.createLucideIcons) window.createLucideIcons();
-                                     this.setupContinuousScrollObserver();
-                                     if (!this.hasImages) {
-                                         this.initContinuousPdf();
-                                     } else {
-                                         this.isPdfLoading = false;
-                                     }
-                                 });
-                             },
-                             async initContinuousPdf() {
-                                 if (this.hasImages) {
-                                     this.isPdfLoading = false;
-                                     return;
-                                 }
-                                 this.isPdfLoading = true;
-                                 this.pdfError = '';
-                                 try {
-                                     let retries = 0;
-                                     while (typeof window.pdfjsLib === 'undefined' && retries < 40) {
-                                         await new Promise(r => setTimeout(r, 50));
-                                         retries++;
-                                     }
-                                     if (typeof window.pdfjsLib === 'undefined') {
-                                         this.isPdfLoading = false;
-                                         return;
-                                     }
-
-                                     window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}';
-                                     const loadingTask = window.pdfjsLib.getDocument({
-                                         url: this.pdfBaseUrl + (this.pdfBaseUrl.includes('?') ? '&' : '?') + 't=' + Date.now(),
-                                         cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-                                         cMapPacked: true,
-                                     });
-                                     const pdf = await loadingTask.promise;
-                                     const numPages = Math.min(pdf.numPages, this.totalPages);
-
-                                     for (let pNum = 1; pNum <= numPages; pNum++) {
-                                         const page = await pdf.getPage(pNum);
-                                         const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
-                                         if (canvas) {
-                                             if (canvas._renderTask) {
-                                                 try { canvas._renderTask.cancel(); } catch(e){}
-                                             }
-                                             const viewport = page.getViewport({ scale: 1.5 });
-                                             canvas.height = viewport.height;
-                                             canvas.width = viewport.width;
-                                             const ctx = canvas.getContext('2d');
-                                             ctx.setTransform(1, 0, 0, 1, 0, 0);
-                                             ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                             canvas._renderTask = page.render({ canvasContext: ctx, viewport: viewport });
-                                             await canvas._renderTask.promise;
-                                             canvas._renderTask = null;
-                                         }
-                                     }
-                                     this.isPdfLoading = false;
-                                     this.setupContinuousScrollObserver();
-                                 } catch (err) {
-                                     console.error('PDF.js render error:', err);
-                                     this.isPdfLoading = false;
-                                     this.pdfError = 'Gagal memuat pratinjau dokumen pindaian.';
-                                 }
-                             },
-                             setupContinuousScrollObserver() {
-                                 const container = document.getElementById('pdfContinuousScrollContainer');
-                                 if (!container) return;
-
-                                 if (this._scrollListener) {
-                                     container.removeEventListener('scroll', this._scrollListener);
-                                 }
-
-                                 this._scrollListener = () => {
-                                     const containerRect = container.getBoundingClientRect();
-                                     // Target focus line: 35% from the top of the container
-                                     const targetY = containerRect.top + containerRect.height * 0.35;
-
-                                     let selectedIdx = null;
-                                     let minDistance = Infinity;
-
-                                     const cards = container.querySelectorAll('.scan-pdf-page-card');
-                                     cards.forEach((card) => {
-                                         const rect = card.getBoundingClientRect();
-                                         if (rect.top <= targetY && rect.bottom >= targetY) {
-                                             selectedIdx = parseInt(card.dataset.pageIndex, 10);
-                                         }
-                                         const cardCenter = (rect.top + rect.bottom) / 2;
-                                         const dist = Math.abs(cardCenter - targetY);
-                                         if (dist < minDistance) {
-                                             minDistance = dist;
-                                             if (selectedIdx === null) {
-                                                 selectedIdx = parseInt(card.dataset.pageIndex, 10);
-                                             }
-                                         }
-                                     });
-
-                                     if (selectedIdx !== null && !isNaN(selectedIdx) && this.activeScanIdx !== selectedIdx) {
-                                         this.activeScanIdx = selectedIdx;
-                                     }
-                                 };
-
-                                 container.addEventListener('scroll', this._scrollListener, { passive: true });
-                                 this._scrollListener();
-                             },
-                             prevPage() {
-                                 if (this.activeScanIdx > 0) {
-                                     this.selectPage(this.activeScanIdx - 1);
-                                 }
-                             },
-                             nextPage() {
-                                 if (this.activeScanIdx < this.totalPages - 1) {
-                                     this.selectPage(this.activeScanIdx + 1);
-                                 }
-                             },
-                             selectPage(idx) {
-                                 this.activeScanIdx = idx;
-                                 if (!this.isMobile) {
-                                     const card = document.getElementById('scan-page-card-' + idx);
-                                     if (card) {
-                                         card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                                     }
-                                 }
-                             }
-                         }">
-
-                        <!-- Split View Container (Responsive: Side-by-Side di Desktop, Full Flow di Mobile) -->
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch"
-                             :class="isMobile ? 'overflow-visible' : 'flex-1 min-h-0'">
-                            <!-- Sisi Kiri: Pindaian Dokumen Asli (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[470px] xl:h-[490px] 2xl:h-[570px] max-h-[calc(92vh-220px)] overflow-hidden flex flex-col'"
-                                 class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3 justify-between relative shadow-2xs">
-                                <!-- Header Controls -->
-                                <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs text-gov-textMain shrink-0">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-6 rounded-md bg-blue-100 text-blue-700 flex items-center justify-center">
-                                            <i data-lucide="file-search" class="w-3.5 h-3.5"></i>
-                                        </div>
-                                        <div>
-                                            <span class="font-bold text-slate-800">Dokumen Asli</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <button type="button" @click="rotatePage(activeScanIdx)"
-                                            title="Putar Dokumen 180°"
-                                            class="h-7 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
-                                            <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
-                                            <span>Putar</span>
-                                        </button>
-                                        <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
-                                            class="h-7 px-3 rounded-lg bg-white hover:bg-slate-100 text-blue-700 hover:text-blue-900 text-xs font-semibold inline-flex items-center gap-1.5 border border-slate-200 shadow-2xs transition cursor-pointer">
-                                            <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
-                                            <span class="hidden sm:inline">Buka di Tab Baru</span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <!-- Continuous Scroll Container for All PDF Pages -->
-                                <div wire:ignore
-                                     wire:key="scan-pdf-continuous-container-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
-                                     id="pdfContinuousScrollContainer"
-                                     :class="isMobile ? 'w-full h-auto overflow-visible' : 'flex-1 min-h-0 w-full overflow-y-auto notula-scrollable'"
-                                     class="my-1.5 rounded-lg bg-slate-200/90 p-2 sm:p-3 space-y-3.5 border border-slate-300 shadow-inner relative">
-                                    
-                                    <!-- Loading State Overlay -->
-                                    <div x-show="isPdfLoading" class="absolute inset-0 bg-slate-100/95 flex flex-col items-center justify-center gap-2 z-20">
-                                        <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        <span class="text-xs font-semibold text-slate-700">Menyiapkan halaman dokumen pindaian...</span>
-                                    </div>
-
-                                    @foreach($scanPages as $pIdx => $pItem)
-                                        @php
-                                            $targetPage = (int) ($pItem['page_number'] ?? ($pIdx + 1));
-                                            $pageEmpName = $pItem['nama'] ?? 'Pegawai';
-                                        @endphp
-                                        <div class="scan-pdf-page-card bg-white rounded-xl shadow-xs border overflow-hidden transition cursor-pointer"
-                                             :class="isMobile ? (activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md block' : 'hidden') : (activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md block' : 'border-slate-300 opacity-75 hover:opacity-100 block')"
-                                             data-page-index="{{ $pIdx }}"
-                                             id="scan-page-card-{{ $pIdx }}"
-                                             @click="selectPage({{ $pIdx }})">
-                                            <!-- Card Header -->
-                                            <div class="px-3.5 py-1.5 border-b flex items-center justify-between text-xs transition"
-                                                 :class="activeScanIdx === {{ $pIdx }} ? 'bg-sky-50 text-gov-navy font-bold border-sky-200' : 'bg-slate-50 text-slate-600 border-slate-200'">
-                                                <div class="flex items-center gap-1.5">
-                                                    <span class="w-2.5 h-2.5 rounded-full" :class="activeScanIdx === {{ $pIdx }} ? 'bg-emerald-500 ring-2 ring-emerald-200' : 'bg-slate-300'"></span>
-                                                    <span>Halaman {{ $targetPage }}</span>
-                                                    <span class="text-slate-400 font-normal">dari {{ count($scanPages) }}</span>
-                                                </div>
-                                                <button type="button" @click.stop="rotatePage({{ $pIdx }})"
-                                                    title="Putar Lembar Ini 180°"
-                                                    class="h-5 px-1.5 rounded bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-800 text-[10px] font-medium inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
-                                                    <i data-lucide="rotate-cw" class="w-2.5 h-2.5 text-slate-400"></i>
-                                                    <span>Putar</span>
-                                                </button>
-                                            </div>
-
-                                            <!-- Content: High-Res Poppler Image OR PDF.js Canvas -->
-                                            <div class="bg-white flex items-center justify-center p-2 min-h-0 lg:min-h-[280px]">
-                                                @if(!empty($pItem['image_path']))
-                                                    <img src="{{ $pItem['image_path'] }}"
-                                                         alt="Halaman {{ $targetPage }}"
-                                                         :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
-                                                         class="w-full h-auto block rounded shadow-2xs object-contain"
-                                                         loading="lazy">
-                                                @else
-                                                    <canvas id="scan-pdf-canvas-{{ $pIdx }}"
-                                                            :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
-                                                            class="w-full h-auto block rounded shadow-2xs bg-white"></canvas>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <!-- Bottom Footer info (Desktop: Hint Gulir, Mobile: Navigasi Lembar) -->
-                                <div x-show="!isMobile" class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200 shrink-0">
-                                    <span class="flex items-center gap-1">
-                                        <i data-lucide="mouse-pointer" class="w-3 h-3 text-slate-400"></i>
-                                        <span>Gulir lembar atau klik kartu untuk beralih halaman.</span>
-                                    </span>
-                                </div>
-                                <div x-show="isMobile" class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 text-xs shrink-0">
-                                    <button type="button" @click="prevPage()" :disabled="activeScanIdx <= 0"
-                                        :class="activeScanIdx <= 0 ? 'opacity-40 cursor-not-allowed text-slate-400 border-slate-200' : 'text-gov-navy hover:bg-slate-100 border-slate-300 cursor-pointer'"
-                                        class="h-8 px-3 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
-                                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                                        <span>Sebelumnya</span>
-                                    </button>
-                                    <button type="button" @click="nextPage()" :disabled="activeScanIdx >= totalPages - 1"
-                                        :class="activeScanIdx >= totalPages - 1 ? 'opacity-40 cursor-not-allowed text-slate-400 border-slate-200' : 'text-gov-navy hover:bg-slate-100 border-slate-300 cursor-pointer'"
-                                        class="h-8 px-3 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
-                                        <span>Berikutnya</span>
-                                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[470px] xl:h-[490px] 2xl:h-[570px] max-h-[calc(92vh-220px)] overflow-hidden flex flex-col'"
-                                 class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs">
-                                <!-- Fixed Header -->
-                                <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
-                                    <span class="font-bold text-sm text-gov-textMain">Verifikasi Data</span>
-                                    <button type="button" @click="$wire.removeScanPage(activeScanIdx)"
-                                        class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer">
-                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        <span>Hapus Lembar Ini</span>
-                                    </button>
-                                </div>
-
-                                <!-- Scrollable Form Content (Desktop: Scrollable, Mobile: Full Height Tanpa Scroll) -->
-                                <div :class="isMobile ? 'w-full h-auto overflow-visible' : 'flex-1 min-h-0 w-full overflow-y-auto notula-scrollable'"
-                                     class="pr-1 space-y-3.5 pt-2">
-                                    @foreach($scanPages as $idx => $cur)
-                                        <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-3.5"
-                                             x-transition:enter="transition ease-out duration-100"
-                                             x-transition:enter-start="opacity-0 translate-y-1"
-                                             x-transition:enter-end="opacity-100 translate-y-0">
-
-                                        <!-- Identitas Fields -->
-                                        <div class="space-y-2.5">
-                                            <div>
-                                                <label class="block font-semibold text-slate-700 mb-1">Nama Pegawai *</label>
-                                                <input type="text" wire:model.live="scanPages.{{ $idx }}.nama"
-                                                    class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-textMain">
-                                            </div>
-
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                                <div>
-                                                    <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
-                                                    <input type="text" wire:model.live="scanPages.{{ $idx }}.phone" placeholder="08xxxxxxxxxx"
-                                                        class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono">
-                                                </div>
-                                                <div>
-                                                    <label class="block font-semibold text-slate-700 mb-1">Periode Mulai Berlaku</label>
-                                                    <input type="text" wire:model.live="scanPages.{{ $idx }}.effective_period" placeholder="Periode 11/2026"
-                                                        class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-navy">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Tabel Nominal Komitmen Bulanan dengan Pemisah Ribuan -->
-                                        <div class="pt-2 border-t border-slate-100"
-                                             x-data="{
-                                                 zakat: @entangle('scanPages.' . $idx . '.commitments.zakat'),
-                                                 infaq: @entangle('scanPages.' . $idx . '.commitments.infaq'),
-                                                 qurban: @entangle('scanPages.' . $idx . '.commitments.qurban'),
-                                                 yatim: @entangle('scanPages.' . $idx . '.commitments.yatim'),
-                                                 dhuafa: @entangle('scanPages.' . $idx . '.commitments.dhuafa'),
-                                                 getTotal() {
-                                                     return (parseInt(this.zakat) || 0) +
-                                                            (parseInt(this.infaq) || 0) +
-                                                            (parseInt(this.qurban) || 0) +
-                                                            (parseInt(this.yatim) || 0) +
-                                                            (parseInt(this.dhuafa) || 0);
-                                                 }
-                                             }">
-                                            <div class="flex items-center justify-between mb-1.5">
-                                                <label class="block font-bold text-slate-800 text-xs">Nominal Komitmen Bulanan (Rp)</label>
-                                                <span class="text-[11px] text-slate-400">Pemisah ribuan otomatis</span>
-                                            </div>
-
-                                            <div class="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-gov-border">
-                                                <!-- 1. Zakat -->
-                                                <div class="grid grid-cols-2 items-center gap-2">
-                                                    <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
-                                                        <span>1. Zakat</span>
-                                                    </span>
-                                                    <div class="relative">
-                                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
-                                                        <input type="text" inputmode="numeric"
-                                                            :value="window.formatRibuan(zakat)"
-                                                            @input="window.handleRibuanInput($event.target, (clean) => { zakat = clean ? parseInt(clean) : 0; })"
-                                                            placeholder="0"
-                                                            class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
-                                                    </div>
-                                                </div>
-
-                                                <!-- 2. Infaq & Sedekah -->
-                                                <div class="grid grid-cols-2 items-center gap-2">
-                                                    <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
-                                                        <span>2. Infaq & Sedekah</span>
-                                                    </span>
-                                                    <div class="relative">
-                                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
-                                                        <input type="text" inputmode="numeric"
-                                                            :value="window.formatRibuan(infaq)"
-                                                            @input="window.handleRibuanInput($event.target, (clean) => { infaq = clean ? parseInt(clean) : 0; })"
-                                                            placeholder="0"
-                                                            class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
-                                                    </div>
-                                                </div>
-
-                                                <!-- 3. Tabungan Qurban -->
-                                                <div class="grid grid-cols-2 items-center gap-2">
-                                                    <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
-                                                        <span>3. Tabungan Qurban</span>
-                                                    </span>
-                                                    <div class="relative">
-                                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
-                                                        <input type="text" inputmode="numeric"
-                                                            :value="window.formatRibuan(qurban)"
-                                                            @input="window.handleRibuanInput($event.target, (clean) => { qurban = clean ? parseInt(clean) : 0; })"
-                                                            placeholder="0"
-                                                            class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
-                                                    </div>
-                                                </div>
-
-                                                <!-- 4. Santunan Anak Yatim -->
-                                                <div class="grid grid-cols-2 items-center gap-2">
-                                                    <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
-                                                        <span>4. Santunan Anak Yatim</span>
-                                                    </span>
-                                                    <div class="relative">
-                                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
-                                                        <input type="text" inputmode="numeric"
-                                                            :value="window.formatRibuan(yatim)"
-                                                            @input="window.handleRibuanInput($event.target, (clean) => { yatim = clean ? parseInt(clean) : 0; })"
-                                                            placeholder="0"
-                                                            class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
-                                                    </div>
-                                                </div>
-
-                                                <!-- 5. Santunan Dhuafa -->
-                                                <div class="grid grid-cols-2 items-center gap-2">
-                                                    <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
-                                                        <span>5. Santunan Dhuafa</span>
-                                                    </span>
-                                                    <div class="relative">
-                                                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
-                                                        <input type="text" inputmode="numeric"
-                                                            :value="window.formatRibuan(dhuafa)"
-                                                            @input="window.handleRibuanInput($event.target, (clean) => { dhuafa = clean ? parseInt(clean) : 0; })"
-                                                            placeholder="0"
-                                                            class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Live Total Calculation in Rupiah -->
-                                            <div class="mt-2.5 pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-                                                <span class="font-bold text-slate-700">Total Komitmen / Bulan:</span>
-                                                <span class="font-extrabold text-gov-navy text-sm font-mono"
-                                                      x-text="'Rp ' + (window.formatRibuan(getTotal()) || '0')">
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Footer for Verification Screen (Responsive: Rapih di Mobile & Desktop) -->
-                        <div class="mt-4 pt-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-200 text-xs shrink-0">
-                            <!-- Tombol Aksi Utama: Tutup & Unduh Excel (Berdampingan Proporsional di Mobile) -->
-                            <div class="flex items-center gap-2 w-full sm:w-auto order-1 sm:order-2">
-                                <button type="button" @click="showPrintPernyataanModal = false"
-                                    class="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer text-center">
-                                    Tutup
-                                </button>
-                                <button type="button" wire:click="exportScanPernyataanExcel"
-                                    wire:loading.attr="disabled"
-                                    class="flex-2 sm:flex-none px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
-                                    <i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i>
-                                    <span>Unduh Excel</span>
-                                </button>
-                            </div>
-
-                            <!-- Tombol Sekunder: Unggah Ulang PDF Lain (Lebar Penuh di Mobile Bawah, Sebelah Kiri di Desktop) -->
-                            <button type="button" wire:click="resetScanPernyataan"
-                                class="w-full sm:w-auto px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 font-medium text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 order-2 sm:order-1">
-                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
-                                <span>Unggah Ulang PDF Lain</span>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================== -->
     <!-- MODAL: TAMBAH / EDIT PROGRAM SOSIAL (MILESTONE 6) -->
     <!-- ========================================== -->
     <div x-show="showSocialProgramModal" x-cloak wire:ignore.self
@@ -5081,7 +4220,7 @@
             <!-- Footer -->
             <div class="flex items-center justify-between border-t border-slate-200 pt-3 shrink-0 text-xs">
                 <div class="text-[11px] text-slate-500">
-                    💡 <strong>Otomatisasi:</strong> Jadwal kajian baru atau lama dengan nama ustadz yang sama akan langsung menggunakan foto ini.
+                    ðŸ’¡ <strong>Otomatisasi:</strong> Jadwal kajian baru atau lama dengan nama ustadz yang sama akan langsung menggunakan foto ini.
                 </div>
                 <button type="button" @click="showUstadzModal = false; $wire.closeUstadzModal()"
                     class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition cursor-pointer">
@@ -5215,7 +4354,7 @@
                             <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <div class="leading-relaxed">
                                 <span class="font-semibold block text-rose-700">{{ $message }}</span>
-                                <span class="text-[11px] text-rose-600 block mt-0.5">Saran: Jika foto dari kamera DSLR/HP beresolusi sangat besar (10–15 MB per foto), pilih 1–2 foto sekaligus atau sesuaikan batas <code class="bg-rose-100 px-1 py-0.5 rounded font-mono text-[10px]">client_max_body_size</code> di Nginx server.</span>
+                                <span class="text-[11px] text-rose-600 block mt-0.5">Saran: Jika foto dari kamera DSLR/HP beresolusi sangat besar (10â€“15 MB per foto), pilih 1â€“2 foto sekaligus atau sesuaikan batas <code class="bg-rose-100 px-1 py-0.5 rounded font-mono text-[10px]">client_max_body_size</code> di Nginx server.</span>
                             </div>
                         </div>
                     @enderror
@@ -5477,7 +4616,7 @@
                             <span x-text="galleryLightboxModal.date"></span>
                         </span>
                         
-                        <span class="text-slate-500 shrink-0">•</span>
+                        <span class="text-slate-500 shrink-0">â€¢</span>
                         
                         <!-- Lokasi -->
                         <span class="inline-flex items-center gap-1 min-w-0 truncate text-slate-300">

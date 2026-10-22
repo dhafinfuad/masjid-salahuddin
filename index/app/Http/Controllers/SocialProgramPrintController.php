@@ -208,6 +208,24 @@ class SocialProgramPrintController extends Controller
         $usersByNip = User::whereNotNull('nip')->get()->keyBy(fn ($u) => preg_replace('/\D/', '', (string)$u->nip));
         $usersByName = User::all()->keyBy(fn ($u) => strtolower(trim($u->name)));
 
+        // Hak akses: Jika pengguna bukan pengurus / tidak canManage(), paksa mode single hanya untuk identitas dirinya sendiri
+        $currentUser = auth()->user();
+        if ($currentUser && ! $currentUser->canManage()) {
+            $mode = 'single';
+            $employeeNameQuery = $currentUser->name;
+            if ($currentUser->nip) {
+                $cleanNip = preg_replace('/\D/', '', (string) $currentUser->nip);
+                $foundEmp = $allEmployees->first(function ($e) use ($cleanNip) {
+                    return preg_replace('/\D/', '', (string) $e->nip_panjang) === $cleanNip
+                        || preg_replace('/\D/', '', (string) $e->nip_pendek) === $cleanNip;
+                });
+                if ($foundEmp) {
+                    $employeeId = $foundEmp->id;
+                    $employeeNameQuery = $foundEmp->name;
+                }
+            }
+        }
+
         $pages = [];
 
         if ($mode === 'blank') {
@@ -243,7 +261,7 @@ class SocialProgramPrintController extends Controller
                 'history' => [],
             ];
         } elseif ($mode === 'single') {
-            // Satu pegawai tertentu (dengan riwayat potongan)
+            // Satu pegawai tertentu (dengan riwayat potongan kondisional)
             $targetName = $employeeNameQuery;
             if ($employeeId && isset($employeesById[$employeeId])) {
                 $targetName = $employeesById[$employeeId]->name;
@@ -268,6 +286,17 @@ class SocialProgramPrintController extends Controller
             $commitments = $this->buildProgramCommitments($participants);
             $history = $this->buildProgramHistory($participants, $year);
 
+            // Evaluasi apakah pegawai pernah memiliki potongan pada tahun $year yang dipilih
+            $hasHistoryInYear = false;
+            foreach ($history as $h) {
+                foreach ($h['months'] as $mVal) {
+                    if ($mVal !== '-') {
+                        $hasHistoryInYear = true;
+                        break 2;
+                    }
+                }
+            }
+
             $pages[] = [
                 'name' => $parsedData['name'],
                 'nip' => $parsedData['nip'],
@@ -275,7 +304,7 @@ class SocialProgramPrintController extends Controller
                 'seksi' => $parsedData['seksi'],
                 'phone' => $parsedData['phone'],
                 'programs' => $commitments,
-                'show_history' => true,
+                'show_history' => $hasHistoryInYear,
                 'history' => $history,
             ];
         } else {
