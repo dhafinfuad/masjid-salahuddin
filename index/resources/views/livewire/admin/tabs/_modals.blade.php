@@ -2346,8 +2346,8 @@
     <!-- ======================================================== -->
     <div x-show="receiptPreviewModal.show" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el)) closeReceiptModal(false)"
-        class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
-        style="display: none;"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+        style="display: none; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
         @keydown.escape.window="if (receiptPreviewModal.show) closeReceiptModal(false)"
         @keydown.arrow-left.window="if (receiptPreviewModal.show) receiptPreviewModal.prev()"
         @keydown.arrow-right.window="if (receiptPreviewModal.show) receiptPreviewModal.next()">
