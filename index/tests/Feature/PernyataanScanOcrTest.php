@@ -240,10 +240,15 @@ No  Program                 Nominal per Bulan
             ->set('scanPernyataanFile', $fakePdf)
             ->call('processScanPernyataan')
             ->assertHasNoErrors()
+            ->assertSee('max-w-6xl')
             ->assertSee('pdfContinuousScrollContainer')
-            ->assertSee('Data Verifikasi Pegawai')
+            ->assertSee('Verifikasi Data')
             ->assertSee('Unduh Excel')
-            ->assertSee('scan-pdf-page-card');
+            ->assertSee('scan-pdf-page-card')
+            ->assertSee('Sebelumnya')
+            ->assertSee('Berikutnya')
+            ->assertSee('prevPage()')
+            ->assertSee('nextPage()');
 
         // Uji penghapusan lembar halaman scan
         $component->call('removeScanPage', 0)
