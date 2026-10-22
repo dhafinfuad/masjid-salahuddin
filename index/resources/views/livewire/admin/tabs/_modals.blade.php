@@ -3866,8 +3866,8 @@
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-center p-3 sm:p-5"
         style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
-        <div class="relative bg-white rounded-2xl w-full p-4 sm:p-5 text-left shadow-2xl border border-gov-border space-y-3 my-auto transition-all duration-150"
-            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? 'max-w-6xl max-h-[92vh] overflow-y-auto lg:overflow-hidden lg:flex lg:flex-col' : (pernyataanModalTab === 'impor' ? 'max-w-2xl max-h-[90vh] overflow-y-auto' : 'max-w-xl max-h-[90vh] overflow-y-auto')"
+        <div class="relative bg-white rounded-2xl w-full p-4 sm:p-5 text-left shadow-2xl border border-gov-border space-y-3 my-auto transition-all duration-150 overflow-hidden"
+            :class="(pernyataanModalTab === 'impor' && ($wire.scanPages?.length > 0 || {{ !empty($scanPages) ? 'true' : 'false' }})) ? (window.innerWidth < 1024 ? 'max-w-6xl max-h-[92vh] overflow-y-auto block' : 'max-w-6xl max-h-[92vh] flex flex-col overflow-hidden') : (pernyataanModalTab === 'impor' ? 'max-w-2xl max-h-[90vh] overflow-y-auto' : 'max-w-xl max-h-[90vh] overflow-y-auto')"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
             x-transition:enter-end="opacity-100 scale-100"
@@ -4281,8 +4281,18 @@
                              hasImages: {{ !empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
+                             isMobile: window.innerWidth < 1024,
+                             pageRotations: {},
+                             rotateCurrentPage() {
+                                 const idx = this.activeScanIdx;
+                                 this.pageRotations[idx] = ((this.pageRotations[idx] || 0) + 180) % 360;
+                             },
                              init() {
+                                 window.addEventListener('resize', () => {
+                                     this.isMobile = window.innerWidth < 1024;
+                                 });
                                  this.$nextTick(() => {
+                                     if (window.createLucideIcons) window.createLucideIcons();
                                      this.setupContinuousScrollObserver();
                                      if (!this.hasImages) {
                                          this.initContinuousPdf();
@@ -4389,7 +4399,7 @@
                              },
                              selectPage(idx) {
                                  this.activeScanIdx = idx;
-                                 if (window.innerWidth >= 1024) {
+                                 if (!this.isMobile) {
                                      const card = document.getElementById('scan-page-card-' + idx);
                                      if (card) {
                                          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -4399,9 +4409,11 @@
                          }">
 
                         <!-- Split View Container (Responsive: Side-by-Side di Desktop, Full Flow di Mobile) -->
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:flex-1 lg:min-h-0 items-stretch">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch"
+                             :class="isMobile ? 'overflow-visible' : 'flex-1 min-h-0'">
                             <!-- Sisi Kiri: Pindaian Dokumen Asli (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3 flex flex-col justify-between h-auto lg:h-[540px] 2xl:lg:h-[620px] lg:max-h-[calc(92vh-185px)] relative overflow-visible lg:overflow-hidden shadow-2xs">
+                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden flex flex-col'"
+                                 class="lg:col-span-7 bg-slate-50 rounded-xl border border-gov-border p-3 justify-between relative shadow-2xs">
                                 <!-- Header Controls -->
                                 <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs text-gov-textMain shrink-0">
                                     <div class="flex items-center gap-2">
@@ -4412,11 +4424,17 @@
                                             <span class="font-bold text-slate-800">Dokumen Asli</span>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" @click="rotateCurrentPage()"
+                                            title="Putar Dokumen 180°"
+                                            class="h-7 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
+                                            <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
+                                            <span>Putar</span>
+                                        </button>
                                         <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
                                             class="h-7 px-3 rounded-lg bg-white hover:bg-slate-100 text-blue-700 hover:text-blue-900 text-xs font-semibold inline-flex items-center gap-1.5 border border-slate-200 shadow-2xs transition cursor-pointer">
                                             <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
-                                            <span>Buka di Tab Baru</span>
+                                            <span class="hidden sm:inline">Buka di Tab Baru</span>
                                         </a>
                                     </div>
                                 </div>
@@ -4425,7 +4443,8 @@
                                 <div wire:ignore
                                      wire:key="scan-pdf-continuous-container-{{ count($scanPages) }}-{{ session('temp_scan_pdf_time', 1) }}"
                                      id="pdfContinuousScrollContainer"
-                                     class="w-full h-auto lg:flex-1 lg:min-h-0 overflow-visible lg:overflow-y-auto notula-scrollable my-1.5 rounded-lg bg-slate-200/90 p-2 sm:p-3 space-y-3.5 border border-slate-300 shadow-inner relative">
+                                     :class="isMobile ? 'w-full h-auto overflow-visible' : 'flex-1 min-h-0 w-full overflow-y-auto notula-scrollable'"
+                                     class="my-1.5 rounded-lg bg-slate-200/90 p-2 sm:p-3 space-y-3.5 border border-slate-300 shadow-inner relative">
                                     
                                     <!-- Loading State Overlay -->
                                     <div x-show="isPdfLoading" class="absolute inset-0 bg-slate-100/95 flex flex-col items-center justify-center gap-2 z-20">
@@ -4442,7 +4461,7 @@
                                             $pageEmpName = $pItem['nama'] ?? 'Pegawai';
                                         @endphp
                                         <div class="scan-pdf-page-card bg-white rounded-xl shadow-xs border overflow-hidden transition cursor-pointer"
-                                             :class="activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md block' : 'border-slate-300 opacity-75 hover:opacity-100 hidden lg:block'"
+                                             :class="isMobile ? (activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md block' : 'hidden') : (activeScanIdx === {{ $pIdx }} ? 'ring-2 ring-gov-navy border-gov-navy shadow-md block' : 'border-slate-300 opacity-75 hover:opacity-100 block')"
                                              data-page-index="{{ $pIdx }}"
                                              id="scan-page-card-{{ $pIdx }}"
                                              @click="selectPage({{ $pIdx }})">
@@ -4461,10 +4480,12 @@
                                                 @if(!empty($pItem['image_path']))
                                                     <img src="{{ $pItem['image_path'] }}"
                                                          alt="Halaman {{ $targetPage }}"
+                                                         :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                          class="w-full h-auto block rounded shadow-2xs object-contain"
                                                          loading="lazy">
                                                 @else
                                                     <canvas id="scan-pdf-canvas-{{ $pIdx }}"
+                                                            :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                             class="w-full h-auto block rounded shadow-2xs bg-white"></canvas>
                                                 @endif
                                             </div>
@@ -4473,25 +4494,22 @@
                                 </div>
 
                                 <!-- Bottom Footer info (Desktop: Hint Gulir, Mobile: Navigasi Lembar) -->
-                                <div class="hidden lg:flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200 shrink-0">
+                                <div x-show="!isMobile" class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200 shrink-0">
                                     <span class="flex items-center gap-1">
                                         <i data-lucide="mouse-pointer" class="w-3 h-3 text-slate-400"></i>
                                         <span>Gulir lembar atau klik kartu untuk beralih halaman.</span>
                                     </span>
                                 </div>
-                                <div class="flex lg:hidden items-center justify-between gap-2 pt-2 border-t border-slate-200 text-xs shrink-0">
+                                <div x-show="isMobile" class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 text-xs shrink-0">
                                     <button type="button" @click="prevPage()" :disabled="activeScanIdx <= 0"
                                         :class="activeScanIdx <= 0 ? 'opacity-40 cursor-not-allowed text-slate-400 border-slate-200' : 'text-gov-navy hover:bg-slate-100 border-slate-300 cursor-pointer'"
-                                        class="h-8 px-2.5 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
+                                        class="h-8 px-3 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
                                         <i data-lucide="chevron-left" class="w-4 h-4"></i>
                                         <span>Sebelumnya</span>
                                     </button>
-                                    <span class="text-xs font-semibold text-slate-700">
-                                        Halaman <span class="font-bold text-gov-navy" x-text="activeScanIdx + 1"></span> dari <span x-text="totalPages"></span>
-                                    </span>
                                     <button type="button" @click="nextPage()" :disabled="activeScanIdx >= totalPages - 1"
                                         :class="activeScanIdx >= totalPages - 1 ? 'opacity-40 cursor-not-allowed text-slate-400 border-slate-200' : 'text-gov-navy hover:bg-slate-100 border-slate-300 cursor-pointer'"
-                                        class="h-8 px-2.5 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
+                                        class="h-8 px-3 rounded-lg border bg-white font-semibold inline-flex items-center gap-1 transition">
                                         <span>Berikutnya</span>
                                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                                     </button>
@@ -4499,7 +4517,8 @@
                             </div>
 
                             <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana (Desktop: Terkunci & Scrollable, Mobile: Full Height) -->
-                            <div class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs flex flex-col h-auto lg:h-[540px] 2xl:lg:h-[620px] lg:max-h-[calc(92vh-185px)] overflow-visible lg:overflow-hidden">
+                            <div :class="isMobile ? 'h-auto overflow-visible' : 'h-[520px] 2xl:h-[600px] max-h-[calc(92vh-185px)] overflow-hidden flex flex-col'"
+                                 class="lg:col-span-5 bg-white rounded-xl border border-gov-border p-4 shadow-2xs">
                                 <!-- Fixed Header -->
                                 <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
                                     <span class="font-bold text-sm text-gov-textMain">Verifikasi Data</span>
@@ -4511,7 +4530,8 @@
                                 </div>
 
                                 <!-- Scrollable Form Content (Desktop: Scrollable, Mobile: Full Height Tanpa Scroll) -->
-                                <div class="w-full h-auto lg:flex-1 lg:min-h-0 overflow-visible lg:overflow-y-auto notula-scrollable pr-1 space-y-3.5 pt-2">
+                                <div :class="isMobile ? 'w-full h-auto overflow-visible' : 'flex-1 min-h-0 w-full overflow-y-auto notula-scrollable'"
+                                     class="pr-1 space-y-3.5 pt-2">
                                     @foreach($scanPages as $idx => $cur)
                                         <div x-show="activeScanIdx === {{ $idx }}" x-cloak class="space-y-3.5"
                                              x-transition:enter="transition ease-out duration-100"
@@ -4652,26 +4672,28 @@
                             </div>
                         </div>
 
-                        <!-- Footer for Verification Screen -->
-                        <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-200 text-xs shrink-0">
-                            <button type="button" wire:click="resetScanPernyataan"
-                                class="px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer inline-flex items-center gap-1.5">
-                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
-                                <span>Unggah Ulang PDF Lain</span>
-                            </button>
-
-                            <div class="flex items-center gap-2">
+                        <!-- Footer for Verification Screen (Responsive: Rapih di Mobile & Desktop) -->
+                        <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-200 text-xs shrink-0">
+                            <!-- Tombol Aksi Utama: Tutup & Unduh Excel (Berdampingan Proporsional di Mobile) -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto order-1 sm:order-2">
                                 <button type="button" @click="showPrintPernyataanModal = false"
-                                    class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                                    class="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer text-center">
                                     Tutup
                                 </button>
                                 <button type="button" wire:click="exportScanPernyataanExcel"
                                     wire:loading.attr="disabled"
-                                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+                                    class="flex-2 sm:flex-none px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
                                     <i data-lucide="file-spreadsheet" class="w-4 h-4 text-amber-400"></i>
                                     <span>Unduh Excel</span>
                                 </button>
                             </div>
+
+                            <!-- Tombol Sekunder: Unggah Ulang PDF Lain (Lebar Penuh di Mobile Bawah, Sebelah Kiri di Desktop) -->
+                            <button type="button" wire:click="resetScanPernyataan"
+                                class="w-full sm:w-auto px-3.5 py-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 font-medium text-xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 order-2 sm:order-1">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>Unggah Ulang PDF Lain</span>
+                            </button>
                         </div>
                     </div>
                 @endif
