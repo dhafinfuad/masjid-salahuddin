@@ -4282,33 +4282,25 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
-                             pdfDoc: null,
-                             renderedPages: {},
-                             _currentMobileRenderTask: null,
-
                              init() {
                                  window.addEventListener('resize', () => {
-                                     const wasMobile = this.isMobile;
                                      this.isMobile = window.innerWidth < 1024;
-                                     if (wasMobile !== this.isMobile && !this.hasImages && this.pdfDoc) {
-                                         if (this.isMobile) {
-                                             this.renderMobilePage(this.activeScanIdx);
-                                         } else {
-                                             this.renderAllDesktopPages();
-                                         }
-                                     }
                                  });
                                  this.$nextTick(() => {
                                      if (window.createLucideIcons) window.createLucideIcons();
+                                     this.setupContinuousScrollObserver();
                                      if (!this.hasImages) {
-                                         this.loadPdfDocument();
+                                         this.initContinuousPdf();
                                      } else {
                                          this.isPdfLoading = false;
                                      }
                                  });
                              },
-
-                             async loadPdfDocument() {
+                             async initContinuousPdf() {
+                                 if (this.hasImages) {
+                                     this.isPdfLoading = false;
+                                     return;
+                                 }
                                  this.isPdfLoading = true;
                                  this.pdfError = '';
                                  try {
@@ -4328,94 +4320,28 @@
                                          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
                                          cMapPacked: true,
                                      });
-                                     this.pdfDoc = await loadingTask.promise;
+                                     const pdf = await loadingTask.promise;
+                                     const numPages = Math.min(pdf.numPages, this.totalPages);
 
-                                     if (this.isMobile) {
-                                         await this.renderMobilePage(this.activeScanIdx);
-                                     } else {
-                                         await this.renderAllDesktopPages();
+                                     for (let pNum = 1; pNum <= numPages; pNum++) {
+                                         const page = await pdf.getPage(pNum);
+                                         const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
+                                         if (canvas) {
+                                             const viewport = page.getViewport({ scale: 1.5 });
+                                             canvas.height = viewport.height;
+                                             canvas.width = viewport.width;
+                                             const ctx = canvas.getContext('2d');
+                                             await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                                         }
                                      }
                                      this.isPdfLoading = false;
+                                     this.setupContinuousScrollObserver();
                                  } catch (err) {
-                                     console.error('PDF.js load error:', err);
+                                     console.error('PDF.js render error:', err);
                                      this.isPdfLoading = false;
                                      this.pdfError = 'Gagal memuat pratinjau dokumen pindaian.';
                                  }
                              },
-
-                             async renderAllDesktopPages() {
-                                 if (!this.pdfDoc) return;
-                                 const numPages = Math.min(this.pdfDoc.numPages, this.totalPages);
-                                 for (let pNum = 1; pNum <= numPages; pNum++) {
-                                     const page = await this.pdfDoc.getPage(pNum);
-                                     const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
-                                     if (canvas) {
-                                         const viewport = page.getViewport({ scale: 1.5 });
-                                         canvas.height = viewport.height;
-                                         canvas.width = viewport.width;
-                                         const ctx = canvas.getContext('2d');
-                                         await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-                                     }
-                                 }
-                                 this.setupContinuousScrollObserver();
-                             },
-
-                             async renderMobilePage(idx) {
-                                 if (!this.pdfDoc || idx < 0 || idx >= this.totalPages) return;
-                                 
-                                 const targetCanvas = document.getElementById('scan-pdf-canvas-' + idx);
-                                 if (!targetCanvas) {
-                                     await this.$nextTick();
-                                 }
-                                 const canvas = document.getElementById('scan-pdf-canvas-' + idx);
-                                 if (!canvas) return;
-
-                                 if (this.renderedPages[idx]) {
-                                     return;
-                                 }
-
-                                 try {
-                                     if (this._currentMobileRenderTask) {
-                                         try { this._currentMobileRenderTask.cancel(); } catch (e) {}
-                                         this._currentMobileRenderTask = null;
-                                     }
-
-                                     const pNum = idx + 1;
-                                     const page = await this.pdfDoc.getPage(pNum);
-                                     
-                                     const outputScale = window.devicePixelRatio || 1;
-                                     const viewport = page.getViewport({ scale: 1.5 });
-
-                                     canvas.width = Math.floor(viewport.width * outputScale);
-                                     canvas.height = Math.floor(viewport.height * outputScale);
-                                     canvas.style.width = '100%';
-                                     canvas.style.height = 'auto';
-
-                                     const ctx = canvas.getContext('2d');
-                                     ctx.setTransform(1, 0, 0, 1, 0, 0);
-                                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                                     const transform = outputScale !== 1 
-                                         ? [outputScale, 0, 0, outputScale, 0, 0] 
-                                         : null;
-
-                                     const renderContext = {
-                                         canvasContext: ctx,
-                                         viewport: viewport,
-                                         transform: transform
-                                     };
-
-                                     this._currentMobileRenderTask = page.render(renderContext);
-                                     await this._currentMobileRenderTask.promise;
-                                     this.renderedPages[idx] = true;
-                                     this._currentMobileRenderTask = null;
-                                 } catch (err) {
-                                     if (err?.name !== 'RenderingCancelledException') {
-                                         console.error('Mobile PDF render error:', err);
-                                     }
-                                 }
-                             },
-
                              setupContinuousScrollObserver() {
                                  const container = document.getElementById('pdfContinuousScrollContainer');
                                  if (!container) return;
@@ -4473,10 +4399,6 @@
                                      if (card) {
                                          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                                      }
-                                 } else {
-                                     this.$nextTick(() => {
-                                         this.renderMobilePage(idx);
-                                     });
                                  }
                              }
                          }">
