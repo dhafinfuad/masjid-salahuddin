@@ -219,7 +219,8 @@ class PortalPage extends Component
 
         // Jadwal Kajian & Khutbah Jumat Terdekat (Riil)
         Kajian::ensureNotulaColumnExists();
-        $today = Carbon::today();
+        $today = Carbon::today('Asia/Jakarta');
+        $todayDate = $today->format('Y-m-d');
         $kajians = Kajian::where('date', '>=', $today->copy()->subDays(1))
             ->orderBy('date', 'asc')
             ->take(8)
@@ -227,6 +228,18 @@ class PortalPage extends Component
         if ($kajians->isEmpty()) {
             $kajians = Kajian::orderBy('date', 'desc')->take(8)->get();
         }
+
+        // Cari ID kajian terdekat berikutnya (dimulai dari hari ini ke depan)
+        $nextKajian = $kajians->first(function ($k) use ($todayDate) {
+            $kDate = $k->date instanceof Carbon ? $k->date->format('Y-m-d') : ($k->date ? Carbon::parse($k->date)->format('Y-m-d') : null);
+            return $kDate && $kDate >= $todayDate;
+        });
+        if (!$nextKajian) {
+            $nextKajian = Kajian::whereDate('date', '>=', $todayDate)
+                ->orderBy('date', 'asc')
+                ->first();
+        }
+        $nextKajianId = $nextKajian?->id;
 
         // Khutbah Jumat Terdekat / Hari Ini untuk Sinkronisasi Petugas Sholat Jumat
         $targetFridayDate = $today->isFriday() ? $today->copy() : $today->copy()->next(Carbon::FRIDAY);
@@ -348,6 +361,8 @@ class PortalPage extends Component
         return view('livewire.portal.portal-page', [
             'settings' => $settings,
             'kajians' => $kajians,
+            'nextKajianId' => $nextKajianId,
+            'todayDate' => $todayDate,
             'currentFridayKajian' => $currentFridayKajian,
             'agendas' => $agendas,
             'cities' => app(PrayerTimeService::class)->getCities(),

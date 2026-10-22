@@ -317,8 +317,12 @@
                                         
                                         <!-- Real Kajian Cards (Pekanan & Tematik & Jumat) -->
                                         @foreach($kajians as $kajian)
-                                            <div x-show="isKajianMatch('{{ $kajian->type }}', '{{ strtolower(addslashes($kajian->title . ' ' . ($kajian->speaker_name ?? '') . ' ' . ($kajian->khatib_name ?? '') . ' ' . ($kajian->muadzin_name ?? '') . ' ' . ($kajian->mc_name ?? '') . ' ' . ($kajian->time_display ?? '') . ' ' . ($kajian->type === 'tematik' ? 'tematik' : ($kajian->type === 'pekanan' ? 'pekanan' : 'jumat khutbah')))) }}')"
-                                                 class="activity-card group bg-slate-50/70 hover:bg-white border border-gov-border rounded-xl p-3.5 transition hover:shadow-2xs space-y-2 flex flex-col justify-between"
+                                            @php
+                                                $isNextKajian = (isset($nextKajianId) && $kajian->id === $nextKajianId);
+                                            @endphp
+                                            <div wire:key="portal-kajian-card-{{ $kajian->id }}"
+                                                 x-show="isKajianMatch('{{ $kajian->type }}', '{{ strtolower(addslashes($kajian->title . ' ' . ($kajian->speaker_name ?? '') . ' ' . ($kajian->khatib_name ?? '') . ' ' . ($kajian->muadzin_name ?? '') . ' ' . ($kajian->mc_name ?? '') . ' ' . ($kajian->time_display ?? '') . ' ' . ($kajian->type === 'tematik' ? 'tematik' : ($kajian->type === 'pekanan' ? 'pekanan' : 'jumat khutbah')))) }}')"
+                                                 class="activity-card group bg-slate-50/70 hover:bg-white {{ $isNextKajian ? 'border border-amber-500 ring-1 sm:ring-1 ring-amber-400/30' : 'border border-gov-border' }} rounded-xl p-3.5 transition hover:shadow-2xs space-y-2 flex flex-col justify-between"
                                                  data-category="{{ $kajian->type === 'jumat' ? 'khutbah' : 'kajian' }}"
                                                  data-title="{{ strtolower($kajian->title) }}">
                                                 <div class="space-y-2">
