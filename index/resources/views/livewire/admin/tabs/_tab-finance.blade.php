@@ -86,20 +86,18 @@
                 <!-- SUB-TAB 1: ALIRAN KAS UTAMA -->
                 <!-- ==================================================== -->
                 <div x-show="financeSubTab === 'utama'" x-cloak :class="{ 'hidden': financeSubTab !== 'utama' }"
+                    class="space-y-6"
                     x-data="{
                         activeFinanceType: '{{ $financeTypeFilter }}',
-                        financesData: {{ Js::from(collect($financesList->items())->map(fn($f) => ['id' => $f->id, 'type' => $f->type])->values()->all()) }},
-                        get hasVisibleRows() {
-                            if (this.activeFinanceType === 'all') return this.financesData.length > 0;
-                            return this.financesData.some(f => f.type === this.activeFinanceType);
+                        allTypes: {{ Js::from($financesList->pluck('type')->unique()->values()->all()) }},
+                        matchesType(type) {
+                            return this.activeFinanceType === 'all' || this.activeFinanceType === type;
                         },
-                        setFinanceType(type) {
-                            this.activeFinanceType = type;
-                            $wire.set('financeTypeFilter', type);
+                        hasVisible() {
+                            if (this.activeFinanceType === 'all') return this.allTypes.length > 0;
+                            return this.allTypes.includes(this.activeFinanceType);
                         }
-                    }"
-                    x-effect="activeFinanceType = '{{ $financeTypeFilter }}'; financesData = {{ Js::from(collect($financesList->items())->map(fn($f) => ['id' => $f->id, 'type' => $f->type])->values()->all()) }}"
-                    class="space-y-6">
+                    }">
 
                     <!-- 4 Financial Metric Cards (Standardized to Dashboard 100% White Cards) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -196,21 +194,21 @@
                     <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-4">
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                             <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto">
-                                <!-- Type Pills (Instant UI 0ms transition) -->
+                                <!-- Type Pills (Pure Client-Side 0ms Instant - Matches Pos Anggaran Kategori Pattern) -->
                                 <button type="button" 
-                                    @click="setFinanceType('all')"
+                                    @click="activeFinanceType = 'all'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Semua
                                 </button>
                                 <button type="button" 
-                                    @click="setFinanceType('pemasukan')"
+                                    @click="activeFinanceType = 'pemasukan'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pemasukan
                                 </button>
                                 <button type="button" 
-                                    @click="setFinanceType('pengeluaran')"
+                                    @click="activeFinanceType = 'pengeluaran'"
                                     class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pengeluaran
@@ -406,7 +404,7 @@
                                 <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
                                     @forelse($financesList as $fin)
                                         <tr wire:key="fin-row-{{ $fin->id }}" 
-                                            x-show="activeFinanceType === 'all' || activeFinanceType === '{{ $fin->type }}'" 
+                                            x-show="matchesType('{{ $fin->type }}')" 
                                             class="hover:bg-slate-50/80 transition">
                                             <td class="p-3.5 pl-5 whitespace-nowrap">
                                                 <div class="font-medium text-gov-textMain text-xs">
@@ -540,7 +538,7 @@
                                         </tr>
                                     @endforelse
                                     @if(count($financesList) > 0)
-                                        <tr x-show="!hasVisibleRows" x-cloak style="display: none;">
+                                        <tr x-show="!hasVisible()" x-cloak style="display: none;">
                                             <td colspan="6" class="p-8 text-center text-slate-400">
                                                 <div class="flex flex-col items-center justify-center py-6">
                                                     <svg class="w-8 h-8 text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -567,7 +565,7 @@
                     <div class="md:hidden space-y-3" wire:loading.class="opacity-50 pointer-events-none" wire:target="financeMonthFilter, financeYearFilter, financeSearch, clearFinanceSearch, sortBy, gotoPage, nextPage, previousPage">
                         @forelse($financesList as $fin)
                             <div wire:key="fin-card-{{ $fin->id }}" 
-                                x-show="activeFinanceType === 'all' || activeFinanceType === '{{ $fin->type }}'" 
+                                x-show="matchesType('{{ $fin->type }}')" 
                                 class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="space-y-0.5">
@@ -688,7 +686,7 @@
                         @endforelse
 
                         @if(count($financesList) > 0)
-                            <div x-show="!hasVisibleRows" x-cloak style="display: none;" class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
+                            <div x-show="!hasVisible()" x-cloak style="display: none;" class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
                                 <div class="flex flex-col items-center justify-center py-4">
                                     <svg class="w-8 h-8 text-slate-300 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
