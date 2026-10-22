@@ -461,6 +461,7 @@
             $wire.set('assignJuzNumber', juz, false);
             $wire.set('assignPegawai1', this.assignPegawai1, false);
             $wire.set('assignPegawai2', this.assignPegawai2, false);
+        },
         showUserModal: false,
         isEditingUser: false,
         userForm: {
@@ -908,7 +909,9 @@
     @close-agenda-modal.window="showAgendaModal = false" @open-import-agenda-modal.window="showImportAgendaModal = true"
     @close-import-agenda-modal.window="showImportAgendaModal = false"
     @open-assign-odoj-modal.window="showAssignOdojModal = true"
-    @close-assign-odoj-modal.window="showAssignOdojModal = false" @open-user-modal.window="showUserModal = true"
+    @close-assign-odoj-modal.window="showAssignOdojModal = false"
+    @open-user-modal.window="showUserModal = true"
+    @close-user-modal.window="showUserModal = false"
     @open-employee-modal.window="showEmployeeModal = true"
     @close-employee-modal.window="showEmployeeModal = false"
     @open-import-employee-modal.window="showImportEmployeeModal = true"
