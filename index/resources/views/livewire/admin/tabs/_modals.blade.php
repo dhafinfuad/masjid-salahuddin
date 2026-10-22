@@ -2345,10 +2345,10 @@
     <!-- MODAL: PRATINJAU BUKTI TRANSFER / KWITANSI TRANSAKSI KAS -->
     <!-- ======================================================== -->
     <div x-show="receiptPreviewModal.show" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) receiptPreviewModal.show = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+        @click="if (window.isBackdropClick($event, $el)) closeReceiptModal(false)"
+        class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
         style="display: none;"
-        @keydown.escape.window="receiptPreviewModal.show = false"
+        @keydown.escape.window="if (receiptPreviewModal.show) closeReceiptModal(false)"
         @keydown.arrow-left.window="if (receiptPreviewModal.show) receiptPreviewModal.prev()"
         @keydown.arrow-right.window="if (receiptPreviewModal.show) receiptPreviewModal.next()">
         <div class="bg-white rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200/80 space-y-3.5 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92vh]">
@@ -2373,7 +2373,7 @@
                         <p class="text-xs text-slate-500 mt-0.5 leading-relaxed line-clamp-1" x-text="receiptPreviewModal.description || 'Pratinjau berkas bukti transaksi'"></p>
                     </div>
                 </div>
-                <button type="button" @click="receiptPreviewModal.show = false"
+                <button type="button" @click="closeReceiptModal(false)"
                     class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer shrink-0"
                     title="Tutup">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2479,10 +2479,22 @@
                     </svg>
                     <span>Buka File Asli</span>
                 </a>
-                <button type="button" @click="receiptPreviewModal.show = false"
-                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer">
-                    Tutup
-                </button>
+                <div class="flex items-center gap-2">
+                    <template x-if="receiptPreviewModal.fromFinanceModal">
+                        <button type="button" @click="closeReceiptModal(false)"
+                            class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6"/>
+                            </svg>
+                            <span>Kembali ke Form Edit</span>
+                        </button>
+                    </template>
+                    <button type="button" @click="closeReceiptModal(true)"
+                        class="px-4 py-2 rounded-lg font-bold shadow-2xs transition cursor-pointer"
+                        :class="receiptPreviewModal.fromFinanceModal ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200' : 'bg-gov-navy hover:bg-gov-navyHover text-white'">
+                        Tutup
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -2598,7 +2610,7 @@
                                 <path d="M17 7 7 17"/>
                                 <path d="M17 17H7V7"/>
                             </svg>
-                            <span>Pemasukan (Masuk)</span>
+                            <span>Pemasukan</span>
                         </button>
                         <button type="button"
                             wire:key="fin-btn-type-keluar"
@@ -2609,7 +2621,7 @@
                                 <path d="M7 17 17 7"/>
                                 <path d="M7 7h10v10"/>
                             </svg>
-                            <span>Pengeluaran (Keluar)</span>
+                            <span>Pengeluaran</span>
                         </button>
                     </div>
                     @error('financeType') <span
@@ -2751,12 +2763,13 @@
                                     }, $existingFinanceReceiptPaths);
                                 @endphp
                                 <button type="button"
-                                    @click="openReceiptModal({{ Js::from([
+                                    @click="showFinanceModal = false; openReceiptModal({{ Js::from([
                                         'items' => $existingUrls,
                                         'description' => $financeDescription ?: 'Bukti Transaksi Tersimpan',
                                         'date' => $financeDate ?: '',
                                         'amount' => $financeAmount ? ('Rp ' . number_format((float) preg_replace('/\D/', '', (string) $financeAmount), 0, ',', '.')) : '',
                                         'type' => $financeType ?: 'pemasukan',
+                                        'fromFinanceModal' => true,
                                     ]) }})"
                                     class="px-2 py-1 rounded-md bg-white hover:bg-sky-50 text-sky-700 font-semibold border border-sky-300 shadow-2xs transition text-[11px] inline-flex items-center gap-1 cursor-pointer">
                                     <svg class="w-3 h-3 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -523,6 +523,7 @@
             date: '',
             amount: '',
             type: 'pemasukan',
+            fromFinanceModal: false,
             get currentItem() {
                 if (this.items && this.items.length > 0) {
                     return this.items[this.currentIndex] || this.items[0];
@@ -575,14 +576,28 @@
             this.receiptPreviewModal.date = data.date || '';
             this.receiptPreviewModal.amount = data.amount || '';
             this.receiptPreviewModal.type = data.type || 'pemasukan';
+            this.receiptPreviewModal.fromFinanceModal = Boolean(data.fromFinanceModal);
+
+            if (this.receiptPreviewModal.fromFinanceModal) {
+                this.showFinanceModal = false;
+            }
+
             this.receiptPreviewModal.show = true;
 
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
             });
         },
-        closeReceiptModal() {
+        closeReceiptModal(forceCloseAll = false) {
+            const shouldReopenFinance = !forceCloseAll && this.receiptPreviewModal.fromFinanceModal;
             this.receiptPreviewModal.show = false;
+            this.receiptPreviewModal.fromFinanceModal = false;
+            if (shouldReopenFinance) {
+                this.$nextTick(() => {
+                    this.showFinanceModal = true;
+                    if (window.createLucideIcons) window.createLucideIcons();
+                });
+            }
         },
         galleryLightboxModal: {
             show: false,
