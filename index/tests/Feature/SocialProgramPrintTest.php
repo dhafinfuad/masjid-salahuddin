@@ -387,5 +387,56 @@ class SocialProgramPrintTest extends TestCase
         $component->assertSee('Adelina Kholifah Putri');
         $component->assertSee('Buka Dokumen Cetak');
     }
+
+    public function test_user_with_academic_degree_matches_participant_records_without_degree_and_shows_history(): void
+    {
+        $adhikaEmp = Employee::create([
+            'name' => 'ADHIKA HIMAWATI SURYANINGSIH, A.Md.Pjk.',
+            'nip_panjang' => '199708182016122001',
+            'nip_pendek' => '815100680',
+            'jabatan' => 'Pelaksana (Seksi Pelayanan)',
+            'unit_kerja' => 'KPP Madya Malang',
+            'status' => 'AKTIF',
+        ]);
+
+        $adhikaUser = User::factory()->create([
+            'name' => 'ADHIKA HIMAWATI SURYANINGSIH, A.Md.Pjk.',
+            'role' => 'Jamaah',
+            'status' => 'Aktif',
+            'nip' => '815100680',
+        ]);
+
+        // Simpan data potongan dengan nama pokok tanpa gelar (sebagaimana tercatat di rekapitulasi)
+        ProgramParticipant::create([
+            'name' => 'ADHIKA HIMAWATI SURYANINGSIH',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 50000,
+            'period' => 'Periode 8/2026',
+        ]);
+        ProgramParticipant::create([
+            'name' => 'ADHIKA HIMAWATI SURYANINGSIH',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 50000,
+            'period' => 'Periode 9/2026',
+        ]);
+
+        // 1. Uji akses sebagai Jamaah Adhika
+        $this->actingAs($adhikaUser);
+        $response = $this->get('/admin/programs/print-surat-pernyataan?year=2026');
+        $response->assertStatus(200);
+        $response->assertSee('Adhika Himawati Suryaningsih');
+        $response->assertSee('Riwayat Potongan Tahun 2026');
+        $response->assertSee('50k');
+
+        // 2. Uji akses sebagai Admin yang memilih Adhika dengan parameter employee_name bergelar
+        $this->actingAs($this->admin);
+        $adminResp = $this->get('/admin/programs/print-surat-pernyataan?mode=single&year=2026&employee_name=' . urlencode('ADHIKA HIMAWATI SURYANINGSIH, A.Md.Pjk.') . '&employee_id=' . $adhikaEmp->id);
+        $adminResp->assertStatus(200);
+        $adminResp->assertSee('Adhika Himawati Suryaningsih');
+        $adminResp->assertSee('Riwayat Potongan Tahun 2026');
+        $adminResp->assertSee('50k');
+    }
 }
 

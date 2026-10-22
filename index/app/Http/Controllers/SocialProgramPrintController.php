@@ -140,6 +140,52 @@ class SocialProgramPrintController extends Controller
     }
 
     /**
+     * Cari seluruh data partisipasi (ProgramParticipant) yang cocok untuk pegawai tertentu.
+     * Mendukung variasi nama lengkap, nama tanpa gelar akademik (misal A.Md.Pjk., S.E., dll),
+     * hingga normalisasi nama toleran.
+     */
+    protected function getParticipantsForEmployee(?Employee $emp, string $targetName)
+    {
+        $candidateNames = array_unique(array_filter([
+            trim($targetName),
+            $emp ? trim($emp->name) : null,
+            trim((string) EmployeeStatusSyncService::stripAcademicTitles($targetName)),
+            $emp ? trim((string) EmployeeStatusSyncService::stripAcademicTitles($emp->name)) : null,
+        ]));
+
+        $participants = ProgramParticipant::where(function ($query) use ($candidateNames) {
+            foreach ($candidateNames as $name) {
+                if (strlen($name) >= 2) {
+                    $query->orWhere('name', $name);
+                }
+            }
+        })->get();
+
+        if ($participants->isEmpty()) {
+            $normTarget = EmployeeStatusSyncService::normalizeName($targetName);
+            $normEmp = $emp ? EmployeeStatusSyncService::normalizeName($emp->name) : '';
+
+            $participants = ProgramParticipant::all()->filter(function ($p) use ($normTarget, $normEmp) {
+                $pNorm = EmployeeStatusSyncService::normalizeName($p->name);
+                return (!empty($normTarget) && $pNorm === $normTarget)
+                    || (!empty($normEmp) && $pNorm === $normEmp);
+            });
+        }
+
+        if ($participants->isEmpty()) {
+            $normTarget = EmployeeStatusSyncService::normalizeName($targetName);
+            if (strlen($normTarget) >= 5) {
+                $participants = ProgramParticipant::all()->filter(function ($p) use ($normTarget) {
+                    $pNorm = EmployeeStatusSyncService::normalizeName($p->name);
+                    return strlen($pNorm) >= 5 && (str_contains($pNorm, $normTarget) || str_contains($normTarget, $pNorm));
+                });
+            }
+        }
+
+        return $participants;
+    }
+
+    /**
      * Map participant record to canonical program key
      */
     protected function resolveProgramKey(string $name, ?int $programId = null): ?string
@@ -277,11 +323,8 @@ class SocialProgramPrintController extends Controller
 
             $parsedData = $this->extractEmployeeData($emp, $targetName, $usersByNip, $usersByName);
 
-            // Ambil semua partisipasi pegawai tersebut
-            $participants = ProgramParticipant::where('name', $targetName)->get();
-            if ($participants->isEmpty() && $emp) {
-                $participants = ProgramParticipant::where('name', 'like', '%' . $emp->name . '%')->get();
-            }
+            // Ambil semua partisipasi pegawai tersebut (mendukung gelar akademik & normalisasi nama)
+            $participants = $this->getParticipantsForEmployee($emp, $targetName);
 
             $commitments = $this->buildProgramCommitments($participants);
             $history = $this->buildProgramHistory($participants, $year);

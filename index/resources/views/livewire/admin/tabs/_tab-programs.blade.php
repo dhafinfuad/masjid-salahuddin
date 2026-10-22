@@ -1113,6 +1113,7 @@
                                          pdfError: '',
                                          _isManualSelecting: false,
                                          _manualSelectTimer: null,
+                                          _pdfRenderGen: 0,
                                          pageRotations: {},
                                          rotatePage(idx) {
                                              const current = this.pageRotations[idx] || 0;
@@ -1123,65 +1124,89 @@
                                                  if (window.createLucideIcons) window.createLucideIcons();
                                                  this.setupContinuousScrollObserver();
                                                  if (!this.hasImages) {
-                                                     this.initContinuousPdf();
-                                                 } else {
-                                                     this.isPdfLoading = false;
-                                                 }
+                                                      this.initContinuousPdf();
+                                                  } else {
+                                                      this.isPdfLoading = false;
+                                                      this.pdfError = '';
+                                                  }
                                              });
                                          },
                                          async initContinuousPdf() {
-                                             if (this.hasImages) {
-                                                 this.isPdfLoading = false;
-                                                 return;
-                                             }
-                                             this.isPdfLoading = true;
-                                             this.pdfError = '';
-                                             try {
-                                                 let retries = 0;
-                                                 while (typeof window.pdfjsLib === 'undefined' && retries < 40) {
-                                                     await new Promise(r => setTimeout(r, 50));
-                                                     retries++;
-                                                 }
-                                                 if (typeof window.pdfjsLib === 'undefined') {
-                                                     this.isPdfLoading = false;
-                                                     return;
-                                                 }
+                                              if (this.hasImages) {
+                                                  this.isPdfLoading = false;
+                                                  this.pdfError = '';
+                                                  return;
+                                              }
+                                              this._pdfRenderGen = (this._pdfRenderGen || 0) + 1;
+                                              const currentGen = this._pdfRenderGen;
+                                              this.isPdfLoading = true;
+                                              this.pdfError = '';
+                                              try {
+                                                  let retries = 0;
+                                                  while (typeof window.pdfjsLib === 'undefined' && retries < 40) {
+                                                      if (this._pdfRenderGen !== currentGen) return;
+                                                      await new Promise(r => setTimeout(r, 50));
+                                                      retries++;
+                                                  }
+                                                  if (this._pdfRenderGen !== currentGen) return;
+                                                  if (typeof window.pdfjsLib === 'undefined') {
+                                                      this.isPdfLoading = false;
+                                                      return;
+                                                  }
 
-                                                 window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}';
-                                                 const loadingTask = window.pdfjsLib.getDocument({
-                                                     url: this.pdfBaseUrl + (this.pdfBaseUrl.includes('?') ? '&' : '?') + 't=' + Date.now(),
-                                                     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-                                                     cMapPacked: true,
-                                                 });
-                                                 const pdf = await loadingTask.promise;
-                                                 const numPages = Math.min(pdf.numPages, this.totalPages);
+                                                  window.pdfjsLib.GlobalWorkerOptions.workerSrc = '{{ asset('vendor/pdfjs/pdf.worker.min.js') }}';
+                                                  const loadingTask = window.pdfjsLib.getDocument({
+                                                      url: this.pdfBaseUrl + (this.pdfBaseUrl.includes('?') ? '&' : '?') + 't=' + Date.now(),
+                                                      cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+                                                      cMapPacked: true,
+                                                  });
+                                                  const pdf = await loadingTask.promise;
+                                                  if (this._pdfRenderGen !== currentGen) return;
+                                                  const numPages = Math.min(pdf.numPages, this.totalPages);
 
-                                                 for (let pNum = 1; pNum <= numPages; pNum++) {
-                                                     const page = await pdf.getPage(pNum);
-                                                     const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
-                                                     if (canvas) {
-                                                         if (canvas._renderTask) {
-                                                             try { canvas._renderTask.cancel(); } catch(e){}
-                                                         }
-                                                         const viewport = page.getViewport({ scale: 1.5 });
-                                                         canvas.height = viewport.height;
-                                                         canvas.width = viewport.width;
-                                                         const ctx = canvas.getContext('2d');
-                                                         ctx.setTransform(1, 0, 0, 1, 0, 0);
-                                                         ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                                         canvas._renderTask = page.render({ canvasContext: ctx, viewport: viewport });
-                                                         await canvas._renderTask.promise;
-                                                         canvas._renderTask = null;
-                                                     }
-                                                 }
-                                                 this.isPdfLoading = false;
-                                                 this.setupContinuousScrollObserver();
-                                             } catch (err) {
-                                                 console.error('PDF.js render error:', err);
-                                                 this.isPdfLoading = false;
-                                                 this.pdfError = 'Gagal memuat pratinjau dokumen pindaian.';
-                                             }
-                                         },
+                                                  for (let pNum = 1; pNum <= numPages; pNum++) {
+                                                      if (this._pdfRenderGen !== currentGen) return;
+                                                      const page = await pdf.getPage(pNum);
+                                                      const canvas = document.getElementById('scan-pdf-canvas-' + (pNum - 1));
+                                                      if (canvas) {
+                                                          if (canvas._renderTask) {
+                                                              try { canvas._renderTask.cancel(); } catch(e){}
+                                                          }
+                                                          const viewport = page.getViewport({ scale: 1.5 });
+                                                          canvas.height = viewport.height;
+                                                          canvas.width = viewport.width;
+                                                          const ctx = canvas.getContext('2d');
+                                                          ctx.setTransform(1, 0, 0, 1, 0, 0);
+                                                          ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                                          canvas._renderTask = page.render({ canvasContext: ctx, viewport: viewport });
+                                                          try {
+                                                              await canvas._renderTask.promise;
+                                                          } catch (renderErr) {
+                                                              if (renderErr?.name === 'RenderingCancelledException' || (renderErr?.message && renderErr.message.toLowerCase().includes('cancel'))) {
+                                                                  // Normal cancellation between page/task switches, ignore
+                                                              } else {
+                                                                  throw renderErr;
+                                                              }
+                                                          }
+                                                          canvas._renderTask = null;
+                                                      }
+                                                  }
+                                                  if (this._pdfRenderGen === currentGen) {
+                                                      this.isPdfLoading = false;
+                                                      this.pdfError = '';
+                                                      this.setupContinuousScrollObserver();
+                                                  }
+                                              } catch (err) {
+                                                  if (err?.name === 'RenderingCancelledException' || (err?.message && err.message.toLowerCase().includes('cancel'))) {
+                                                      return;
+                                                  }
+                                                  console.error('PDF.js render error:', err);
+                                                  if (this._pdfRenderGen === currentGen) {
+                                                      this.isPdfLoading = false;
+                                                      this.pdfError = 'Gagal memuat pratinjau dokumen pindaian.';
+                                                  }
+                                              }
+                                          },
                                          setupContinuousScrollObserver() {
                                              const container = document.getElementById('pdfContinuousScrollContainer');
                                              if (!container) return;
@@ -1293,7 +1318,7 @@
                                                 </div>
 
                                                 <!-- Error Notice -->
-                                                <div x-show="pdfError" class="p-4 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-xs" x-text="pdfError"></div>
+                                                <div x-show="!hasImages && pdfError" class="p-4 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-xs" x-text="pdfError"></div>
 
                                                 <!-- All Pages Stacked Continuously -->
                                                 @foreach($scanPages as $pIdx => $pageData)
