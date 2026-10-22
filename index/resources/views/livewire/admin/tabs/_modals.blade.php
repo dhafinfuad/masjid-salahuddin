@@ -4282,11 +4282,10 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
-                             pageRotations: {
-                                 0: 180
-                             },
+                             pageRotations: {},
                              rotatePage(idx) {
-                                 this.pageRotations[idx] = ((this.pageRotations[idx] || 0) + 180) % 360;
+                                 const current = this.pageRotations[idx] || 0;
+                                 this.pageRotations = { ...this.pageRotations, [idx]: (current + 180) % 360 };
                              },
                              init() {
                                  window.addEventListener('resize', () => {
