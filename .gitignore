@@ -19,8 +19,8 @@ ssl/
 ssl/*
 
 # Dependencies (Installed via Composer & NPM)
-vendor/
-**/vendor/
+/vendor/
+/index/vendor/
 node_modules/
 **/node_modules/
 

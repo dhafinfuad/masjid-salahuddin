@@ -746,6 +746,18 @@ class FinanceManagementTest extends TestCase
         $component->assertSee('Pengeluaran Operasional 1')
             ->assertDontSee('Infaq Rutin Pegawai Oktober');
     }
+
+    public function test_finance_subtab_kategori_renders_correctly_without_template_errors(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->set('financeSubTab', 'kategori')
+            ->assertOk()
+            ->assertSee('Kelola Kategori Kas')
+            ->assertSee('Kotak Infaq Jumat')
+            ->assertSee('Honorarium Khotib');
+    }
 }
 
 

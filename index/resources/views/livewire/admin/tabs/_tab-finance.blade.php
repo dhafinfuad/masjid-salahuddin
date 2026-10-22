@@ -539,6 +539,7 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
 
                     <!-- Mobile Standalone Responsive Cards -->
                     <div class="md:hidden space-y-3">
