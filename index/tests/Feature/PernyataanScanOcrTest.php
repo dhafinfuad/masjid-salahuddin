@@ -54,6 +54,14 @@ class PernyataanScanOcrTest extends TestCase
             'status' => 'AKTIF',
         ]);
 
+        Employee::create([
+            'name' => 'Dilla Wahyu Permatasari',
+            'nip_panjang' => '199712172018122001',
+            'nip_pendek' => '122001',
+            'jabatan' => 'Pelaksana',
+            'status' => 'AKTIF',
+        ]);
+
         $this->programInfaq = SocialProgram::firstOrCreate(['slug' => 'infaq-rutin'], [
             'name' => 'Infaq Rutin',
             'category' => 'infaq',

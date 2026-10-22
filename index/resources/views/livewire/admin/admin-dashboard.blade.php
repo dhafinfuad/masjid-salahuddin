@@ -739,8 +739,8 @@
         exportPotonganStartMonth: {{ now()->month }},
         exportPotonganEndMonth: {{ now()->month }},
         exportPotonganMonth: {{ now()->month }},
-        showPrintPernyataanModal: false,
-        pernyataanModalTab: 'cetak',
+        showPrintPernyataanModal: $wire.entangle('showPrintPernyataanModal'),
+        pernyataanModalTab: $wire.entangle('pernyataanModalTab'),
         printPernyataanMode: 'all',
         printPernyataanEmployeeId: '',
         printPernyataanEmployeeName: '',
@@ -783,6 +783,8 @@
                 this.printPernyataanEffectiveYear = '{{ $tahunDepanIndo }}';
             }
             this.showPrintPernyataanModal = true;
+            $wire.set('showPrintPernyataanModal', true, false);
+            $wire.set('pernyataanModalTab', tab || 'cetak', false);
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
             });

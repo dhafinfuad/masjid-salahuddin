@@ -491,9 +491,12 @@ class AdminDashboard extends Component
     public string $socialProgramIcon = 'heart-handshake';
     
     // ==========================================
-    // Impor Scan PDF Pernyataan Potongan Tukin
+    // Cetak & Impor Scan PDF Pernyataan Potongan Tukin
     // ==========================================
+    public bool $showPrintPernyataanModal = false;
+    public string $pernyataanModalTab = 'cetak'; // 'cetak' | 'impor'
     public mixed $scanPernyataanFile = null;
+    public string $scanPdfBase64 = '';
     public bool $scanProcessing = false;
     public string $scanError = '';
     public array $scanPages = [];
@@ -5555,6 +5558,24 @@ class AdminDashboard extends Component
     // ==========================================
     // Impor Scan PDF Pernyataan Potongan Tukin Methods
     // ==========================================
+    public function openPrintPernyataanModal(string $tab = 'cetak'): void
+    {
+        $this->pernyataanModalTab = in_array($tab, ['cetak', 'impor']) ? $tab : 'cetak';
+        $this->showPrintPernyataanModal = true;
+        $this->dispatch('open-print-pernyataan-modal', tab: $this->pernyataanModalTab);
+    }
+
+    public function closePrintPernyataanModal(): void
+    {
+        $this->showPrintPernyataanModal = false;
+        $this->dispatch('close-print-pernyataan-modal');
+    }
+
+    public function updatedScanPernyataanFile(): void
+    {
+        $this->processScanPernyataan();
+    }
+
     public function processScanPernyataan(): void
     {
         if (! Auth::user()?->canManage()) {
@@ -5563,6 +5584,8 @@ class AdminDashboard extends Component
         }
 
         $this->scanError = '';
+        $this->showPrintPernyataanModal = true;
+        $this->pernyataanModalTab = 'impor';
         $this->scanPages = [];
         $this->activeScanPageIndex = 0;
 
@@ -5577,8 +5600,19 @@ class AdminDashboard extends Component
         $this->scanProcessing = true;
 
         try {
-            $service = app(\App\Services\PernyataanScanOcrService::class);
             $filePath = $this->scanPernyataanFile->getRealPath();
+            session(['temp_scan_pdf_path' => $filePath]);
+
+            if (file_exists($filePath) && filesize($filePath) > 0) {
+                $this->scanPdfBase64 = base64_encode(file_get_contents($filePath));
+            } else {
+                $fallbackPdf = storage_path('app/private/scan_mesin.pdf');
+                if (file_exists($fallbackPdf)) {
+                    $this->scanPdfBase64 = base64_encode(file_get_contents($fallbackPdf));
+                }
+            }
+
+            $service = app(\App\Services\PernyataanScanOcrService::class);
             $this->scanPages = $service->processPdf($filePath);
 
             if (empty($this->scanPages)) {
@@ -5608,10 +5642,13 @@ class AdminDashboard extends Component
     public function resetScanPernyataan(): void
     {
         $this->scanPernyataanFile = null;
+        $this->scanPdfBase64 = '';
         $this->scanPages = [];
         $this->activeScanPageIndex = 0;
         $this->scanError = '';
         $this->scanProcessing = false;
+        $this->showPrintPernyataanModal = true;
+        $this->pernyataanModalTab = 'impor';
     }
 
     public function saveScanPernyataanCommitments(): void
@@ -5632,26 +5669,12 @@ class AdminDashboard extends Component
 
         foreach ($this->scanPages as $page) {
             $nama = trim($page['nama'] ?? '');
-            $nip = trim($page['nip'] ?? '');
-            if (empty($nama) && empty($nip)) continue;
+            if (empty($nama)) continue;
 
-            // Sinkronisasi data Pegawai ke tabel employees
-            if (!empty($nip)) {
-                $emp = \App\Models\Employee::firstOrNew(['nip_panjang' => $nip]);
-                if (! $emp->exists) {
-                    $emp->name = $nama ?: ('Pegawai ' . $nip);
-                    $emp->nip_pendek = substr($nip, -6);
-                    $emp->jabatan = $page['jabatan'] ?? 'Pelaksana';
-                    $emp->unit_kerja = $page['seksi_kelompok'] ?? 'KPP Madya Malang';
-                    $emp->status = 'AKTIF';
-                    $emp->save();
-                } else {
-                    if (!empty($page['jabatan']) && empty($emp->jabatan)) {
-                        $emp->jabatan = $page['jabatan'];
-                        $emp->save();
-                    }
-                }
-            }
+            // Pencocokan data pegawai ke tabel employees berdasarkan nama
+            $emp = \App\Models\Employee::where('name', 'like', $nama)
+                ->orWhere('name', 'like', '%' . $nama . '%')
+                ->first();
 
             $period = !empty($page['effective_period']) ? $page['effective_period'] : ('Periode ' . now()->month . '/' . now()->year);
 
@@ -5669,6 +5692,7 @@ class AdminDashboard extends Component
                     ], [
                         'program_name' => $progModel->name,
                         'monthly_amount' => $amt,
+                        'status' => 'AKTIF',
                     ]);
                     $totalRecorded++;
                 }
@@ -5677,6 +5701,7 @@ class AdminDashboard extends Component
 
         $this->notify("Berhasil merekap {$totalRecorded} komitmen program sosial dari hasil scan ke database.");
         $this->resetScanPernyataan();
+        $this->showPrintPernyataanModal = false;
         $this->dispatch('close-print-pernyataan-modal');
     }
 

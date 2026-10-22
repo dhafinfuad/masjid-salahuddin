@@ -88,6 +88,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/finance/export-excel', [FinanceExportController::class, 'exportExcel'])->name('admin.finance.export-excel');
     Route::get('/admin/programs/export-excel', [SocialProgramExportController::class, 'exportExcel'])->name('admin.programs.export-excel');
     Route::get('/admin/programs/print-surat-pernyataan', [SocialProgramPrintController::class, 'printPdf'])->name('admin.programs.print-surat-pernyataan');
+    Route::get('/admin/programs/preview-scan-pernyataan', function () {
+        if (! auth()->user()?->canManage()) {
+            abort(403);
+        }
+        $path = session('temp_scan_pdf_path');
+        if (! $path || ! file_exists($path)) {
+            $path = storage_path('app/private/scan_mesin.pdf');
+        }
+        if (! file_exists($path)) {
+            abort(404, 'Berkas pindaian scan belum tersedia.');
+        }
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="scan_pernyataan.pdf"',
+        ]);
+    })->name('admin.programs.preview-scan-pernyataan');
 
     Route::get('/admin', AdminDashboard::class)->name('admin.dashboard');
     Route::get('/admin/poster-setting', \App\Livewire\Admin\PosterSettingManager::class)->name('admin.poster-setting');

@@ -25,8 +25,9 @@
         <!-- Vite Assets: Tailwind CSS & JS -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- Standalone Local Vendor QR Code Library (Deferred) -->
+        <!-- Standalone Local Vendor Libraries (Deferred) -->
         <script src="{{ asset('vendor/qrcode.min.js') }}" defer></script>
+        <script src="{{ asset('vendor/pdfjs/pdf.min.js') }}" defer></script>
 
         <style>
             [x-cloak] { display: none !important; }

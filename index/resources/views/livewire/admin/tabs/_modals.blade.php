@@ -4216,26 +4216,43 @@
                         </div>
 
                         <!-- File Input / Dropzone -->
-                        <div class="border-2 border-dashed border-slate-300 hover:border-gov-navy rounded-2xl p-6 text-center transition bg-slate-50/50 hover:bg-slate-50 cursor-pointer relative"
-                            x-data="{ isDragging: false }"
-                            @dragover.prevent="isDragging = true"
-                            @dragleave.prevent="isDragging = false"
-                            @drop.prevent="isDragging = false; $refs.scanPdfInput.files = $event.dataTransfer.files; $refs.scanPdfInput.dispatchEvent(new Event('change', { bubbles: true }))"
-                            :class="isDragging ? 'border-gov-navy bg-sky-50/50 ring-2 ring-gov-navy/20' : ''">
+                        <div class="border-2 border-dashed rounded-2xl p-8 text-center space-y-2.5 transition relative overflow-hidden group"
+                             x-data="{ isDragging: false }"
+                             :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-slate-300 hover:border-gov-navy bg-slate-50/50 hover:bg-slate-50'">
                             
-                            <input x-ref="scanPdfInput" type="file" wire:model="scanPernyataanFile" accept="application/pdf" class="hidden" id="scanPernyataanFileInput">
-                            
-                            <label for="scanPernyataanFileInput" class="cursor-pointer block">
-                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-2xs mb-2.5">
+                            <!-- Full-Surface Native File Input -->
+                            <input id="scanPernyataanFileInput"
+                                   type="file"
+                                   wire:model.live="scanPernyataanFile"
+                                   accept="application/pdf"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                   @dragenter="isDragging = true"
+                                   @dragover.prevent="isDragging = true"
+                                   @dragleave="isDragging = false"
+                                   @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                            <!-- Loading Overlay during file upload & parsing -->
+                            <div wire:loading.flex wire:target="scanPernyataanFile, processScanPernyataan" class="absolute inset-0 bg-white/95 backdrop-blur-xs rounded-2xl flex-col items-center justify-center gap-2.5 z-20">
+                                <svg class="w-8 h-8 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="text-xs font-bold text-gov-textMain">Sedang membaca berkas PDF & mengekstrak data formulir...</span>
+                                <span class="text-[11px] text-slate-500">Mempersiapkan pindaian dan lembar verifikasi</span>
+                            </div>
+
+                            <!-- Dropzone Visual Elements (pointer-events-none prevents child drag interference) -->
+                            <div class="pointer-events-none space-y-2">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-2xs mb-2">
                                     <i data-lucide="file-up" class="w-6 h-6 text-blue-600"></i>
                                 </div>
-                                <span class="font-bold text-sm text-gov-textMain block">
-                                    {{ $scanPernyataanFile ? $scanPernyataanFile->getClientOriginalName() : 'Pilih Berkas Scan PDF atau Tarik ke Sini' }}
-                                </span>
-                                <span class="text-xs text-slate-500 block mt-1">
+                                <p class="text-sm font-bold text-gov-textMain">
+                                    <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau tarik scan PDF ke sini
+                                </p>
+                                <p class="text-xs text-slate-500">
                                     Mendukung berkas PDF multi-halaman (hingga 20 MB)
-                                </span>
-                            </label>
+                                </p>
+                            </div>
                         </div>
 
                         @if($scanError)
@@ -4250,18 +4267,6 @@
                             <button type="button" @click="showPrintPernyataanModal = false"
                                 class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
                                 Batal
-                            </button>
-                            <button type="button" wire:click="processScanPernyataan"
-                                wire:loading.attr="disabled"
-                                @if(!$scanPernyataanFile) disabled @endif
-                                class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400" wire:loading.remove wire:target="processScanPernyataan"></i>
-                                <svg wire:loading wire:target="processScanPernyataan" class="w-3.5 h-3.5 animate-spin text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
-                                    <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
-                                </svg>
-                                <span wire:loading.remove wire:target="processScanPernyataan">Mulai Pindai & Proses OCR</span>
-                                <span wire:loading wire:target="processScanPernyataan">Memproses Halaman Scan...</span>
                             </button>
                         </div>
                     </div>
@@ -4294,42 +4299,123 @@
                                 $cur = $scanPages[$activeScanPageIndex];
                             @endphp
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                                <!-- Sisi Kiri: Gambar Pindaian Asli -->
-                                <div class="bg-slate-100 rounded-xl border border-gov-border p-3 flex flex-col justify-between h-[450px]">
-                                    <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs">
-                                        <span class="font-semibold text-slate-700 flex items-center gap-1.5">
-                                            <i data-lucide="file-search" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <!-- Sisi Kiri: Pindaian Dokumen Asli (PDF.js Canvas Viewer) -->
+                                <div class="bg-slate-900 rounded-xl border border-slate-700 p-3 flex flex-col justify-between h-[520px] relative overflow-hidden"
+                                     x-data="{
+                                         scale: 1.2,
+                                         loading: false,
+                                         pdfDoc: null,
+                                         pdfBase64: @js($scanPdfBase64),
+                                         async initPdfViewer() {
+                                             let tries = 0;
+                                             while (!window.pdfjsLib && tries < 25) {
+                                                 await new Promise(r => setTimeout(r, 100));
+                                                 tries++;
+                                             }
+                                             if (!window.pdfjsLib) return;
+                                             window.pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.js';
+
+                                             let data = this.pdfBase64;
+                                             if (!data) return;
+
+                                             this.loading = true;
+                                             try {
+                                                 const binStr = atob(data);
+                                                 const bytes = new Uint8Array(binStr.length);
+                                                 for (let i = 0; i < binStr.length; i++) {
+                                                     bytes[i] = binStr.charCodeAt(i);
+                                                 }
+                                                 this.pdfDoc = await window.pdfjsLib.getDocument({ data: bytes }).promise;
+                                                 await this.renderPage({{ $activeScanPageIndex + 1 }});
+                                             } catch (e) {
+                                                 console.error('PDF.js loading error:', e);
+                                             } finally {
+                                                 this.loading = false;
+                                             }
+                                         },
+                                         async renderPage(num) {
+                                             if (!this.pdfDoc) return;
+                                             if (num < 1 || num > this.pdfDoc.numPages) return;
+                                             this.loading = true;
+                                             try {
+                                                 const page = await this.pdfDoc.getPage(num);
+                                                 const canvas = this.$refs.pdfCanvas;
+                                                 if (!canvas) return;
+                                                 const ctx = canvas.getContext('2d');
+                                                 const viewport = page.getViewport({ scale: this.scale });
+                                                 canvas.height = viewport.height;
+                                                 canvas.width = viewport.width;
+                                                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                                             } catch (err) {
+                                                 console.error('Error rendering page:', err);
+                                             } finally {
+                                                 this.loading = false;
+                                             }
+                                         },
+                                         zoomIn() {
+                                             this.scale = Math.min(2.5, +(this.scale + 0.2).toFixed(1));
+                                             this.renderPage({{ $activeScanPageIndex + 1 }});
+                                         },
+                                         zoomOut() {
+                                             this.scale = Math.max(0.6, +(this.scale - 0.2).toFixed(1));
+                                             this.renderPage({{ $activeScanPageIndex + 1 }});
+                                         },
+                                         resetZoom() {
+                                             this.scale = 1.2;
+                                             this.renderPage({{ $activeScanPageIndex + 1 }});
+                                         }
+                                     }"
+                                     x-init=\"initPdfViewer(); \$watch('\$wire.activeScanPageIndex', (val) => renderPage(val + 1)); \$watch('\$wire.scanPdfBase64', (val) => { pdfBase64 = val; initPdfViewer(); })\">
+
+                                    <!-- Header Controls: Title & Zoom -->
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-700 text-xs text-white">
+                                        <span class="font-semibold flex items-center gap-1.5">
+                                            <i data-lucide="file-search" class="w-3.5 h-3.5 text-blue-400"></i>
                                             <span>Pindaian Dokumen (Hal {{ $activeScanPageIndex + 1 }})</span>
                                         </span>
-                                        <span class="text-[11px] text-slate-400">Tinjau tulisan tangan</span>
+                                        <div class="flex items-center gap-1 bg-slate-800 rounded-lg p-0.5 border border-slate-700 text-[11px]">
+                                            <button type="button" @click="zoomOut()" title="Perkecil"
+                                                class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer">
+                                                <i data-lucide="zoom-out" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                            <span class="px-1 font-mono text-[10px] text-slate-300" x-text="Math.round(scale * 100) + '%'">120%</span>
+                                            <button type="button" @click="zoomIn()" title="Perbesar"
+                                                class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer">
+                                                <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                            <button type="button" @click="resetZoom()" title="Reset Zoom"
+                                                class="px-1.5 h-6 rounded text-[10px] hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer">
+                                                Reset
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div class="flex-1 overflow-auto rounded-lg bg-slate-200/60 p-2 my-2 flex items-center justify-center">
-                                        @if(!empty($cur['image_path']))
-                                            <img src="{{ $cur['image_path'] }}" alt="Scan Lembar {{ $activeScanPageIndex + 1 }}"
-                                                class="max-w-full h-auto rounded shadow-md border border-slate-300">
-                                        @else
-                                            <div class="text-center p-6 text-slate-500 space-y-2">
-                                                <i data-lucide="file-check-2" class="w-10 h-10 mx-auto text-slate-400"></i>
-                                                <p class="font-semibold text-xs text-gov-textMain">Dokumen Asli: Hal {{ $activeScanPageIndex + 1 }}</p>
-                                                <p class="text-[11px] text-slate-500 leading-relaxed max-w-xs mx-auto">
-                                                    Pegawai: <strong class="text-gov-navy">{{ $cur['nama'] }}</strong><br>
-                                                    NIP: <span class="tnum font-mono">{{ $cur['nip'] }}</span>
-                                                </p>
-                                                <div class="pt-2 text-[10px] text-slate-400">
-                                                    Pindaian terbaca dari berkas PDF lokal
-                                                </div>
-                                            </div>
-                                        @endif
+                                    <!-- Canvas Scroll Container -->
+                                    <div class="flex-1 overflow-auto rounded-lg bg-slate-950 p-2 my-2 flex items-center justify-center relative notula-scrollable">
+                                        <div x-show="loading" class="absolute inset-0 bg-slate-950/80 backdrop-blur-2xs flex flex-col items-center justify-center gap-2 z-10 text-white text-xs">
+                                            <svg class="w-6 h-6 animate-spin text-blue-400" viewBox="0 0 24 24" fill="none">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span>Memuat pindaian lembar {{ $activeScanPageIndex + 1 }}...</span>
+                                        </div>
+
+                                        <canvas x-ref="pdfCanvas" class="max-w-full rounded shadow-xl bg-white border border-slate-700 mx-auto transition-transform duration-100"></canvas>
                                     </div>
 
-                                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                                        <span>Gunakan sisi kanan untuk mengoreksi angka tulisan tangan jika perlu.</span>
+                                    <!-- Bottom Footer bar -->
+                                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+                                        <span>Tinjau nominal tulisan tangan pegawai</span>
+                                        <a href="{{ route('admin.programs.preview-scan-pernyataan') }}" target="_blank"
+                                            class="hover:text-blue-400 text-slate-400 inline-flex items-center gap-1 hover:underline">
+                                            <i data-lucide="external-link" class="w-3 h-3"></i>
+                                            <span>Buka PDF di Tab Baru</span>
+                                        </a>
                                     </div>
                                 </div>
 
-                                <!-- Sisi Kanan: Form Koreksi & Verifikasi -->
-                                <div class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3.5 h-[450px] overflow-y-auto">
+                                <!-- Sisi Kanan: Form Koreksi & Verifikasi Sederhana -->
+                                <div class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3.5 h-[520px] overflow-y-auto">
                                     <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs border border-emerald-200">
@@ -4344,47 +4430,29 @@
                                         </button>
                                     </div>
 
-                                    <!-- Identitas Fields -->
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <!-- Identitas Fields (NIP, Jabatan, Seksi Dihapus) -->
+                                    <div class="space-y-2.5">
                                         <div>
                                             <label class="block font-semibold text-slate-700 mb-1">Nama Pegawai *</label>
                                             <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.nama"
                                                 class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-textMain">
                                         </div>
-                                        <div>
-                                            <label class="block font-semibold text-slate-700 mb-1">NIP (18 Digit) *</label>
-                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.nip"
-                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono font-medium text-gov-textMain">
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                            <div>
+                                                <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
+                                                <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.phone" placeholder="08xxxxxxxxxx"
+                                                    class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono">
+                                            </div>
+                                            <div>
+                                                <label class="block font-semibold text-slate-700 mb-1">Periode Mulai Berlaku</label>
+                                                <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.effective_period" placeholder="Periode 11/2026"
+                                                    class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-navy">
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                        <div>
-                                            <label class="block font-semibold text-slate-700 mb-1">Jabatan</label>
-                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.jabatan"
-                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs">
-                                        </div>
-                                        <div>
-                                            <label class="block font-semibold text-slate-700 mb-1">Seksi / Unit Kerja</label>
-                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.seksi_kelompok"
-                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs">
-                                        </div>
-                                    </div>
-
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                        <div>
-                                            <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
-                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.phone" placeholder="08xxxxxxxxxx"
-                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono">
-                                        </div>
-                                        <div>
-                                            <label class="block font-semibold text-slate-700 mb-1">Periode Mulai Berlaku</label>
-                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.effective_period" placeholder="Periode 11/2026"
-                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-navy">
-                                        </div>
-                                    </div>
-
-                                    <!-- Tabel Nominal Komitmen -->
+                                    <!-- Tabel Nominal Komitmen Bulanan -->
                                     <div class="pt-2 border-t border-slate-100">
                                         <div class="flex items-center justify-between mb-1.5">
                                             <label class="block font-bold text-slate-800 text-xs">Nominal Komitmen Bulanan (Rp)</label>
