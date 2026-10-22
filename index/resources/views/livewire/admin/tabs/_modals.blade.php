@@ -4282,7 +4282,13 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
-                             pageRotations: {},
+                             pageRotations: (() => {
+                                 const isIOS = typeof navigator !== 'undefined' && (
+                                     /iPad|iPhone|iPod/.test(navigator.userAgent || '') || 
+                                     (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1)
+                                 );
+                                 return isIOS ? { 0: 180 } : {};
+                             })(),
                              rotatePage(idx) {
                                  const current = this.pageRotations[idx] || 0;
                                  this.pageRotations = { ...this.pageRotations, [idx]: (current + 180) % 360 };
