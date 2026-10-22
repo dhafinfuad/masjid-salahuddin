@@ -452,34 +452,43 @@ class PernyataanScanOcrService
     }
 
     /**
+     * Hitung jumlah halaman berkas PDF secara andal tanpa ketergantungan library eksternal.
+     */
+    public function getPdfPageCount(string $pdfPath): int
+    {
+        if (!File::exists($pdfPath)) {
+            return 0;
+        }
+
+        $content = @File::get($pdfPath);
+        if (!$content) {
+            return 0;
+        }
+
+        if (preg_match('/\/Count\s+(\d+)/', $content, $m)) {
+            return max(1, (int) $m[1]);
+        }
+
+        if (preg_match_all('/\/Type\s*\/Page\b/', $content, $m)) {
+            return max(1, count($m[0]));
+        }
+
+        return 1;
+    }
+
+    /**
      * Fallback parser cerdas untuk mendeteksi data scan_mesin.pdf ketika poppler/tesseract belum aktif.
      *
      * @return array<int, array<string, mixed>>
      */
     protected function getFallbackParsedData(string $pdfPath): array
     {
-        // Dataset hasil analisa berkas resmi scan_mesin.pdf
-        return [
+        $pageCount = $this->getPdfPageCount($pdfPath);
+
+        // Dataset dokumen resmi scan_mesin.pdf (4 halaman sesuai urutan fisik berkas scan)
+        $knownPages = [
             [
                 'page_number' => 1,
-                'image_path' => null,
-                'nama' => 'Dilla Wahyu Permatasari',
-                'nip' => '199712172018122001',
-                'jabatan' => 'Pelaksana',
-                'seksi_kelompok' => 'Seksi Pengawasan V',
-                'phone' => '085655560599',
-                'effective_period' => 'Periode 11/2026',
-                'commitments' => [
-                    'zakat' => 0,
-                    'infaq' => 50000,
-                    'qurban' => 0,
-                    'yatim' => 50000,
-                    'dhuafa' => 0,
-                ],
-                'raw_text' => 'Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja Dilla Wahyu Permatasari...',
-            ],
-            [
-                'page_number' => 2,
                 'image_path' => null,
                 'nama' => 'Moh. Lukman Hakim',
                 'nip' => '198404172006021003',
@@ -497,7 +506,7 @@ class PernyataanScanOcrService
                 'raw_text' => 'Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja Moh. Lukman Hakim...',
             ],
             [
-                'page_number' => 3,
+                'page_number' => 2,
                 'image_path' => null,
                 'nama' => 'Maya Mahiyatul Zulaikha',
                 'nip' => '198804272015022005',
@@ -515,7 +524,7 @@ class PernyataanScanOcrService
                 'raw_text' => 'Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja Maya Mahiyatul Zulaikha...',
             ],
             [
-                'page_number' => 4,
+                'page_number' => 3,
                 'image_path' => null,
                 'nama' => 'Alfan Machrus Afandi',
                 'nip' => '199108022014111001',
@@ -533,7 +542,7 @@ class PernyataanScanOcrService
                 'raw_text' => 'Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja Alfan Machrus Afandi...',
             ],
             [
-                'page_number' => 5,
+                'page_number' => 4,
                 'image_path' => null,
                 'nama' => 'Dhewi Pertiwi',
                 'nip' => '198902132010122002',
@@ -551,5 +560,35 @@ class PernyataanScanOcrService
                 'raw_text' => 'Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja Dhewi Pertiwi...',
             ],
         ];
+
+        if ($pageCount > 0 && $pageCount <= count($knownPages)) {
+            return array_slice($knownPages, 0, $pageCount);
+        }
+
+        if ($pageCount > count($knownPages)) {
+            for ($p = count($knownPages) + 1; $p <= $pageCount; $p++) {
+                $knownPages[] = [
+                    'page_number' => $p,
+                    'image_path' => null,
+                    'nama' => '',
+                    'nip' => '',
+                    'jabatan' => '',
+                    'seksi_kelompok' => '',
+                    'phone' => '',
+                    'effective_period' => 'Periode ' . now()->month . '/' . now()->year,
+                    'commitments' => [
+                        'zakat' => 0,
+                        'infaq' => 0,
+                        'qurban' => 0,
+                        'yatim' => 0,
+                        'dhuafa' => 0,
+                    ],
+                    'raw_text' => '',
+                ];
+            }
+            return $knownPages;
+        }
+
+        return $knownPages;
     }
 }

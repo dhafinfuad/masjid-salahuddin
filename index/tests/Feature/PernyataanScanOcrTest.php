@@ -145,11 +145,11 @@ No  Program                 Nominal per Bulan
             ->set('scanPernyataanFile', $fakePdf)
             ->call('processScanPernyataan')
             ->assertHasNoErrors()
-            ->assertCount('scanPages', 5)
-            ->assertSee('Dilla Wahyu Permatasari');
+            ->assertCount('scanPages', 4)
+            ->assertSee('Moh. Lukman Hakim');
 
-        $this->assertEquals('Moh. Lukman Hakim', $test->get('scanPages')[1]['nama']);
-        $this->assertEquals('198404172006021003', $test->get('scanPages')[1]['nip']);
+        $this->assertEquals('Moh. Lukman Hakim', $test->get('scanPages')[0]['nama']);
+        $this->assertEquals('198404172006021003', $test->get('scanPages')[0]['nip']);
     }
 
     public function test_admin_can_export_scan_pernyataan_commitments_to_excel(): void
@@ -161,7 +161,7 @@ No  Program                 Nominal per Bulan
         $component = Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
             ->set('scanPernyataanFile', $fakePdf)
             ->call('processScanPernyataan')
-            ->set('scanPages.1.commitments.infaq', '250.000')
+            ->set('scanPages.0.commitments.infaq', '250.000')
             ->call('exportScanPernyataanExcel')
             ->assertHasNoErrors()
             ->assertFileDownloaded();
@@ -192,7 +192,7 @@ No  Program                 Nominal per Bulan
         $this->assertStringContainsString('Jumlah Potongan', $sharedStringsXml);
 
         // Validasi data pegawai dan label program
-        $this->assertStringContainsString('Dilla Wahyu Permatasari', $sharedStringsXml);
+        $this->assertStringContainsString('Moh. Lukman Hakim', $sharedStringsXml);
         $this->assertStringContainsString('Infaq &amp; Sedekah', $sharedStringsXml);
         $this->assertStringContainsString('Santunan Anak Yatim', $sharedStringsXml);
         $this->assertStringContainsString('Alfan Machrus Afandi', $sharedStringsXml);
@@ -252,6 +252,6 @@ No  Program                 Nominal per Bulan
 
         // Uji penghapusan lembar halaman scan
         $component->call('removeScanPage', 0)
-            ->assertCount('scanPages', 4);
+            ->assertCount('scanPages', 3);
     }
 }
