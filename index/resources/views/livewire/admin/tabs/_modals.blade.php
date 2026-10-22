@@ -4282,6 +4282,12 @@
                              isPdfLoading: {{ empty($scanPages[0]['image_path'] ?? null) ? 'true' : 'false' }},
                              pdfError: '',
                              isMobile: window.innerWidth < 1024,
+                             pageRotations: {
+                                 0: 180
+                             },
+                             rotatePage(idx) {
+                                 this.pageRotations[idx] = ((this.pageRotations[idx] || 0) + 180) % 360;
+                             },
                              init() {
                                  window.addEventListener('resize', () => {
                                      this.isMobile = window.innerWidth < 1024;
@@ -4420,6 +4426,12 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-1.5">
+                                        <button type="button" @click="rotatePage(activeScanIdx)"
+                                            title="Putar Dokumen 180°"
+                                            class="h-7 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
+                                            <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
+                                            <span>Putar</span>
+                                        </button>
                                         <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
                                             class="h-7 px-3 rounded-lg bg-white hover:bg-slate-100 text-blue-700 hover:text-blue-900 text-xs font-semibold inline-flex items-center gap-1.5 border border-slate-200 shadow-2xs transition cursor-pointer">
                                             <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -4462,6 +4474,12 @@
                                                     <span>Halaman {{ $targetPage }}</span>
                                                     <span class="text-slate-400 font-normal">dari {{ count($scanPages) }}</span>
                                                 </div>
+                                                <button type="button" @click.stop="rotatePage({{ $pIdx }})"
+                                                    title="Putar Lembar Ini 180°"
+                                                    class="h-5 px-1.5 rounded bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-800 text-[10px] font-medium inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
+                                                    <i data-lucide="rotate-cw" class="w-2.5 h-2.5 text-slate-400"></i>
+                                                    <span>Putar</span>
+                                                </button>
                                             </div>
 
                                             <!-- Content: High-Res Poppler Image OR PDF.js Canvas -->
@@ -4469,10 +4487,12 @@
                                                 @if(!empty($pItem['image_path']))
                                                     <img src="{{ $pItem['image_path'] }}"
                                                          alt="Halaman {{ $targetPage }}"
+                                                         :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                          class="w-full h-auto block rounded shadow-2xs object-contain"
                                                          loading="lazy">
                                                 @else
                                                     <canvas id="scan-pdf-canvas-{{ $pIdx }}"
+                                                            :style="'transform: rotate(' + (pageRotations[{{ $pIdx }}] || 0) + 'deg); transition: transform 0.2s ease;'"
                                                             class="w-full h-auto block rounded shadow-2xs bg-white"></canvas>
                                                 @endif
                                             </div>
