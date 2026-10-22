@@ -348,8 +348,8 @@
                         <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
                             <button type="button" @click="openPrintPernyataanModal()"
                                 class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                                <i data-lucide="printer" class="w-3.5 h-3.5 text-blue-600"></i>
-                                <span>Cetak Surat Pernyataan</span>
+                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-600"></i>
+                                <span>Surat Pernyataan</span>
                             </button>
 
                             <div class="relative w-full sm:w-64" x-data="{

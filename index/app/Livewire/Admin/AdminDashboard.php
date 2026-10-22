@@ -491,6 +491,15 @@ class AdminDashboard extends Component
     public string $socialProgramIcon = 'heart-handshake';
     
     // ==========================================
+    // Impor Scan PDF Pernyataan Potongan Tukin
+    // ==========================================
+    public mixed $scanPernyataanFile = null;
+    public bool $scanProcessing = false;
+    public string $scanError = '';
+    public array $scanPages = [];
+    public int $activeScanPageIndex = 0;
+
+    // ==========================================
     // Visitor Statistics State
     // ==========================================
     public string $statsPeriod = '7_days'; // 'today' | '7_days' | '30_days' | 'all'
@@ -5541,6 +5550,134 @@ class AdminDashboard extends Component
         } catch (\Throwable $e) {
             $this->importPotonganError = 'Terjadi kesalahan saat memproses data: ' . $e->getMessage();
         }
+    }
+
+    // ==========================================
+    // Impor Scan PDF Pernyataan Potongan Tukin Methods
+    // ==========================================
+    public function processScanPernyataan(): void
+    {
+        if (! Auth::user()?->canManage()) {
+            $this->scanError = 'Akses ditolak: Anda tidak memiliki wewenang mengimpor data komitmen.';
+            return;
+        }
+
+        $this->scanError = '';
+        $this->scanPages = [];
+        $this->activeScanPageIndex = 0;
+
+        $this->validate([
+            'scanPernyataanFile' => 'required|file|mimes:pdf|max:20480',
+        ], [
+            'scanPernyataanFile.required' => 'Pilih berkas file PDF scan terlebih dahulu.',
+            'scanPernyataanFile.mimes' => 'Format berkas harus berupa file PDF (.pdf).',
+            'scanPernyataanFile.max' => 'Ukuran berkas maksimal 20 MB.',
+        ]);
+
+        $this->scanProcessing = true;
+
+        try {
+            $service = app(\App\Services\PernyataanScanOcrService::class);
+            $filePath = $this->scanPernyataanFile->getRealPath();
+            $this->scanPages = $service->processPdf($filePath);
+
+            if (empty($this->scanPages)) {
+                $this->scanError = 'Tidak ada lembar atau teks yang dapat diekstrak dari berkas PDF ini.';
+            } else {
+                $this->activeScanPageIndex = 0;
+                $this->notify('Berhasil mengekstrak ' . count($this->scanPages) . ' lembar formulir dari pindaian scan.');
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Scan PDF error: ' . $e->getMessage());
+            $this->scanError = 'Terjadi kesalahan saat memproses berkas scan: ' . $e->getMessage();
+        } finally {
+            $this->scanProcessing = false;
+        }
+    }
+
+    public function removeScanPage(int $index): void
+    {
+        if (isset($this->scanPages[$index])) {
+            array_splice($this->scanPages, $index, 1);
+            if ($this->activeScanPageIndex >= count($this->scanPages)) {
+                $this->activeScanPageIndex = max(0, count($this->scanPages) - 1);
+            }
+        }
+    }
+
+    public function resetScanPernyataan(): void
+    {
+        $this->scanPernyataanFile = null;
+        $this->scanPages = [];
+        $this->activeScanPageIndex = 0;
+        $this->scanError = '';
+        $this->scanProcessing = false;
+    }
+
+    public function saveScanPernyataanCommitments(): void
+    {
+        if (! Auth::user()?->canManage()) {
+            $this->notify('Akses ditolak.');
+            return;
+        }
+
+        if (empty($this->scanPages)) {
+            $this->notify('Tidak ada data hasil scan untuk disimpan.');
+            return;
+        }
+
+        $service = app(\App\Services\PernyataanScanOcrService::class);
+        $programsMap = $service->getSocialProgramsMap();
+        $totalRecorded = 0;
+
+        foreach ($this->scanPages as $page) {
+            $nama = trim($page['nama'] ?? '');
+            $nip = trim($page['nip'] ?? '');
+            if (empty($nama) && empty($nip)) continue;
+
+            // Sinkronisasi data Pegawai ke tabel employees
+            if (!empty($nip)) {
+                $emp = \App\Models\Employee::firstOrNew(['nip_panjang' => $nip]);
+                if (! $emp->exists) {
+                    $emp->name = $nama ?: ('Pegawai ' . $nip);
+                    $emp->nip_pendek = substr($nip, -6);
+                    $emp->jabatan = $page['jabatan'] ?? 'Pelaksana';
+                    $emp->unit_kerja = $page['seksi_kelompok'] ?? 'KPP Madya Malang';
+                    $emp->status = 'AKTIF';
+                    $emp->save();
+                } else {
+                    if (!empty($page['jabatan']) && empty($emp->jabatan)) {
+                        $emp->jabatan = $page['jabatan'];
+                        $emp->save();
+                    }
+                }
+            }
+
+            $period = !empty($page['effective_period']) ? $page['effective_period'] : ('Periode ' . now()->month . '/' . now()->year);
+
+            // Simpan setiap program komitmen yang nominalnya > 0
+            foreach ($page['commitments'] ?? [] as $progKey => $amount) {
+                $amt = (float) $amount;
+                if ($amt <= 0) continue;
+
+                $progModel = $programsMap[$progKey] ?? null;
+                if ($progModel) {
+                    \App\Models\ProgramParticipant::updateOrCreate([
+                        'social_program_id' => $progModel->id,
+                        'name' => $nama,
+                        'period' => $period,
+                    ], [
+                        'program_name' => $progModel->name,
+                        'monthly_amount' => $amt,
+                    ]);
+                    $totalRecorded++;
+                }
+            }
+        }
+
+        $this->notify("Berhasil merekap {$totalRecorded} komitmen program sosial dari hasil scan ke database.");
+        $this->resetScanPernyataan();
+        $this->dispatch('close-print-pernyataan-modal');
     }
 
     // ==========================================

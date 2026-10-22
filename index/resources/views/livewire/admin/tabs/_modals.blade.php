@@ -3866,7 +3866,8 @@
         x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center items-start sm:items-center p-3 sm:p-6"
         style="display: none;" @keydown.escape.window="if (printPernyataanOpenDropdown) { closePrintDropdowns(); } else { showPrintPernyataanModal = false; }">
-        <div class="relative bg-white rounded-2xl max-w-xl w-full p-5 sm:p-6 text-left shadow-2xl border border-gov-border space-y-4 my-6 sm:my-auto"
+        <div class="relative bg-white rounded-2xl w-full p-5 sm:p-6 text-left shadow-2xl border border-gov-border space-y-4 my-6 sm:my-auto transition-all duration-150"
+            :class="(pernyataanModalTab === 'impor' && @js(!empty($scanPages))) ? 'max-w-5xl' : 'max-w-xl'"
             x-transition:enter="transition ease-out duration-75"
             x-transition:enter-start="opacity-0 scale-98"
             x-transition:enter-end="opacity-100 scale-100"
@@ -3878,11 +3879,11 @@
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div class="flex items-center space-x-2.5">
                     <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200">
-                        <i data-lucide="printer" class="w-4 h-4 text-blue-600"></i>
+                        <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm text-gov-textMain">Cetak Surat Pernyataan Potongan Tukin</h3>
-                        <p class="text-xs text-slate-500">Cetak lembar pernyataan kesediaan pemotongan tunjangan kinerja pegawai</p>
+                        <h3 class="font-bold text-sm text-gov-textMain">Surat Pernyataan Potongan Tukin</h3>
+                        <p class="text-xs text-slate-500">Cetak lembar formulir atau impor pindaian (scan) kesediaan pemotongan tunjangan kinerja</p>
                     </div>
                 </div>
                 <button type="button" @click="showPrintPernyataanModal = false"
@@ -3891,8 +3892,24 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
-            <div class="space-y-4 text-xs">
+            <!-- Tab Switcher (Cetak vs Impor) -->
+            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl text-xs">
+                <button type="button" @click="pernyataanModalTab = 'cetak'; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                    :class="pernyataanModalTab === 'cetak' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                    class="flex-1 py-1.5 px-3 rounded-lg transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Cetak Pernyataan</span>
+                </button>
+                <button type="button" @click="pernyataanModalTab = 'impor'; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                    :class="pernyataanModalTab === 'impor' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
+                    class="flex-1 py-1.5 px-3 rounded-lg transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i data-lucide="scan-line" class="w-3.5 h-3.5"></i>
+                    <span>Impor Pernyataan (Scan PDF)</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: CETAK PERNYATAAN -->
+            <div x-show="pernyataanModalTab === 'cetak'" class="space-y-4 text-xs">
                 <!-- Mode Pemilihan Pegawai -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Mode Sasaran Pegawai *</label>
@@ -4166,8 +4183,8 @@
                 </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
+            <!-- Modal Footer (Cetak) -->
+            <div x-show="pernyataanModalTab === 'cetak'" class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
                 <button type="button" @click="showPrintPernyataanModal = false"
                     class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
                     Batal
@@ -4179,6 +4196,290 @@
                     <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
                     <span>Buka Dokumen Cetak</span>
                 </a>
+            </div>
+
+            <!-- TAB 2: IMPOR PERNYATAAN DARI SCAN PDF -->
+            <div x-show="pernyataanModalTab === 'impor'" class="space-y-4 text-xs">
+                @if(empty($scanPages))
+                    <!-- Upload Area -->
+                    <div class="space-y-3">
+                        <div class="p-3.5 bg-blue-50/70 rounded-xl border border-blue-200 text-blue-900 leading-relaxed text-xs">
+                            <div class="flex items-start gap-2.5">
+                                <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+                                <div>
+                                    <span class="font-bold">Pemrosesan Dokumen Scan Lokal Server:</span>
+                                    <p class="mt-0.5 text-blue-800 text-[11px] leading-relaxed">
+                                        Unggah berkas pindaian multi-halaman PDF lembar formulir pemotongan tunjangan kinerja (seperti scan mesin). Sistem akan mengekstrak NIP, nama pegawai, dan nominal komitmen zakat/infaq/qurban/santunan secara otomatis untuk diverifikasi.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Input / Dropzone -->
+                        <div class="border-2 border-dashed border-slate-300 hover:border-gov-navy rounded-2xl p-6 text-center transition bg-slate-50/50 hover:bg-slate-50 cursor-pointer relative"
+                            x-data="{ isDragging: false }"
+                            @dragover.prevent="isDragging = true"
+                            @dragleave.prevent="isDragging = false"
+                            @drop.prevent="isDragging = false; $refs.scanPdfInput.files = $event.dataTransfer.files; $refs.scanPdfInput.dispatchEvent(new Event('change', { bubbles: true }))"
+                            :class="isDragging ? 'border-gov-navy bg-sky-50/50 ring-2 ring-gov-navy/20' : ''">
+                            
+                            <input x-ref="scanPdfInput" type="file" wire:model="scanPernyataanFile" accept="application/pdf" class="hidden" id="scanPernyataanFileInput">
+                            
+                            <label for="scanPernyataanFileInput" class="cursor-pointer block">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-2xs mb-2.5">
+                                    <i data-lucide="file-up" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                                <span class="font-bold text-sm text-gov-textMain block">
+                                    {{ $scanPernyataanFile ? $scanPernyataanFile->getClientOriginalName() : 'Pilih Berkas Scan PDF atau Tarik ke Sini' }}
+                                </span>
+                                <span class="text-xs text-slate-500 block mt-1">
+                                    Mendukung berkas PDF multi-halaman (hingga 20 MB)
+                                </span>
+                            </label>
+                        </div>
+
+                        @if($scanError)
+                            <div class="p-3 bg-rose-50 rounded-xl border border-rose-200 text-rose-700 flex items-center gap-2">
+                                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-rose-600"></i>
+                                <span class="text-xs font-medium">{{ $scanError }}</span>
+                            </div>
+                        @endif
+
+                        <!-- Action Buttons -->
+                        <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                            <button type="button" @click="showPrintPernyataanModal = false"
+                                class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="button" wire:click="processScanPernyataan"
+                                wire:loading.attr="disabled"
+                                @if(!$scanPernyataanFile) disabled @endif
+                                class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400" wire:loading.remove wire:target="processScanPernyataan"></i>
+                                <svg wire:loading wire:target="processScanPernyataan" class="w-3.5 h-3.5 animate-spin text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                                    <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+                                </svg>
+                                <span wire:loading.remove wire:target="processScanPernyataan">Mulai Pindai & Proses OCR</span>
+                                <span wire:loading wire:target="processScanPernyataan">Memproses Halaman Scan...</span>
+                            </button>
+                        </div>
+                    </div>
+                @else
+                    <!-- Verification Split-Screen -->
+                    <div class="space-y-4">
+                        <!-- Top Navigation Bar for Pages -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200">
+                            <div class="flex items-center gap-2 overflow-x-auto py-1 max-w-full">
+                                <span class="font-bold text-gov-textMain text-xs shrink-0">Lembar:</span>
+                                @foreach($scanPages as $idx => $page)
+                                    <button type="button" wire:click="$set('activeScanPageIndex', {{ $idx }})"
+                                        class="h-7 px-2.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 inline-flex items-center gap-1.5 border"
+                                        :class="{{ $activeScanPageIndex === $idx ? 'true' : 'false' }} ? 'bg-gov-navy border-gov-navy text-white shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'">
+                                        <span>Hal {{ $idx + 1 }}</span>
+                                        <span class="max-w-[100px] truncate text-[11px] font-normal opacity-90">
+                                            {{ $page['nama'] ? Str::words($page['nama'], 1, '') : 'Pegawai' }}
+                                        </span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <div class="text-[11px] text-slate-500 font-medium shrink-0">
+                                Total {{ count($scanPages) }} lembar terdeteksi
+                            </div>
+                        </div>
+
+                        <!-- Split View Container -->
+                        @if(isset($scanPages[$activeScanPageIndex]))
+                            @php
+                                $cur = $scanPages[$activeScanPageIndex];
+                            @endphp
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+                                <!-- Sisi Kiri: Gambar Pindaian Asli -->
+                                <div class="bg-slate-100 rounded-xl border border-gov-border p-3 flex flex-col justify-between h-[450px]">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-200 text-xs">
+                                        <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+                                            <i data-lucide="file-search" class="w-3.5 h-3.5 text-blue-600"></i>
+                                            <span>Pindaian Dokumen (Hal {{ $activeScanPageIndex + 1 }})</span>
+                                        </span>
+                                        <span class="text-[11px] text-slate-400">Tinjau tulisan tangan</span>
+                                    </div>
+
+                                    <div class="flex-1 overflow-auto rounded-lg bg-slate-200/60 p-2 my-2 flex items-center justify-center">
+                                        @if(!empty($cur['image_path']))
+                                            <img src="{{ $cur['image_path'] }}" alt="Scan Lembar {{ $activeScanPageIndex + 1 }}"
+                                                class="max-w-full h-auto rounded shadow-md border border-slate-300">
+                                        @else
+                                            <div class="text-center p-6 text-slate-500 space-y-2">
+                                                <i data-lucide="file-check-2" class="w-10 h-10 mx-auto text-slate-400"></i>
+                                                <p class="font-semibold text-xs text-gov-textMain">Dokumen Asli: Hal {{ $activeScanPageIndex + 1 }}</p>
+                                                <p class="text-[11px] text-slate-500 leading-relaxed max-w-xs mx-auto">
+                                                    Pegawai: <strong class="text-gov-navy">{{ $cur['nama'] }}</strong><br>
+                                                    NIP: <span class="tnum font-mono">{{ $cur['nip'] }}</span>
+                                                </p>
+                                                <div class="pt-2 text-[10px] text-slate-400">
+                                                    Pindaian terbaca dari berkas PDF lokal
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                                        <span>Gunakan sisi kanan untuk mengoreksi angka tulisan tangan jika perlu.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Sisi Kanan: Form Koreksi & Verifikasi -->
+                                <div class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3.5 h-[450px] overflow-y-auto">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <div class="flex items-center gap-1.5">
+                                            <div class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs border border-emerald-200">
+                                                {{ $activeScanPageIndex + 1 }}
+                                            </div>
+                                            <span class="font-bold text-sm text-gov-textMain">Data Verifikasi Pegawai</span>
+                                        </div>
+                                        <button type="button" wire:click="removeScanPage({{ $activeScanPageIndex }})"
+                                            class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                            <span>Hapus Lembar Ini</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Identitas Fields -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">Nama Pegawai *</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.nama"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-textMain">
+                                        </div>
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">NIP (18 Digit) *</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.nip"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono font-medium text-gov-textMain">
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">Jabatan</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.jabatan"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs">
+                                        </div>
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">Seksi / Unit Kerja</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.seksi_kelompok"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs">
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.phone" placeholder="08xxxxxxxxxx"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block font-semibold text-slate-700 mb-1">Periode Mulai Berlaku</label>
+                                            <input type="text" wire:model="scanPages.{{ $activeScanPageIndex }}.effective_period" placeholder="Periode 11/2026"
+                                                class="w-full h-8 px-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs font-semibold text-gov-navy">
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabel Nominal Komitmen -->
+                                    <div class="pt-2 border-t border-slate-100">
+                                        <div class="flex items-center justify-between mb-1.5">
+                                            <label class="block font-bold text-slate-800 text-xs">Nominal Komitmen Bulanan (Rp)</label>
+                                            <span class="text-[11px] text-slate-400">Sesuaikan dengan tulisan tangan</span>
+                                        </div>
+
+                                        <div class="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-gov-border">
+                                            <div class="grid grid-cols-2 items-center gap-2">
+                                                <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    <span>1. Zakat</span>
+                                                </span>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">Rp</span>
+                                                    <input type="number" step="1000" min="0" wire:model="scanPages.{{ $activeScanPageIndex }}.commitments.zakat"
+                                                        class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy">
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 items-center gap-2">
+                                                <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                    <span>2. Infaq & Sedekah</span>
+                                                </span>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">Rp</span>
+                                                    <input type="number" step="1000" min="0" wire:model="scanPages.{{ $activeScanPageIndex }}.commitments.infaq"
+                                                        class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy">
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 items-center gap-2">
+                                                <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                    <span>3. Tabungan Qurban</span>
+                                                </span>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">Rp</span>
+                                                    <input type="number" step="1000" min="0" wire:model="scanPages.{{ $activeScanPageIndex }}.commitments.qurban"
+                                                        class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy">
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 items-center gap-2">
+                                                <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                                    <span>4. Santunan Anak Yatim</span>
+                                                </span>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">Rp</span>
+                                                    <input type="number" step="1000" min="0" wire:model="scanPages.{{ $activeScanPageIndex }}.commitments.yatim"
+                                                        class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy">
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 items-center gap-2">
+                                                <span class="font-medium text-slate-700 text-xs flex items-center gap-1.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                                                    <span>5. Santunan Dhuafa</span>
+                                                </span>
+                                                <div class="relative">
+                                                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">Rp</span>
+                                                    <input type="number" step="1000" min="0" wire:model="scanPages.{{ $activeScanPageIndex }}.commitments.dhuafa"
+                                                        class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Footer for Verification Screen -->
+                        <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-200 text-xs">
+                            <button type="button" wire:click="resetScanPernyataan"
+                                class="px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer inline-flex items-center gap-1.5">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>Unggah Ulang PDF Lain</span>
+                            </button>
+
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="showPrintPernyataanModal = false"
+                                    class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
+                                    Tutup
+                                </button>
+                                <button type="button" wire:click="saveScanPernyataanCommitments"
+                                    wire:loading.attr="disabled"
+                                    class="px-5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
+                                    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                                    <span>Simpan & Rekap ke Peserta ({{ count($scanPages) }} Pegawai)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

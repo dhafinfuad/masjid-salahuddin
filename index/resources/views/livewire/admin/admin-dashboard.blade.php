@@ -740,6 +740,7 @@
         exportPotonganEndMonth: {{ now()->month }},
         exportPotonganMonth: {{ now()->month }},
         showPrintPernyataanModal: false,
+        pernyataanModalTab: 'cetak',
         printPernyataanMode: 'all',
         printPernyataanEmployeeId: '',
         printPernyataanEmployeeName: '',
@@ -769,7 +770,8 @@
         closePrintDropdowns() {
             this.printPernyataanOpenDropdown = null;
         },
-        openPrintPernyataanModal() {
+        openPrintPernyataanModal(tab = 'cetak') {
+            this.pernyataanModalTab = tab || 'cetak';
             this.printPernyataanOpenDropdown = null;
             this.printPernyataanSearchEmp = '';
             this.printPernyataanSearchNewEmp = '';
