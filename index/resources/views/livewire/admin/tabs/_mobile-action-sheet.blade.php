@@ -4,7 +4,7 @@
 
 <!-- 1. Circular (+) Floating Action Button (Mobile Only) -->
 <div class="fixed bottom-6 right-5 z-40 sm:hidden"
-    x-show="!['settings', 'statistics', 'statistik'].includes(activeTab)"
+    x-show="!['settings', 'statistics', 'statistik', 'saran'].includes(activeTab)"
     x-cloak>
     <button type="button"
         @click="openMobileActionSheet()"
@@ -560,19 +560,6 @@
                         <span class="text-xs font-semibold text-slate-800 leading-tight">Tambah Pegawai</span>
                     </button>
                 </div>
-            </div>
-        </template>
-
-        <!-- ============================================== -->
-        <!-- TAB 9: SARAN & KRITIK JAMAAH -->
-        <!-- ============================================== -->
-        <template x-if="activeTab === 'saran'">
-            <div class="space-y-3">
-                <a href="{{ route('portal.saran') }}" target="_blank" @click="closeMobileActionSheet()"
-                    class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
-                    <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    <span>Buka Halaman Aspirasi Publik</span>
-                </a>
             </div>
         </template>
     </div>

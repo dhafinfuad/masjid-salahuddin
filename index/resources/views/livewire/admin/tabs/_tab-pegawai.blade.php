@@ -82,14 +82,6 @@
                     class="w-full"
                 />
             </div>
-
-            <!-- Teks Indikator Total -->
-            <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
-                <span class="font-bold text-gov-navy">{{ method_exists($employeesList, 'total') ? $employeesList->total() : $employeesList->count() }}</span>
-                @if($activeEmployeesCount > 0)
-                    <span class="text-slate-400">({{ $activeEmployeesCount }} aktif)</span>
-                @endif
-            </div>
         </div>
     </div>
 

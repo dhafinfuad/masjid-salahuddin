@@ -163,10 +163,6 @@
                         class="w-full"
                     />
                 </div>
-
-                <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
-                    <span class="font-bold text-gov-navy">{{ method_exists($usersList, 'total') ? $usersList->total() : $usersList->count() }}</span> pengguna
-                </div>
             </div>
         </div>
 

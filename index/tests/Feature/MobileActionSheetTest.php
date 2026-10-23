@@ -64,13 +64,13 @@ class MobileActionSheetTest extends TestCase
         }
     }
 
-    public function test_redundant_buttons_removed_and_fab_hidden_on_settings_and_statistics(): void
+    public function test_redundant_buttons_removed_and_fab_hidden_on_settings_and_statistics_and_saran(): void
     {
         $this->actingAs($this->admin);
         $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
 
-        // 1. Verifikasi FAB memiliki logika sembunyi untuk settings dan statistics
-        $this->assertStringContainsString("!['settings', 'statistics', 'statistik'].includes(activeTab)", $rendered);
+        // 1. Verifikasi FAB memiliki logika sembunyi untuk settings, statistics, dan saran
+        $this->assertStringContainsString("!['settings', 'statistics', 'statistik', 'saran'].includes(activeTab)", $rendered);
 
         // 2. Verifikasi tombol Tambah Peserta tidak ada di action sheet programs
         $this->assertStringNotContainsString('openCreateParticipant()', $rendered);
@@ -81,8 +81,23 @@ class MobileActionSheetTest extends TestCase
         $this->assertStringNotContainsString("userSubTab = 'kepengurusan'", $rendered);
         $this->assertStringNotContainsString("userSubTab = 'pengguna'", $rendered);
 
-        // 4. Verifikasi tombol reset takmir dan lihat di portal di users/gallery/petugas tidak ada
+        // 4. Verifikasi tombol reset takmir dan lihat di portal di users/gallery/petugas/saran tidak ada
         $this->assertStringNotContainsString('resetTakmirToDefault()', $rendered);
         $this->assertStringNotContainsString('/petugas-sholat', $rendered);
+        $this->assertStringNotContainsString("activeTab === 'saran'", $rendered);
+    }
+
+    public function test_tambah_pos_hidden_on_mobile_and_user_counts_removed(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Verifikasi tombol Tambah Pos disembunyikan di mobile dengan hidden md:inline-flex
+        $financeHtml = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])->html();
+        $this->assertStringContainsString('hidden md:inline-flex shrink-0 justify-center items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer', $financeHtml);
+
+        // Verifikasi keterangan counter 'aktif' dan 'pengguna' tidak ada di tab users
+        $usersHtml = Livewire::test(AdminDashboard::class, ['tab' => 'users'])->html();
+        $this->assertStringNotContainsString('aktif)', $usersHtml);
+        $this->assertStringNotContainsString('pengguna</span>', $usersHtml);
     }
 }

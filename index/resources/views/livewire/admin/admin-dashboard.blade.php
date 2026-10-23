@@ -930,9 +930,6 @@
                 return 'Pilih aksi untuk Manajemen Akun Pengguna';
             }
             if (this.activeTab === 'galeri' || this.activeTab === 'gallery') return 'Pilih aksi untuk Dokumentasi Galeri Kegiatan';
-            if (this.activeTab === 'settings') return 'Pilih aksi untuk Pengaturan Masjid & Poster';
-            if (this.activeTab === 'saran') return 'Pilih aksi untuk Kotak Aspirasi Jamaah';
-            if (this.activeTab === 'statistics' || this.activeTab === 'statistik') return 'Pilih aksi untuk Statistik Pengunjung';
             return 'Pilih tindakan cepat untuk halaman ini';
         }
     }" @resize.window="if (window.innerWidth >= 768) { sidebarDrawerOpen = true; }"

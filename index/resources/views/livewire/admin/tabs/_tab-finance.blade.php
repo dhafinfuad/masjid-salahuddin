@@ -1059,7 +1059,7 @@
 
                             @if(Auth::user()->canManage())
                                 <button type="button" @click="openCreateFinanceCategory()"
-                                    class="shrink-0 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="hidden md:inline-flex shrink-0 justify-center items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-3.5 h-3.5 text-amber-400"></i>
                                     <span>Tambah Pos</span>
                                 </button>
