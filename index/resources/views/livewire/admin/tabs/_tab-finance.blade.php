@@ -62,24 +62,44 @@
                     </div>
                 </div>
 
-                <!-- Sub-tab Navigation Bar (Matching Sub-tab Pattern on Other Pages) -->
-                <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-start gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-                    <button type="button"
-                        @click="financeSubTab = 'utama'; $wire.set('financeSubTab', 'utama', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                        :class="financeSubTab === 'utama' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer inline-flex items-center gap-2"
-                        title="Aliran Kas Utama">
-                        <i data-lucide="wallet" class="w-4 h-4"></i>
-                        <span>Kas Utama</span>
-                    </button>
-                    <button type="button"
-                        @click="financeSubTab = 'kategori'; $wire.set('financeSubTab', 'kategori', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                        :class="financeSubTab === 'kategori' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer inline-flex items-center gap-2"
-                        title="Kelola Kategori Kas">
-                        <i data-lucide="tags" class="w-4 h-4"></i>
-                        <span>Kategori</span>
-                    </button>
+                <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
+                <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
+                    <div class="relative">
+                        <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
+                        <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
+
+                            <!-- Item: Kas Utama -->
+                            <button type="button"
+                                @click="financeSubTab = 'utama'; $wire.set('financeSubTab', 'utama', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="financeSubTab === 'utama' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="financeSubTab === 'utama' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="wallet" class="w-5 h-5 transition"
+                                        :class="financeSubTab === 'utama' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="financeSubTab === 'utama' ? 'text-white' : 'text-slate-600'">Kas Utama</span>
+                            </button>
+
+                            <!-- Item: Kategori -->
+                            <button type="button"
+                                @click="financeSubTab = 'kategori'; $wire.set('financeSubTab', 'kategori', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="financeSubTab === 'kategori' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="financeSubTab === 'kategori' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="tags" class="w-5 h-5 transition"
+                                        :class="financeSubTab === 'kategori' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="financeSubTab === 'kategori' ? 'text-white' : 'text-slate-600'">Kategori</span>
+                            </button>
+
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ==================================================== -->

@@ -39,39 +39,80 @@
                     </div>
                 </div>
 
-                <!-- Sub-tab Navigation Bar (Strict Mandate Class) -->
-                <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-start gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-                    <button type="button" @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
-                        :class="socialSubTab === 'katalog' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
-                        <i data-lucide="heart-handshake" class="w-4 h-4"></i>
-                        <span>Katalog Program Sosial</span>
-                    </button>
+                <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
+                <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
+                    <div class="relative">
+                        <!-- Fade gradient right edge -->
+                        <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
+                        <!-- Scrollable icon strip -->
+                        <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
 
-                    @if(Auth::user()->canManage())
-                        <button type="button" @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
-                            :class="socialSubTab === 'peserta' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
-                            <i data-lucide="users" class="w-4 h-4"></i>
-                            <span>Rekapitulasi Peserta</span>
-                        </button>
-                    @endif
+                            <!-- Item: Katalog -->
+                            <button type="button"
+                                @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="socialSubTab === 'katalog' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="socialSubTab === 'katalog' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="heart-handshake" class="w-5 h-5 transition"
+                                        :class="socialSubTab === 'katalog' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="socialSubTab === 'katalog' ? 'text-white' : 'text-slate-600'">Katalog</span>
+                            </button>
 
-                    <button type="button" @click="socialSubTab = 'pernyataan'; $wire.set('socialSubTab', 'pernyataan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
-                        :class="socialSubTab === 'pernyataan' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
-                        <i data-lucide="file-text" class="w-4 h-4"></i>
-                        <span>Surat Pernyataan</span>
-                    </button>
+                            @if(Auth::user()->canManage())
+                            <!-- Item: Peserta -->
+                            <button type="button"
+                                @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="socialSubTab === 'peserta' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="socialSubTab === 'peserta' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="users" class="w-5 h-5 transition"
+                                        :class="socialSubTab === 'peserta' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="socialSubTab === 'peserta' ? 'text-white' : 'text-slate-600'">Peserta</span>
+                            </button>
+                            @endif
 
-                    @if(Auth::user()->canManage())
-                        <button type="button" @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2"
-                            :class="socialSubTab === 'setoran' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'">
-                            <i data-lucide="landmark" class="w-4 h-4"></i>
-                            <span>Setoran Kantor</span>
-                        </button>
-                    @endif
+                            <!-- Item: Surat Pernyataan -->
+                            <button type="button"
+                                @click="socialSubTab = 'pernyataan'; $wire.set('socialSubTab', 'pernyataan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="socialSubTab === 'pernyataan' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="socialSubTab === 'pernyataan' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="file-text" class="w-5 h-5 transition"
+                                        :class="socialSubTab === 'pernyataan' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="socialSubTab === 'pernyataan' ? 'text-white' : 'text-slate-600'">Surat</span>
+                            </button>
+
+                            @if(Auth::user()->canManage())
+                            <!-- Item: Setoran Kantor -->
+                            <button type="button"
+                                @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                                :class="socialSubTab === 'setoran' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                            >
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                                    :class="socialSubTab === 'setoran' ? 'bg-white/15' : 'bg-slate-100'">
+                                    <i data-lucide="landmark" class="w-5 h-5 transition"
+                                        :class="socialSubTab === 'setoran' ? 'text-white' : 'text-gov-navy'"></i>
+                                </div>
+                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                                    :class="socialSubTab === 'setoran' ? 'text-white' : 'text-slate-600'">Setoran</span>
+                            </button>
+                            @endif
+
+                        </div>
+                    </div>
                 </div>
 
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->

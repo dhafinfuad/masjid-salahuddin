@@ -15,23 +15,46 @@
         </div>
     </div>
 
-    <!-- 2 Sub-tab Navigation Bar -->
-    <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-start gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-        <button type="button"
-            @click="switchSettingsSubTab('masjid')"
-            :class="settingsSubTab === 'masjid' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-            <i data-lucide="building-2" class="w-4 h-4"></i>
-            <span>Pengaturan Masjid</span>
-        </button>
-        <button type="button"
-            @click="switchSettingsSubTab('poster')"
-            :class="settingsSubTab === 'poster' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-            class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-            <i data-lucide="palette" class="w-4 h-4"></i>
-            <span>Template & Studio Poster Kajian</span>
-        </button>
+    <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
+    <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
+        <div class="relative">
+            <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
+            <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
+
+                <!-- Item: Pengaturan Masjid -->
+                <button type="button"
+                    @click="switchSettingsSubTab('masjid')"
+                    class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                    :class="settingsSubTab === 'masjid' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                >
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                        :class="settingsSubTab === 'masjid' ? 'bg-white/15' : 'bg-slate-100'">
+                        <i data-lucide="building-2" class="w-5 h-5 transition"
+                            :class="settingsSubTab === 'masjid' ? 'text-white' : 'text-gov-navy'"></i>
+                    </div>
+                    <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                        :class="settingsSubTab === 'masjid' ? 'text-white' : 'text-slate-600'">Masjid</span>
+                </button>
+
+                <!-- Item: Poster -->
+                <button type="button"
+                    @click="switchSettingsSubTab('poster')"
+                    class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
+                    :class="settingsSubTab === 'poster' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
+                >
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
+                        :class="settingsSubTab === 'poster' ? 'bg-white/15' : 'bg-slate-100'">
+                        <i data-lucide="palette" class="w-5 h-5 transition"
+                            :class="settingsSubTab === 'poster' ? 'text-white' : 'text-gov-navy'"></i>
+                    </div>
+                    <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
+                        :class="settingsSubTab === 'poster' ? 'text-white' : 'text-slate-600'">Poster</span>
+                </button>
+
+            </div>
+        </div>
     </div>
+
 
     <!-- ======================================================== -->
     <!-- KONTEN SUB-TAB 1: PENGATURAN MASJID & LAYAR TV -->
