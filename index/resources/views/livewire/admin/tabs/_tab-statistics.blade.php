@@ -40,71 +40,183 @@
     </div>
 
     <!-- 4 Key Performance Indicator (KPI) Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- KPI 1: Total Kunjungan -->
-        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-xs text-gov-textMuted font-medium block">Total Kunjungan (Hits)</span>
-                <span class="text-2xl font-bold text-gov-textMain tracking-tight">
-                    {{ number_format($statsTotalVisits, 0, ',', '.') }}
-                </span>
-                <span class="text-[11px] text-slate-400 block">Seluruh tampilan halaman</span>
+    @php
+        $isDesktopDominant = ($statsDesktopPercent >= $statsMobilePercent);
+        $dominantPercent = $isDesktopDominant ? $statsDesktopPercent : $statsMobilePercent;
+        $dominantLabel = $isDesktopDominant ? 'Desktop' : 'HP';
+        $secondaryPercent = $isDesktopDominant ? $statsMobilePercent : $statsDesktopPercent;
+        $secondaryLabel = $isDesktopDominant ? 'HP / Mobile' : 'Desktop / Laptop';
+        $dominantIcon = $isDesktopDominant ? 'monitor' : 'smartphone';
+        $iconBg = $isDesktopDominant ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200';
+    @endphp
+
+    <!-- KPI Metric Cards Wrapper -->
+    <div>
+        <!-- Mobile: scroll-snap carousel -->
+        <div class="sm:hidden"
+            x-data="{
+                kpiIdx: 0,
+                kpiTotal: 4,
+                scrollTo(idx) {
+                    this.kpiIdx = Math.max(0, Math.min(idx, this.kpiTotal - 1));
+                    const el = this.$refs.kpiTrack;
+                    const cardW = el.scrollWidth / this.kpiTotal;
+                    el.scrollTo({ left: cardW * this.kpiIdx, behavior: 'smooth' });
+                },
+                onScroll() {
+                    const el = this.$refs.kpiTrack;
+                    const cardW = el.scrollWidth / this.kpiTotal;
+                    this.kpiIdx = Math.round(el.scrollLeft / cardW);
+                }
+            }"
+        >
+            <!-- Scroll track -->
+            <div
+                x-ref="kpiTrack"
+                @scroll.passive="onScroll()"
+                class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 scrollbar-none"
+                style="-ms-overflow-style:none; scrollbar-width:none;"
+            >
+                <!-- Card 0: Total Kunjungan -->
+                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                    <div class="space-y-1">
+                        <span class="text-xs text-gov-textMuted font-medium block">Total Kunjungan (Hits)</span>
+                        <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                            {{ number_format($statsTotalVisits, 0, ',', '.') }}
+                        </span>
+                        <span class="text-[11px] text-slate-400 block">Seluruh tampilan halaman</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="eye" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Card 1: Pengunjung Unik -->
+                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                    <div class="space-y-1">
+                        <span class="text-xs text-gov-textMuted font-medium block">Pengunjung Unik (IP)</span>
+                        <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                            {{ number_format($statsUniqueVisitors, 0, ',', '.') }}
+                        </span>
+                        <span class="text-[11px] text-slate-400 block">Perangkat / jamaah berbeda</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2: Kunjungan Hari Ini -->
+                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                    <div class="space-y-1">
+                        <span class="text-xs text-gov-textMuted font-medium block">Kunjungan Hari Ini</span>
+                        <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                            {{ number_format($statsTodayVisits, 0, ',', '.') }}
+                        </span>
+                        <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Real-time hari ini
+                        </span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
+                        <i data-lucide="calendar-check" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3: Dominasi Perangkat -->
+                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                    <div class="space-y-1">
+                        <span class="text-xs text-gov-textMuted font-medium block">Dominasi Perangkat</span>
+                        <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                            {{ $dominantPercent }}% <span class="text-xs font-semibold text-slate-500">{{ $dominantLabel }}</span>
+                        </span>
+                        <span class="text-[11px] text-slate-400 block">{{ $secondaryPercent }}% {{ $secondaryLabel }}</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl {{ $iconBg }} border flex items-center justify-center shrink-0">
+                        <i data-lucide="{{ $dominantIcon }}" class="w-6 h-6"></i>
+                    </div>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0">
-                <i data-lucide="eye" class="w-6 h-6"></i>
+
+            <!-- Bottom nav: prev · dots · next (inline) -->
+            <div class="flex items-center justify-center gap-3 mt-2.5">
+                <button type="button" @click="scrollTo(kpiIdx - 1)"
+                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
+                    :class="kpiIdx === 0 ? 'opacity-30 pointer-events-none' : ''">
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                </button>
+                <div class="flex items-center gap-1.5">
+                    <template x-for="i in kpiTotal" :key="i">
+                        <button type="button" @click="scrollTo(i - 1)"
+                            class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                            :class="kpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300 w-1.5'"
+                        ></button>
+                    </template>
+                </div>
+                <button type="button" @click="scrollTo(kpiIdx + 1)"
+                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
+                    :class="kpiIdx === kpiTotal - 1 ? 'opacity-30 pointer-events-none' : ''">
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
             </div>
         </div>
 
-        <!-- KPI 2: Pengunjung Unik -->
-        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-xs text-gov-textMuted font-medium block">Pengunjung Unik (IP)</span>
-                <span class="text-2xl font-bold text-gov-textMain tracking-tight">
-                    {{ number_format($statsUniqueVisitors, 0, ',', '.') }}
-                </span>
-                <span class="text-[11px] text-slate-400 block">Perangkat / jamaah berbeda</span>
+        <!-- Desktop: normal grid (sm+) -->
+        <div class="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- KPI 1: Total Kunjungan -->
+            <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs text-gov-textMuted font-medium block">Total Kunjungan (Hits)</span>
+                    <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                        {{ number_format($statsTotalVisits, 0, ',', '.') }}
+                    </span>
+                    <span class="text-[11px] text-slate-400 block">Seluruh tampilan halaman</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="eye" class="w-6 h-6"></i>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
-                <i data-lucide="users" class="w-6 h-6"></i>
-            </div>
-        </div>
 
-        <!-- KPI 3: Kunjungan Hari Ini -->
-        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-xs text-gov-textMuted font-medium block">Kunjungan Hari Ini</span>
-                <span class="text-2xl font-bold text-gov-textMain tracking-tight">
-                    {{ number_format($statsTodayVisits, 0, ',', '.') }}
-                </span>
-                <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Real-time hari ini
-                </span>
+            <!-- KPI 2: Pengunjung Unik -->
+            <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs text-gov-textMuted font-medium block">Pengunjung Unik (IP)</span>
+                    <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                        {{ number_format($statsUniqueVisitors, 0, ',', '.') }}
+                    </span>
+                    <span class="text-[11px] text-slate-400 block">Perangkat / jamaah berbeda</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
-                <i data-lucide="calendar-check" class="w-6 h-6"></i>
-            </div>
-        </div>
 
-        <!-- KPI 4: Dominasi Perangkat (Dinamis: Perangkat terbesar di atas dengan font bold besar dan icon yang sesuai) -->
-        @php
-            $isDesktopDominant = ($statsDesktopPercent >= $statsMobilePercent);
-            $dominantPercent = $isDesktopDominant ? $statsDesktopPercent : $statsMobilePercent;
-            $dominantLabel = $isDesktopDominant ? 'Desktop' : 'HP';
-            $secondaryPercent = $isDesktopDominant ? $statsMobilePercent : $statsDesktopPercent;
-            $secondaryLabel = $isDesktopDominant ? 'HP / Mobile' : 'Desktop / Laptop';
-            $dominantIcon = $isDesktopDominant ? 'monitor' : 'smartphone';
-            $iconBg = $isDesktopDominant ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200';
-        @endphp
-        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-            <div class="space-y-1">
-                <span class="text-xs text-gov-textMuted font-medium block">Dominasi Perangkat</span>
-                <span class="text-2xl font-bold text-gov-textMain tracking-tight">
-                    {{ $dominantPercent }}% <span class="text-xs font-semibold text-slate-500">{{ $dominantLabel }}</span>
-                </span>
-                <span class="text-[11px] text-slate-400 block">{{ $secondaryPercent }}% {{ $secondaryLabel }}</span>
+            <!-- KPI 3: Kunjungan Hari Ini -->
+            <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs text-gov-textMuted font-medium block">Kunjungan Hari Ini</span>
+                    <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                        {{ number_format($statsTodayVisits, 0, ',', '.') }}
+                    </span>
+                    <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Real-time hari ini
+                    </span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center shrink-0">
+                    <i data-lucide="calendar-check" class="w-6 h-6"></i>
+                </div>
             </div>
-            <div class="w-12 h-12 rounded-xl {{ $iconBg }} border flex items-center justify-center shrink-0">
-                <i data-lucide="{{ $dominantIcon }}" class="w-6 h-6"></i>
+
+            <!-- KPI 4: Dominasi Perangkat -->
+            <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                <div class="space-y-1">
+                    <span class="text-xs text-gov-textMuted font-medium block">Dominasi Perangkat</span>
+                    <span class="text-2xl font-bold text-gov-textMain tracking-tight">
+                        {{ $dominantPercent }}% <span class="text-xs font-semibold text-slate-500">{{ $dominantLabel }}</span>
+                    </span>
+                    <span class="text-[11px] text-slate-400 block">{{ $secondaryPercent }}% {{ $secondaryLabel }}</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl {{ $iconBg }} border flex items-center justify-center shrink-0">
+                    <i data-lucide="{{ $dominantIcon }}" class="w-6 h-6"></i>
+                </div>
             </div>
         </div>
     </div>

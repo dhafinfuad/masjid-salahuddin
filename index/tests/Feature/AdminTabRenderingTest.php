@@ -57,4 +57,25 @@ class AdminTabRenderingTest extends TestCase
             $this->assertStringNotContainsString('hidden sm:flex w-9 h-9 rounded-lg bg-white/10', $html, "Tab {$tab} still contains desktop header icon box");
         }
     }
+
+    public function test_statistics_kpi_cards_render_carousel_on_mobile_and_grid_on_desktop(): void
+    {
+        $html = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'statistics'])
+            ->html();
+
+        // 1. Memastikan mobile carousel track dan Alpine state tersedia
+        $this->assertStringContainsString('kpiTotal: 4', $html);
+        $this->assertStringContainsString('x-ref="kpiTrack"', $html);
+        $this->assertStringContainsString('snap-x snap-mandatory', $html);
+
+        // 2. Memastikan desktop grid tersedia
+        $this->assertStringContainsString('hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4', $html);
+
+        // 3. Memastikan semua kartu metrik utama ter-render
+        $this->assertStringContainsString('Total Kunjungan (Hits)', $html);
+        $this->assertStringContainsString('Pengunjung Unik (IP)', $html);
+        $this->assertStringContainsString('Kunjungan Hari Ini', $html);
+        $this->assertStringContainsString('Dominasi Perangkat', $html);
+    }
 }
