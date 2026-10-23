@@ -47,6 +47,11 @@ class PosterSettingManager extends Component
 
     public function mount(bool $isEmbedded = false): void
     {
+        if (auth()->check() && auth()->user()->isJamaah()) {
+            $this->redirect(url('/admin/dashboard'), navigate: true);
+            return;
+        }
+
         $this->isEmbedded = $isEmbedded;
         $config = PosterSetting::getAppConfig();
         $this->template = (int) ($config['template'] ?? 1);

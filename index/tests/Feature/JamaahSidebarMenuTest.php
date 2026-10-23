@@ -52,6 +52,20 @@ class JamaahSidebarMenuTest extends TestCase
             ->assertSet('currentTab', 'dashboard');
     }
 
+    public function test_jamaah_is_redirected_from_poster_setting_route(): void
+    {
+        $this->actingAs($this->makeUser('Jamaah'))
+            ->get('/admin/poster-setting')
+            ->assertRedirect('/admin/dashboard');
+    }
+
+    public function test_officer_can_still_open_poster_setting_route(): void
+    {
+        $this->actingAs($this->makeUser('Master'))
+            ->get('/admin/poster-setting')
+            ->assertOk();
+    }
+
     public function test_officer_still_sees_all_menus(): void
     {
         $this->actingAs($this->makeUser('Master'));
