@@ -747,7 +747,7 @@
                 <!-- SUB-TAB 2: KELOLA KATEGORI KAS & POS ANGGARAN -->
                 <!-- ==================================================== -->
                 <div x-show="financeSubTab === 'kategori'" x-cloak :class="{ 'hidden': financeSubTab !== 'kategori' }"
-                    class="space-y-6" x-data="{
+                    class="space-y-5" x-data="{
                         catFilter: 'all',
                         catSearch: '',
                         matches(group, name) {
