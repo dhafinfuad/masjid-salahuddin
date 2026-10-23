@@ -292,26 +292,36 @@ class SocialProgramManagementTest extends TestCase
             'status' => 'AKTIF',
         ]);
 
+        $participant = ProgramParticipant::create([
+            'name' => 'Haji Mansyur',
+            'social_program_id' => $this->yatimProgram->id,
+            'program_name' => $this->yatimProgram->name,
+            'monthly_amount' => 100000,
+            'period' => 'Periode ' . now()->month . '/' . now()->year,
+        ]);
+
         $this->actingAs($jamaah);
 
-        // Verify page loads and contains Daftarkan Peserta button
-        $test = Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+        // Verify page loads without Daftarkan Peserta button/modal, and allows editing participant
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
             ->assertSet('currentTab', 'programs')
-            ->assertSeeHtml('Daftarkan Peserta')
-            ->call('openParticipantModal')
+            ->assertDontSeeHtml('Daftarkan Peserta')
+            ->assertSeeHtml('Edit Peserta Program Sosial')
+            ->call('editParticipant', $participant->id)
             ->assertSet('showParticipantModal', true)
+            ->assertSet('isEditingParticipant', true)
             ->assertSet('participantName', 'Haji Mansyur')
-            ->set('participantProgram', $this->yatimProgram->name)
-            ->set('participantAmount', '200000')
+            ->set('participantAmount', '250000')
             ->call('saveParticipant')
             ->assertHasNoErrors()
             ->assertDispatched('close-participant-modal')
-            ->assertSet('toastMessage', 'Peserta baru berhasil didaftarkan ke program.');
+            ->assertSet('toastMessage', 'Data peserta Haji Mansyur berhasil diperbarui.');
 
         $this->assertDatabaseHas('program_participants', [
+            'id' => $participant->id,
             'name' => 'Haji Mansyur',
             'social_program_id' => $this->yatimProgram->id,
-            'monthly_amount' => 200000,
+            'monthly_amount' => 250000,
         ]);
     }
 
@@ -522,7 +532,7 @@ class SocialProgramManagementTest extends TestCase
             ->assertSeeHtml('<span>Katalog Program Sosial</span>')
             ->assertDontSeeHtml('<span>Rekapitulasi Peserta</span>')
             ->assertDontSeeHtml('<span>Setoran Kantor</span>')
-            ->assertSeeHtml('<span>Peserta</span>')
+            ->assertDontSeeHtml('<span>Peserta</span>')
             ->assertDontSeeHtml('<span>Program</span>')
             ->assertDontSeeHtml('<span>Import</span>')
             ->assertDontSeeHtml('<span>Export</span>')
@@ -592,6 +602,35 @@ class SocialProgramManagementTest extends TestCase
             'name' => 'Program Beasiswa Tahfidz',
             'status' => 'AKTIF',
         ]);
+    }
+
+    public function test_programs_tab_handles_subtab_pernyataan_for_admin_and_jamaah(): void
+    {
+        $jamaah = User::create([
+            'name' => 'Jamaah Test',
+            'email' => 'jamaah@masjidsalahuddin.id',
+            'password' => Hash::make('password'),
+            'role' => 'Jamaah',
+            'status' => 'AKTIF',
+        ]);
+
+        $this->actingAs($jamaah);
+
+        $this->get('/admin/programs?subtab=pernyataan')
+            ->assertOk()
+            ->assertSee('Surat Pernyataan')
+            ->assertDontSee('openCreateParticipant');
+
+        Livewire::withQueryParams(['subtab' => 'pernyataan'])
+            ->test(AdminDashboard::class, ['tab' => 'programs'])
+            ->assertSet('socialSubTab', 'pernyataan')
+            ->assertDontSeeHtml('openCreateParticipant()');
+    }
+
+    public function test_portal_card_daftar_sekarang_links_to_admin_programs_surat_pernyataan(): void
+    {
+        Livewire::test(PortalPage::class)
+            ->assertSeeHtml(url('/admin/programs?subtab=pernyataan'));
     }
 }
 

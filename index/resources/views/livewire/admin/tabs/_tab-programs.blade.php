@@ -25,13 +25,6 @@
                                 <i data-lucide="download" class="w-3.5 h-3.5 text-blue-600"></i>
                                 <span>Export</span>
                             </button>
-                        @endif
-                        <button type="button" @click="openCreateParticipant()"
-                            class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-400"></i>
-                            <span>Peserta</span>
-                        </button>
-                        @if(Auth::user()->canManage())
                             <button type="button" @click="openCreateSocialProgram()"
                                 class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                 <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>

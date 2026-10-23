@@ -538,7 +538,7 @@
                                             Tertarik berkontribusi atau mendaftar komitmen rutin program sosial & dakwah masjid?
                                         </p>
                                         <button type="button" 
-                                            @click="{{ auth()->check() ? 'window.location.href = \'' . url('/admin/programs') . '\'' : '$dispatch(\'toast\', { message: \'Silakan login terlebih dahulu untuk mendaftar!\' })' }}"
+                                            @click="window.location.href = '{{ url('/admin/programs?subtab=pernyataan') }}'"
                                             class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
                                             <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
                                             <span>Daftar Sekarang</span>

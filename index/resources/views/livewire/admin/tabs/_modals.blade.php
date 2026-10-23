@@ -3412,7 +3412,7 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- MODAL: DAFTARKAN / EDIT PESERTA PROGRAM SOSIAL (MILESTONE 5) -->
+    <!-- MODAL: EDIT PESERTA PROGRAM SOSIAL -->
     <!-- ======================================================== -->
     <div x-show="showParticipantModal" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el)) showParticipantModal = false"
@@ -3424,14 +3424,11 @@
                 <div class="flex items-center gap-2.5">
                     <div
                         class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <i data-lucide="user-plus" class="w-4 h-4 text-amber-600"></i>
+                        <i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-gov-textMain"
-                            x-text="isEditingParticipant ? 'Edit Peserta Program Sosial' : 'Daftarkan Peserta Program Sosial'">
-                        </h3>
-                        <p class="text-xs text-slate-500">Pendaftaran komitmen pemotongan gaji / tukin bulanan pegawai
-                        </p>
+                        <h3 class="text-base font-bold text-gov-textMain">Edit Peserta Program Sosial</h3>
+                        <p class="text-xs text-slate-500">Perbarui data komitmen pemotongan gaji / tukin bulanan pegawai</p>
                     </div>
                 </div>
                 <button type="button" @click="showParticipantModal = false"
@@ -3501,8 +3498,7 @@
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="saveParticipant"
-                            x-text="isEditingParticipant ? 'Perbarui Peserta' : 'Daftarkan Peserta'"></span>
+                        <span wire:loading.remove wire:target="saveParticipant">Perbarui Peserta</span>
                         <span wire:loading.inline-flex wire:target="saveParticipant"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"

@@ -794,25 +794,7 @@
             });
         },
         showParticipantModal: false,
-        isEditingParticipant: false,
-        openCreateParticipant() {
-            this.isEditingParticipant = false;
-            this.showParticipantModal = true;
-            $wire.set('isEditingParticipant', false, false);
-            $wire.set('editingParticipantId', null, false);
-            @if(Auth::check() && Auth::user()->isJamaah())
-            $wire.set('participantName', {{ Js::from(Auth::user()->name ?? '') }}, false);
-            @else
-            $wire.set('participantName', '', false);
-            @endif
-            $wire.set('participantProgram', 'Santunan Anak Yatim', false);
-            $wire.set('participantAmount', '250000', false);
-            $wire.set('participantPeriod', 'Bulanan', false);
-            $wire.set('participantStatus', 'AKTIF', false);
-            this.$nextTick(() => {
-                if (window.createLucideIcons) window.createLucideIcons();
-            });
-        },
+        isEditingParticipant: true,
         openEditParticipant(data) {
             this.isEditingParticipant = true;
             this.showParticipantModal = true;
@@ -821,7 +803,9 @@
             $wire.set('participantName', data.name || '', false);
             $wire.set('participantProgram', data.program_name || 'Santunan Anak Yatim', false);
             $wire.set('participantAmount', String(parseInt(data.monthly_amount) || ''), false);
-            $wire.set('participantPeriod', data.period || 'Bulanan', false);
+            const now = new Date();
+            const defaultPeriod = 'Periode ' + (now.getMonth() + 1) + '/' + now.getFullYear();
+            $wire.set('participantPeriod', data.period || defaultPeriod, false);
             $wire.set('participantStatus', data.status || 'AKTIF', false);
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();

@@ -543,6 +543,11 @@ class AdminDashboard extends Component
             $this->currentTab = ($tab === 'statistik') ? 'statistics' : (($tab === 'gallery') ? 'galeri' : $tab);
         }
 
+        $subtab = request()->query('subtab') ?: request()->query('socialSubTab');
+        if ($subtab && in_array($subtab, ['katalog', 'peserta', 'pernyataan', 'setoran'], true)) {
+            $this->socialSubTab = $subtab;
+        }
+
         $this->financeDate = Carbon::today()->format('Y-m-d');
         $this->lumpSumDate = Carbon::today()->format('Y-m-d');
         $this->financeMonthFilter = [(string) Carbon::today()->month];
@@ -6793,7 +6798,7 @@ class AdminDashboard extends Component
             $isJamaah = Auth::check() && ! Auth::user()->canManage();
             $userName = Auth::user()?->name;
 
-            if ($isJamaah) {
+            if ($isJamaah && ! in_array($this->socialSubTab, ['katalog', 'pernyataan'], true)) {
                 $this->socialSubTab = 'katalog';
             }
 
