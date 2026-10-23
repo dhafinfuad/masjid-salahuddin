@@ -894,6 +894,46 @@
             if (window.copyJarkomanToClipboard) {
                 window.copyJarkomanToClipboard(text);
             }
+        },
+        mobileActionSheetOpen: false,
+        openMobileActionSheet() {
+            this.mobileActionSheetOpen = true;
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
+        },
+        closeMobileActionSheet() {
+            this.mobileActionSheetOpen = false;
+        },
+        getMobileActionSubtitle() {
+            if (this.activeTab === 'kegiatan' || this.activeTab === 'kajian' || this.activeTab === 'agenda') {
+                if (this.kegiatanSubTab === 'pekanan') return 'Pilih aksi untuk jadwal Kajian Pekanan';
+                if (this.kegiatanSubTab === 'jumat') return 'Pilih aksi untuk Shalat Jumat & Khutbah';
+                if (this.kegiatanSubTab === 'agenda') return 'Pilih aksi untuk Agenda Kegiatan Akbar';
+                if (this.kegiatanSubTab === 'odoj') return 'Pilih aksi untuk One Day One Juz';
+                return 'Pilih aksi untuk halaman Kegiatan & Kajian';
+            }
+            if (this.activeTab === 'petugas') return 'Pilih aksi untuk Jadwal Petugas Shalat';
+            if (this.activeTab === 'finance') {
+                if (this.financeSubTab === 'kategori') return 'Pilih aksi untuk Kelola Pos Kategori';
+                return 'Pilih aksi untuk Pembukuan Kas & Keuangan';
+            }
+            if (this.activeTab === 'programs') {
+                if (this.socialSubTab === 'peserta') return 'Pilih aksi untuk Rekapitulasi Peserta';
+                if (this.socialSubTab === 'pernyataan') return 'Pilih aksi untuk Surat Pernyataan';
+                if (this.socialSubTab === 'setoran') return 'Pilih aksi untuk Rekap Setoran Kantor';
+                return 'Pilih aksi untuk Program Sosial & Infaq';
+            }
+            if (this.activeTab === 'users') {
+                if (this.userSubTab === 'pegawai') return 'Pilih aksi untuk Master Data Pegawai';
+                if (this.userSubTab === 'kepengurusan') return 'Pilih aksi untuk Kepengurusan Takmir & Dokumen SK';
+                return 'Pilih aksi untuk Manajemen Akun Pengguna';
+            }
+            if (this.activeTab === 'galeri' || this.activeTab === 'gallery') return 'Pilih aksi untuk Dokumentasi Galeri Kegiatan';
+            if (this.activeTab === 'settings') return 'Pilih aksi untuk Pengaturan Masjid & Poster';
+            if (this.activeTab === 'saran') return 'Pilih aksi untuk Kotak Aspirasi Jamaah';
+            if (this.activeTab === 'statistics' || this.activeTab === 'statistik') return 'Pilih aksi untuk Statistik Pengunjung';
+            return 'Pilih tindakan cepat untuk halaman ini';
         }
     }" @resize.window="if (window.innerWidth >= 768) { sidebarDrawerOpen = true; }"
     @open-edit-kajian-modal.window="
@@ -1341,7 +1381,7 @@
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-            class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-gov-navy text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700/60 text-xs font-semibold backdrop-blur-md"
+            class="fixed top-16 inset-x-4 sm:top-auto sm:bottom-6 sm:right-6 sm:inset-x-auto z-50 flex items-center justify-between sm:justify-start gap-3 bg-gov-navy text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700/60 text-xs font-semibold backdrop-blur-md"
             style="display: none;">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
             <span x-text="message" class="tracking-wide"></span>
@@ -1417,6 +1457,9 @@
         </div>
     </div>
 
+
+    <!-- Mobile Floating Action Button (FAB) & Bottom Action Sheet -->
+    @include('livewire.admin.tabs._mobile-action-sheet')
 
     <!-- All Modal Dialogs -->
     @include('livewire.admin.tabs._modals')

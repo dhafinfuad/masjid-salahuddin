@@ -4,10 +4,10 @@
             <div class="space-y-4">
                 <!-- Top Header & Action Bar -->
                 <div
-                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
+                    class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
                     <div class="flex items-center space-x-2.5">
                         <div
-                            class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+                            class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                             <i data-lucide="user-check" class="w-4 h-4 text-gov-navy"></i>
                         </div>
                         <div>

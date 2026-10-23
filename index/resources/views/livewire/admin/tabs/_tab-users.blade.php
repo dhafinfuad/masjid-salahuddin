@@ -7,8 +7,8 @@
     <div x-show="userSubTab === 'pengguna'">
         <!-- Top Header & Filter Card -->
         <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="hidden sm:flex items-center space-x-2.5">
+            class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="flex items-center space-x-2.5">
                 <div
                     class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                     <i data-lucide="user-cog" class="w-4 h-4 text-gov-navy"></i>
@@ -41,8 +41,8 @@
 
     <!-- Top Header Card: Pegawai -->
     <div x-show="userSubTab === 'pegawai'" x-cloak>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="hidden sm:flex items-center space-x-2.5 min-w-0 flex-1">
+        <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
                 <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                     <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="16" rx="3"/>
@@ -84,8 +84,8 @@
 
     <!-- Top Header Card: Kepengurusan -->
     <div x-show="userSubTab === 'kepengurusan'" x-cloak>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="hidden sm:flex items-center space-x-3">
+        <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-gov-navy flex items-center justify-center border border-blue-200 shrink-0">
                     <i data-lucide="shield-check" class="w-5 h-5 text-gov-navy"></i>
                 </div>

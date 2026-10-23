@@ -4,8 +4,8 @@
             <div class="space-y-6">
                 <!-- Top Header Card / Action Buttons (Compact 2x2 on Mobile, Full Bar on Desktop) -->
                 @if(Auth::user()->canManage())
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="hidden sm:flex items-center space-x-2.5">
+                    <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="flex items-center space-x-2.5">
                             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
                                 <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
                             </div>
