@@ -177,7 +177,7 @@
                                 <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Saldo
                                     Awal</span>
                                 <div
-                                    class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs">
+                                    class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shadow-2xs">
                                     <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
                                 </div>
                             </div>
@@ -185,7 +185,7 @@
                                 <div class="text-2xl font-bold text-gov-textMain tnum">
                                     Rp {{ number_format($saldoAwal, 0, ',', '.') }}
                                 </div>
-                                <span class="text-xs text-slate-500 font-medium flex items-center space-x-1 mt-1">
+                                <span class="text-xs text-amber-600 font-medium flex items-center space-x-1 mt-1">
                                     <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                                     <span>Awal bulan berjalan</span>
                                 </span>

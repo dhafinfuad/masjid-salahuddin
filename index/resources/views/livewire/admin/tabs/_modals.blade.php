@@ -2670,7 +2670,7 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Alokasi Pembukuan Kas</label>
                         @php
-                            $agendaOptions = [['value' => '', 'label' => 'ðŸ¢ Kas Umum Masjid (Rutin Bulanan)']];
+                            $agendaOptions = [['value' => '', 'label' => 'Kas Umum Masjid (Rutin Bulanan)']];
                             if (isset($allAgendas) && $allAgendas->isNotEmpty()) {
                                 $agendaOptions[] = ['label' => '🎯 PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
                                 foreach($allAgendas as $ag) {
@@ -2696,7 +2696,7 @@
 
                 <!-- Deskripsi / Keterangan -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Uraian / Keterangan Transaksi *</label>
+                    <label class="block font-semibold text-slate-700 mb-1">Uraian Transaksi *</label>
                     <textarea wire:model="financeDescription" rows="2"
                         placeholder="Contoh: Pembelian sound system mimbar ruang sholat utama..." required
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
@@ -2706,7 +2706,7 @@
 
                 <!-- Bukti Transaksi / Nota -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Unggah Nota / Kwitansi / Bukti Transfer (Opsional)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">Unggah Nota / Bukti Transfer (Opsional)</label>
                     <div x-data="{ isDragging: false }"
                          @dragenter.prevent="isDragging = true"
                          @dragover.prevent="isDragging = true"
@@ -2762,7 +2762,7 @@
                                         <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                                         <polyline points="14 2 14 8 20 8"/>
                                     </svg>
-                                    <span>Bukti Tersimpan ({{ count($existingFinanceReceiptPaths) }} berkas)</span>
+                                    <span>({{ count($existingFinanceReceiptPaths) }} berkas)</span>
                                 </span>
                                 @php
                                     $existingUrls = array_map(function($p) {
@@ -2788,7 +2788,7 @@
                                         <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
                                         <circle cx="12" cy="12" r="3"/>
                                     </svg>
-                                    <span>Lihat Carousel</span>
+                                    <span>Lihat</span>
                                 </button>
                             </div>
 
