@@ -25,19 +25,19 @@
     </div>
 
     <!-- Filter & Search Card -->
-    <div class="bg-white rounded-xl p-4 sm:p-5 border border-gov-border shadow-2xs space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-            
+    <div class="bg-white rounded-xl p-3.5 border border-gov-border shadow-2xs">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+
             <!-- Search Input -->
-            <div class="sm:col-span-6 relative">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div class="relative flex-1">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input type="text" wire:model.live.debounce.300ms="saranSearch"
                     placeholder="Cari pengirim, topik, kontak, atau isi saran..."
                     class="h-9 w-full pl-9 pr-3 text-xs border border-gov-border rounded-lg bg-slate-50/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
             </div>
 
             <!-- Status Filter -->
-            <div class="sm:col-span-3">
+            <div class="shrink-0 w-full sm:w-44">
                 <x-custom-select 
                     wire:model.live="saranStatusFilter"
                     :options="[
@@ -48,11 +48,12 @@
                         'arsip' => 'Diarsipkan',
                     ]"
                     placeholder="Semua Status"
+                    class="w-full"
                 />
             </div>
 
             <!-- Category Filter -->
-            <div class="sm:col-span-3">
+            <div class="shrink-0 w-full sm:w-44">
                 <x-custom-select 
                     wire:model.live="saranCategoryFilter"
                     :options="[
@@ -64,6 +65,7 @@
                         'Lainnya' => 'Lainnya',
                     ]"
                     placeholder="Semua Kategori"
+                    class="w-full"
                 />
             </div>
 

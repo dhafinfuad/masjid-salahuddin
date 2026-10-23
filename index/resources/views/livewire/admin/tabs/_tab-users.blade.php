@@ -133,46 +133,45 @@
     <div x-show="userSubTab === 'pengguna'" class="space-y-6">
 
         <!-- Role Filter Card & Summary -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
-                <div class="w-full sm:w-auto">
-                    <x-custom-select 
-                        wire:model.live="userFilterRole"
-                        :options="[
-                            'all' => 'Semua Role',
-                            'Master' => 'Master Admin',
-                            'Ketua' => 'Ketua DKM',
-                            'Sekretaris' => 'Sekretaris',
-                            'Bendahara' => 'Bendahara',
-                            'Jamaah' => 'Jamaah (Viewer)',
-                        ]"
-                        placeholder="Semua Role"
-                        icon="shield"
-                        class="w-full sm:w-44"
-                    />
-                </div>
-
-                <!-- Search Input -->
-                <div class="relative w-full sm:w-64" x-data="{
-                    clearSearch() {
-                        $wire.clearUserSearch();
-                    }
-                }">
-                    <i data-lucide="search"
-                        class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        placeholder="Cari nama, email..."
-                        class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                    <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                        <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
+            <!-- Role Dropdown -->
+            <div class="shrink-0 w-full sm:w-44">
+                <x-custom-select 
+                    wire:model.live="userFilterRole"
+                    :options="[
+                        'all' => 'Semua Role',
+                        'Master' => 'Master Admin',
+                        'Ketua' => 'Ketua DKM',
+                        'Sekretaris' => 'Sekretaris',
+                        'Bendahara' => 'Bendahara',
+                        'Jamaah' => 'Jamaah (Viewer)',
+                    ]"
+                    placeholder="Semua Role"
+                    icon="shield"
+                    class="w-full"
+                />
             </div>
 
-            <div class="text-slate-500 font-medium text-xs">
+            <!-- Search Input -->
+            <div class="relative flex-1" x-data="{
+                clearSearch() {
+                    $wire.clearUserSearch();
+                }
+            }">
+                <i data-lucide="search"
+                    class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                <input wire:model.live.debounce.300ms="search" type="text"
+                    placeholder="Cari nama, email..."
+                    class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
+                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
                 Total: <span class="font-bold text-gov-navy">{{ method_exists($usersList, 'total') ? $usersList->total() : $usersList->count() }}</span> pengguna
             </div>
         </div>

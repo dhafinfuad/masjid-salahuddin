@@ -28,30 +28,32 @@
     </div>
 
     <!-- Filter & Toolbar Bar -->
-    <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <!-- Search Bar -->
-        <div class="relative flex-1 max-w-md">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" wire:model.live.debounce.300ms="gallerySearch"
-                placeholder="Cari judul kegiatan atau lokasi..."
-                class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
-        </div>
+    <div class="bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+            <!-- Search Bar -->
+            <div class="relative flex-1">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input type="text" wire:model.live.debounce.300ms="gallerySearch"
+                    placeholder="Cari judul kegiatan atau lokasi..."
+                    class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
+            </div>
 
-        <!-- Filter Tahun -->
-        <div class="flex items-center gap-2.5">
+            <!-- Filter Tahun -->
             @php
                 $galYears = array_merge(
                     [['value' => 'all', 'label' => 'Semua Tahun']],
                     collect($galleryYearsList ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
                 );
             @endphp
-            <x-custom-select 
-                wire:model.live="galleryYearFilter"
-                :options="$galYears"
-                placeholder="Semua Tahun"
-                icon="calendar"
-                class="w-36"
-            />
+            <div class="shrink-0 w-full sm:w-36">
+                <x-custom-select 
+                    wire:model.live="galleryYearFilter"
+                    :options="$galYears"
+                    placeholder="Semua Tahun"
+                    icon="calendar"
+                    class="w-full"
+                />
+            </div>
         </div>
     </div>
 
