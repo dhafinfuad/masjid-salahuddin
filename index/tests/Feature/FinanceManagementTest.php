@@ -761,7 +761,8 @@ class FinanceManagementTest extends TestCase
             ->assertSee('Total Pos Anggaran')
             ->assertSee('Pos Penerimaan')
             ->assertSee('Pengeluaran Rutin')
-            ->assertSee('Pengeluaran Non-Rutin');
+            ->assertSee('Pengeluaran Non-Rutin')
+            ->assertDontSee('<!-- Filter Row -->\n', false);
     }
 }
 

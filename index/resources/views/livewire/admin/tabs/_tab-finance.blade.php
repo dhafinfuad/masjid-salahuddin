@@ -1044,7 +1044,8 @@
                             </button>
                         </div>
 
-                        <!-- Filter Row -->\n                        <div class="flex flex-row items-center gap-2">
+                        <!-- Filter Row -->
+                        <div class="flex flex-row items-center gap-2">
                             <!-- Kelompok / Status Filter Dropdown -->
                             <div class="flex-1">
                                 <x-custom-select 
