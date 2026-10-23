@@ -2,19 +2,19 @@
             <!-- TAB: PROGRAM SOSIAL & KEIKUTSERTAAN (MILESTONE 6) -->
             <!-- ======================================================== -->
             <div class="space-y-6">
-                <!-- Top Header Card -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="flex items-center space-x-2.5">
-                        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-amber-50 text-amber-700 items-center justify-center border border-amber-200 shrink-0">
-                            <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
+                <!-- Top Header Card / Action Buttons (Compact 2x2 on Mobile, Full Bar on Desktop) -->
+                @if(Auth::user()->canManage())
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="hidden sm:flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
+                                <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-gov-textMain">Program Sosial</h3>
+                                <p class="text-xs text-slate-500">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-base text-gov-textMain">Program Sosial</h3>
-                            <p class="text-xs text-slate-500">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                        @if(Auth::user()->canManage())
+                        <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
                             <button type="button" @click="showImportPotonganModal = true; $wire.call('openImportPotonganModal'); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
                                 class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-600"></i>
@@ -35,85 +35,21 @@
                                 <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
                                 <span>Program</span>
                             </button>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
-                <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
-                    <div class="relative">
-                        <!-- Fade gradient right edge -->
-                        <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
-                        <!-- Scrollable icon strip -->
-                        <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
-
-                            <!-- Item: Katalog -->
-                            <button type="button"
-                                @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="socialSubTab === 'katalog' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="socialSubTab === 'katalog' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="heart-handshake" class="w-5 h-5 transition"
-                                        :class="socialSubTab === 'katalog' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="socialSubTab === 'katalog' ? 'text-white' : 'text-slate-600'">Katalog</span>
-                            </button>
-
-                            @if(Auth::user()->canManage())
-                            <!-- Item: Peserta -->
-                            <button type="button"
-                                @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="socialSubTab === 'peserta' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="socialSubTab === 'peserta' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="users" class="w-5 h-5 transition"
-                                        :class="socialSubTab === 'peserta' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="socialSubTab === 'peserta' ? 'text-white' : 'text-slate-600'">Peserta</span>
-                            </button>
-                            @endif
-
-                            <!-- Item: Surat Pernyataan -->
-                            <button type="button"
-                                @click="socialSubTab = 'pernyataan'; $wire.set('socialSubTab', 'pernyataan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="socialSubTab === 'pernyataan' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="socialSubTab === 'pernyataan' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="file-text" class="w-5 h-5 transition"
-                                        :class="socialSubTab === 'pernyataan' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="socialSubTab === 'pernyataan' ? 'text-white' : 'text-slate-600'">Surat</span>
-                            </button>
-
-                            @if(Auth::user()->canManage())
-                            <!-- Item: Setoran Kantor -->
-                            <button type="button"
-                                @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="socialSubTab === 'setoran' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="socialSubTab === 'setoran' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="landmark" class="w-5 h-5 transition"
-                                        :class="socialSubTab === 'setoran' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="socialSubTab === 'setoran' ? 'text-white' : 'text-slate-600'">Setoran</span>
-                            </button>
-                            @endif
-
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="hidden sm:flex flex-row items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
+                                <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-base text-gov-textMain">Program Sosial</h3>
+                                <p class="text-xs text-slate-500">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->
                 <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-6">

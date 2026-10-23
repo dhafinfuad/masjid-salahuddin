@@ -1119,33 +1119,84 @@
     <div class="admin-workspace flex-1 flex flex-col min-w-0 min-h-screen bg-gov-canvas"
         :class="sidebarDrawerOpen ? '' : 'sidebar-closed'">
 
-        <!-- Top Workspace Bar with Drawer Trigger Button -->
-        <header
-            class="bg-white border-b border-gov-border px-6 py-3 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20 shadow-2xs">
-            <div class="flex items-center space-x-3">
-                <!-- Drawer Toggle Trigger Button (Mobile, or Desktop when sidebar closed) -->
-                <button type="button" @click="sidebarDrawerOpen = !sidebarDrawerOpen"
-                    class="items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
-                    :class="sidebarDrawerOpen ? 'md:opacity-0 md:w-0 md:p-0 md:pointer-events-none md:overflow-hidden flex' : 'opacity-100 w-8 flex'"
-                    title="Buka/Tutup Menu Drawer">
-                    <i data-lucide="menu" class="w-4 h-4 text-gov-navyHover shrink-0"></i>
-                </button>
+        <!-- Top Workspace Bar with Drawer Trigger Button & Sticky Sub-Header -->
+        <div class="sticky top-0 z-20 shadow-2xs">
+            <header
+                class="bg-white border-b border-gov-border px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                    <!-- Drawer Toggle Trigger Button (Mobile, or Desktop when sidebar closed) -->
+                    <button type="button" @click="sidebarDrawerOpen = !sidebarDrawerOpen"
+                        class="items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
+                        :class="sidebarDrawerOpen ? 'md:opacity-0 md:w-0 md:p-0 md:pointer-events-none md:overflow-hidden flex' : 'opacity-100 w-8 flex'"
+                        title="Buka/Tutup Menu Drawer">
+                        <i data-lucide="menu" class="w-4 h-4 text-gov-navyHover shrink-0"></i>
+                    </button>
 
-                <div class="flex items-center text-xs text-gov-textMuted font-medium">
-                    <span class="font-semibold text-gov-textMain flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                        <span x-text="getBreadcrumb()">{{ $this->getBreadcrumbTitle() }}</span>
-                    </span>
+                    <div class="flex items-center text-xs text-gov-textMuted font-medium">
+                        <span class="font-semibold text-gov-textMain flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            <span x-text="getBreadcrumb()">{{ $this->getBreadcrumbTitle() }}</span>
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center space-x-3">
-            </div>
-        </header>
+                <div class="flex items-center space-x-3">
+                </div>
+            </header>
 
-        <!-- Top Micro Progress Bar for Livewire Background Sync -->
-        <div wire:loading wire:target="switchTab, gotoPage, nextPage, previousPage" class="h-0.5 w-full bg-slate-100 overflow-hidden relative z-30">
-            <div class="h-full bg-linear-to-r from-amber-400 via-gov-navy to-amber-400 w-full animate-pulse"></div>
+            <!-- OPSI 4: Sticky Sub-Header Tabs (Tempatkan tepat di bawah Header utama) -->
+            @if($currentTab === 'programs')
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
+                    <div class="flex items-center overflow-x-auto no-scrollbar">
+                        
+                        <!-- Tab Aktif / Tidak Aktif: Katalog Program -->
+                        <button type="button"
+                            @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="socialSubTab === 'katalog' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
+                            <span>Katalog Program</span>
+                        </button>
+
+                        <!-- Tab Aktif / Tidak Aktif: Rekap Peserta -->
+                        @if(Auth::user()->canManage())
+                            <button type="button"
+                                @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                                :class="socialSubTab === 'peserta' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                                <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                                <span>Rekap Peserta</span>
+                            </button>
+                        @endif
+
+                        <!-- Tab Aktif / Tidak Aktif: Surat Pernyataan -->
+                        <button type="button"
+                            @click="socialSubTab = 'pernyataan'; $wire.set('socialSubTab', 'pernyataan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="socialSubTab === 'pernyataan' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span>Surat Pernyataan</span>
+                        </button>
+
+                        <!-- Tab Aktif / Tidak Aktif: Setoran Kantor -->
+                        @if(Auth::user()->canManage())
+                            <button type="button"
+                                @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                                :class="socialSubTab === 'setoran' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                                <i data-lucide="landmark" class="w-3.5 h-3.5"></i>
+                                <span>Setoran Kantor</span>
+                            </button>
+                        @endif
+
+                    </div>
+                </div>
+            @endif
+
+            <!-- Top Micro Progress Bar for Livewire Background Sync -->
+            <div wire:loading wire:target="switchTab, gotoPage, nextPage, previousPage" class="h-0.5 w-full bg-slate-100 overflow-hidden relative z-30">
+                <div class="h-full bg-linear-to-r from-amber-400 via-gov-navy to-amber-400 w-full animate-pulse"></div>
+            </div>
         </div>
 
         <!-- Floating Auto-Dismiss Toast Notification -->
