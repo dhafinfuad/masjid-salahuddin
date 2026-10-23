@@ -176,7 +176,7 @@ class UserManagementTest extends TestCase
         $this->actingAs($this->jamaah);
 
         // Jamaah trying to create user
-        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+        Livewire::test(AdminDashboard::class, ['tab' => 'dashboard'])
             ->set('userName', 'User Ilegal')
             ->set('userEmail', 'ilegal@masjidsalahuddin.id')
             ->set('userPassword', 'password123')
@@ -187,7 +187,7 @@ class UserManagementTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => 'ilegal@masjidsalahuddin.id']);
 
         // Jamaah trying to delete user
-        Livewire::test(AdminDashboard::class, ['tab' => 'users'])
+        Livewire::test(AdminDashboard::class, ['tab' => 'dashboard'])
             ->call('deleteUser', $this->sekretaris->id)
             ->assertDispatched('toast');
 

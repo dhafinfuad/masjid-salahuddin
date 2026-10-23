@@ -530,6 +530,11 @@ class AdminDashboard extends Component
             $this->kegiatanSubTab = 'agenda';
         }
 
+        if ($tab && Auth::check() && Auth::user()->isJamaah() && in_array($tab, ['saran', 'users', 'statistics', 'statistik', 'settings'])) {
+            $this->redirect(url('/admin/dashboard'), navigate: true);
+            return;
+        }
+
         if ($tab && in_array($tab, ['dashboard', 'kegiatan', 'kajian', 'petugas', 'agenda', 'finance', 'programs', 'users', 'settings', 'statistics', 'statistik', 'galeri', 'gallery', 'saran'])) {
             $this->currentTab = ($tab === 'statistik') ? 'statistics' : (($tab === 'gallery') ? 'galeri' : $tab);
         }
@@ -610,6 +615,10 @@ class AdminDashboard extends Component
 
     public function switchTab(string $tab): void
     {
+        if (Auth::check() && Auth::user()->isJamaah() && in_array($tab, ['saran', 'users', 'statistics', 'statistik', 'settings'])) {
+            return;
+        }
+
         $this->currentTab = $tab;
         if ($tab === 'kajian') {
             $this->kegiatanSubTab = 'pekanan';

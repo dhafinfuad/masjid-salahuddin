@@ -1046,6 +1046,7 @@
                     <span class="text-sm font-medium">Galeri Kegiatan</span>
                 </a>
 
+                @unless(Auth::user()->isJamaah())
                 <a href="{{ url('/admin/saran') }}" wire:navigate
                     class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ $currentTab === 'saran' ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
                     <i data-lucide="message-square-quote" class="w-4 h-4 text-slate-400"></i>
@@ -1057,10 +1058,12 @@
                     <i data-lucide="user-cog" class="w-4 h-4 text-slate-400"></i>
                     <span class="text-sm font-medium">Pengguna</span>
                 </a>
+                @endunless
             </div>
 
             <!-- Secondary Links with Square (rounded-none) Style -->
             <div class="p-3 pt-1 space-y-1 text-xs border-t border-[#0F2F59] mt-2">
+                @unless(Auth::user()->isJamaah())
                 <span
                     class="text-xs uppercase tracking-wider text-slate-400 font-semibold px-3 block mb-1.5">SISTEM</span>
 
@@ -1075,6 +1078,7 @@
                     <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i>
                     <span class="text-sm font-medium">Pengaturan</span>
                 </a>
+                @endunless
 
                 <a href="{{ url('/') }}" target="_blank"
                     class="w-full flex items-center justify-between px-3 py-2.5 rounded-none font-normal text-slate-300 hover:text-white hover:bg-white/5 transition">
