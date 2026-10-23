@@ -59,7 +59,7 @@ class PerformanceAndNavigationTest extends TestCase
         // Tab: petugas
         $responsePetugas = $this->get('/admin/petugas');
         $responsePetugas->assertOk();
-        $responsePetugas->assertSee('Jadwal Penugasan Petugas Ibadah');
+        $responsePetugas->assertSee('Imam & Muadzin', false);
     }
 
     /** @test */
@@ -85,7 +85,7 @@ class PerformanceAndNavigationTest extends TestCase
             ->assertSee('Kas & Keuangan Masjid', false)
             ->call('switchTab', 'petugas')
             ->assertSet('currentTab', 'petugas')
-            ->assertSee('Jadwal Penugasan Petugas Ibadah');
+            ->assertSee('Imam & Muadzin', false);
     }
 
     /** @test */
@@ -191,16 +191,16 @@ class PerformanceAndNavigationTest extends TestCase
         // 2. Kegiatan & its sub-tabs
         $component->call('switchTab', 'kegiatan');
         $component->set('kegiatanSubTab', 'pekanan');
-        $this->assertEquals('Kegiatan > Kajian Pekanan', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kegiatan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('kegiatanSubTab', 'jumat');
-        $this->assertEquals('Kegiatan > Kajian Jumat & Khutbah', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kegiatan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('kegiatanSubTab', 'agenda');
-        $this->assertEquals('Kegiatan > Kegiatan Akbar', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kegiatan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('kegiatanSubTab', 'odoj');
-        $this->assertEquals('Kegiatan > One Day One Juz', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kegiatan', $component->instance()->getBreadcrumbTitle());
 
         // 3. Petugas Shalat
         $component->call('switchTab', 'petugas');
@@ -209,35 +209,35 @@ class PerformanceAndNavigationTest extends TestCase
         // 4. Kas & Keuangan (Utama, Program with sub-views, Kategori)
         $component->call('switchTab', 'finance');
         $component->set('financeSubTab', 'utama');
-        $this->assertEquals('Kas & Keuangan > Kas Utama', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('financeSubTab', 'program');
         $component->set('programSubView', 'ringkasan');
-        $this->assertEquals('Kas & Keuangan > Kas Program > Ringkasan', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('programSubView', 'peserta');
-        $this->assertEquals('Kas & Keuangan > Kas Program > Peserta', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('programSubView', 'potongan');
-        $this->assertEquals('Kas & Keuangan > Kas Program > Potongan', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('programSubView', 'penerimaan');
-        $this->assertEquals('Kas & Keuangan > Kas Program > Setoran Kantor', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         $component->set('financeSubTab', 'kategori');
-        $this->assertEquals('Kas & Keuangan > Kategori', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Kas & Keuangan', $component->instance()->getBreadcrumbTitle());
 
         // 5. Program Sosial
         $component->call('switchTab', 'programs');
         $component->set('socialSubTab', 'katalog');
-        $this->assertEquals('Program Sosial > Katalog Program', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Program Sosial', $component->instance()->getBreadcrumbTitle());
 
         $component->set('socialSubTab', 'peserta');
-        $this->assertEquals('Program Sosial > Rekapitulasi Peserta', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Program Sosial', $component->instance()->getBreadcrumbTitle());
 
         // 6. Pengguna & Pengaturan
         $component->call('switchTab', 'users');
-        $this->assertEquals('Pengguna & Role', $component->instance()->getBreadcrumbTitle());
+        $this->assertEquals('Pengguna', $component->instance()->getBreadcrumbTitle());
 
         $component->call('switchTab', 'settings');
         $this->assertEquals('Pengaturan', $component->instance()->getBreadcrumbTitle());

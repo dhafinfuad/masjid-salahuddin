@@ -78,47 +78,31 @@
                  return 'Dashboard';
              }
              if (this.activeTab === 'kegiatan' || this.activeTab === 'kajian' || this.activeTab === 'agenda') {
-                 const sub = this.kegiatanSubTab || 'pekanan';
-                if (sub === 'pekanan') return 'Kegiatan > Kajian';
-                if (sub === 'jumat') return 'Kegiatan > Kajian Jumat & Khutbah';
-                 if (sub === 'agenda') return 'Kegiatan > Kegiatan Akbar';
-                 if (sub === 'odoj') return 'Kegiatan > One Day One Juz';
                  return 'Kegiatan';
              }
              if (this.activeTab === 'petugas') {
                  return 'Petugas Shalat';
              }
              if (this.activeTab === 'finance') {
-                 const sub = this.financeSubTab || 'utama';
-                 if (sub === 'utama') return 'Kas & Keuangan > Kas Utama';
-                 if (sub === 'kategori') return 'Kas & Keuangan > Kategori';
                  return 'Kas & Keuangan';
              }
              if (this.activeTab === 'programs') {
-                 const sub = this.socialSubTab || 'katalog';
-                 if (sub === 'katalog') return 'Program Sosial > Katalog Program';
-                 if (sub === 'peserta') return 'Program Sosial > Rekapitulasi Peserta';
-                 if (sub === 'pernyataan') return 'Program Sosial > Surat Pernyataan';
-                 if (sub === 'setoran') return 'Program Sosial > Setoran Kantor';
                  return 'Program Sosial';
              }
              if (this.activeTab === 'users') {
-                 const sub = this.userSubTab || 'pengguna';
-                 if (sub === 'pegawai') return 'Pengguna > Pegawai';
-                 if (sub === 'kepengurusan') return 'Pengguna > Kepengurusan';
-                 return 'Pengguna > Anggota';
+                 return 'Pengguna';
              }
              if (this.activeTab === 'settings') {
-                 return (this.settingsSubTab === 'poster') ? 'Pengaturan > Template & Studio Poster Kajian' : 'Pengaturan > Pengaturan Masjid & Layar TV';
+                 return 'Pengaturan';
              }
              if (this.activeTab === 'statistics' || this.activeTab === 'statistik') {
-                 return 'Sistem > Statistik Pengunjung';
+                 return 'Statistik Pengunjung';
              }
              if (this.activeTab === 'galeri' || this.activeTab === 'gallery') {
                  return 'Galeri Kegiatan';
              }
              if (this.activeTab === 'saran') {
-                 return 'Manajemen > Kotak Saran & Kritik';
+                 return 'Saran & Kritik';
              }
              return this.activeTab ? (this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1)) : 'Dashboard';
          },
@@ -1174,7 +1158,7 @@
 
                     <div class="flex items-center text-xs text-gov-textMuted font-medium">
                         <span class="font-semibold text-gov-textMain flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500 ring-4 ring-amber-500/15"></span>
                             <span x-text="getBreadcrumb()">{{ $this->getBreadcrumbTitle() }}</span>
                         </span>
                     </div>

@@ -663,77 +663,19 @@ class AdminDashboard extends Component
 
     public function getBreadcrumbTitle(): string
     {
-        if ($this->currentTab === 'dashboard') {
-            return 'Dashboard';
-        }
-
-        if (in_array($this->currentTab, ['kegiatan', 'kajian', 'agenda'])) {
-            return match ($this->kegiatanSubTab) {
-                'pekanan' => 'Kegiatan > Kajian Pekanan',
-                'jumat' => 'Kegiatan > Kajian Jumat & Khutbah',
-                'agenda' => 'Kegiatan > Kegiatan Akbar',
-                'odoj' => 'Kegiatan > One Day One Juz',
-                default => 'Kegiatan',
-            };
-        }
-
-        if ($this->currentTab === 'petugas') {
-            return 'Petugas Shalat';
-        }
-
-        if ($this->currentTab === 'finance') {
-            if ($this->financeSubTab === 'utama') {
-                return 'Kas & Keuangan > Kas Utama';
-            }
-            if ($this->financeSubTab === 'program') {
-                return match ($this->programSubView) {
-                    'ringkasan' => 'Kas & Keuangan > Kas Program > Ringkasan',
-                    'peserta' => 'Kas & Keuangan > Kas Program > Peserta',
-                    'potongan' => 'Kas & Keuangan > Kas Program > Potongan',
-                    'penerimaan' => 'Kas & Keuangan > Kas Program > Setoran Kantor',
-                    default => 'Kas & Keuangan > Kas Program',
-                };
-            }
-            if ($this->financeSubTab === 'kategori') {
-                return 'Kas & Keuangan > Kategori';
-            }
-            return 'Kas & Keuangan';
-        }
-
-        if ($this->currentTab === 'programs') {
-            return match ($this->socialSubTab) {
-                'katalog' => 'Program Sosial > Katalog Program',
-                'peserta' => 'Program Sosial > Rekapitulasi Peserta',
-                'pernyataan' => 'Program Sosial > Surat Pernyataan',
-                'setoran' => 'Program Sosial > Setoran Kantor',
-                default => 'Program Sosial',
-            };
-        }
-
-        if ($this->currentTab === 'galeri' || $this->currentTab === 'gallery') {
-            return 'Galeri Kegiatan';
-        }
-
-        if ($this->currentTab === 'saran') {
-            return 'Saran & Kritik';
-        }
-
-        if ($this->currentTab === 'users') {
-            return 'Pengguna & Role';
-        }
-
-        if ($this->currentTab === 'settings') {
-            return match ($this->settingsSubTab) {
-                'poster' => 'Pengaturan > Template & Studio Poster Kajian',
-                default => 'Pengaturan',
-            };
-        }
-
-        if ($this->currentTab === 'statistics' || $this->currentTab === 'statistik') {
-            return 'Sistem > Statistik Pengunjung';
-        }
-
-        return ucfirst($this->currentTab);
+        return match ($this->currentTab) {
+            'dashboard' => 'Dashboard',
+            'kegiatan', 'kajian', 'agenda' => 'Kegiatan',
+            'petugas' => 'Petugas Shalat',
+            'finance' => 'Kas & Keuangan',
+            'programs' => 'Program Sosial',
+            'galeri', 'gallery' => 'Galeri Kegiatan',
+            'saran' => 'Saran & Kritik',
+            'users' => 'Pengguna',
+            'settings' => 'Pengaturan',
+            'statistics', 'statistik' => 'Statistik Pengunjung',
+            default => ucfirst($this->currentTab),
+        };
     }
 
     public function getPageTitle(): string
