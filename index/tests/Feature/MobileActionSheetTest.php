@@ -113,4 +113,32 @@ class MobileActionSheetTest extends TestCase
             $rendered
         );
     }
+
+    public function test_single_secondary_button_under_primary_uses_compact_border_slate_400_style(): void
+    {
+        $this->actingAs($this->admin);
+        $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
+
+        // 1. Subtab Surat Pernyataan (Unggah Berkas Scan)
+        $this->assertStringContainsString('openPrintPernyataanModal(\'upload\')', $rendered);
+        $this->assertMatchesRegularExpression(
+            '/openPrintPernyataanModal\(\'upload\'\)[^>]*class="[^"]*py-3 px-4[^"]*border-slate-400[^"]*"/s',
+            $rendered
+        );
+
+        // 2. Subtab Setoran Kantor (Export Setoran)
+        $this->assertStringContainsString('Export Setoran', $rendered);
+        $this->assertMatchesRegularExpression(
+            '/showExportPotonganModal = true[^>]*class="[^"]*py-3 px-4[^"]*border-slate-400[^"]*"/s',
+            $rendered
+        );
+
+        // 3. Subtab Pegawai (Impor Spreadsheet)
+        $this->assertStringContainsString('Impor Spreadsheet', $rendered);
+        $this->assertMatchesRegularExpression(
+            '/showImportEmployeeModal = true[^>]*class="[^"]*py-3 px-4[^"]*border-slate-400[^"]*"/s',
+            $rendered
+        );
+    }
 }
+

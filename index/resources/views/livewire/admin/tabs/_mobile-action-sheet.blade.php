@@ -410,10 +410,8 @@
                     </button>
 
                     <button type="button" @click="closeMobileActionSheet(); openPrintPernyataanModal('upload')"
-                        class="w-full flex items-center justify-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                        </div>
+                        class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                        <svg class="w-4 h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                         <span class="text-xs font-semibold text-slate-800">Unggah Berkas Scan</span>
                     </button>
                 </div>
@@ -429,10 +427,8 @@
                     @endif
 
                     <button type="button" @click="closeMobileActionSheet(); showExportPotonganModal = true"
-                        class="w-full flex items-center justify-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                        </div>
+                        class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                        <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                         <span class="text-xs font-semibold text-slate-800">Export Setoran</span>
                     </button>
                 </div>
@@ -473,10 +469,8 @@
 
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); showImportEmployeeModal = true; $wire.openImportEmployeeModal()"
-                            class="w-full flex items-center justify-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                            </div>
+                            class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                            <svg class="w-4 h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             <span class="text-xs font-semibold text-slate-800">Impor Spreadsheet</span>
                         </button>
                     @endif
