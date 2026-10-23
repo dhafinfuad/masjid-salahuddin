@@ -10,7 +10,7 @@
                         <div>
                             <div class="flex items-center gap-2 mb-0.5">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                                <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Kegiatan</span>
+                                <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Kegiatan</span>
                             </div>
                             <h3 class="font-bold text-base text-white">
                                 <span x-show="kegiatanSubTab === 'pekanan'">Kajian</span>

@@ -113,67 +113,47 @@
                                 style="-ms-overflow-style:none; scrollbar-width:none;"
                             >
                                 <!-- Card 0: Saldo Awal -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Saldo Awal</span>
-                                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 shadow-2xs">
-                                            <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
-                                        </div>
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Saldo Awal</p>
+                                        <h4 class="text-lg font-bold text-gov-textMain mt-1 tnum">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Awal bulan berjalan</p>
                                     </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</div>
-                                        <span class="text-xs text-slate-500 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                            <span>Awal bulan berjalan</span>
-                                        </span>
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-200">
+                                        <i data-lucide="history" class="w-5 h-5 text-slate-600"></i>
                                     </div>
                                 </div>
                                 <!-- Card 1: Kas Masuk -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Kas Masuk</span>
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-200 shadow-2xs">
-                                            <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
-                                        </div>
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Kas Masuk</p>
+                                        <h4 class="text-lg font-bold text-emerald-700 mt-1 tnum">Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Infaq, sedekah, &amp; tukin</p>
                                     </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</div>
-                                        <span class="text-xs text-emerald-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                                            <span>Infaq, sedekah, &amp; tukin</span>
-                                        </span>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-200">
+                                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-emerald-600"></i>
                                     </div>
                                 </div>
                                 <!-- Card 2: Kas Keluar -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Kas Keluar</span>
-                                        <div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center border border-rose-200 shadow-2xs">
-                                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
-                                        </div>
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Kas Keluar</p>
+                                        <h4 class="text-lg font-bold text-rose-700 mt-1 tnum">Rp {{ number_format($totalKasKeluar, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-rose-600 font-medium mt-0.5">Operasional &amp; belanja rutin</p>
                                     </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($totalKasKeluar, 0, ',', '.') }}</div>
-                                        <span class="text-xs text-rose-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-                                            <span>Operasional &amp; belanja rutin</span>
-                                        </span>
+                                    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-200">
+                                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-rose-600"></i>
                                     </div>
                                 </div>
                                 <!-- Card 3: Saldo Saat Ini -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Saldo Kas Saat Ini</span>
-                                        <div class="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center border border-sky-200 shadow-2xs">
-                                            <i data-lucide="wallet" class="w-4 h-4 text-sky-600"></i>
-                                        </div>
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Saldo Kas Saat Ini</p>
+                                        <h4 class="text-lg font-bold text-gov-navy mt-1 tnum">Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-sky-600 font-medium mt-0.5">Total kas bersih tersimpan</p>
                                     </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-navy tnum">Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}</div>
-                                        <span class="text-xs text-sky-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                                            <span>Total kas bersih tersimpan</span>
-                                        </span>
+                                    <div class="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center border border-sky-200">
+                                        <i data-lucide="wallet" class="w-5 h-5 text-sky-600"></i>
                                     </div>
                                 </div>
                             </div>
@@ -814,78 +794,58 @@
                                 style="-ms-overflow-style:none; scrollbar-width:none;"
                             >
                                 <!-- Card 0: Total Pos Anggaran -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Pos Anggaran</span>
-                                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 shadow-2xs">
-                                            <i data-lucide="tags" class="w-4 h-4 text-slate-600"></i>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Pos Anggaran</p>
+                                        <h4 class="text-lg font-bold text-gov-textMain mt-1 tnum">
                                             {{ $financeCategories->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
-                                        </div>
-                                        <span class="text-xs text-slate-500 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                                            <span>Pos anggaran terdaftar</span>
-                                        </span>
+                                        </h4>
+                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Pos anggaran terdaftar</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-200">
+                                        <i data-lucide="tags" class="w-5 h-5 text-slate-600"></i>
                                     </div>
                                 </div>
 
                                 <!-- Card 1: Pos Penerimaan -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pos Penerimaan</span>
-                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-200 shadow-2xs">
-                                            <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Pos Penerimaan</p>
+                                        <h4 class="text-lg font-bold text-emerald-700 mt-1 tnum">
                                             {{ $penerimaanCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
-                                        </div>
-                                        <span class="text-xs text-emerald-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
-                                            <span>Akumulasi: Rp {{ number_format($totalPenerimaanNominal, 0, ',', '.') }}</span>
-                                        </span>
+                                        </h4>
+                                        <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Akumulasi: Rp {{ number_format($totalPenerimaanNominal, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-200">
+                                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-emerald-600"></i>
                                     </div>
                                 </div>
 
                                 <!-- Card 2: Pengeluaran Rutin -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran Rutin</span>
-                                        <div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center border border-rose-200 shadow-2xs">
-                                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Pengeluaran Rutin</p>
+                                        <h4 class="text-lg font-bold text-rose-700 mt-1 tnum">
                                             {{ $pengeluaranRutinCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
-                                        </div>
-                                        <span class="text-xs text-rose-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-                                            <span>Akumulasi: Rp {{ number_format($totalPengeluaranRutinNominal, 0, ',', '.') }}</span>
-                                        </span>
+                                        </h4>
+                                        <p class="text-[11px] text-rose-600 font-medium mt-0.5">Akumulasi: Rp {{ number_format($totalPengeluaranRutinNominal, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-200">
+                                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-rose-600"></i>
                                     </div>
                                 </div>
 
                                 <!-- Card 3: Pengeluaran Non-Rutin -->
-                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran Non-Rutin</span>
-                                        <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center border border-amber-200 shadow-2xs">
-                                            <i data-lucide="wrench" class="w-4 h-4 text-amber-600"></i>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Pengeluaran Non-Rutin</p>
+                                        <h4 class="text-lg font-bold text-amber-700 mt-1 tnum">
                                             {{ $pengeluaranNonRutinCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
-                                        </div>
-                                        <span class="text-xs text-amber-600 font-medium flex items-center gap-1 mt-1">
-                                            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-                                            <span>Akumulasi: Rp {{ number_format($totalPengeluaranNonRutinNominal, 0, ',', '.') }}</span>
-                                        </span>
+                                        </h4>
+                                        <p class="text-[11px] text-amber-600 font-medium mt-0.5">Akumulasi: Rp {{ number_format($totalPengeluaranNonRutinNominal, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-200">
+                                        <i data-lucide="wrench" class="w-5 h-5 text-amber-600"></i>
                                     </div>
                                 </div>
                             </div>

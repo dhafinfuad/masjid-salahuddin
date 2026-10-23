@@ -10,7 +10,7 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                                 <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Jadwal Petugas</span>
                             </div>
-                            <h3 class="font-bold text-base text-white">Jadwal Penugasan Petugas Ibadah</h3>
+                            <h3 class="font-bold text-base text-white">Imam & Muadzin</h3>
                             <p class="text-xs text-slate-300 mt-0.5">Kelola jadwal Imam dan Muadzin rutin khusus Shalat Dzuhur & Ashar.</p>
                         </div>
 
