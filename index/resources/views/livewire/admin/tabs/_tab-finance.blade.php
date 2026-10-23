@@ -790,112 +790,236 @@
                     }">
 
                     <!-- 4 Category Metric Cards (Standardized White Cards) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Total Pos Anggaran -->
-                        <div
-                            class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-slate-300 transition flex flex-col justify-between">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total
-                                    Pos Anggaran</span>
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs">
-                                    <i data-lucide="tags" class="w-4 h-4 text-slate-600"></i>
+                    @php
+                        $penerimaanCats = $financeCategories->where('group', 'penerimaan');
+                        $totalPenerimaanNominal = $penerimaanCats->sum('finances_sum_amount');
+                        $pengeluaranRutinCats = $financeCategories->where('group', 'pengeluaran_rutin');
+                        $totalPengeluaranRutinNominal = $pengeluaranRutinCats->sum('finances_sum_amount');
+                        $pengeluaranNonRutinCats = $financeCategories->where('group', 'pengeluaran_nonrutin');
+                        $totalPengeluaranNonRutinNominal = $pengeluaranNonRutinCats->sum('finances_sum_amount');
+                    @endphp
+                    <!-- Mobile KPI Carousel Wrapper -->
+                    <div>
+                        <!-- Mobile: scroll-snap carousel -->
+                        <div class="sm:hidden"
+                            x-data="{
+                                catKpiIdx: 0,
+                                catKpiTotal: 4,
+                                scrollTo(idx) {
+                                    this.catKpiIdx = Math.max(0, Math.min(idx, this.catKpiTotal - 1));
+                                    const el = this.$refs.catKpiTrack;
+                                    const cardW = el.scrollWidth / this.catKpiTotal;
+                                    el.scrollTo({ left: cardW * this.catKpiIdx, behavior: 'smooth' });
+                                },
+                                onScroll() {
+                                    const el = this.$refs.catKpiTrack;
+                                    const cardW = el.scrollWidth / this.catKpiTotal;
+                                    this.catKpiIdx = Math.round(el.scrollLeft / cardW);
+                                }
+                            }"
+                        >
+                            <!-- Scroll track -->
+                            <div
+                                x-ref="catKpiTrack"
+                                @scroll.passive="onScroll()"
+                                class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 scrollbar-none"
+                                style="-ms-overflow-style:none; scrollbar-width:none;"
+                            >
+                                <!-- Card 0: Total Pos Anggaran -->
+                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Pos Anggaran</span>
+                                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-200 shadow-2xs">
+                                            <i data-lucide="tags" class="w-4 h-4 text-slate-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                            {{ $financeCategories->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
+                                        </div>
+                                        <span class="text-xs text-slate-500 font-medium flex items-center gap-1 mt-1">
+                                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                            <span>Pos anggaran terdaftar</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 1: Pos Penerimaan -->
+                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pos Penerimaan</span>
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center border border-emerald-200 shadow-2xs">
+                                            <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                            {{ $penerimaanCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
+                                        </div>
+                                        <span class="text-xs text-emerald-600 font-medium flex items-center gap-1 mt-1">
+                                            <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                                            <span>Akumulasi: Rp {{ number_format($totalPenerimaanNominal, 0, ',', '.') }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Pengeluaran Rutin -->
+                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran Rutin</span>
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center border border-rose-200 shadow-2xs">
+                                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                            {{ $pengeluaranRutinCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
+                                        </div>
+                                        <span class="text-xs text-rose-600 font-medium flex items-center gap-1 mt-1">
+                                            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                                            <span>Akumulasi: Rp {{ number_format($totalPengeluaranRutinNominal, 0, ',', '.') }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Pengeluaran Non-Rutin -->
+                                <div class="snap-start shrink-0 w-full bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran Non-Rutin</span>
+                                        <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center border border-amber-200 shadow-2xs">
+                                            <i data-lucide="wrench" class="w-4 h-4 text-amber-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">
+                                            {{ $pengeluaranNonRutinCats->count() }} <span class="text-sm font-semibold text-slate-500">Pos</span>
+                                        </div>
+                                        <span class="text-xs text-amber-600 font-medium flex items-center gap-1 mt-1">
+                                            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                                            <span>Akumulasi: Rp {{ number_format($totalPengeluaranNonRutinNominal, 0, ',', '.') }}</span>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <div class="text-2xl font-bold text-gov-textMain tnum">
-                                    {{ $financeCategories->count() }} <span
-                                        class="text-sm font-semibold text-slate-500">Pos</span>
+                            <!-- Bottom nav: prev · dots · next (inline) -->
+                            <div class="flex items-center justify-center gap-3 mt-2.5">
+                                <button type="button" @click="scrollTo(catKpiIdx - 1)"
+                                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
+                                    :class="catKpiIdx === 0 ? 'opacity-30 pointer-events-none' : ''">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <div class="flex items-center gap-1.5">
+                                    <template x-for="i in catKpiTotal" :key="i">
+                                        <button type="button" @click="scrollTo(i - 1)"
+                                            class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                                            :class="catKpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300 w-1.5'"
+                                        ></button>
+                                    </template>
                                 </div>
-                                <span class="text-xs text-slate-500 font-medium flex items-center space-x-1 mt-1">
-                                    <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-                                    <span>Pos anggaran terdaftar</span>
-                                </span>
+                                <button type="button" @click="scrollTo(catKpiIdx + 1)"
+                                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
+                                    :class="catKpiIdx === catKpiTotal - 1 ? 'opacity-30 pointer-events-none' : ''">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Pos Penerimaan -->
-                        @php
-                            $penerimaanCats = $financeCategories->where('group', 'penerimaan');
-                            $totalPenerimaanNominal = $penerimaanCats->sum('finances_sum_amount');
-                        @endphp
-                        <div
-                            class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pos
-                                    Penerimaan</span>
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-2xs">
-                                    <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
+                        <!-- Desktop: normal grid (sm+) -->
+                        <div class="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Total Pos Anggaran -->
+                            <div
+                                class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-slate-300 transition flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total
+                                        Pos Anggaran</span>
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs">
+                                        <i data-lucide="tags" class="w-4 h-4 text-slate-600"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="text-2xl font-bold text-gov-textMain tnum">
+                                        {{ $financeCategories->count() }} <span
+                                            class="text-sm font-semibold text-slate-500">Pos</span>
+                                    </div>
+                                    <span class="text-xs text-slate-500 font-medium flex items-center space-x-1 mt-1">
+                                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                                        <span>Pos anggaran terdaftar</span>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <div class="text-2xl font-bold text-gov-textMain tnum">
-                                    {{ $penerimaanCats->count() }} <span
-                                        class="text-sm font-semibold text-slate-500">Pos</span>
-                                </div>
-                                <span class="text-xs text-emerald-600 font-medium flex items-center space-x-1 mt-1">
-                                    <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
-                                    <span>Akumulasi: Rp {{ number_format($totalPenerimaanNominal, 0, ',', '.') }}</span>
-                                </span>
-                            </div>
-                        </div>
 
-                        <!-- Pos Pengeluaran Rutin -->
-                        @php
-                            $pengeluaranRutinCats = $financeCategories->where('group', 'pengeluaran_rutin');
-                            $totalPengeluaranRutinNominal = $pengeluaranRutinCats->sum('finances_sum_amount');
-                        @endphp
-                        <div
-                            class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-rose-300 transition flex flex-col justify-between">
-                            <div class="flex items-center justify-between">
-                                <span
-                                    class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran
-                                    Rutin</span>
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shadow-2xs">
-                                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
+                            <!-- Pos Penerimaan -->
+                            <div
+                                class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-emerald-300 transition flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pos
+                                        Penerimaan</span>
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-2xs">
+                                        <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="text-2xl font-bold text-gov-textMain tnum">
+                                        {{ $penerimaanCats->count() }} <span
+                                            class="text-sm font-semibold text-slate-500">Pos</span>
+                                    </div>
+                                    <span class="text-xs text-emerald-600 font-medium flex items-center space-x-1 mt-1">
+                                        <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                                        <span>Akumulasi: Rp {{ number_format($totalPenerimaanNominal, 0, ',', '.') }}</span>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <div class="text-2xl font-bold text-gov-textMain tnum">
-                                    {{ $pengeluaranRutinCats->count() }} <span
-                                        class="text-sm font-semibold text-slate-500">Pos</span>
-                                </div>
-                                <span class="text-xs text-rose-600 font-medium flex items-center space-x-1 mt-1">
-                                    <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-                                    <span>Akumulasi: Rp
-                                        {{ number_format($totalPengeluaranRutinNominal, 0, ',', '.') }}</span>
-                                </span>
-                            </div>
-                        </div>
 
-                        <!-- Pos Pengeluaran Non-Rutin -->
-                        @php
-                            $pengeluaranNonRutinCats = $financeCategories->where('group', 'pengeluaran_nonrutin');
-                            $totalPengeluaranNonRutinNominal = $pengeluaranNonRutinCats->sum('finances_sum_amount');
-                        @endphp
-                        <div
-                            class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-amber-300 transition flex flex-col justify-between">
-                            <div class="flex items-center justify-between">
-                                <span
-                                    class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran
-                                    Non-Rutin</span>
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 shadow-2xs">
-                                    <i data-lucide="wrench" class="w-4 h-4 text-amber-600"></i>
+                            <!-- Pos Pengeluaran Rutin -->
+                            <div
+                                class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-rose-300 transition flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span
+                                        class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran
+                                        Rutin</span>
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shadow-2xs">
+                                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="text-2xl font-bold text-gov-textMain tnum">
+                                        {{ $pengeluaranRutinCats->count() }} <span
+                                            class="text-sm font-semibold text-slate-500">Pos</span>
+                                    </div>
+                                    <span class="text-xs text-rose-600 font-medium flex items-center space-x-1 mt-1">
+                                        <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                                        <span>Akumulasi: Rp
+                                            {{ number_format($totalPengeluaranRutinNominal, 0, ',', '.') }}</span>
+                                    </span>
                                 </div>
                             </div>
-                            <div class="mt-2">
-                                <div class="text-2xl font-bold text-gov-textMain tnum">
-                                    {{ $pengeluaranNonRutinCats->count() }} <span
-                                        class="text-sm font-semibold text-slate-500">Pos</span>
+
+                            <!-- Pos Pengeluaran Non-Rutin -->
+                            <div
+                                class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-amber-300 transition flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span
+                                        class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Pengeluaran
+                                        Non-Rutin</span>
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200 shadow-2xs">
+                                        <i data-lucide="wrench" class="w-4 h-4 text-amber-600"></i>
+                                    </div>
                                 </div>
-                                <span class="text-xs text-amber-600 font-medium flex items-center space-x-1 mt-1">
-                                    <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-                                    <span>Akumulasi: Rp
-                                        {{ number_format($totalPengeluaranNonRutinNominal, 0, ',', '.') }}</span>
-                                </span>
+                                <div class="mt-2">
+                                    <div class="text-2xl font-bold text-gov-textMain tnum">
+                                        {{ $pengeluaranNonRutinCats->count() }} <span
+                                            class="text-sm font-semibold text-slate-500">Pos</span>
+                                    </div>
+                                    <span class="text-xs text-amber-600 font-medium flex items-center space-x-1 mt-1">
+                                        <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                                        <span>Akumulasi: Rp
+                                            {{ number_format($totalPengeluaranNonRutinNominal, 0, ',', '.') }}</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

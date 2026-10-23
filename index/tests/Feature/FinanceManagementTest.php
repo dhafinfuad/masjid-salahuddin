@@ -756,7 +756,12 @@ class FinanceManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Kelola Kategori Kas')
             ->assertSee('Kotak Infaq Jumat')
-            ->assertSee('Honorarium Khotib');
+            ->assertSee('Honorarium Khotib')
+            ->assertSee('catKpiTrack', false)
+            ->assertSee('Total Pos Anggaran')
+            ->assertSee('Pos Penerimaan')
+            ->assertSee('Pengeluaran Rutin')
+            ->assertSee('Pengeluaran Non-Rutin');
     }
 }
 
