@@ -27,10 +27,10 @@
                             </div>
                         </div>
 
-                        <!-- Right Action Buttons (Disesuaikan per Sub-tab) -->
-                        <div class="shrink-0">
+                        <!-- Right Action Buttons (Desktop Only: di mobile menggunakan FAB & Menu Tindakan Cepat) -->
+                        <div class="shrink-0 hidden sm:flex sm:items-center">
                             <!-- Action Buttons for Kajian Pekanan & Jumat -->
-                            <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                            <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="flex items-center gap-2">
                                 @if(Auth::user()->canManage())
                                     <button type="button"
                                         @click="showImportKajianModal = true; $wire.openImportKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
@@ -64,7 +64,7 @@
 
                                 @if(Auth::user()->canManage())
                                     <button type="button" @click="openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
-                                        class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                        class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
                                         <i data-lucide="plus" class="w-4 h-4"></i>
                                         <span>Tambah Jadwal</span>
                                     </button>
@@ -72,62 +72,63 @@
                             </div>
 
                             <!-- Action Buttons for Kegiatan Akbar -->
-                            <div x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }" class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-                            @if(Auth::user()->canManage())
-                                <button type="button"
-                                    @click="showImportAgendaModal = true; if(window.createLucideIcons) window.createLucideIcons();"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                    <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
-                                    <span>Import</span>
-                                </button>
-                            @endif
+                            <div x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }" class="flex items-center gap-2">
+                                @if(Auth::user()->canManage())
+                                    <button type="button"
+                                        @click="showImportAgendaModal = true; if(window.createLucideIcons) window.createLucideIcons();"
+                                        class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                        <i data-lucide="file-up" class="w-4 h-4 text-white/70"></i>
+                                        <span>Import</span>
+                                    </button>
+                                @endif
 
-                            <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openExport: false }" @click.outside="openExport = false">
-                                <button type="button" @click="openExport = !openExport"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                    <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
-                                    <span>Export</span>
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-                                </button>
-                                <div x-show="openExport" x-cloak
-                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                    <a href="{{ route('admin.agenda.export-excel') }}"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
-                                        <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
-                                        <span>Download Format Excel (.csv)</span>
-                                    </a>
-                                    <a href="{{ route('admin.agenda.export-pdf') }}" target="_blank"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
-                                        <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                        <span>Cetak Format Rapi (PDF)</span>
-                                    </a>
+                                <div class="relative" x-data="{ openExport: false }" @click.outside="openExport = false">
+                                    <button type="button" @click="openExport = !openExport"
+                                        class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                        <i data-lucide="file-down" class="w-4 h-4 text-emerald-300"></i>
+                                        <span>Export</span>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-white/50"></i>
+                                    </button>
+                                    <div x-show="openExport" x-cloak
+                                        class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
+                                        <a href="{{ route('admin.agenda.export-excel') }}"
+                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                            <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
+                                            <span>Download Format Excel (.csv)</span>
+                                        </a>
+                                        <a href="{{ route('admin.agenda.export-pdf') }}" target="_blank"
+                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
+                                            <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
+                                            <span>Cetak Format Rapi (PDF)</span>
+                                        </a>
+                                    </div>
                                 </div>
+
+                                @if(Auth::user()->canManage())
+                                    <button type="button" @click="openCreateAgenda()"
+                                        class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                        <i data-lucide="plus" class="w-4 h-4"></i>
+                                        <span>Tambah Agenda</span>
+                                    </button>
+                                @endif
                             </div>
 
-                            @if(Auth::user()->canManage())
-                                <button type="button" @click="openCreateAgenda()"
-                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                    <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
-                                    <span>Tambah Agenda</span>
+                            <!-- Action Buttons for ODOJ -->
+                            <div x-show="kegiatanSubTab === 'odoj'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'odoj' }" class="flex items-center gap-2">
+                                @if(Auth::user()->canManage())
+                                    <button type="button" @click="openAssignOdoj(1, '')"
+                                        class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs shadow-2xs transition cursor-pointer">
+                                        <i data-lucide="users" class="w-4 h-4 text-amber-300"></i>
+                                        <span>Atur Juz</span>
+                                    </button>
+                                @endif
+                                <button type="button" @click="copyOdojToClipboard({{ Js::from($odojWhatsappText) }})"
+                                    class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
+                                    title="Salin rekap ODOJ ke clipboard untuk WhatsApp">
+                                    <i data-lucide="clipboard-copy" class="w-4 h-4 shrink-0 inline-block"></i>
+                                    <span class="whitespace-nowrap">Salin Rekap WA</span>
                                 </button>
-                            @endif
-                        </div>
-
-                        <!-- Action Buttons for ODOJ -->
-                        <div x-show="kegiatanSubTab === 'odoj'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'odoj' }" class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                            @if(Auth::user()->canManage())
-                                <button type="button" @click="openAssignOdoj(1, '')"
-                                    class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                    <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
-                                    <span>Atur Juz</span>
-                                </button>
-                            @endif
-                            <button type="button" @click="copyOdojToClipboard({{ Js::from($odojWhatsappText) }})"
-                                class="{{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }} w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
-                                title="Salin rekap ODOJ ke clipboard untuk WhatsApp">
-                                <i data-lucide="clipboard-copy" class="w-4 h-4 text-amber-400 shrink-0 inline-block"></i>
-                                <span class="whitespace-nowrap">Salin Rekap WA</span>
-                            </button>
+                            </div>
                         </div>
                     </div>
                 </div>

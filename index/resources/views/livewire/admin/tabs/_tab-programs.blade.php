@@ -20,7 +20,7 @@
                         </div>
 
                         @if(Auth::user()->canManage())
-                            <div class="shrink-0 grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                            <div class="shrink-0 hidden sm:flex sm:items-center gap-2">
                                 <button type="button" @click="showImportPotonganModal = true; $wire.call('openImportPotonganModal'); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
                                     class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                     <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-white/70"></i>
@@ -37,7 +37,7 @@
                                     <span>Peserta</span>
                                 </button>
                                 <button type="button" @click="openCreateSocialProgram()"
-                                    class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>Program</span>
                                 </button>

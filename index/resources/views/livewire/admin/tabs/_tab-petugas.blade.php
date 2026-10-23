@@ -19,8 +19,8 @@
                             </div>
                         </div>
 
-                        <!-- Right Buttons: Import, Export, Tambah Petugas -->
-                        <div class="shrink-0 grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                        <!-- Right Buttons: Import, Export, Tambah Petugas (Desktop Only) -->
+                        <div class="shrink-0 hidden sm:flex sm:items-center gap-2">
                             @if(Auth::user()->canManage())
                                 <!-- Tombol Import Jadwal -->
                                 <button type="button" @click="showImportDutyModal = true; $wire.openImportDuty()"
@@ -58,7 +58,7 @@
                             @if(Auth::user()->canManage())
                                 <!-- Tombol Tambah Petugas -->
                                 <button type="button" @click="openCreatePrayerDuty()"
-                                    class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>Tambah Petugas</span>
                                 </button>

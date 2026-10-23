@@ -2,15 +2,21 @@
 <!-- TAB: PENGATURAN & TEMPLATE STUDIO -->
 <!-- ======================================================== -->
 <div class="space-y-4">
-    <!-- Top Header Bar -->
-    <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-        <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                <i data-lucide="settings-2" class="w-4 h-4 text-gov-navy"></i>
-            </div>
-            <div>
-                <h3 class="font-bold text-base text-gov-textMain">Pengaturan Masjid &amp; Media Visual</h3>
-                <p class="text-xs text-gov-textMuted mt-0.5">Konfigurasi profil masjid dan template poster kajian.</p>
+    <!-- Header Card Banner (Navy Banner) -->
+    <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i data-lucide="settings-2" class="w-4 h-4 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Konfigurasi Sistem</span>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Pengaturan Masjid & Media Visual</h3>
+                    <p class="text-xs text-slate-300 mt-0.5">Konfigurasi profil masjid dan template poster kajian.</p>
+                </div>
             </div>
         </div>
     </div>

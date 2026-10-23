@@ -20,7 +20,7 @@
                         <p class="text-xs text-slate-300 mt-0.5">Kelola akun pengurus DKM (Master, Ketua, Sekretaris, Bendahara) dan Jamaah.</p>
                     </div>
                 </div>
-                <div class="shrink-0">
+                <div class="shrink-0 hidden sm:block">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="openCreateUser()"
                             class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 @if(Auth::user()->canManage())
-                    <div class="shrink-0 flex items-center gap-2">
+                    <div class="shrink-0 hidden sm:flex sm:items-center gap-2">
                         <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
                             class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -105,7 +105,7 @@
                     </div>
                 </div>
 
-                <div class="shrink-0 flex flex-wrap items-center gap-2">
+                <div class="shrink-0 hidden sm:flex sm:items-center gap-2">
                     @if(Auth::user()->canManage())
                         <button type="button" 
                             wire:click="openTemplateKepModal"
