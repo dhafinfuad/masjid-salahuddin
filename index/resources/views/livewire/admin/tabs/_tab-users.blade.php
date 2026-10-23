@@ -5,124 +5,133 @@
     <!-- ======================================================== -->
     <!-- Top Header Card: Pengguna -->
     <div x-show="userSubTab === 'pengguna'">
-        <!-- Top Header & Filter Card -->
-        <div
-            class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-2.5">
-                <div
-                    class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                    <i data-lucide="user-cog" class="w-4 h-4 text-gov-navy"></i>
+        <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <i data-lucide="user-cog" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Akun</span>
+                        </div>
+                        <h3 class="font-bold text-base text-white">Manajemen Pengguna & Hak Akses</h3>
+                        <p class="text-xs text-slate-300 mt-0.5">Kelola akun pengurus DKM (Master, Ketua, Sekretaris, Bendahara) dan Jamaah.</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-bold text-base text-gov-textMain">Manajemen Pengguna & Hak Akses</h3>
-                    <p class="text-xs text-gov-textMuted">Kelola akun pengurus DKM (Master, Ketua, Sekretaris,
-                        Bendahara) dan Jamaah.</p>
+                <div class="shrink-0">
+                    @if(Auth::user()->canManage())
+                        <button type="button" @click="openCreateUser()"
+                            class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>Tambah Pengguna</span>
+                        </button>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-white/10 text-white/70 text-xs font-medium border border-white/20">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            <span>Mode Lihat Saja</span>
+                        </span>
+                    @endif
                 </div>
             </div>
-            @if(Auth::user()->canManage())
-                <div class="flex items-center gap-2">
-                    <button type="button" @click="openCreateUser()"
-                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer">
-                        <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
-                        <span>Tambah Pengguna</span>
-                    </button>
-                </div>
-            @else
-                <div>
-                    <span
-                        class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-slate-100 text-slate-500 text-xs font-medium border border-gov-border">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-400"></i>
-                        <span>Mode Lihat Saja</span>
-                    </span>
-                </div>
-            @endif
         </div>
     </div>
 
     <!-- Top Header Card: Pegawai -->
     <div x-show="userSubTab === 'pegawai'" x-cloak>
-        <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
-                <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                    <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="16" rx="3"/>
-                        <circle cx="9" cy="10" r="2"/>
-                        <line x1="15" y1="8" x2="17" y2="8"/>
-                        <line x1="15" y1="12" x2="17" y2="12"/>
-                        <line x1="7" y1="16" x2="17" y2="16"/>
-                    </svg>
+        <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="16" rx="3"/>
+                            <circle cx="9" cy="10" r="2"/>
+                            <line x1="15" y1="8" x2="17" y2="8"/>
+                            <line x1="15" y1="12" x2="17" y2="12"/>
+                            <line x1="7" y1="16" x2="17" y2="16"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Database Pegawai</span>
+                        </div>
+                        <h3 class="font-bold text-base text-white">Data Pegawai Muslim KPP Madya Malang</h3>
+                        <p class="text-xs text-slate-300 mt-0.5">Database induk seluruh pegawai muslim kantor untuk penugasan ibadah, rekap infaq, dan inventarisasi jamaah.</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="font-bold text-base text-gov-textMain">Data Pegawai Muslim KPP Madya Malang</h3>
-                    <p class="text-xs text-gov-textMuted">Database induk seluruh pegawai muslim kantor untuk penugasan ibadah, rekap infaq, dan inventarisasi jamaah.</p>
-                </div>
+                @if(Auth::user()->canManage())
+                    <div class="shrink-0 flex items-center gap-2">
+                        <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
+                            class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                            <span>Import</span>
+                        </button>
+                        <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
+                            class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span>Tambah Pegawai</span>
+                        </button>
+                    </div>
+                @endif
             </div>
-            @if(Auth::user()->canManage())
-                <div class="flex items-center gap-2.5 shrink-0 flex-nowrap">
-                    <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
-                        class="h-9 px-3.5 rounded-lg bg-white hover:bg-slate-50 text-gov-navy font-bold text-xs border border-gov-border shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
-                        <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="12" y1="18" x2="12" y2="12"/>
-                            <line x1="9" y1="15" x2="15" y2="15"/>
-                        </svg>
-                        <span>Impor Berkas Pegawai</span>
-                    </button>
-                    <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
-                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition inline-flex items-center space-x-2 cursor-pointer shrink-0 whitespace-nowrap">
-                        <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        <span>Tambah Pegawai</span>
-                    </button>
-                </div>
-            @endif
         </div>
     </div>
 
     <!-- Top Header Card: Kepengurusan -->
     <div x-show="userSubTab === 'kepengurusan'" x-cloak>
-        <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-gov-navy flex items-center justify-center border border-blue-200 shrink-0">
-                    <i data-lucide="shield-check" class="w-5 h-5 text-gov-navy"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h3 class="font-bold text-base text-gov-textMain">Manajemen Kepengurusan Takmir & Dokumen SK</h3>
+        <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
                     </div>
-                    <p class="text-xs text-slate-500 mt-0.5">Kelola berkas PDF resmi SK Kepala KPP Madya Malang, susunan personalia takmir, dan uraian Tupoksi.</p>
+                    <div>
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Kepengurusan</span>
+                        </div>
+                        <h3 class="font-bold text-base text-white">Manajemen Kepengurusan Takmir & Dokumen SK</h3>
+                        <p class="text-xs text-slate-300 mt-0.5">Kelola berkas PDF resmi SK Kepala KPP Madya Malang, susunan personalia takmir, dan uraian Tupoksi.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex flex-wrap items-center gap-2">
-                @if(Auth::user()->canManage())
-                    <button type="button" 
-                        wire:click="openTemplateKepModal"
-                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
-                        title="Buka Template & Perbarui Surat KEP Kepala KPP Madya Malang">
-                        <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span>Template Surat KEP Takmir</span>
-                    </button>
-                @endif
+                <div class="shrink-0 flex flex-wrap items-center gap-2">
+                    @if(Auth::user()->canManage())
+                        <button type="button" 
+                            wire:click="openTemplateKepModal"
+                            class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Buka Template & Perbarui Surat KEP Kepala KPP Madya Malang">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span>Template SK</span>
+                        </button>
+                    @endif
 
-                <a href="{{ url('/profil') }}" target="_blank"
-                    class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500"></i>
-                    <span>Lihat di Portal</span>
-                </a>
+                    <a href="{{ url('/profil') }}" target="_blank"
+                        class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-white/70"></i>
+                        <span>Lihat Portal</span>
+                    </a>
 
-                @if(Auth::user()->canManage())
-                    <button type="button" 
-                        wire:click="resetTakmirToDefault"
-                        wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
-                        class="h-9 px-3.5 rounded-lg border border-rose-200 bg-rose-50/50 hover:bg-rose-50 text-rose-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-500"></i>
-                        <span>Reset ke Default SK</span>
-                    </button>
-                @endif
+                    @if(Auth::user()->canManage())
+                        <button type="button" 
+                            wire:click="resetTakmirToDefault"
+                            wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
+                            class="h-9 px-3.5 rounded-lg border border-rose-300/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-200 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-300"></i>
+                            <span>Reset Default</span>
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -133,27 +142,9 @@
     <div x-show="userSubTab === 'pengguna'" class="space-y-6">
 
         <!-- Role Filter Card & Summary -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
-            <!-- Role Dropdown -->
-            <div class="shrink-0 w-full sm:w-44">
-                <x-custom-select 
-                    wire:model.live="userFilterRole"
-                    :options="[
-                        'all' => 'Semua Role',
-                        'Master' => 'Master Admin',
-                        'Ketua' => 'Ketua DKM',
-                        'Sekretaris' => 'Sekretaris',
-                        'Bendahara' => 'Bendahara',
-                        'Jamaah' => 'Jamaah (Viewer)',
-                    ]"
-                    placeholder="Semua Role"
-                    icon="shield"
-                    class="w-full"
-                />
-            </div>
-
+        <div class="space-y-2">
             <!-- Search Input -->
-            <div class="relative flex-1" x-data="{
+            <div class="relative" x-data="{
                 clearSearch() {
                     $wire.clearUserSearch();
                 }
@@ -162,8 +153,8 @@
                     class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
                 <input wire:model.live.debounce.300ms="search" type="text"
                     placeholder="Cari nama, email..."
-                    class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
+                    class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian">
                     <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -171,8 +162,29 @@
                 </button>
             </div>
 
-            <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
-                Total: <span class="font-bold text-gov-navy">{{ method_exists($usersList, 'total') ? $usersList->total() : $usersList->count() }}</span> pengguna
+            <!-- Filters Row -->
+            <div class="flex flex-row items-center gap-2">
+                <!-- Role Dropdown -->
+                <div class="flex-1">
+                    <x-custom-select 
+                        wire:model.live="userFilterRole"
+                        :options="[
+                            'all' => 'Semua Role',
+                            'Master' => 'Master Admin',
+                            'Ketua' => 'Ketua DKM',
+                            'Sekretaris' => 'Sekretaris',
+                            'Bendahara' => 'Bendahara',
+                            'Jamaah' => 'Jamaah (Viewer)',
+                        ]"
+                        placeholder="Semua Role"
+                        icon="shield"
+                        class="w-full"
+                    />
+                </div>
+
+                <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
+                    <span class="font-bold text-gov-navy">{{ method_exists($usersList, 'total') ? $usersList->total() : $usersList->count() }}</span> pengguna
+                </div>
             </div>
         </div>
 

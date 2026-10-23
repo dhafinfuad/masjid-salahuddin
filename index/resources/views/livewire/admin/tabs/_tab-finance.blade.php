@@ -3,62 +3,66 @@
             <!-- ======================================================== -->
             <div class="space-y-6">
 
-                <!-- Executive Page Header (Consistent with Kegiatan, Kajian, Petugas, Agenda) -->
-                <div
-                    class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="flex items-center space-x-2.5">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                            <i data-lucide="wallet" class="w-4 h-4 text-gov-navy"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-base text-gov-textMain">Kas & Keuangan Masjid</h3>
-                            <p class="text-xs text-gov-textMuted">Pembukuan kas, anggaran, sosial, & laporan.</p>
-                        </div>
-                    </div>
-
-                    <!-- Right Action Buttons -->
-                    <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                        @if(Auth::user()->canManage())
-                            <button type="button" @click="showFinanceImportModal = true"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
-                                <span>Import</span>
-                            </button>
-                        @endif
-
-                        <!-- Dropdown Export Kas -->
-                        <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openFinanceExport: false }"
-                            @click.outside="openFinanceExport = false">
-                            <button type="button" @click="openFinanceExport = !openFinanceExport"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
-                                <span>Export</span>
-                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-                            </button>
-                            <div x-show="openFinanceExport" x-cloak
-                                class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                <a href="{{ route('admin.finance.export-excel') }}"
-                                    class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
-                                    <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
-                                    <span>Download Excel (.csv)</span>
-                                </a>
-                                <button type="button"
-                                    @click="openFinanceExport = false; showPrintFinanceModal = true; $wire.openPrintFinanceModal()"
-                                    class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
-                                    <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                    <span>Cetak Laporan (PDF)</span>
-                                </button>
+                <!-- Executive Page Header (Navy Banner) -->
+                <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="wallet" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Keuangan</span>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Kas & Keuangan Masjid</h3>
+                                <p class="text-xs text-slate-300 mt-0.5">Pembukuan kas, anggaran, sosial, & laporan.</p>
                             </div>
                         </div>
 
-                        @if(Auth::user()->canManage())
-                            <button type="button" @click="openCreateFinance()"
-                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
-                                <span>Catat Transaksi</span>
-                            </button>
-                        @endif
+                        <!-- Right Action Buttons -->
+                        <div class="shrink-0 grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                            @if(Auth::user()->canManage())
+                                <button type="button" @click="showFinanceImportModal = true"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-up" class="w-4 h-4 text-white/70"></i>
+                                    <span>Import</span>
+                                </button>
+                            @endif
+
+                            <!-- Dropdown Export Kas -->
+                            <div class="relative" x-data="{ openFinanceExport: false }"
+                                @click.outside="openFinanceExport = false">
+                                <button type="button" @click="openFinanceExport = !openFinanceExport"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-down" class="w-4 h-4 text-emerald-300"></i>
+                                    <span>Export</span>
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-white/50"></i>
+                                </button>
+                                <div x-show="openFinanceExport" x-cloak
+                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
+                                    <a href="{{ route('admin.finance.export-excel') }}"
+                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                        <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
+                                        <span>Download Excel (.csv)</span>
+                                    </a>
+                                    <button type="button"
+                                        @click="openFinanceExport = false; showPrintFinanceModal = true; $wire.openPrintFinanceModal()"
+                                        class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
+                                        <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
+                                        <span>Cetak Laporan (PDF)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            @if(Auth::user()->canManage())
+                                <button type="button" @click="openCreateFinance()"
+                                    class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Catat Transaksi</span>
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -287,9 +291,30 @@
                     </div>
 
                     <!-- Filter & Search Toolbar Card -->
-                    <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-4">
-                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                            <div class="grid grid-cols-3 gap-1.5 w-full sm:flex sm:items-center sm:w-auto">
+                    <div class="space-y-2">
+                        <!-- Search Input (Selalu di atas) -->
+                        <div class="relative" x-data="{
+                            clearSearch() {
+                                financeSearch = '';
+                            }
+                        }">
+                            <i data-lucide="search"
+                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input x-model="financeSearch" type="text"
+                                placeholder="Cari transaksi, kategori, keterangan..."
+                                class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs font-medium focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy shadow-2xs transition">
+                            <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Filter Row: Pills + Month + Year -->
+                        <div class="flex flex-row items-center gap-2">
+                            <!-- Type Pills -->
+                            <div class="flex items-center gap-1">
                                 <!-- Type Pills (Pure Client-Side 0ms Instant - Matches Pos Anggaran Kategori Pattern) -->
                                 <button type="button" 
                                     @click="activeFinanceType = 'all'"
@@ -311,9 +336,7 @@
                                 </button>
                             </div>
 
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full lg:w-auto text-xs">
-                                <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                                    <!-- Month Checklist Multi-Select Dropdown -->
+                            <!-- Month Checklist Multi-Select Dropdown -->
                                     <div class="relative w-full sm:w-40" x-data="{
                                         open: false
                                     }">
@@ -417,42 +440,21 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                            </div>
 
-                                    <!-- Year Filter -->
-                                    <div class="w-full sm:w-40">
-                                        <x-custom-select 
-                                            wire:model.live="financeYearFilter"
-                                            :options="[
-                                                'all' => 'Semua Tahun',
-                                                '2026' => 'Tahun 2026',
-                                                '2025' => 'Tahun 2025',
-                                                '2024' => 'Tahun 2024',
-                                            ]"
-                                            placeholder="Semua Tahun"
-                                            icon="calendar"
-                                        />
-                                    </div>
-                                </div>
-
-                                <!-- Search Input (Pure Client-Side 0ms Instant - Matches Kategori Pattern) -->
-                                <div class="relative w-full sm:w-64" x-data="{
-                                    clearSearch() {
-                                        financeSearch = '';
-                                    }
-                                }">
-                                    <i data-lucide="search"
-                                        class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                    <input x-model="financeSearch" type="text"
-                                        placeholder="Cari transaksi..."
-                                        class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs font-medium focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy">
-                                    <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                                        <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                </div>
+                            <!-- Year Filter -->
+                            <div class="shrink-0">
+                                <x-custom-select 
+                                    wire:model.live="financeYearFilter"
+                                    :options="[
+                                        'all' => 'Semua Tahun',
+                                        '2026' => 'Tahun 2026',
+                                        '2025' => 'Tahun 2025',
+                                        '2024' => 'Tahun 2024',
+                                    ]"
+                                    placeholder="Semua Tahun"
+                                    icon="calendar"
+                                />
                             </div>
                         </div>
                     </div>
@@ -892,29 +894,28 @@
                     </div>
 
                     <!-- Search & Filter Bar (Standalone Card) -->
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1">
-                            <!-- Search Input -->
-                            <div class="relative flex-1 max-w-sm" x-data="{
-                                clearSearch() {
-                                    catSearch = '';
-                                }
-                            }">
-                                <i data-lucide="search"
-                                    class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                <input x-model="catSearch" type="text" placeholder="Cari pos anggaran..."
-                                    class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                </button>
-                            </div>
+                    <div class="space-y-2">
+                        <!-- Search Input -->
+                        <div class="relative" x-data="{
+                            clearSearch() {
+                                catSearch = '';
+                            }
+                        }">
+                            <i data-lucide="search"
+                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input x-model="catSearch" type="text" placeholder="Cari pos anggaran..."
+                                class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                            <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
 
+                        <!-- Filter Row -->\n                        <div class="flex flex-row items-center gap-2">
                             <!-- Kelompok / Status Filter Dropdown -->
-                            <div class="w-full sm:w-auto">
+                            <div class="flex-1">
                                 <x-custom-select 
                                     x-model="catFilter"
                                     :options="[
@@ -925,22 +926,20 @@
                                     ]"
                                     placeholder="Semua Pos Anggaran"
                                     icon="filter"
-                                    class="w-full sm:w-52"
+                                    class="w-full"
                                 />
                             </div>
-                        </div>
 
-                        <!-- Add Button -->
-                        @if(Auth::user()->canManage())
-                            <div class="w-full sm:w-auto flex items-center">
+                            @if(Auth::user()->canManage())
                                 <button type="button" @click="openCreateFinanceCategory()"
-                                    class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer shrink-0">
+                                    class="shrink-0 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
                                     <i data-lucide="plus" class="w-3.5 h-3.5 text-amber-400"></i>
-                                    <span>Tambah Pos Anggaran</span>
+                                    <span>Tambah Pos</span>
                                 </button>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
+
 
                     <!-- Tabel Daftar Pos Anggaran Lengkap (Full-Width Card) -->
                     <!-- Desktop Table of Categories -->

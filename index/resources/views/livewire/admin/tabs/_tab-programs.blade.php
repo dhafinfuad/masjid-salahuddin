@@ -2,54 +2,49 @@
             <!-- TAB: PROGRAM SOSIAL & KEIKUTSERTAAN (MILESTONE 6) -->
             <!-- ======================================================== -->
             <div class="space-y-6">
-                <!-- Top Header Card / Action Buttons (Compact 2x2 on Mobile, Full Bar on Desktop) -->
-                @if(Auth::user()->canManage())
-                    <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                                <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
+                <!-- Header Card Banner (Navy) -->
+                <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="heart-handshake" class="w-4 h-4 text-white"></i>
                             </div>
                             <div>
-                                <h3 class="font-bold text-base text-gov-textMain">Program Sosial</h3>
-                                <p class="text-xs text-slate-500">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Program Sosial</span>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Program Sosial</h3>
+                                <p class="text-xs text-slate-300 mt-0.5">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                            <button type="button" @click="showImportPotonganModal = true; $wire.call('openImportPotonganModal'); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-600"></i>
-                                <span>Import</span>
-                            </button>
-                            <button type="button" @click="showExportPotonganModal = true; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="download" class="w-3.5 h-3.5 text-blue-600"></i>
-                                <span>Export</span>
-                            </button>
-                            <button type="button" @click="openCreateParticipant()"
-                                class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-400"></i>
-                                <span>Peserta</span>
-                            </button>
-                            <button type="button" @click="openCreateSocialProgram()"
-                                class="w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
-                                <span>Program</span>
-                            </button>
-                        </div>
+
+                        @if(Auth::user()->canManage())
+                            <div class="shrink-0 grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                                <button type="button" @click="showImportPotonganModal = true; $wire.call('openImportPotonganModal'); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-white/70"></i>
+                                    <span>Import</span>
+                                </button>
+                                <button type="button" @click="showExportPotonganModal = true; $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-300"></i>
+                                    <span>Export</span>
+                                </button>
+                                <button type="button" @click="openCreateParticipant()"
+                                    class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs shadow-2xs transition cursor-pointer">
+                                    <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-300"></i>
+                                    <span>Peserta</span>
+                                </button>
+                                <button type="button" @click="openCreateSocialProgram()"
+                                    class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Program</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
-                @else
-                    <div class="hidden sm:flex flex-row items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                                <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-base text-gov-textMain">Program Sosial</h3>
-                                <p class="text-xs text-slate-500">Realisasi dana, komitmen sukarela, dan basis data peserta</p>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                </div>
 
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->
                 <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-6">
@@ -207,26 +202,26 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 w-full md:flex md:items-center md:w-auto text-xs">
+                        <div class="flex items-center gap-2 w-full md:w-auto text-xs">
                             <span class="sr-only">BULAN:</span>
                             <x-custom-select
                                 wire:model.live="catalogMonth"
                                 :options="$catalogMonthOptions"
                                 placeholder="Pilih Bulan"
                                 icon="calendar"
-                                class="w-full md:w-36"
+                                class="flex-1 min-w-0 md:flex-none w-full md:w-36"
                             />
                             <span class="sr-only">TAHUN:</span>
                             <x-custom-select
                                 wire:model.live="catalogYear"
                                 :options="$catalogYearOptions"
                                 placeholder="Pilih Tahun"
-                                class="w-full md:w-28"
+                                class="flex-1 min-w-0 md:flex-none w-full md:w-28"
                             />
                             <button type="button" wire:click="resetCatalogFilters"
-                                class="col-span-2 md:col-span-1 h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
+                                title="Reset Filter" class="shrink-0 w-9 md:w-auto h-9 md:px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
-                                <span>Reset</span>
+                                <span class="hidden md:inline">Reset</span>
                             </button>
                         </div>
                     </div>
@@ -360,10 +355,30 @@
                 @if(Auth::user()->canManage())
                     <!-- SUB-VIEW 2: REKAPITULASI PESERTA -->
                     <div x-show="socialSubTab === 'peserta'" x-cloak class="space-y-6">
-                    <!-- Filter & Search Bar (Complies with Rule 1 for select font-medium) -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
-                        <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                            <div class="w-full sm:w-56">
+                    <!-- Filter & Search Bar -->
+                    <div class="space-y-2">
+                        <!-- Search Input (Selalu di atas) -->
+                        <div class="relative" x-data="{
+                            clearSearch() {
+                                $wire.clearSocialParticipantSearch();
+                            }
+                        }">
+                            <i data-lucide="search"
+                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input wire:model.live.debounce.300ms="socialParticipantSearch" type="text"
+                                placeholder="Cari nama peserta..."
+                                class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium shadow-2xs transition">
+                            <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Filter Row -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
                                 @php
                                     $programFilterOptions = array_merge(
                                         [['value' => 'all', 'label' => 'Semua Program Sosial']],
@@ -375,10 +390,11 @@
                                     :options="$programFilterOptions"
                                     placeholder="Semua Program Sosial"
                                     icon="heart-handshake"
+                                    class="w-full"
                                 />
                             </div>
 
-                            <div class="relative w-full sm:w-56" x-data="{
+                            <div class="relative" x-data="{
                                 open: false
                             }">
                                 <button type="button" @click="open = !open"
@@ -407,7 +423,7 @@
                                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-75 shrink-0" :class="open ? 'rotate-180' : ''"></i>
                                 </button>
 
-                                <!-- Dropdown Checklist Panel (Animasi Sangat Cepat) -->
+                                <!-- Dropdown Checklist Panel -->
                                 <div x-show="open" @click.outside="open = false" x-cloak
                                     x-transition:enter="transition ease-out duration-50"
                                     x-transition:enter-start="transform opacity-0 scale-98"
@@ -466,26 +482,6 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-                            <div class="relative w-full sm:w-64" x-data="{
-                                clearSearch() {
-                                    $wire.clearSocialParticipantSearch();
-                                }
-                            }">
-                                <i data-lucide="search"
-                                    class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                <input wire:model.live.debounce.300ms="socialParticipantSearch" type="text"
-                                    placeholder="Cari nama peserta..."
-                                    class="h-9 w-full pl-8 pr-9 rounded-lg border border-gov-border bg-white text-xs text-gov-textMain focus:outline-none focus:border-gov-navy font-medium">
-                                <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                </button>
                             </div>
                         </div>
                     </div>

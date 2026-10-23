@@ -2,72 +2,94 @@
             <!-- SUBTAB: PENUGASAN IMAM & ADZAN (MILESTONE 2) -->
             <!-- ======================================================== -->
             <div class="space-y-4">
-                <!-- Top Header & Action Bar -->
-                <div
-                    class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="flex items-center space-x-2.5">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                            <i data-lucide="user-check" class="w-4 h-4 text-gov-navy"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-base text-gov-textMain">Jadwal Penugasan Petugas Ibadah</h3>
-                            <p class="text-xs text-gov-textMuted">Kelola jadwal Imam dan Muadzin rutin khusus Shalat
-                                Dzuhur & Ashar.</p>
-                        </div>
-                    </div>
-
-                    <!-- Right Buttons: Import, Export, Tambah Petugas -->
-                    <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                        @if(Auth::user()->canManage())
-                            <!-- Tombol Import Jadwal -->
-                            <button type="button" @click="showImportDutyModal = true; $wire.openImportDuty()"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
-                                <span>Import</span>
-                            </button>
-                        @endif
-
-                        <!-- Dropdown Export Jadwal -->
-                        <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openDutyExport: false }"
-                            @click.outside="openDutyExport = false">
-                            <button type="button" @click="openDutyExport = !openDutyExport"
-                                class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
-                                <span>Export</span>
-                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-                            </button>
-                            <div x-show="openDutyExport" x-cloak
-                                class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
-                                <a :href="'{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
-                                    class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
-                                    <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
-                                    <span>Download Excel (.xlsx)</span>
-                                </a>
-                                <a :href="'{{ route('admin.petugas.export-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
-                                    target="_blank"
-                                    class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
-                                    <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                    <span>Cetak Jadwal (PDF)</span>
-                                </a>
+                <!-- Top Header & Action Bar (Navy Banner) -->
+                <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="user-check" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Jadwal Petugas</span>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Jadwal Penugasan Petugas Ibadah</h3>
+                                <p class="text-xs text-slate-300 mt-0.5">Kelola jadwal Imam dan Muadzin rutin khusus Shalat Dzuhur & Ashar.</p>
                             </div>
                         </div>
 
-                        @if(Auth::user()->canManage())
-                            <!-- Tombol Tambah Petugas -->
-                            <button type="button" @click="openCreatePrayerDuty()"
-                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
-                                <span>Tambah Petugas</span>
-                            </button>
-                        @endif
+                        <!-- Right Buttons: Import, Export, Tambah Petugas -->
+                        <div class="shrink-0 grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                            @if(Auth::user()->canManage())
+                                <!-- Tombol Import Jadwal -->
+                                <button type="button" @click="showImportDutyModal = true; $wire.openImportDuty()"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-up" class="w-4 h-4 text-white/70"></i>
+                                    <span>Import</span>
+                                </button>
+                            @endif
+
+                            <!-- Dropdown Export Jadwal -->
+                            <div class="relative" x-data="{ openDutyExport: false }"
+                                @click.outside="openDutyExport = false">
+                                <button type="button" @click="openDutyExport = !openDutyExport"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-down" class="w-4 h-4 text-emerald-300"></i>
+                                    <span>Export</span>
+                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-white/50"></i>
+                                </button>
+                                <div x-show="openDutyExport" x-cloak
+                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
+                                    <a :href="'{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
+                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                        <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
+                                        <span>Download Excel (.xlsx)</span>
+                                    </a>
+                                    <a :href="'{{ route('admin.petugas.export-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
+                                        target="_blank"
+                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
+                                        <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
+                                        <span>Cetak Jadwal (PDF)</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            @if(Auth::user()->canManage())
+                                <!-- Tombol Tambah Petugas -->
+                                <button type="button" @click="openCreatePrayerDuty()"
+                                    class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Tambah Petugas</span>
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
                 <!-- Filter Toolbar: Filter Pekan, Filter Bulan, Filter Tahun, & Search -->
-                <div
-                    class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full md:flex md:items-center md:w-auto text-xs">
+                <div class="space-y-2">
+                    <!-- Search Input -->
+                    <div class="relative" x-data="{
+                        clearSearch() {
+                            $wire.clearPetugasSearch();
+                        }
+                    }">
+                        <i data-lucide="search"
+                            class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                        <input wire:model.live.debounce.300ms="search" type="text"
+                            placeholder="Cari nama petugas / hari..."
+                            class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                        <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
+                            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Filters Row -->
+                    <div class="grid grid-cols-3 gap-2">
                         @php
                             $dutyWeekOptions = [
                                 ['value' => 'all', 'label' => 'Semua Pekan'],
@@ -99,7 +121,7 @@
                             wire:model.live="prayerDutyFilterWeek" 
                             :options="$dutyWeekOptions"
                             placeholder="Semua Pekan"
-                            class="w-full sm:w-36"
+                            class="w-full"
                         />
 
                         <span class="sr-only">BULAN:</span>
@@ -108,7 +130,7 @@
                             :options="$dutyMonthOptions"
                             placeholder="Pilih Bulan"
                             icon="calendar"
-                            class="w-full sm:w-36"
+                            class="w-full"
                         />
 
                         <span class="sr-only">TAHUN:</span>
@@ -116,27 +138,8 @@
                             wire:model.live="prayerDutyFilterYear" 
                             :options="$dutyYearOptions"
                             placeholder="Semua Tahun"
-                            class="col-span-2 sm:col-span-1 w-full sm:w-32"
+                            class="w-full"
                         />
-                    </div>
-
-                    <!-- Search Input -->
-                    <div class="relative w-full md:w-64" x-data="{
-                        clearSearch() {
-                            $wire.clearPetugasSearch();
-                        }
-                    }">
-                        <i data-lucide="search"
-                            class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input wire:model.live.debounce.300ms="search" type="text"
-                            placeholder="Cari nama petugas / hari..."
-                            class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                        <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
-                            <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
                     </div>
                 </div>
 
