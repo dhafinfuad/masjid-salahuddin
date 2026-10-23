@@ -140,19 +140,6 @@
                     </div>
                 </div>
 
-                <!-- Info Box Sinkronisasi Otomatis -->
-                <div
-                    class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200/80 text-emerald-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="info" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-                        <span><strong>Sinkronisasi Otomatis:</strong> Petugas Shalat Dzuhur Jumat otomatis diselaraskan dengan Khatib Jumat, dan Imam "Ustaz kajian" otomatis diselaraskan dengan Narasumber Kajian Pekanan terkait.</span>
-                    </div>
-                    <button type="button" @click="switchTabFast('kajian'); kajianSubTab = 'pekanan'"
-                        class="text-emerald-700 hover:text-emerald-900 font-bold underline whitespace-nowrap text-left sm:text-right cursor-pointer">
-                        Lihat Jadwal Kajian &rarr;
-                    </button>
-                </div>
-
                 <!-- Tabel Jadwal Petugas Ibadah (Smart Hybrid Architecture) -->
                 <div class="space-y-3">
                     <!-- Desktop Executive Table (Merged Cohesive Columns) -->
