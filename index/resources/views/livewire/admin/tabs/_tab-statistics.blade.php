@@ -1,7 +1,7 @@
 <!-- ======================================================== -->
 <!-- TAB: STATISTIK PENGUNJUNG (0ms Latency Impact, High-Performance) -->
 <!-- ======================================================== -->
-<div class="space-y-6">
+<div class="space-y-5">
 
     <!-- Top Banner with Pattern & Filters -->
     <div class="bg-gov-navy rounded-xl p-4 sm:p-6 text-white relative overflow-hidden shadow-xs bg-gov-pattern border border-gov-border/30">

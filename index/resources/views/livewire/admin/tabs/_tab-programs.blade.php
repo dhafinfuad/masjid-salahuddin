@@ -53,7 +53,7 @@
                 </div>
 
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->
-                <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-3">
+                <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-5">
                     <!-- Metric Cards (3 Cards) -->
                     @if(Auth::user()->canManage())
                     <!-- Mobile KPI Carousel Wrapper -->

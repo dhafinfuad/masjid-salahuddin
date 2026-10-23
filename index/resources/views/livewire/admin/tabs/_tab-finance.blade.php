@@ -72,7 +72,7 @@
                 <!-- SUB-TAB 1: ALIRAN KAS UTAMA -->
                 <!-- ==================================================== -->
                 <div x-show="financeSubTab === 'utama'" x-cloak :class="{ 'hidden': financeSubTab !== 'utama' }"
-                    class="space-y-3"
+                    class="space-y-5"
                     x-data="{
                         activeFinanceType: 'all',
                         financeSearch: '',
