@@ -94,6 +94,23 @@ class JamaahProgramCardTest extends TestCase
             ->assertDontSee('Rp 1.000.000');
     }
 
+    public function test_jamaah_name_matching_ignores_case_and_extra_spaces(): void
+    {
+        $period = 'Periode ' . now()->month . '/' . now()->year;
+        $prog = SocialProgram::create([
+            'name' => 'Infaq Rutin', 'slug' => 'infaq-rutin', 'category' => 'infaq',
+            'period_type' => 'bulanan', 'status' => 'AKTIF', 'icon' => 'wallet',
+        ]);
+        ProgramParticipant::create(['social_program_id' => $prog->id, 'name' => 'ADHIKA  HIMAWATI  SURYANINGSIH', 'program_name' => $prog->name, 'monthly_amount' => 50000, 'period' => $period]);
+        ProgramParticipant::create(['social_program_id' => $prog->id, 'name' => 'Pegawai Lain', 'program_name' => $prog->name, 'monthly_amount' => 800000, 'period' => $period]);
+
+        $this->actingAs($this->makeUser('Jamaah', 'Adhika Himawati Suryaningsih'));
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->assertSee('Rp 50.000')
+            ->assertDontSee('Rp 800.000');
+    }
+
     public function test_officer_still_sees_totals_and_realisasi_dana(): void
     {
         $this->seedPrograms();

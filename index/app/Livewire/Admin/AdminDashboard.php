@@ -6812,9 +6812,25 @@ class AdminDashboard extends Component
                 $currentPeriod = 'Periode ' . $catalogMonthInt . '/' . $catalogYearInt;
                 $catalogSearchTerm = trim($this->catalogSearch);
 
-                $allSocialPrograms = SocialProgram::withCount(['participants as active_participants_count' => fn($q) => $q->where('period', $currentPeriod)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])])
-                    ->withSum(['participants as monthly_commitment_total' => fn($q) => $q->where('period', $currentPeriod)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])], 'monthly_amount')
-                    ->withSum(['participants as total_collected' => fn($q) => $q->whereIn('period', $ytdPeriods)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])], 'monthly_amount')
+                // Nama peserta yang cocok dengan akun ini (abaikan gelar, spasi ganda, huruf besar/kecil)
+                $normalizeName = function (?string $n): string {
+                    $n = \App\Services\EmployeeStatusSyncService::stripAcademicTitles((string) $n);
+                    return strtolower(trim((string) preg_replace('/\s+/', ' ', $n)));
+                };
+                $wantedNames = array_filter(array_unique([
+                    $normalizeName($userName),
+                    $normalizeName(Auth::user()->employee?->name),
+                ]));
+                $ownNames = ProgramParticipant::query()->distinct()->pluck('name')
+                    ->filter(fn ($n) => in_array($normalizeName($n), $wantedNames, true))
+                    ->values()->all();
+                if (empty($ownNames)) {
+                    $ownNames = [$userName];
+                }
+
+                $allSocialPrograms = SocialProgram::withCount(['participants as active_participants_count' => fn($q) => $q->where('period', $currentPeriod)->whereIn('name', $ownNames)])
+                    ->withSum(['participants as monthly_commitment_total' => fn($q) => $q->where('period', $currentPeriod)->whereIn('name', $ownNames)], 'monthly_amount')
+                    ->withSum(['participants as total_collected' => fn($q) => $q->whereIn('period', $ytdPeriods)->whereIn('name', $ownNames)], 'monthly_amount')
                     ->withSum(['finances as total_disbursed' => fn($q) => $q->where('type', 'pengeluaran')], 'amount')
                     ->when($catalogSearchTerm !== '', fn ($q) => $q->where('name', 'like', '%' . $catalogSearchTerm . '%'))
                     ->get();
@@ -6826,7 +6842,7 @@ class AdminDashboard extends Component
                               ->orWhere('program_name', $prog->name)
                               ->orWhere('program_name', str_replace('Program ', '', $prog->name));
                         })
-                        ->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])
+                        ->whereIn('name', $ownNames)
                         ->whereIn('period', $ytdPeriods)
                         ->sum('monthly_amount');
 
@@ -6841,7 +6857,7 @@ class AdminDashboard extends Component
                               ->orWhere('program_name', $prog->name)
                               ->orWhere('program_name', str_replace('Program ', '', $prog->name));
                         })
-                        ->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])
+                        ->whereIn('name', $ownNames)
                         ->where('period', $currentPeriod)
                         ->sum('monthly_amount');
 
@@ -6857,7 +6873,7 @@ class AdminDashboard extends Component
 
                 $totalSocialProgramsCount = $allSocialPrograms->count();
                 $totalSocialCommitment = (float) ProgramParticipant::where('period', $currentPeriod)
-                    ->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])
+                    ->whereIn('name', $ownNames)
                     ->sum('monthly_amount');
                 $totalSocialCollectedAll = (float) $allSocialPrograms->sum(fn ($p) => (float) $p->total_collected);
                 $totalActiveSocialParticipants = 0;
