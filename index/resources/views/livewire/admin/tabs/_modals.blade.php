@@ -889,8 +889,8 @@
                     class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Hari & Tahun Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Hari & Tahun Grid (sembunyikan jika Jumat Dzuhur) -->
+                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari *</label>
                         <x-custom-select
@@ -919,7 +919,8 @@
                     </div>
                 </div>
 
-                <div>
+                <!-- Pola Pekan Penugasan (sembunyikan jika Jumat Dzuhur) -->
+                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')">
                     <label class="block font-semibold text-slate-700 mb-1">Pola Pekan Penugasan *</label>
                     <x-custom-select
                         x-model="dutyForm.week_pattern"
@@ -949,7 +950,8 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Petugas Imam & Muadzin (sembunyikan jika Jumat Dzuhur) -->
+                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Petugas Imam</label>
                         <input x-model="dutyForm.imam_name" type="text" placeholder="Contoh: Ust. Pujo Santoso"
@@ -967,28 +969,38 @@
                     </div>
                 </div>
 
-                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs">
+                <!-- Info box: Jumat Dzuhur dikelola di modal Kajian Jumat -->
+                <template x-if="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur'">
+                    <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs space-y-2">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                            <span><strong>Shalat Dzuhur hari Jumat = Shalat Jumat.</strong> Pengaturan petugas Imam (Khatib), Muadzin, dan MC Shalat Jumat dikelola terpusat di modal <em>Edit Jadwal Kajian</em> kategori Shalat Jumat &amp; Khutbah.</span>
+                        </div>
+                        <template x-if="dutyRowData.friday_kajian_id">
+                            <div class="flex justify-end">
+                                <button type="button"
+                                    @click="showPrayerDutyModal = false; $wire.openFridayKajianFromPetugas(dutyRowData.friday_kajian_id)"
+                                    class="font-bold text-amber-800 hover:text-amber-950 underline cursor-pointer text-xs">
+                                    Buka Modal Kajian Jumat &rarr;
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Info Sinkronisasi: tampil hanya jika BUKAN Jumat Dzuhur -->
+                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs">
                     <strong>Informasi Sinkronisasi:</strong> Pada hari Jumat siang (Shalat Dzuhur / Shalat Jumat), data
                     nama Imam dan Muadzin akan otomatis disinkronkan dengan nama Khatib dan Muadzin Shalat Jumat pada
                     modul Kajian Jumat.
                 </div>
 
-                <template x-if="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur' && dutyRowData.friday_kajian_id">
-                    <div class="p-2.5 bg-amber-100/60 rounded-lg border border-amber-300 text-amber-900 text-xs flex items-center justify-between">
-                        <span>Ingin memperbarui Khatib & Muadzin Jumat?</span>
-                        <button type="button"
-                            @click="showPrayerDutyModal = false; $wire.openFridayKajianFromPetugas(dutyRowData.friday_kajian_id)"
-                            class="font-bold text-amber-800 hover:text-amber-950 underline cursor-pointer">
-                            Edit di Modul Kegiatan &rarr;
-                        </button>
-                    </div>
-                </template>
-
                 <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showPrayerDutyModal = false"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
+                        :disabled="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur'"
+                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="savePrayerDuty"
                             x-text="isEditingPrayerDuty ? 'Simpan Perubahan' : 'Tambah Penugasan'"></span>
                         <span wire:loading.inline-flex wire:target="savePrayerDuty"
