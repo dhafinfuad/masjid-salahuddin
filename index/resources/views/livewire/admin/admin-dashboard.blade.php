@@ -1,7 +1,9 @@
 <div data-html2canvas-ignore="true"
     class="min-h-screen flex flex-col bg-gov-canvas text-gov-textMain selection:bg-gov-navy selection:text-white"
+    @scroll.window.passive="isScrolled = (window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0) > 0"
     x-data="{
          sidebarDrawerOpen: window.innerWidth >= 768,
+         isScrolled: false,
          activeTab: '{{ $currentTab }}',
          kegiatanSubTab: '{{ $kegiatanSubTab }}',
          kajianSubTab: '{{ $kajianSubTab }}',
@@ -10,6 +12,11 @@
          settingsSubTab: '{{ $settingsSubTab }}',
          init() {
              this.updateDocumentTitle();
+             const updateScroll = () => {
+                 this.isScrolled = (window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0) > 0;
+             };
+             window.addEventListener('scroll', updateScroll, { passive: true });
+             updateScroll();
              this.$watch('activeTab', () => this.updateDocumentTitle());
              this.$watch('kegiatanSubTab', () => this.updateDocumentTitle());
              this.$watch('financeSubTab', () => this.updateDocumentTitle());
@@ -1144,7 +1151,8 @@
         :class="sidebarDrawerOpen ? '' : 'sidebar-closed'">
 
         <!-- Top Workspace Bar with Drawer Trigger Button & Sticky Sub-Header -->
-        <div class="sticky top-0 z-20 shadow-2xs">
+        <div class="sticky top-0 z-20 transition-shadow duration-200"
+            :class="isScrolled ? 'shadow-lg' : 'shadow-2xs'">
             <header
                 class="bg-white border-b border-gov-border px-6 py-3 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center space-x-3">
@@ -1170,7 +1178,8 @@
 
             <!-- OPSI 4: Sticky Sub-Header Tabs (Tempatkan tepat di bawah Header utama) -->
             @if($currentTab === 'programs')
-                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1">
+                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1 transition-shadow duration-200"
+                    :class="isScrolled ? 'shadow-lg' : ''">
                     <div class="flex items-center overflow-x-auto no-scrollbar gap-1">
                         <!-- Tab 1: Katalog Program -->
                         <button type="button"
@@ -1214,7 +1223,8 @@
                     </div>
                 </div>
             @elseif(in_array($currentTab, ['kegiatan', 'kajian', 'agenda']))
-                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1">
+                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1 transition-shadow duration-200"
+                    :class="isScrolled ? 'shadow-lg' : ''">
                     <div class="flex items-center overflow-x-auto no-scrollbar gap-1">
                         <!-- Tab 1: Kajian -->
                         <button type="button"
@@ -1254,7 +1264,8 @@
                     </div>
                 </div>
             @elseif($currentTab === 'finance')
-                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1">
+                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1 transition-shadow duration-200"
+                    :class="isScrolled ? 'shadow-lg' : ''">
                     <div class="flex items-center overflow-x-auto no-scrollbar gap-1">
                         <!-- Tab 1: Kas Utama -->
                         <button type="button"
@@ -1278,7 +1289,8 @@
                     </div>
                 </div>
             @elseif($currentTab === 'users')
-                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1">
+                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1 transition-shadow duration-200"
+                    :class="isScrolled ? 'shadow-lg' : ''">
                     <div class="flex items-center overflow-x-auto no-scrollbar gap-1">
                         <!-- Tab 1: Anggota -->
                         <button type="button"
@@ -1315,7 +1327,8 @@
                     </div>
                 </div>
             @elseif($currentTab === 'settings')
-                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1">
+                <div class="bg-white border-b border-slate-200 px-6 sm:px-6 pt-1 transition-shadow duration-200"
+                    :class="isScrolled ? 'shadow-lg' : ''">
                     <div class="flex items-center overflow-x-auto no-scrollbar gap-1">
                         <!-- Tab 1: Pengaturan Masjid -->
                         <button type="button"
@@ -1378,7 +1391,7 @@
         </div>
 
         <!-- Admin Workspace Body -->
-        <div class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
+        <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
 
             @if(Auth::user()->isReadOnly())
                 <div

@@ -275,7 +275,7 @@
                                             </div>
                                         @endif
                                         <div class="p-2 rounded-lg bg-slate-50/50 border border-slate-100">
-                                            <span class="text-slate-500 block text-[11px]">{{ Auth::user()->canManage() ? 'Potongan Bulan Ini' : 'Potongan ' . \Carbon\Carbon::create((int) ($this->catalogYear ?: now()->year), (int) ($this->catalogMonth ?: now()->month), 1)->translatedFormat('F Y') }}</span>
+                                            <span class="text-slate-500 block text-[11px] mb-1">{{ Auth::user()->canManage() ? 'Potongan Bulan Ini' : 'Potongan ' . \Carbon\Carbon::create((int) ($this->catalogYear ?: now()->year), (int) ($this->catalogMonth ?: now()->month), 1)->translatedFormat('F Y') }}</span>
                                             <span class="font-bold text-gov-textMain text-sm">Rp {{ number_format($prog->monthly_commitment_total, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
