@@ -6,7 +6,7 @@
     <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
                     <i data-lucide="images" class="w-4 h-4 text-white"></i>
                 </div>
                 <div>

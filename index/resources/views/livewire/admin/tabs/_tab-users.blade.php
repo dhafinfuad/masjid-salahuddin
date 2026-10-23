@@ -8,7 +8,7 @@
         <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
                         <i data-lucide="user-cog" class="w-4 h-4 text-white"></i>
                     </div>
                     <div>
@@ -16,7 +16,8 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Akun</span>
                         </div>
-                        <h3 class="font-bold text-base text-white">Manajemen Pengguna & Hak Akses</h3>
+                        <h3 class="font-bold text-base text-white">Anggota</h3>
+                        <span class="sr-only">Manajemen Pengguna & Hak Akses</span>
                         <p class="text-xs text-slate-300 mt-0.5">Kelola akun pengurus DKM (Master, Ketua, Sekretaris, Bendahara) dan Jamaah.</p>
                     </div>
                 </div>
@@ -43,7 +44,7 @@
         <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
                         <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="16" rx="3"/>
                             <circle cx="9" cy="10" r="2"/>
@@ -57,7 +58,8 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Database Pegawai</span>
                         </div>
-                        <h3 class="font-bold text-base text-white">Data Pegawai Muslim KPP Madya Malang</h3>
+                        <h3 class="font-bold text-base text-white">Pegawai</h3>
+                        <span class="sr-only">Data Pegawai Muslim KPP Madya Malang</span>
                         <p class="text-xs text-slate-300 mt-0.5">Database induk seluruh pegawai muslim kantor untuk penugasan ibadah, rekap infaq, dan inventarisasi jamaah.</p>
                     </div>
                 </div>
@@ -92,7 +94,7 @@
         <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
                         <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
                     </div>
                     <div>
@@ -100,7 +102,8 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Kepengurusan</span>
                         </div>
-                        <h3 class="font-bold text-base text-white">Manajemen Kepengurusan Takmir & Dokumen SK</h3>
+                        <h3 class="font-bold text-base text-white">Kepengurusan</h3>
+                        <span class="sr-only">Manajemen Kepengurusan Takmir & Dokumen SK</span>
                         <p class="text-xs text-slate-300 mt-0.5">Kelola berkas PDF resmi SK Kepala KPP Madya Malang, susunan personalia takmir, dan uraian Tupoksi.</p>
                     </div>
                 </div>

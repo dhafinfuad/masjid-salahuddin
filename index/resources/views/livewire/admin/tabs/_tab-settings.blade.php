@@ -6,7 +6,7 @@
     <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
                     <i data-lucide="settings-2" class="w-4 h-4 text-white"></i>
                 </div>
                 <div>
@@ -14,8 +14,15 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                         <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Konfigurasi Sistem</span>
                     </div>
-                    <h3 class="font-bold text-base text-white">Pengaturan Masjid & Media Visual</h3>
-                    <p class="text-xs text-slate-300 mt-0.5">Konfigurasi profil masjid dan template poster kajian.</p>
+                    <h3 class="font-bold text-base text-white">
+                        <span x-show="settingsSubTab === 'masjid'">Pengaturan Masjid</span>
+                        <span x-show="settingsSubTab === 'poster'" x-cloak>Template & Studio Poster</span>
+                    </h3>
+                    <span class="sr-only">Pengaturan Masjid & Media Visual</span>
+                    <div class="text-xs text-slate-300 mt-0.5">
+                        <span x-show="settingsSubTab === 'masjid'">Perbarui profil masjid, informasi Sholat Jumat, dan display TV.</span>
+                        <span x-show="settingsSubTab === 'poster'" x-cloak>Studio visual generator poster kajian otomatis siap cetak dan bagikan.</span>
+                    </div>
                 </div>
             </div>
             <div class="shrink-0 hidden sm:flex sm:items-center"></div>
