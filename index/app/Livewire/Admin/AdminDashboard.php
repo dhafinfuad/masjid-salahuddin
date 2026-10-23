@@ -5642,7 +5642,7 @@ class AdminDashboard extends Component
             }
 
             $service = app(\App\Services\PernyataanScanOcrService::class);
-            $this->scanPages = $service->processPdf($filePath);
+            $this->scanPages = $service->processPdf($destPath);
 
             if (empty($this->scanPages)) {
                 $this->scanError = 'Tidak ada lembar atau teks yang dapat diekstrak dari berkas PDF ini.';

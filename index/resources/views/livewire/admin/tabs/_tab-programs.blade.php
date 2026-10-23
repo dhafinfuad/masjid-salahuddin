@@ -1418,11 +1418,11 @@
                                                      x-data="{
                                                          nip: '{{ $page['nip'] ?? '' }}',
                                                          nama: '{{ addslashes($page['nama'] ?? '') }}',
-                                                         zakat: {{ (int)($page['programs']['zakat'] ?? 0) }},
-                                                         infaq: {{ (int)($page['programs']['infaq'] ?? 0) }},
-                                                         qurban: {{ (int)($page['programs']['qurban'] ?? 0) }},
-                                                         yatim: {{ (int)($page['programs']['yatim'] ?? 0) }},
-                                                         dhuafa: {{ (int)($page['programs']['dhuafa'] ?? 0) }},
+                                                         zakat: {{ (int)($page['commitments']['zakat'] ?? $page['programs']['zakat'] ?? 0) }},
+                                                         infaq: {{ (int)($page['commitments']['infaq'] ?? $page['programs']['infaq'] ?? 0) }},
+                                                         qurban: {{ (int)($page['commitments']['qurban'] ?? $page['programs']['qurban'] ?? 0) }},
+                                                         yatim: {{ (int)($page['commitments']['yatim'] ?? $page['programs']['yatim'] ?? 0) }},
+                                                         dhuafa: {{ (int)($page['commitments']['dhuafa'] ?? $page['programs']['dhuafa'] ?? 0) }},
                                                          getTotal() {
                                                              return (this.zakat || 0) + (this.infaq || 0) + (this.qurban || 0) + (this.yatim || 0) + (this.dhuafa || 0);
                                                          }
@@ -1465,7 +1465,7 @@
                                                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
                                                                     <input type="text" inputmode="numeric"
                                                                         :value="window.formatRibuan(zakat)"
-                                                                        @input="window.handleRibuanInput($event.target, (clean) => { zakat = clean ? parseInt(clean) : 0; })"
+                                                                        @input="window.handleRibuanInput($event.target, (clean) => { zakat = clean ? parseInt(clean) : 0; $wire.set('scanPages.{{ $index }}.commitments.zakat', zakat, false); $wire.set('scanPages.{{ $index }}.programs.zakat', zakat, false); })"
                                                                         placeholder="0"
                                                                         class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
                                                                 </div>
@@ -1478,7 +1478,7 @@
                                                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
                                                                     <input type="text" inputmode="numeric"
                                                                         :value="window.formatRibuan(infaq)"
-                                                                        @input="window.handleRibuanInput($event.target, (clean) => { infaq = clean ? parseInt(clean) : 0; })"
+                                                                        @input="window.handleRibuanInput($event.target, (clean) => { infaq = clean ? parseInt(clean) : 0; $wire.set('scanPages.{{ $index }}.commitments.infaq', infaq, false); $wire.set('scanPages.{{ $index }}.programs.infaq', infaq, false); })"
                                                                         placeholder="0"
                                                                         class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
                                                                 </div>
@@ -1491,7 +1491,7 @@
                                                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
                                                                     <input type="text" inputmode="numeric"
                                                                         :value="window.formatRibuan(qurban)"
-                                                                        @input="window.handleRibuanInput($event.target, (clean) => { qurban = clean ? parseInt(clean) : 0; })"
+                                                                        @input="window.handleRibuanInput($event.target, (clean) => { qurban = clean ? parseInt(clean) : 0; $wire.set('scanPages.{{ $index }}.commitments.qurban', qurban, false); $wire.set('scanPages.{{ $index }}.programs.qurban', qurban, false); })"
                                                                         placeholder="0"
                                                                         class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
                                                                 </div>
@@ -1504,7 +1504,7 @@
                                                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
                                                                     <input type="text" inputmode="numeric"
                                                                         :value="window.formatRibuan(yatim)"
-                                                                        @input="window.handleRibuanInput($event.target, (clean) => { yatim = clean ? parseInt(clean) : 0; })"
+                                                                        @input="window.handleRibuanInput($event.target, (clean) => { yatim = clean ? parseInt(clean) : 0; $wire.set('scanPages.{{ $index }}.commitments.yatim', yatim, false); $wire.set('scanPages.{{ $index }}.programs.yatim', yatim, false); })"
                                                                         placeholder="0"
                                                                         class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
                                                                 </div>
@@ -1517,7 +1517,7 @@
                                                                     <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-semibold">Rp</span>
                                                                     <input type="text" inputmode="numeric"
                                                                         :value="window.formatRibuan(dhuafa)"
-                                                                        @input="window.handleRibuanInput($event.target, (clean) => { dhuafa = clean ? parseInt(clean) : 0; })"
+                                                                        @input="window.handleRibuanInput($event.target, (clean) => { dhuafa = clean ? parseInt(clean) : 0; $wire.set('scanPages.{{ $index }}.commitments.dhuafa', dhuafa, false); $wire.set('scanPages.{{ $index }}.programs.dhuafa', dhuafa, false); })"
                                                                         placeholder="0"
                                                                         class="w-full h-7 pl-7 pr-2 text-right rounded-lg border border-slate-200 bg-white text-xs font-bold text-gov-textMain tnum focus:border-gov-navy focus:outline-none">
                                                                 </div>
