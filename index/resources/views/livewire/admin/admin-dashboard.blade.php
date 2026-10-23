@@ -898,6 +898,9 @@
         },
         mobileActionSheetOpen: false,
         openMobileActionSheet() {
+            if (['settings', 'statistics', 'statistik', 'saran'].includes(this.activeTab) || (this.activeTab === 'programs' && this.socialSubTab === 'pernyataan')) {
+                return;
+            }
             this.mobileActionSheetOpen = true;
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
@@ -921,7 +924,6 @@
             }
             if (this.activeTab === 'programs') {
                 if (this.socialSubTab === 'peserta') return 'Pilih aksi untuk Rekapitulasi Peserta';
-                if (this.socialSubTab === 'pernyataan') return 'Pilih aksi untuk Surat Pernyataan';
                 if (this.socialSubTab === 'setoran') return 'Pilih aksi untuk Rekap Setoran Kantor';
                 return 'Pilih aksi untuk Program Sosial & Infaq';
             }
