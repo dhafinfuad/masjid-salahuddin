@@ -125,8 +125,9 @@ class PernyataanScanOcrService
             Log::warning('pdftoppm failed: ' . $process->getErrorOutput());
         }
 
-        // Ekstraksi gambar langsung dari PDF stream menggunakan PHP murni
-        return $this->extractImagesFromPdfStreams($pdfPath, $outputDir);
+        // Jika pdftoppm belum terpasang, kembalikan array kosong agar peramban menggunakan PDF.js
+        // untuk merender lembar PDF secara jernih dan tajam (termasuk layer mask JBIG2 komposit).
+        return [];
     }
 
     /**

@@ -496,7 +496,6 @@ class AdminDashboard extends Component
     public bool $showPrintPernyataanModal = false;
     public string $pernyataanModalTab = 'cetak'; // 'cetak' | 'impor'
     public mixed $scanPernyataanFile = null;
-    public string $scanPdfBase64 = '';
     public bool $scanProcessing = false;
     public string $scanError = '';
     public array $scanPages = [];
@@ -5628,7 +5627,6 @@ class AdminDashboard extends Component
                     'temp_scan_pdf_path' => $destPath,
                     'temp_scan_pdf_time' => time(),
                 ]);
-                $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
             } else {
                 $fallbackPdf = storage_path('app/private/scan_mesin.pdf');
                 if (file_exists($fallbackPdf)) {
@@ -5637,7 +5635,6 @@ class AdminDashboard extends Component
                         'temp_scan_pdf_path' => $destPath,
                         'temp_scan_pdf_time' => time(),
                     ]);
-                    $this->scanPdfBase64 = base64_encode(file_get_contents($destPath));
                 }
             }
 
@@ -5671,7 +5668,6 @@ class AdminDashboard extends Component
     public function resetScanPernyataan(): void
     {
         $this->scanPernyataanFile = null;
-        $this->scanPdfBase64 = '';
         $this->scanPages = [];
         $this->activeScanPageIndex = 0;
         $this->scanError = '';
