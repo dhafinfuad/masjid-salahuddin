@@ -136,9 +136,9 @@
                 <!-- Kajian Search & Filter (Hanya tampil saat subtab Pekanan atau Jumat) -->
                 <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="space-y-4">
                 <!-- Search & Filter Bar -->
-                <div class="space-y-2">
+                <div class="flex flex-col md:flex-row md:items-center gap-2">
                     <!-- Search Input -->
-                    <div class="relative" x-data="{
+                    <div class="relative flex-1 min-w-0" x-data="{
                         clearSearch() {
                             const sub = kegiatanSubTab || 'pekanan';
                             $wire.call('clearKajianSearch', sub);
@@ -156,7 +156,7 @@
                     </div>
 
                     <!-- Filters Row -->
-                    <div class="flex flex-row items-center gap-2">
+                    <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
                         @php
                             $kajianMonthOptions = [['value' => 'all', 'label' => 'Semua Bulan']];
                             for ($m = 1; $m <= 12; $m++) {
@@ -170,7 +170,7 @@
                                 collect($availableKajianYears)->map(fn($yr) => ['value' => (string)$yr, 'label' => (string)$yr])->values()->all()
                             );
                         @endphp
-                        <div class="flex-1">
+                        <div class="flex-1 md:w-40">
                             <x-custom-select 
                                 wire:key="kajian-month-filter" 
                                 wire:model.live="kajianMonthFilter" 
@@ -181,7 +181,7 @@
                             />
                         </div>
 
-                        <div class="flex-1">
+                        <div class="flex-1 md:w-32">
                             <x-custom-select 
                                 wire:key="kajian-year-filter" 
                                 wire:model.live="kajianYearFilter" 
@@ -1151,8 +1151,8 @@
                     class="space-y-3">
                     <!-- Search & Filter Bar -->
                     <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="relative flex-1 max-w-sm" x-data="{
+                        class="flex flex-col md:flex-row md:items-center gap-2 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="relative flex-1 min-w-0" x-data="{
                             clearSearch() {
                                 $wire.clearAgendaSearch();
                             }
@@ -1169,26 +1169,28 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <x-custom-select 
-                                wire:key="agenda-status-filter" 
-                                wire:model.live="agendaFilterStatus"
-                                :options="[
-                                    'all' => 'Semua Status',
-                                    'Direncanakan' => 'Direncanakan',
-                                    'Berjalan' => 'Berjalan',
-                                    'SELESAI' => 'Selesai',
-                                ]"
-                                placeholder="Semua Status"
-                                class="w-full sm:w-36"
-                            />
+                        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+                            <div class="flex-1 md:w-36">
+                                <x-custom-select 
+                                    wire:key="agenda-status-filter" 
+                                    wire:model.live="agendaFilterStatus"
+                                    :options="[
+                                        'all' => 'Semua Status',
+                                        'Direncanakan' => 'Direncanakan',
+                                        'Berjalan' => 'Berjalan',
+                                        'SELESAI' => 'Selesai',
+                                    ]"
+                                    placeholder="Semua Status"
+                                    class="w-full"
+                                />
+                            </div>
 
                             @if($agendaFilterStatus !== 'all' || !empty($agendaSearch))
                                 <button type="button" wire:click="resetAgendaFilters"
                                     class="shrink-0 h-9 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
                                     title="Reset Filter ke Semua">
                                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                                    <span class="hidden sm:inline">Reset</span>
+                                    <span class="hidden md:inline">Reset</span>
                                 </button>
                             @endif
                         </div>

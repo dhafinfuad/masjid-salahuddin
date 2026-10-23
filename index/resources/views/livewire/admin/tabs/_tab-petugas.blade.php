@@ -63,9 +63,9 @@
                 </div>
 
                 <!-- Filter Toolbar: Filter Pekan, Filter Bulan, Filter Tahun, & Search -->
-                <div class="space-y-2">
+                <div class="flex flex-col md:flex-row md:items-center gap-2">
                     <!-- Search Input -->
-                    <div class="relative" x-data="{
+                    <div class="relative flex-1 min-w-0" x-data="{
                         clearSearch() {
                             $wire.clearPetugasSearch();
                         }
@@ -84,7 +84,7 @@
                     </div>
 
                     <!-- Filters Row -->
-                    <div class="grid grid-cols-3 gap-2">
+                    <div class="grid grid-cols-3 md:flex md:flex-row md:items-center gap-2 w-full md:w-auto shrink-0">
                         @php
                             $dutyWeekOptions = [
                                 ['value' => 'all', 'label' => 'Semua Pekan'],
@@ -112,29 +112,35 @@
                             }
                         @endphp
 
-                        <x-custom-select 
-                            wire:model.live="prayerDutyFilterWeek" 
-                            :options="$dutyWeekOptions"
-                            placeholder="Semua Pekan"
-                            class="w-full"
-                        />
+                        <div class="w-full md:w-36">
+                            <x-custom-select 
+                                wire:model.live="prayerDutyFilterWeek" 
+                                :options="$dutyWeekOptions"
+                                placeholder="Semua Pekan"
+                                class="w-full"
+                            />
+                        </div>
 
                         <span class="sr-only">BULAN:</span>
-                        <x-custom-select 
-                            wire:model.live="prayerDutyFilterMonth" 
-                            :options="$dutyMonthOptions"
-                            placeholder="Pilih Bulan"
-                            icon="calendar"
-                            class="w-full"
-                        />
+                        <div class="w-full md:w-36">
+                            <x-custom-select 
+                                wire:model.live="prayerDutyFilterMonth" 
+                                :options="$dutyMonthOptions"
+                                placeholder="Pilih Bulan"
+                                icon="calendar"
+                                class="w-full"
+                            />
+                        </div>
 
                         <span class="sr-only">TAHUN:</span>
-                        <x-custom-select 
-                            wire:model.live="prayerDutyFilterYear" 
-                            :options="$dutyYearOptions"
-                            placeholder="Semua Tahun"
-                            class="w-full"
-                        />
+                        <div class="w-full md:w-32">
+                            <x-custom-select 
+                                wire:model.live="prayerDutyFilterYear" 
+                                :options="$dutyYearOptions"
+                                placeholder="Semua Tahun"
+                                class="w-full"
+                            />
+                        </div>
                     </div>
                 </div>
 

@@ -124,9 +124,9 @@
     <div x-show="userSubTab === 'pengguna'" class="space-y-6">
 
         <!-- Role Filter Card & Summary -->
-        <div class="space-y-2">
+        <div class="flex flex-col md:flex-row md:items-center gap-2">
             <!-- Search Input -->
-            <div class="relative" x-data="{
+            <div class="relative flex-1 min-w-0" x-data="{
                 clearSearch() {
                     $wire.clearUserSearch();
                 }
@@ -145,24 +145,21 @@
             </div>
 
             <!-- Filters Row -->
-            <div class="flex flex-row items-center gap-2">
-                <!-- Role Dropdown -->
-                <div class="flex-1">
-                    <x-custom-select 
-                        wire:model.live="userFilterRole"
-                        :options="[
-                            'all' => 'Semua Role',
-                            'Master' => 'Master Admin',
-                            'Ketua' => 'Ketua DKM',
-                            'Sekretaris' => 'Sekretaris',
-                            'Bendahara' => 'Bendahara',
-                            'Jamaah' => 'Jamaah (Viewer)',
-                        ]"
-                        placeholder="Semua Role"
-                        icon="shield"
-                        class="w-full"
-                    />
-                </div>
+            <div class="w-full md:w-52 shrink-0">
+                <x-custom-select 
+                    wire:model.live="userFilterRole"
+                    :options="[
+                        'all' => 'Semua Role',
+                        'Master' => 'Master Admin',
+                        'Ketua' => 'Ketua DKM',
+                        'Sekretaris' => 'Sekretaris',
+                        'Bendahara' => 'Bendahara',
+                        'Jamaah' => 'Jamaah (Viewer)',
+                    ]"
+                    placeholder="Semua Role"
+                    icon="shield"
+                    class="w-full"
+                />
             </div>
         </div>
 

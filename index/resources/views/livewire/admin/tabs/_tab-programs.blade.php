@@ -183,8 +183,8 @@
                         }
                     @endphp
                     <!-- Filter Toolbar Katalog (Jamaah): Pencarian, Bulan, Tahun -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="relative w-full md:w-72">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="relative flex-1 min-w-0">
                             <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                             <input wire:model.live.debounce.300ms="catalogSearch" type="text"
                                 placeholder="Cari nama program..."
@@ -196,7 +196,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="flex items-center gap-2 w-full md:w-auto text-xs">
+                        <div class="flex items-center gap-2 w-full md:w-auto shrink-0 text-xs">
                             <span class="sr-only">BULAN:</span>
                             <x-custom-select
                                 wire:model.live="catalogMonth"
@@ -350,9 +350,9 @@
                     <!-- SUB-VIEW 2: REKAPITULASI PESERTA -->
                     <div x-show="socialSubTab === 'peserta'" x-cloak class="space-y-6">
                     <!-- Filter & Search Bar -->
-                    <div class="space-y-2">
-                        <!-- Search Input (Selalu di atas) -->
-                        <div class="relative" x-data="{
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
+                        <!-- Search Input (Selalu di atas pada mobile) -->
+                        <div class="relative flex-1 min-w-0" x-data="{
                             clearSearch() {
                                 $wire.clearSocialParticipantSearch();
                             }
@@ -371,8 +371,8 @@
                         </div>
 
                         <!-- Filter Row -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
+                        <div class="grid grid-cols-2 md:flex md:flex-row md:items-center gap-2 w-full md:w-auto shrink-0">
+                            <div class="w-full md:w-56">
                                 @php
                                     $programFilterOptions = array_merge(
                                         [['value' => 'all', 'label' => 'Semua Program Sosial']],
@@ -388,7 +388,7 @@
                                 />
                             </div>
 
-                            <div class="relative" x-data="{
+                            <div class="relative w-full md:w-44" x-data="{
                                 open: false
                             }">
                                 <button type="button" @click="open = !open"

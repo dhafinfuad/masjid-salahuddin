@@ -30,9 +30,9 @@
     @endif
 
     <!-- Filter Card & Pencarian Pegawai -->
-    <div class="space-y-2">
+    <div class="flex flex-col md:flex-row md:items-center gap-2">
         <!-- Search Input -->
-        <div class="relative" x-data="{
+        <div class="relative flex-1 min-w-0" x-data="{
             clearEmpSearch() {
                 $wire.set('employeeSearch', '');
                 $wire.set('search', '');
@@ -53,9 +53,9 @@
         </div>
 
         <!-- Filters Row -->
-        <div class="flex flex-row items-center gap-2">
+        <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
             <!-- Filter Status Kepegawaian -->
-            <div class="flex-1">
+            <div class="flex-1 md:w-40">
                 <x-custom-select 
                     wire:model.live="employeeFilterStatus"
                     :options="[
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Filter Status Akun Aplikasi -->
-            <div class="flex-1">
+            <div class="flex-1 md:w-40">
                 <x-custom-select 
                     wire:model.live="employeeFilterLink"
                     :options="[

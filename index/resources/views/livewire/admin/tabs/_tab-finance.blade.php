@@ -961,9 +961,9 @@
                     </div>
 
                     <!-- Search & Filter Bar (Standalone Card) -->
-                    <div class="space-y-2">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
                         <!-- Search Input -->
-                        <div class="relative" x-data="{
+                        <div class="relative flex-1 min-w-0" x-data="{
                             clearSearch() {
                                 catSearch = '';
                             }
@@ -981,9 +981,9 @@
                         </div>
 
                         <!-- Filter Row -->
-                        <div class="flex flex-row items-center gap-2">
+                        <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
                             <!-- Kelompok / Status Filter Dropdown -->
-                            <div class="flex-1">
+                            <div class="flex-1 md:w-52">
                                 <x-custom-select 
                                     x-model="catFilter"
                                     :options="[

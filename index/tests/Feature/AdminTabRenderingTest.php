@@ -78,4 +78,28 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString('Kunjungan Hari Ini', $html);
         $this->assertStringContainsString('Dominasi Perangkat', $html);
     }
+
+    public function test_desktop_single_row_searchbar_and_filters_are_rendered_on_tabs_except_finance_kas_utama(): void
+    {
+        // 1. Tab kegiatan, petugas, programs, users, galeri, saran memiliki searchbar flex-1 min-w-0 pada container md:flex-row
+        $tabs = ['kegiatan', 'petugas', 'programs', 'users', 'galeri', 'saran'];
+
+        foreach ($tabs as $tab) {
+            $html = Livewire::actingAs($this->admin)
+                ->test(AdminDashboard::class, ['tab' => $tab])
+                ->html();
+
+            $this->assertStringContainsString('md:flex-row', $html, "Tab {$tab} should contain md:flex-row for desktop single-row layout");
+            $this->assertStringContainsString('flex-1 min-w-0', $html, "Tab {$tab} should contain flex-1 min-w-0 for expanding searchbar");
+        }
+
+        // 2. Tab finance Kas Utama tetap mempertahankan layout aslinya (type pills dan input tidak diubah ke md:flex-row pada toolbar kas utama)
+        $financeHtml = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'finance'])
+            ->html();
+
+        // Kas Utama tetap memiliki pills type selector dan pos anggaran kategori memiliki responsive single row
+        $this->assertStringContainsString("activeFinanceType === 'pemasukan'", $financeHtml);
+        $this->assertStringContainsString("catSearch", $financeHtml);
+    }
 }

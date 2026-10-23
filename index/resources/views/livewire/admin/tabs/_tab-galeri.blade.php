@@ -29,10 +29,10 @@
     </div>
 
     <!-- Filter & Search Bar -->
-    <div class="space-y-2">
+    <div class="flex flex-col md:flex-row md:items-center gap-2">
 
         <!-- Search Bar -->
-        <div class="relative">
+        <div class="relative flex-1 min-w-0">
             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <input type="text" wire:model.live.debounce.300ms="gallerySearch"
                 placeholder="Cari judul kegiatan atau lokasi..."
@@ -40,22 +40,20 @@
         </div>
 
         <!-- Filter Row -->
-        <div class="flex flex-row items-center gap-2">
+        <div class="w-full md:w-44 shrink-0">
             @php
                 $galYears = array_merge(
                     [['value' => 'all', 'label' => 'Semua Tahun']],
                     collect($galleryYearsList ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
                 );
             @endphp
-            <div class="flex-1">
-                <x-custom-select 
-                    wire:model.live="galleryYearFilter"
-                    :options="$galYears"
-                    placeholder="Semua Tahun"
-                    icon="calendar"
-                    class="w-full"
-                />
-            </div>
+            <x-custom-select 
+                wire:model.live="galleryYearFilter" 
+                :options="$galYears"
+                placeholder="Semua Tahun"
+                icon="calendar"
+                class="w-full"
+            />
         </div>
 
     </div>
