@@ -18,6 +18,7 @@
                     <p class="text-xs text-slate-300 mt-0.5">Konfigurasi profil masjid dan template poster kajian.</p>
                 </div>
             </div>
+            <div class="shrink-0 hidden sm:flex sm:items-center"></div>
         </div>
     </div>
 

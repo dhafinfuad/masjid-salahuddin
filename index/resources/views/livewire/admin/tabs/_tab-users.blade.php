@@ -20,7 +20,7 @@
                         <p class="text-xs text-slate-300 mt-0.5">Kelola akun pengurus DKM (Master, Ketua, Sekretaris, Bendahara) dan Jamaah.</p>
                     </div>
                 </div>
-                <div class="shrink-0 hidden sm:block">
+                <div class="shrink-0 hidden sm:flex sm:items-center">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="openCreateUser()"
                             class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition inline-flex items-center gap-2 cursor-pointer">

@@ -22,7 +22,7 @@
             </div>
 
             @if(Auth::user()->canManage())
-                <div class="shrink-0 hidden sm:block">
+                <div class="shrink-0 hidden sm:flex sm:items-center">
                     <button type="button" wire:click="openCreateGalleryModal"
                         class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                         <i data-lucide="plus" class="w-4 h-4"></i>
