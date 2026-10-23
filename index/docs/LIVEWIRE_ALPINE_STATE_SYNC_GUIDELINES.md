@@ -228,6 +228,75 @@ Ketika mengirim data dinamis (teks deskripsi, nama entitas, judul kegiatan, obje
      ```
    - `Js::from()` memanggil `json_encode()` dengan bendera pengamanan ketat (`JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT`), sehingga newline dan tanda petik dikodekan aman tanpa merusak pembungkus atribut HTML `@click="..."`.
 
+### Aturan 8: Larangan Menyimpan File Besar / Base64 pada Properti Publik Livewire (Mencegah `PayloadTooLargeException`)
+1. **Bahaya Fatal Serialization State Livewire**:
+   - Seluruh properti publik (`public $property`) pada komponen Livewire secara otomatis dikonversi menjadi snapshot JSON yang dikirim ke browser dan **wajib dikirim kembali ke server pada setiap permintaan interaksi pengguna** (`wire:click`, `$wire.set`, trigger event, dll.).
+   - Menyimpan berkas biner, string Base64 dokumen PDF (misalnya dokumen scan 1 MB -> 1.335 KB Base64), atau array blob berukuran besar langsung di properti publik PHP (seperti `public string $scanPdfBase64 = ''`) akan membuat ukuran payload request melonjak drastis.
+   - Ketika payload melebihi batas default `payload.max_size` (1024 KB), Livewire langsung menghentikan request dengan eksepsi fatal:
+     ```
+     Livewire\Exceptions\PayloadTooLargeException: Livewire request payload is too large (1335KB). Maximum allowed size is 1024KB.
+     ```
+2. **Pola Emas (Storage + HTTP Streaming Architecture)**:
+   - **JANGAN PERNAH** menyimpan isi biner atau Base64 berkas di properti publik Livewire.
+   - Simpan berkas sementara di disk server lokal (`storage/app/private/temp_scans/latest_scan.pdf`) dan simpan path-nya di sesi pengguna (`session(['temp_scan_pdf_path' => $destPath])`).
+   - Sediakan rute controller / closure streaming HTTP khusus untuk membukanya secara aman:
+     ```php
+     Route::get('/admin/programs/preview-scan-pernyataan', function () {
+         $path = session('temp_scan_pdf_path') ?: storage_path('app/private/temp_scans/latest_scan.pdf');
+         return response()->file($path, [
+             'Content-Type' => 'application/pdf',
+             'Cache-Control' => 'private, max-age=86400',
+         ]);
+     });
+     ```
+   - Properti publik Livewire hanya boleh menyimpan metadata ringkas (seperti NIP, nama pegawai, dan angka komitmen). Ukuran payload Livewire akan terjaga sangat ramping (< 20 KB).
+   - Naikkan juga batas pengaman pada `config/livewire.php`:
+     ```php
+     'payload' => [
+         'max_size' => 10 * 1024 * 1024, // 10MB - safety buffer
+     ],
+     ```
+
+### Aturan 9: Penanganan Pratinjau Dokumen Scanner Mesin (Format MRC & JBIG2 vs PDF.js Canvas)
+1. **Anatomi Berkas Scanner Multi-Function (Canon, Ricoh, Xerox, dsb.)**:
+   - Berkas PDF hasil scanner dokumen fisik modern umumnya menggunakan format **MRC (*Mixed Raster Content*)**.
+   - Berkas ini memisahkan isi halaman menjadi beberapa lapisan (*layer*):
+     - **Lapisan Latar Belakang** (`/Filter [/FlateDecode/DCTDecode]`): Gambar JPEG beresolusi rendah yang memuat tekstur kertas, di mana teks hitam sengaja dihilangkan atau diputihkan oleh algoritma scanner.
+     - **Lapisan Masker Teks** (`/Filter /JBIG2Decode` dengan `/ImageMask true`): Masker 1-bit monokrom beresolusi tinggi yang menyimpan teks hitam pekat, stempel, dan tanda tangan secara tajam.
+2. **Kegagalan Ekstraksi Stream JPEG Murni di PHP**:
+   - Mengekstrak stream JPEG mentah secara manual via PHP tanpa komposit JBIG2 hanya akan menghasilkan gambar latar belakang yang **pudar, putih, dan teksnya hilang/tidak terbaca**.
+3. **Pola Emas (Full PDF.js Canvas Rendering)**:
+   - Gunakan pustaka **PDF.js** pada sisi client untuk merender pratinjau dokumen ke dalam elemen `<canvas>`.
+   - PDF.js mengeksekusi pipeline rendering PDF secara lengkap, menggabungkan lapisan latar belakang dan masker JBIG2 secara presisi sehingga seluruh tulisan, tanda tangan, dan tabel tampil **hitam pekat, sangat tajam, dan kontras sempurna**.
+   - **Mencegah Indikator Loading Menggantung**:
+     Gunakan state Alpine pelindung ganda `isPdfLoading && !hasRenderedAnyPage` dan pastikan blok `finally` selalu mematikan status loading:
+     ```javascript
+     try {
+         // Render tiap halaman ke canvas
+         this.hasRenderedAnyPage = true;
+     } catch (err) {
+         console.error(err);
+     } finally {
+         this.isPdfLoading = false;
+     }
+     ```
+
+### Aturan 10: Sinkronisasi Form Nilai Nominal Antara Objek OCR & Input Alpine (Two-Way Ribuan Input Binding)
+1. **Konsistensi Penamaan Kunci Array**:
+   - Pastikan template Blade membaca fallback dari kedua penamaan kunci data (misalnya `$page['commitments']` dan `$page['programs']`):
+     ```blade
+     infaq: {{ (int)($page['commitments']['infaq'] ?? $page['programs']['infaq'] ?? 0) }}
+     ```
+2. **Sinkronisasi Dua Arah Non-Blocking**:
+   - Saat pengguna mengetik atau mengubah nilai nominal pada input berformat ribuan, lakukan sanitasi angka murni di client-side lalu kirimkan nilainya ke backend secara silent tanpa trigger render ulang yang berat:
+     ```blade
+     @input="window.handleRibuanInput($event.target, (clean) => { 
+         infaq = clean ? parseInt(clean) : 0; 
+         $wire.set('scanPages.{{ $index }}.commitments.infaq', infaq, false); 
+         $wire.set('scanPages.{{ $index }}.programs.infaq', infaq, false); 
+     })"
+     ```
+
 ---
 
 ## 3. Checklist Sebelum Deploy Fitur Baru
@@ -241,3 +310,7 @@ Ketika mengirim data dinamis (teks deskripsi, nama entitas, judul kegiatan, obje
 - [ ] Apakah tidak ada konflik antara parameter path URL dan anotasi `#[Url]`?
 - [ ] Untuk elemen dinamis berbasis state Livewire: Apakah sudah menggunakan Blade murni (`@if`) dengan `wire:key` unik berbeda, tanpa manipulasi Alpine `:class`/`x-text`, tanpa kelas `transition`, dan dengan native inline SVG?
 - [ ] Apakah seluruh operan data Blade ke ekspresi Alpine (`openDeleteModal`, `openEdit*`, `$dispatch`) sudah dibungkus aman menggunakan `Js::from(...)` tanpa string literal `{{ addslashes(...) }}` manual?
+- [ ] Apakah ada properti publik Livewire yang menampung file biner besar, Base64, atau data berukuran > 500KB? (DILARANG: Wajib dialihkan ke storage lokal + rute HTTP streaming untuk mencegah `PayloadTooLargeException`).
+- [ ] Untuk pratinjau dokumen scan/PDF: Apakah menggunakan rendering PDF.js canvas lengkap agar layer komposit JBIG2 tampil jernih, tajam, dan tidak pudar?
+- [ ] Apakah input nominal komitmen/angka terikat dua arah via Alpine `$wire.set('...', val, false)` dengan membaca fallback kedua struktur data (`commitments` & `programs`)?
+
