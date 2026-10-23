@@ -116,11 +116,11 @@
                                 <div class="snap-start shrink-0 w-full bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
                                     <div>
                                         <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Saldo Awal</p>
-                                        <h4 class="text-lg font-bold text-gov-textMain mt-1 tnum">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</h4>
-                                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Awal bulan berjalan</p>
+                                        <h4 class="text-lg font-bold text-amber-700 mt-1 tnum">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-amber-600 font-medium mt-0.5">Awal bulan berjalan</p>
                                     </div>
-                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-200">
-                                        <i data-lucide="history" class="w-5 h-5 text-slate-600"></i>
+                                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-200">
+                                        <i data-lucide="history" class="w-5 h-5 text-amber-700"></i>
                                     </div>
                                 </div>
                                 <!-- Card 1: Kas Masuk -->
@@ -178,7 +178,7 @@
                                     Awal</span>
                                 <div
                                     class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shadow-2xs">
-                                    <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
+                                    <i data-lucide="history" class="w-4 h-4 text-amber-700"></i>
                                 </div>
                             </div>
                             <div class="mt-2">
