@@ -99,7 +99,110 @@
                     }">
 
                     <!-- 4 Financial Metric Cards (Standardized to Dashboard 100% White Cards) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Mobile KPI Carousel Wrapper -->
+                    <div
+                        x-data="{
+                            kpiIdx: 0,
+                            kpiTotal: 4,
+                            kpiPrev() { this.kpiIdx = (this.kpiIdx - 1 + this.kpiTotal) % this.kpiTotal; },
+                            kpiNext() { this.kpiIdx = (this.kpiIdx + 1) % this.kpiTotal; }
+                        }"
+                    >
+                        <!-- Mobile: carousel nav + single card -->
+                        <div class="sm:hidden">
+                            <div class="relative">
+                                <!-- Cards stacked, only active shown -->
+                                <!-- Card 0: Saldo Awal -->
+                                <div x-show="kpiIdx === 0"
+                                    class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Saldo Awal</span>
+                                        <div class="w-8 h-8 rounded-lg bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 shadow-2xs">
+                                            <i data-lucide="history" class="w-4 h-4 text-slate-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</div>
+                                        <span class="text-xs text-slate-500 font-medium flex items-center space-x-1 mt-1">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                            <span>Awal bulan berjalan</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Card 1: Kas Masuk -->
+                                <div x-show="kpiIdx === 1"
+                                    class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Kas Masuk</span>
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-2xs">
+                                            <i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</div>
+                                        <span class="text-xs text-emerald-600 font-medium flex items-center space-x-1 mt-1">
+                                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                                            <span>Infaq, sedekah, &amp; tukin</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Card 2: Kas Keluar -->
+                                <div x-show="kpiIdx === 2"
+                                    class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Total Kas Keluar</span>
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shadow-2xs">
+                                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-rose-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-textMain tnum">Rp {{ number_format($totalKasKeluar, 0, ',', '.') }}</div>
+                                        <span class="text-xs text-rose-600 font-medium flex items-center space-x-1 mt-1">
+                                            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+                                            <span>Operasional &amp; belanja rutin</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Card 3: Saldo Saat Ini -->
+                                <div x-show="kpiIdx === 3"
+                                    class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col justify-between">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-semibold uppercase tracking-wider text-gov-textMuted">Saldo Kas Saat Ini</span>
+                                        <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-200 shadow-2xs">
+                                            <i data-lucide="wallet" class="w-4 h-4 text-sky-600"></i>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="text-2xl font-bold text-gov-navy tnum">Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}</div>
+                                        <span class="text-xs text-sky-600 font-medium flex items-center space-x-1 mt-1">
+                                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                                            <span>Total kas bersih tersimpan</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Prev/Next buttons -->
+                                <button type="button" @click="kpiPrev()"
+                                    class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-7 h-7 rounded-full bg-white border border-gov-border shadow-md flex items-center justify-center text-slate-500 hover:bg-slate-50 transition cursor-pointer z-10">
+                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" @click="kpiNext()"
+                                    class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-7 h-7 rounded-full bg-white border border-gov-border shadow-md flex items-center justify-center text-slate-500 hover:bg-slate-50 transition cursor-pointer z-10">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <!-- Dots indicator -->
+                            <div class="flex justify-center gap-1.5 mt-3">
+                                <template x-for="i in kpiTotal" :key="i">
+                                    <button type="button" @click="kpiIdx = i - 1"
+                                        class="w-1.5 h-1.5 rounded-full transition-all cursor-pointer"
+                                        :class="kpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300'"
+                                    ></button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Desktop: normal grid (sm+) -->
+                        <div class="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- Saldo Awal -->
                         <div
                             class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs hover:border-slate-300 transition flex flex-col justify-between">
@@ -186,6 +289,7 @@
                                     <span>Total kas bersih tersimpan</span>
                                 </span>
                             </div>
+                        </div>
                         </div>
                     </div>
 

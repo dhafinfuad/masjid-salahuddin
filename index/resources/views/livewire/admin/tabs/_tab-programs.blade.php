@@ -76,23 +76,92 @@
 
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->
                 <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-6">
-                    <!-- Metric Cards (3 Cards / 2 Cards for Jamaah) -->
+                    <!-- Metric Cards (3 Cards) -->
                     @if(Auth::user()->canManage())
-                    <div class="grid grid-cols-1 {{ Auth::user()->canManage() ? 'sm:grid-cols-3' : 'sm:grid-cols-2' }} gap-4">
-                        <!-- Realisasi Dana Terhimpun -->
-                        <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-                            <div>
-                                <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Dana Terhimpun</p>
-                                <h4 class="text-lg font-bold text-emerald-700 mt-1">Rp {{ number_format($totalSocialCollectedAll, 0, ',', '.') }}</h4>
-                                <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Januari - {{ now()->translatedFormat('F Y') }}</p>
+                    <!-- Mobile KPI Carousel Wrapper -->
+                    <div
+                        x-data="{
+                            kpiIdx: 0,
+                            kpiTotal: 3,
+                            kpiPrev() { this.kpiIdx = (this.kpiIdx - 1 + this.kpiTotal) % this.kpiTotal; },
+                            kpiNext() { this.kpiIdx = (this.kpiIdx + 1) % this.kpiTotal; }
+                        }"
+                    >
+                        <!-- Mobile: carousel -->
+                        <div class="sm:hidden">
+                            <div class="relative">
+                                <!-- Card 0: Dana Terhimpun -->
+                                <div x-show="kpiIdx === 0"
+                                    class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Dana Terhimpun</p>
+                                        <h4 class="text-lg font-bold text-emerald-700 mt-1">Rp {{ number_format($totalSocialCollectedAll, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Januari - {{ now()->translatedFormat('F Y') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                                        <i data-lucide="wallet" class="w-5 h-5"></i>
+                                    </div>
+                                </div>
+                                <!-- Card 1: Peserta Terdaftar -->
+                                <div x-show="kpiIdx === 1"
+                                    class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Peserta Terdaftar</p>
+                                        <h4 class="text-lg font-bold text-gov-textMain mt-1">{{ $totalActiveSocialParticipants }} Peserta</h4>
+                                        <p class="text-[11px] text-slate-400 mt-0.5">per {{ now()->translatedFormat('F Y') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
+                                        <i data-lucide="users" class="w-5 h-5"></i>
+                                    </div>
+                                </div>
+                                <!-- Card 2: Potongan -->
+                                <div x-show="kpiIdx === 2"
+                                    class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Potongan</p>
+                                        <h4 class="text-lg font-bold text-amber-700 mt-1">Rp {{ number_format($totalSocialCommitment, 0, ',', '.') }}</h4>
+                                        <p class="text-[11px] text-amber-600 font-medium mt-0.5">per {{ now()->translatedFormat('F Y') }}</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
+                                        <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                                    </div>
+                                </div>
+                                <!-- Prev/Next buttons -->
+                                <button type="button" @click="kpiPrev()"
+                                    class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-7 h-7 rounded-full bg-white border border-gov-border shadow-md flex items-center justify-center text-slate-500 hover:bg-slate-50 transition cursor-pointer z-10">
+                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" @click="kpiNext()"
+                                    class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-7 h-7 rounded-full bg-white border border-gov-border shadow-md flex items-center justify-center text-slate-500 hover:bg-slate-50 transition cursor-pointer z-10">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </button>
                             </div>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
-                                <i data-lucide="wallet" class="w-5 h-5"></i>
+                            <!-- Dots indicator -->
+                            <div class="flex justify-center gap-1.5 mt-3">
+                                <template x-for="i in kpiTotal" :key="i">
+                                    <button type="button" @click="kpiIdx = i - 1"
+                                        class="w-1.5 h-1.5 rounded-full transition-all cursor-pointer"
+                                        :class="kpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300'"
+                                    ></button>
+                                </template>
                             </div>
                         </div>
 
-                        <!-- Total Peserta Aktif -->
-                        @if(Auth::user()->canManage())
+                        <!-- Desktop: normal grid (sm+) -->
+                        <div class="hidden sm:grid sm:grid-cols-3 gap-4">
+                            <!-- Realisasi Dana Terhimpun -->
+                            <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Dana Terhimpun</p>
+                                    <h4 class="text-lg font-bold text-emerald-700 mt-1">Rp {{ number_format($totalSocialCollectedAll, 0, ',', '.') }}</h4>
+                                    <p class="text-[11px] text-emerald-600 font-medium mt-0.5">Januari - {{ now()->translatedFormat('F Y') }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+                                    <i data-lucide="wallet" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+
+                            <!-- Total Peserta Aktif -->
                             <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
                                 <div>
                                     <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Peserta Terdaftar</p>
@@ -103,17 +172,17 @@
                                     <i data-lucide="users" class="w-5 h-5"></i>
                                 </div>
                             </div>
-                        @endif
 
-                        <!-- Komitmen Rutin/Bulan -->
-                        <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
-                            <div>
-                                <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Potongan</p>
-                                <h4 class="text-lg font-bold text-amber-700 mt-1">Rp {{ number_format($totalSocialCommitment, 0, ',', '.') }}</h4>
-                                <p class="text-[11px] text-amber-600 font-medium mt-0.5">per {{ now()->translatedFormat('F Y') }}</p>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
-                                <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                            <!-- Komitmen Rutin/Bulan -->
+                            <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Potongan</p>
+                                    <h4 class="text-lg font-bold text-amber-700 mt-1">Rp {{ number_format($totalSocialCommitment, 0, ',', '.') }}</h4>
+                                    <p class="text-[11px] text-amber-600 font-medium mt-0.5">per {{ now()->translatedFormat('F Y') }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
+                                    <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -978,15 +1047,12 @@
                                 @endif
 
                                 <!-- Submit Action Bar -->
-                                <div class="pt-4 flex items-center justify-between border-t border-slate-100">
-                                    <div class="text-[11px] text-slate-400">
-                                        Dokumen PDF dibuka dalam tab baru siap cetak (A4 portrait)
-                                    </div>
+                                <div class="pt-4 flex items-center justify-end border-t border-slate-100">
                                     <a :href="'{{ route('admin.programs.print-surat-pernyataan') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection)"
                                         target="_blank"
-                                        class="px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-2">
+                                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                                         <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
-                                        <span>Buka Dokumen Cetak</span>
+                                        <span>Cetak Surat</span>
                                     </a>
                                 </div>
                             </div>
