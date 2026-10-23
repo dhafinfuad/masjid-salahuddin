@@ -764,6 +764,24 @@ class FinanceManagementTest extends TestCase
             ->assertSee('Pengeluaran Non-Rutin')
             ->assertDontSee('<!-- Filter Row -->\n', false);
     }
+
+    public function test_finance_filter_menu_is_responsive_and_does_not_overflow(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        $html = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->assertOk()
+            ->html();
+
+        // 1. Memastikan filter row menggunakan flex-col pada mobile dan sm:flex-row pada desktop
+        $this->assertStringContainsString('flex flex-col sm:flex-row sm:items-center gap-2', $html);
+
+        // 2. Memastikan type pills menggunakan grid 3 kolom pada mobile agar tidak menabrak batas layar
+        $this->assertStringContainsString('grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-1', $html);
+
+        // 3. Memastikan month & year filter dikelompokkan berdampingan pada baris kedua mobile
+        $this->assertStringContainsString('flex items-center gap-2 w-full sm:w-auto flex-1', $html);
+    }
 }
 
 

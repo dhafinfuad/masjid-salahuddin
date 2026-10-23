@@ -314,34 +314,36 @@
                         </div>
 
                         <!-- Filter Row: Pills + Month + Year -->
-                        <div class="flex flex-row items-center gap-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
                             <!-- Type Pills -->
-                            <div class="flex items-center gap-1">
+                            <div class="grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-1">
                                 <!-- Type Pills (Pure Client-Side 0ms Instant - Matches Pos Anggaran Kategori Pattern) -->
                                 <button type="button" 
                                     @click="activeFinanceType = 'all'"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
+                                    class="justify-center h-9 px-2 sm:px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'all' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Semua
                                 </button>
                                 <button type="button" 
                                     @click="activeFinanceType = 'pemasukan'"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
+                                    class="justify-center h-9 px-2 sm:px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pemasukan' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pemasukan
                                 </button>
                                 <button type="button" 
                                     @click="activeFinanceType = 'pengeluaran'"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
+                                    class="justify-center h-9 px-2 sm:px-3.5 rounded-lg text-xs cursor-pointer text-center inline-flex items-center border"
                                     :class="activeFinanceType === 'pengeluaran' ? 'bg-gov-navy text-white font-bold border-gov-navy shadow-2xs' : 'bg-white border-gov-border text-slate-700 hover:bg-slate-50 font-medium'">
                                     Pengeluaran
                                 </button>
                             </div>
 
-                            <!-- Month Checklist Multi-Select Dropdown -->
-                                    <div class="relative w-full sm:w-40" x-data="{
-                                        open: false
-                                    }">
+                            <!-- Month & Year Filters (Side-by-side on mobile, inline on desktop) -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto flex-1">
+                                <!-- Month Checklist Multi-Select Dropdown -->
+                                <div class="relative flex-1 sm:w-40 sm:flex-initial" x-data="{
+                                    open: false
+                                }">
                                         <button type="button" @click="open = !open"
                                             class="w-full h-9 px-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-gov-textMain cursor-pointer flex items-center justify-between gap-1.5 shadow-2xs hover:bg-slate-50 transition focus:outline-none focus:border-gov-navy select-none"
                                             title="Pilih satu atau beberapa bulan">
@@ -442,21 +444,24 @@
                                             </button>
                                         </div>
                                     </div>
-                            </div>
+                                </div>
 
-                            <!-- Year Filter -->
-                            <div class="shrink-0">
-                                <x-custom-select 
-                                    wire:model.live="financeYearFilter"
-                                    :options="[
-                                        'all' => 'Semua Tahun',
-                                        '2026' => 'Tahun 2026',
-                                        '2025' => 'Tahun 2025',
-                                        '2024' => 'Tahun 2024',
-                                    ]"
-                                    placeholder="Semua Tahun"
-                                    icon="calendar"
-                                />
+                                <!-- Year Filter -->
+                                <div class="flex-1 sm:w-32 sm:flex-initial">
+                                    <x-custom-select 
+                                        wire:model.live="financeYearFilter"
+                                        :options="[
+                                            'all' => 'Semua Tahun',
+                                            '2026' => 'Tahun 2026',
+                                            '2025' => 'Tahun 2025',
+                                            '2024' => 'Tahun 2024',
+                                        ]"
+                                        placeholder="Semua Tahun"
+                                        icon="calendar"
+                                        align="right"
+                                        class="w-full"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
