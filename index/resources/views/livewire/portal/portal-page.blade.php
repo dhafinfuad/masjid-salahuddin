@@ -331,7 +331,11 @@
                                                             {{ $kajian->type === 'jumat' ? 'Khutbah Jumat' : ($kajian->type === 'tematik' ? 'Tematik' : 'Pekanan') }}
                                                         </span>
                                                         <span class="text-xs font-semibold text-slate-600 whitespace-nowrap shrink-0">
-                                                            {{ $kajian->date->translatedFormat('d M Y') }} • {{ $kajian->time_display ?? '11:45 WIB' }}
+                                                            @if($kajian->type === 'jumat')
+                                                                {{ $kajian->date->translatedFormat('d M Y') }}
+                                                            @else
+                                                                {{ $kajian->date->translatedFormat('d M Y') }}@if($kajian->time_display) • {{ $kajian->time_display }}@endif
+                                                            @endif
                                                         </span>
                                                     </div>
                                                     <div>

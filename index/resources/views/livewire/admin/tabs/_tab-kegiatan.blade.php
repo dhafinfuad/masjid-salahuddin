@@ -731,8 +731,7 @@
                                                 </span>
                                             </div>
                                             <div class="text-xs text-slate-500">
-                                                {{ Carbon\Carbon::parse($k->date)->translatedFormat('d M Y') }} •
-                                                {{ $k->time_display }}
+                                                {{ Carbon\Carbon::parse($k->date)->translatedFormat('d M Y') }}
                                             </div>
                                             <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
                                                 @if(Auth::user()->canManage())
@@ -959,7 +958,6 @@
                                                 {{ Carbon\Carbon::parse($k->date)->translatedFormat('l, d M Y') }}
                                             </span>
                                         </div>
-                                        <span class="text-xs text-slate-500">{{ $k->time_display }}</span>
                                     </div>
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         @if($k->is_holiday_disabled)

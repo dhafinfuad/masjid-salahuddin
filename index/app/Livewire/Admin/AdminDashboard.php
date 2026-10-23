@@ -1561,6 +1561,11 @@ class AdminDashboard extends Component
         $this->resetPage('agendaPage');
     }
 
+    public function getDefaultKajianTime(string $type, ?string $date = null): ?string
+    {
+        return app(PrayerTimeService::class)->getDefaultKajianTime($type, $date);
+    }
+
     public function openCreateKajian(string $type = 'pekanan'): void
     {
         if (! Auth::user()->canManage()) {
@@ -1572,7 +1577,7 @@ class AdminDashboard extends Component
         $this->editingKajianId = null;
         $this->kajianType = $type;
         $this->kajianDate = Carbon::now()->addDays($type === 'jumat' ? 5 : 3)->format('Y-m-d');
-        $this->kajianTimeDisplay = $type === 'jumat' ? '11:45 - 12:45' : '09:00 - 11:30';
+        $this->kajianTimeDisplay = app(PrayerTimeService::class)->getDefaultKajianTime($type, $this->kajianDate) ?? '';
         $this->kajianTitle = '';
         $this->kajianSpeakerName = '';
         $this->kajianSpeakerPhone = '';
@@ -1641,6 +1646,8 @@ class AdminDashboard extends Component
             return;
         }
 
+        Kajian::ensureColumnsNullable();
+
         if ($data) {
             $this->editingKajianId = !empty($data['id']) ? (int) $data['id'] : null;
             $this->isEditingKajian = !empty($data['id']);
@@ -1661,8 +1668,8 @@ class AdminDashboard extends Component
 
         $rules = [
             'kajianDate' => 'required|date',
-            'kajianTitle' => 'required|string|max:255',
             'kajianType' => 'required|in:pekanan,jumat,tematik',
+            'kajianTitle' => in_array($this->kajianType, ['pekanan', 'tematik']) ? 'required|string|max:255' : 'nullable|string|max:255',
         ];
 
         if (in_array($this->kajianType, ['pekanan', 'tematik'])) {
@@ -1675,11 +1682,17 @@ class AdminDashboard extends Component
 
         $this->validate($rules);
 
+        $computedTime = !empty($this->kajianTimeDisplay)
+            ? $this->kajianTimeDisplay
+            : app(PrayerTimeService::class)->getDefaultKajianTime($this->kajianType, $this->kajianDate);
+
+        $computedTitle = ($this->kajianType === 'jumat' && empty($this->kajianTitle)) ? null : $this->kajianTitle;
+
         $payload = [
             'type' => $this->kajianType,
             'date' => $this->kajianDate,
-            'time_display' => $this->kajianTimeDisplay ?: ($this->kajianType === 'jumat' ? '11:45 - 12:45' : '09:00 - 11:30'),
-            'title' => $this->kajianTitle,
+            'time_display' => $computedTime,
+            'title' => $computedTitle,
             'youtube_url' => !empty($this->kajianYoutubeUrl) ? trim($this->kajianYoutubeUrl) : null,
         ];
 

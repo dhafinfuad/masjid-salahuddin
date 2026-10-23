@@ -308,19 +308,19 @@
                     <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <button type="button"
-                            @click="kajianForm.type = 'pekanan'; if(!kajianForm.time_display || kajianForm.time_display === '11:45 - 12:45') kajianForm.time_display = '09:00 - 11:30'"
+                            @click="kajianForm.type = 'pekanan'; updateKajianDefaultTime()"
                             class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
                             :class="kajianForm.type === 'pekanan' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
                             Kajian Pekanan
                         </button>
                         <button type="button"
-                            @click="kajianForm.type = 'tematik'; if(!kajianForm.time_display || kajianForm.time_display === '11:45 - 12:45') kajianForm.time_display = '09:00 - 11:30'"
+                            @click="kajianForm.type = 'tematik'; updateKajianDefaultTime()"
                             class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
                             :class="kajianForm.type === 'tematik' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
                             Kajian Tematik
                         </button>
                         <button type="button"
-                            @click="kajianForm.type = 'jumat'; if(!kajianForm.time_display || kajianForm.time_display === '09:00 - 11:30') kajianForm.time_display = '11:45 - 12:45'"
+                            @click="kajianForm.type = 'jumat'; updateKajianDefaultTime()"
                             class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
                             :class="kajianForm.type === 'jumat' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
                             Shalat Jumat & Khutbah
@@ -331,24 +331,26 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
-                        <input x-model="kajianForm.date" type="date"
+                        <input x-model="kajianForm.date" @change="updateKajianDefaultTime()" type="date"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
                         @error('kajianDate') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Waktu Pelaksanaan</label>
+                        <label class="block font-semibold text-slate-700 mb-1">
+                            <span x-text="kajianForm.type === 'jumat' ? 'Waktu Shalat Jumat (Tersinkron Otomatis)' : (kajianForm.type === 'pekanan' ? 'Waktu Kajian (Ashar + 20 Menit)' : 'Waktu Pelaksanaan (Opsional)')"></span>
+                        </label>
                         <input x-model="kajianForm.time_display" type="text"
-                            :placeholder="kajianForm.type === 'jumat' ? '11:45 - 12:45' : '09:00 - 11:30'"
+                            :placeholder="kajianForm.type === 'jumat' ? 'Contoh: 11:49 WIB' : (kajianForm.type === 'pekanan' ? 'Contoh: 15:05 WIB' : 'Contoh: 09:00 WIB')"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
                     </div>
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1"
-                        x-text="kajianForm.type === 'jumat' ? 'Judul / Tema Khutbah Jumat *' : 'Judul / Tema Kajian *'"></label>
+                        x-text="kajianForm.type === 'jumat' ? 'Judul / Tema Khutbah Jumat (Opsional)' : 'Judul / Tema Kajian *'"></label>
                     <input x-model="kajianForm.title" type="text"
-                        :placeholder="kajianForm.type === 'jumat' ? 'Contoh: Meneladani Karakter Pemimpin Berintegritas' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
+                        :placeholder="kajianForm.type === 'jumat' ? 'Kosongkan atau ketik tema khutbah (opsional)' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
                     @error('kajianTitle') <span
                     class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror

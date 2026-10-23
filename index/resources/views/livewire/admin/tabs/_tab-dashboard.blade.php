@@ -75,16 +75,18 @@
                                             </div>
 
                                             <!-- Title -->
-                                            <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-1.5">{{ $kj->title }}</h4>
+                                            <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-1.5">{{ $kj->title ?: ($isJumat ? 'Shalat Jumat & Khutbah' : 'Kajian') }}</h4>
 
                                             <!-- Speaker -->
                                             <p class="text-xs text-slate-700 font-medium truncate mt-0.5">{{ $speaker }}</p>
 
                                             <!-- Time -->
-                                            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1.5">
-                                                <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
-                                                <span class="truncate">{{ $kj->time_display ?: ($isJumat ? 'Waktu Shalat Jumat' : '09:00 WIB') }}</span>
-                                            </div>
+                                            @if(!$isJumat)
+                                                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1.5">
+                                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                                                    <span class="truncate">{{ $kj->time_display ?: '09:00 WIB' }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @empty
@@ -240,7 +242,7 @@
                                                 @if($isFridayDzuhurWidget && $fridayKajianWidget)
                                                     <span class="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-400">Kajian Jumat</span>
                                                     <span class="inline-flex items-center text-[10px] font-semibold text-gov-navy bg-amber-100/80 px-1.5 py-0.5 rounded border border-amber-300">
-                                                        {{ \Carbon\Carbon::parse($fridayKajianWidget->date)->translatedFormat('d M Y') }} • {{ $fridayKajianWidget->time_display ?: '11:27 WIB' }}
+                                                        {{ \Carbon\Carbon::parse($fridayKajianWidget->date)->translatedFormat('d M Y') }}
                                                     </span>
                                                 @elseif($isUstazKajianWidget && $pekananKajianWidget)
                                                     <span class="inline-flex items-center text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">Kajian Pekanan</span>

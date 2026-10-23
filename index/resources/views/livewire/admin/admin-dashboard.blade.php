@@ -131,7 +131,7 @@
              id: null,
              type: 'pekanan',
              date: '{{ Carbon\Carbon::now()->format('Y-m-d') }}',
-             time_display: '09:00 - 11:30',
+             time_display: '',
              title: '',
              speaker_name: '',
              speaker_phone: '',
@@ -143,14 +143,27 @@
              mc_notes: '',
              youtube_url: '',
          },
+         async updateKajianDefaultTime() {
+             if (this.kajianForm.type === 'tematik') {
+                 this.kajianForm.time_display = '';
+                 return;
+             }
+             if (typeof $wire !== 'undefined' && typeof $wire.getDefaultKajianTime === 'function') {
+                 try {
+                     const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date);
+                     if (res) {
+                         this.kajianForm.time_display = res;
+                     }
+                 } catch (e) {}
+             }
+         },
          openCreateKajian(type = 'pekanan') {
              this.isEditingKajian = false;
-             const isJumat = (type === 'jumat');
              this.kajianForm = {
                  id: null,
                  type: type || 'pekanan',
                  date: '{{ Carbon\Carbon::now()->format('Y-m-d') }}',
-                 time_display: isJumat ? '11:45 - 12:45' : '09:00 - 11:30',
+                 time_display: '',
                  title: '',
                  speaker_name: '',
                  speaker_phone: '',
@@ -163,6 +176,7 @@
                  speaker_photo: '',
                  youtube_url: '',
              };
+             this.updateKajianDefaultTime();
              if (typeof $wire !== 'undefined') {
                  $wire.set('editingKajianId', null, false);
                  $wire.set('kajianSpeakerPhoto', null, false);
@@ -181,7 +195,7 @@
                  id: data.id,
                  type: data.type || 'pekanan',
                  date: data.date || '',
-                 time_display: data.time_display || (data.type === 'jumat' ? '11:45 - 12:45' : '09:00 - 11:30'),
+                 time_display: data.time_display || '',
                  title: data.title || '',
                  speaker_name: data.speaker_name || '',
                  speaker_phone: data.speaker_phone || '',
@@ -194,6 +208,9 @@
                  speaker_photo: data.speaker_photo || '',
                  youtube_url: data.youtube_url || '',
              };
+             if (!this.kajianForm.time_display && this.kajianForm.type !== 'tematik') {
+                 this.updateKajianDefaultTime();
+             }
              if (typeof $wire !== 'undefined') {
                  $wire.set('editingKajianId', data.id, false);
                  $wire.set('kajianSpeakerPhoto', null, false);

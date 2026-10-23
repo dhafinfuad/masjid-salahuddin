@@ -77,6 +77,23 @@ class Kajian extends Model
     }
 
     /**
+     * Memastikan kolom title dan time_display nullable (Self-Healing / Auto-Migrate).
+     */
+    public static function ensureColumnsNullable(): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('kajians')) {
+                \Illuminate\Support\Facades\Schema::table('kajians', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->string('title')->nullable()->change();
+                    $table->string('time_display')->nullable()->change();
+                });
+            }
+        } catch (\Throwable $e) {
+            // Abaikan jika sudah nullable atau DB driver tidak mendukung
+        }
+    }
+
+    /**
      * Ekstraksi ID video YouTube dari berbagai format link (watch, live, embed, youtu.be, shorts).
      */
     public function getYoutubeIdAttribute(): ?string

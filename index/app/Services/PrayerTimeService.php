@@ -591,4 +591,43 @@ class PrayerTimeService
 
         return "{$dayName}, {$hijriDateOnly}";
     }
+
+    /**
+     * Menghitung waktu default kajian (Dzuhur/Ashar + offset menit) terformat "HH:MM WIB".
+     * - Pekanan: Waktu Ashar + 20 menit
+     * - Jumat: Waktu Dzuhur + 20 menit
+     * - Tematik: null (ditentukan manual bila ada)
+     */
+    public function getDefaultKajianTime(string $type, mixed $date = null, int $extraMinutes = 20): ?string
+    {
+        if ($type === 'tematik') {
+            return null;
+        }
+
+        $dateCarbon = $date instanceof Carbon 
+            ? $date->copy()->setTimezone('Asia/Jakarta') 
+            : ($date ? Carbon::parse($date)->setTimezone('Asia/Jakarta') : Carbon::now('Asia/Jakarta'));
+
+        $targetKey = ($type === 'jumat') ? 'dzuhur' : 'ashar';
+
+        $prayers = $this->getPrayerTimes(null, $dateCarbon);
+        $targetAdzan = null;
+        foreach ($prayers as $p) {
+            if (($p['key'] ?? '') === $targetKey) {
+                $targetAdzan = $p['adzan'] ?? null;
+                break;
+            }
+        }
+
+        if (!$targetAdzan) {
+            return ($type === 'jumat') ? '11:49 WIB' : '15:05 WIB';
+        }
+
+        [$h, $m] = explode(':', $targetAdzan);
+        $totalMinutes = ((int) $h * 60) + (int) $m + $extraMinutes;
+        $nh = floor($totalMinutes / 60) % 24;
+        $nm = $totalMinutes % 60;
+
+        return sprintf('%02d:%02d WIB', $nh, $nm);
+    }
 }

@@ -251,7 +251,7 @@
                                         </div>
                                         <div class="text-[11px] text-slate-500 font-normal leading-tight">
                                             {{ $item['date'] ? Carbon\Carbon::parse($item['date'])->translatedFormat('d F Y') : '-' }}
-                                            @if(!empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
+                                            @if(!$isJumat && !empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
                                                 • {{ $item['time_display'] }}
                                             @endif
                                         </div>
@@ -440,7 +440,7 @@
                                     </span>
                                     <span class="text-xs {{ $isHighlight ? 'font-bold text-amber-900' : 'font-semibold text-slate-600' }} whitespace-nowrap shrink-0">
                                         {{ $item['date'] ? $item['date']->translatedFormat('d M Y') : '-' }}
-                                        @if(!empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
+                                        @if(!$isJumat && !empty($item['time_display']) && $item['time_display'] !== 'Sesuai Jadwal')
                                             • {{ $item['time_display'] }}
                                         @endif
                                     </span>
