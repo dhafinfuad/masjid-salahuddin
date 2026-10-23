@@ -1150,18 +1150,17 @@
                 <div x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }"
                     class="space-y-3">
                     <!-- Search & Filter Bar -->
-                    <div
-                        class="flex flex-col md:flex-row md:items-center gap-2 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
                         <div class="relative flex-1 min-w-0" x-data="{
                             clearSearch() {
                                 $wire.clearAgendaSearch();
                             }
                         }">
                             <i data-lucide="search"
-                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                                class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                             <input wire:key="agenda-search-input" wire:model.live.debounce.300ms="agendaSearch" type="text"
                                 placeholder="Cari agenda kegiatan..."
-                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
                             <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                                 <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1169,8 +1168,8 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
-                            <div class="flex-1 md:w-36">
+                        <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
+                            <div class="flex-1 md:w-40">
                                 <x-custom-select 
                                     wire:key="agenda-status-filter" 
                                     wire:model.live="agendaFilterStatus"
@@ -1187,10 +1186,9 @@
 
                             @if($agendaFilterStatus !== 'all' || !empty($agendaSearch))
                                 <button type="button" wire:click="resetAgendaFilters"
-                                    class="shrink-0 h-9 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
+                                    class="shrink-0 w-9 h-9 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center justify-center"
                                     title="Reset Filter ke Semua">
                                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                                    <span class="hidden md:inline">Reset</span>
                                 </button>
                             @endif
                         </div>
@@ -1526,19 +1524,18 @@
                 <div x-show="kegiatanSubTab === 'odoj'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'odoj' }"
                     class="space-y-4">
                     <!-- Top Filter Bar: Date selector & batch status actions -->
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
 
                         <!-- Date Navigator: Previous, Input Date, Next -->
                         <div class="flex items-center gap-1.5 w-full sm:w-auto">
                             <button type="button" wire:click="previousOdojDate" title="Hari Sebelumnya"
-                                class="w-9 h-9 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
+                                class="w-9 h-9 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
                                 <i data-lucide="chevron-left" class="w-4 h-4"></i>
                             </button>
                             <input type="date" wire:model.live="odojDate"
                                 class="flex-1 sm:w-36 h-9 px-2.5 rounded-lg border border-gov-border bg-white text-xs font-bold text-slate-800 text-center focus:ring-1 focus:ring-gov-navy focus:outline-none cursor-pointer shadow-2xs">
                             <button type="button" wire:click="nextOdojDate" title="Hari Berikutnya"
-                                class="w-9 h-9 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
+                                class="w-9 h-9 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-600 hover:text-gov-navy transition cursor-pointer inline-flex items-center justify-center shrink-0 shadow-2xs">
                                 <i data-lucide="chevron-right" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -1547,7 +1544,7 @@
                         <div class="flex items-center sm:justify-end gap-2 w-full sm:w-auto">
                             <!-- Indicator Badge: 0/30 Juz Selesai -->
                             <div
-                                class="flex-1 min-w-0 sm:flex-none sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-slate-50 text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs">
+                                class="flex-1 min-w-0 sm:flex-none sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-white text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 shrink-0"></span>
                                 <span class="whitespace-nowrap">{{ $odojCompletedCount }}/30 Juz Selesai</span>
                             </div>
@@ -1561,7 +1558,7 @@
                                         <span class="whitespace-nowrap hidden sm:inline">Semua Sudah</span>
                                     </button>
                                     <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled" title="Reset Semua Belum"
-                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500 shrink-0 inline-block"></i>
                                         <span class="whitespace-nowrap hidden sm:inline">Reset Belum</span>
                                     </button>

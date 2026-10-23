@@ -183,12 +183,12 @@
                         }
                     @endphp
                     <!-- Filter Toolbar Katalog (Jamaah): Pencarian, Bulan, Tahun -->
-                    <div class="flex flex-col md:flex-row md:items-center gap-2 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
+                    <div class="flex flex-col md:flex-row md:items-center gap-2">
                         <div class="relative flex-1 min-w-0">
                             <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                             <input wire:model.live.debounce.300ms="catalogSearch" type="text"
                                 placeholder="Cari nama program..."
-                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
                             <button type="button" wire:click="$set('catalogSearch', '')" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Hapus pencarian">
                                 <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -213,9 +213,8 @@
                                 class="flex-1 min-w-0 md:flex-none w-full md:w-28"
                             />
                             <button type="button" wire:click="resetCatalogFilters"
-                                title="Reset Filter" class="shrink-0 w-9 md:w-auto h-9 md:px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
-                                <span class="hidden md:inline">Reset</span>
+                                title="Reset Filter ke Semua" class="shrink-0 w-9 h-9 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center justify-center">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
                     </div>

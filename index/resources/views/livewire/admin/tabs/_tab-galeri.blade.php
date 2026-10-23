@@ -32,28 +32,40 @@
     <div class="flex flex-col md:flex-row md:items-center gap-2">
 
         <!-- Search Bar -->
-        <div class="relative flex-1 min-w-0">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+        <div class="relative flex-1 min-w-0" x-data="{
+            clearSearch() {
+                $wire.set('gallerySearch', '');
+            }
+        }">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <input type="text" wire:model.live.debounce.300ms="gallerySearch"
                 placeholder="Cari judul kegiatan atau lokasi..."
-                class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-white focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+            <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian">
+                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
 
         <!-- Filter Row -->
-        <div class="w-full md:w-44 shrink-0">
+        <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
             @php
                 $galYears = array_merge(
                     [['value' => 'all', 'label' => 'Semua Tahun']],
                     collect($galleryYearsList ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
                 );
             @endphp
-            <x-custom-select 
-                wire:model.live="galleryYearFilter" 
-                :options="$galYears"
-                placeholder="Semua Tahun"
-                icon="calendar"
-                class="w-full"
-            />
+            <div class="flex-1 md:w-44">
+                <x-custom-select 
+                    wire:model.live="galleryYearFilter" 
+                    :options="$galYears"
+                    placeholder="Semua Tahun"
+                    icon="calendar"
+                    class="w-full"
+                />
+            </div>
         </div>
 
     </div>

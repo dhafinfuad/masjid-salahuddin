@@ -145,21 +145,23 @@
             </div>
 
             <!-- Filters Row -->
-            <div class="w-full md:w-52 shrink-0">
-                <x-custom-select 
-                    wire:model.live="userFilterRole"
-                    :options="[
-                        'all' => 'Semua Role',
-                        'Master' => 'Master Admin',
-                        'Ketua' => 'Ketua DKM',
-                        'Sekretaris' => 'Sekretaris',
-                        'Bendahara' => 'Bendahara',
-                        'Jamaah' => 'Jamaah (Viewer)',
-                    ]"
-                    placeholder="Semua Role"
-                    icon="shield"
-                    class="w-full"
-                />
+            <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
+                <div class="flex-1 md:w-52">
+                    <x-custom-select 
+                        wire:model.live="userFilterRole"
+                        :options="[
+                            'all' => 'Semua Role',
+                            'Master' => 'Master Admin',
+                            'Ketua' => 'Ketua DKM',
+                            'Sekretaris' => 'Sekretaris',
+                            'Bendahara' => 'Bendahara',
+                            'Jamaah' => 'Jamaah (Viewer)',
+                        ]"
+                        placeholder="Semua Role"
+                        icon="shield"
+                        class="w-full"
+                    />
+                </div>
             </div>
         </div>
 
