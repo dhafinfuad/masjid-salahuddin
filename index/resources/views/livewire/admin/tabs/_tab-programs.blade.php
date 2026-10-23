@@ -738,6 +738,24 @@
                             printPernyataanEmployeeName = {{ Js::from(Auth::user()->name) }};
                             printPernyataanEmployeeId = '';
                         "></div>
+                    @else
+                        <!-- Mode Switcher: Cetak Formulir vs Unggah & Verifikasi Scan PDF -->
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                            <button type="button"
+                                @click="pernyataanModalTab = 'cetak'; $wire.set('pernyataanModalTab', 'cetak', false)"
+                                class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
+                                :class="pernyataanModalTab === 'cetak' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'">
+                                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                <span>Cetak Formulir</span>
+                            </button>
+                            <button type="button"
+                                @click="pernyataanModalTab = 'impor'; $wire.set('pernyataanModalTab', 'impor', false)"
+                                class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
+                                :class="pernyataanModalTab === 'impor' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'">
+                                <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
+                                <span>Unggah & Verifikasi Scan PDF</span>
+                            </button>
+                        </div>
                     @endif
 
                     <!-- ============================================== -->

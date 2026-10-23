@@ -119,7 +119,8 @@ class MobileActionSheetTest extends TestCase
         $this->actingAs($this->admin);
         $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
 
-        // 1. Subtab Surat Pernyataan (Unggah Berkas Scan)
+        // 1. Subtab Surat Pernyataan (Cetak Surat Pernyataan dihapus, hanya tersisa Unggah Berkas Scan)
+        $this->assertStringNotContainsString('openPrintPernyataanModal(\'cetak\')', $rendered);
         $this->assertStringContainsString('openPrintPernyataanModal(\'upload\')', $rendered);
         $this->assertMatchesRegularExpression(
             '/openPrintPernyataanModal\(\'upload\'\)[^>]*class="[^"]*py-3 px-4[^"]*border-slate-400[^"]*"/s',

@@ -773,9 +773,10 @@
             this.printPernyataanOpenDropdown = null;
         },
         openPrintPernyataanModal(tab = 'cetak') {
+            const targetTab = (tab === 'upload' || tab === 'impor') ? 'impor' : 'cetak';
             this.activeTab = 'programs';
             this.socialSubTab = 'pernyataan';
-            this.pernyataanModalTab = tab || 'cetak';
+            this.pernyataanModalTab = targetTab;
             this.printPernyataanOpenDropdown = null;
             this.printPernyataanSearchEmp = '';
             this.printPernyataanSearchNewEmp = '';
@@ -788,7 +789,7 @@
             }
             this.showPrintPernyataanModal = false;
             $wire.set('socialSubTab', 'pernyataan', false);
-            $wire.set('pernyataanModalTab', tab || 'cetak', false);
+            $wire.set('pernyataanModalTab', targetTab, false);
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
             });

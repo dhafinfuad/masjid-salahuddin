@@ -5600,7 +5600,7 @@ class AdminDashboard extends Component
     {
         $this->currentTab = 'programs';
         $this->socialSubTab = 'pernyataan';
-        $this->pernyataanModalTab = in_array($tab, ['cetak', 'impor']) ? $tab : 'cetak';
+        $this->pernyataanModalTab = in_array($tab, ['impor', 'upload']) ? 'impor' : 'cetak';
         $this->showPrintPernyataanModal = false;
         $this->dispatch('open-print-pernyataan-tab', tab: $this->pernyataanModalTab);
     }
