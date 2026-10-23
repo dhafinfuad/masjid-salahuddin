@@ -30,38 +30,9 @@
     @endif
 
     <!-- Filter Card & Pencarian Pegawai -->
-    <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 bg-white p-3.5 rounded-xl border border-gov-border text-xs shadow-2xs">
-        <!-- Filter Status Kepegawaian -->
-        <div class="shrink-0 w-full sm:w-44">
-            <x-custom-select 
-                wire:model.live="employeeFilterStatus"
-                :options="[
-                    'all' => 'Semua Status Kantor',
-                    'AKTIF' => 'Aktif di KPP Madya',
-                    'MUTASI' => 'Mutasi / Pindah',
-                    'NONAKTIF' => 'Nonaktif',
-                ]"
-                placeholder="Semua Status Kantor"
-                class="w-full"
-            />
-        </div>
-
-        <!-- Filter Status Akun Aplikasi -->
-        <div class="shrink-0 w-full sm:w-40">
-            <x-custom-select 
-                wire:model.live="employeeFilterLink"
-                :options="[
-                    'all' => 'Semua Status Akun',
-                    'linked' => 'Sudah Punya Akun',
-                    'unlinked' => 'Belum Terdaftar Akun',
-                ]"
-                placeholder="Semua Status Akun"
-                class="w-full"
-            />
-        </div>
-
+    <div class="space-y-2">
         <!-- Search Input -->
-        <div class="relative flex-1" x-data="{
+        <div class="relative" x-data="{
             clearEmpSearch() {
                 $wire.set('employeeSearch', '');
                 $wire.set('search', '');
@@ -70,7 +41,7 @@
             <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
             <input wire:model.live.debounce.300ms="employeeSearch" type="text"
                 placeholder="Cari nama, NIP 9/18 digit, jabatan..."
-                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
             <button type="button" @click="clearEmpSearch()"
                 class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-600 transition cursor-pointer flex items-center justify-center"
                 title="Reset pencarian">
@@ -81,12 +52,44 @@
             </button>
         </div>
 
-        <!-- Teks Indikator Total (Aturan GEMINI.md: Dilarang keras menggunakan badge counter angka) -->
-        <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
-            Total: <span class="font-bold text-gov-navy">{{ method_exists($employeesList, 'total') ? $employeesList->total() : $employeesList->count() }}</span> Pegawai
-            @if($activeEmployeesCount > 0)
-                <span class="text-slate-400 ml-1">({{ $activeEmployeesCount }} aktif)</span>
-            @endif
+        <!-- Filters Row -->
+        <div class="flex flex-row items-center gap-2">
+            <!-- Filter Status Kepegawaian -->
+            <div class="flex-1">
+                <x-custom-select 
+                    wire:model.live="employeeFilterStatus"
+                    :options="[
+                        'all' => 'Semua Status',
+                        'AKTIF' => 'Aktif',
+                        'MUTASI' => 'Mutasi',
+                        'NONAKTIF' => 'Nonaktif',
+                    ]"
+                    placeholder="Semua Status"
+                    class="w-full"
+                />
+            </div>
+
+            <!-- Filter Status Akun Aplikasi -->
+            <div class="flex-1">
+                <x-custom-select 
+                    wire:model.live="employeeFilterLink"
+                    :options="[
+                        'all' => 'Semua Akun',
+                        'linked' => 'Punya Akun',
+                        'unlinked' => 'Belum Akun',
+                    ]"
+                    placeholder="Semua Akun"
+                    class="w-full"
+                />
+            </div>
+
+            <!-- Teks Indikator Total -->
+            <div class="text-slate-500 font-medium text-xs shrink-0 whitespace-nowrap">
+                <span class="font-bold text-gov-navy">{{ method_exists($employeesList, 'total') ? $employeesList->total() : $employeesList->count() }}</span>
+                @if($activeEmployeesCount > 0)
+                    <span class="text-slate-400">({{ $activeEmployeesCount }} aktif)</span>
+                @endif
+            </div>
         </div>
     </div>
 

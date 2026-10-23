@@ -3,49 +3,56 @@
 <!-- ======================================================== -->
 <div class="space-y-4">
     <!-- Top Header & Action Bar -->
-    <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-        <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                <i data-lucide="images" class="w-4 h-4 text-gov-navy"></i>
-            </div>
-            <div>
-                <h3 class="font-bold text-base text-gov-textMain">Galeri Kegiatan Masjid</h3>
-                <div class="text-xs text-gov-textMuted mt-0.5">
-                    Kelola foto dokumentasi kegiatan ibadah, kajian, dan program sosial Masjid Salahuddin.
+    <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                    <i data-lucide="images" class="w-4 h-4 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Dokumentasi</span>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Galeri Kegiatan Masjid</h3>
+                    <div class="text-xs text-slate-300 mt-0.5">
+                        Kelola foto dokumentasi kegiatan ibadah, kajian, dan program sosial Masjid Salahuddin.
+                    </div>
                 </div>
             </div>
-        </div>
 
-        @if(Auth::user()->canManage())
-            <div class="w-full sm:w-auto">
-                <button type="button" wire:click="openCreateGalleryModal"
-                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Tambah Galeri</span>
-                </button>
-            </div>
-        @endif
+            @if(Auth::user()->canManage())
+                <div class="shrink-0">
+                    <button type="button" wire:click="openCreateGalleryModal"
+                        class="h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy text-xs font-bold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Tambah Galeri</span>
+                    </button>
+                </div>
+            @endif
+        </div>
     </div>
 
-    <!-- Filter & Toolbar Bar -->
-    <div class="bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
-            <!-- Search Bar -->
-            <div class="relative flex-1">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input type="text" wire:model.live.debounce.300ms="gallerySearch"
-                    placeholder="Cari judul kegiatan atau lokasi..."
-                    class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
-            </div>
+    <!-- Filter & Search Bar -->
+    <div class="space-y-2">
 
-            <!-- Filter Tahun -->
+        <!-- Search Bar -->
+        <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input type="text" wire:model.live.debounce.300ms="gallerySearch"
+                placeholder="Cari judul kegiatan atau lokasi..."
+                class="h-9 w-full pl-9 pr-3.5 border border-gov-border rounded-lg text-xs bg-white focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+        </div>
+
+        <!-- Filter Row -->
+        <div class="flex flex-row items-center gap-2">
             @php
                 $galYears = array_merge(
                     [['value' => 'all', 'label' => 'Semua Tahun']],
                     collect($galleryYearsList ?? [date('Y')])->map(fn($yr) => ['value' => (string)$yr, 'label' => 'Tahun ' . $yr])->values()->all()
                 );
             @endphp
-            <div class="shrink-0 w-full sm:w-36">
+            <div class="flex-1">
                 <x-custom-select 
                     wire:model.live="galleryYearFilter"
                     :options="$galYears"
@@ -55,6 +62,7 @@
                 />
             </div>
         </div>
+
     </div>
 
     <!-- Gallery Album Cards Grid -->

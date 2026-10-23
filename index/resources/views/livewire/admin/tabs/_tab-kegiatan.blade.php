@@ -3,79 +3,76 @@
             <!-- (Kajian Pekanan, Shalat Jumat, Kegiatan Akbar, ODOJ) -->
             <!-- ======================================================== -->
             <div class="space-y-4">
-                <!-- Top Header & Action Bar (Dinamis sesuai Sub-tab aktif) -->
-                <div class="hidden sm:flex sm:flex-row sm:items-center justify-between gap-4 bg-white sm:p-5 rounded-xl border border-gov-border shadow-2xs">
-                    <!-- Left: Icon & Dynamic Title/Subtitle -->
-                    <div class="flex items-center space-x-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                            <i data-lucide="calendar-range" class="w-4 h-4 text-gov-navy"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-base text-gov-textMain">Manajemen Kegiatan Masjid</h3>
-                            <span class="sr-only">Manajemen Jadwal Kajian Agenda Masjid</span>
-                            <div class="text-xs text-gov-textMuted mt-0.5">
-                                <span x-show="kegiatanSubTab === 'pekanan'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' }">
-                                    Kelola jadwal kajian, kegiatan akbar, dan One Day One Juz.
-                                </span>
-                                <span x-show="kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'jumat' }">
-                                    Penjadwalan kepengurusan petugas Shalat Jumat, tema khutbah, dan naskah MC.
-                                </span>
-                                <span x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }">
-                                    History, laporan pelaksanaan, anggaran, dan perencanaan kegiatan akbar DKM.
-                                </span>
-                                <span x-show="kegiatanSubTab === 'odoj'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'odoj' }">
-                                    Rotasi otomatis juz harian untuk tadarus Al-Qur'an secara terpadu & laporan bertilawah.
-                                </span>
+                <!-- Top Header & Action Bar (Navy Banner - tampil di semua ukuran) -->
+                <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                        <!-- Left: Icon & Dynamic Title/Subtitle -->
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                                <i data-lucide="calendar-range" class="w-4 h-4 text-white"></i>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Action Buttons (Disesuaikan per Sub-tab) -->
-                    <div class="w-full sm:w-auto">
-                        <!-- Action Buttons for Kajian Pekanan & Jumat -->
-                        <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
-                            @if(Auth::user()->canManage())
-                                <button type="button"
-                                    @click="showImportKajianModal = true; $wire.openImportKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                    <i data-lucide="file-up" class="w-4 h-4 text-gov-navy"></i>
-                                    <span>Import</span>
-                                </button>
-                            @endif
-
-                            <div class="relative w-full sm:w-auto {{ !Auth::user()->canManage() ? 'col-span-2 sm:col-span-1' : '' }}" x-data="{ openExport: false }" @click.outside="openExport = false">
-                                <button type="button" @click="openExport = !openExport"
-                                    class="w-full sm:w-auto justify-center h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                                    <i data-lucide="file-down" class="w-4 h-4 text-emerald-600"></i>
-                                    <span>Export</span>
-                                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-                                </button>
-                                <div x-show="openExport" x-cloak
-                                    class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                    <a :href="'{{ route('admin.kajian.export-excel') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
-                                        <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
-                                        <span>Download Excel (.xlsx)</span>
-                                    </a>
-                                    <a :href="'{{ route('admin.kajian.export-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter" target="_blank"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
-                                        <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                        <span>Cetak Jadwal Rapi (PDF)</span>
-                                    </a>
+                            <div>
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Kegiatan</span>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Manajemen Kegiatan Masjid</h3>
+                                <span class="sr-only">Manajemen Jadwal Kajian Agenda Masjid</span>
+                                <div class="text-xs text-slate-300 mt-0.5">
+                                    <span x-show="kegiatanSubTab === 'pekanan'" x-cloak>Kelola jadwal kajian, kegiatan akbar, dan One Day One Juz.</span>
+                                    <span x-show="kegiatanSubTab === 'jumat'" x-cloak>Penjadwalan petugas Shalat Jumat, tema khutbah, dan naskah MC.</span>
+                                    <span x-show="kegiatanSubTab === 'agenda'" x-cloak>History, laporan pelaksanaan, anggaran, dan perencanaan kegiatan akbar DKM.</span>
+                                    <span x-show="kegiatanSubTab === 'odoj'" x-cloak>Rotasi otomatis juz harian untuk tadarus Al-Qur'an secara terpadu & laporan bertilawah.</span>
                                 </div>
                             </div>
-
-                            @if(Auth::user()->canManage())
-                                <button type="button" @click="openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
-                                    class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer">
-                                    <i data-lucide="plus" class="w-4 h-4 text-amber-400"></i>
-                                    <span>Tambah Jadwal</span>
-                                </button>
-                            @endif
                         </div>
 
-                        <!-- Action Buttons for Kegiatan Akbar -->
-                        <div x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }" class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
+                        <!-- Right Action Buttons (Disesuaikan per Sub-tab) -->
+                        <div class="shrink-0">
+                            <!-- Action Buttons for Kajian Pekanan & Jumat -->
+                            <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+                                @if(Auth::user()->canManage())
+                                    <button type="button"
+                                        @click="showImportKajianModal = true; $wire.openImportKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
+                                        class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                        <i data-lucide="file-up" class="w-4 h-4 text-white/70"></i>
+                                        <span>Import</span>
+                                    </button>
+                                @endif
+
+                                <div class="relative" x-data="{ openExport: false }" @click.outside="openExport = false">
+                                    <button type="button" @click="openExport = !openExport"
+                                        class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                        <i data-lucide="file-down" class="w-4 h-4 text-emerald-300"></i>
+                                        <span>Export</span>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-white/50"></i>
+                                    </button>
+                                    <div x-show="openExport" x-cloak
+                                        class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
+                                        <a :href="'{{ route('admin.kajian.export-excel') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
+                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                            <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
+                                            <span>Download Excel (.xlsx)</span>
+                                        </a>
+                                        <a :href="'{{ route('admin.kajian.export-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter" target="_blank"
+                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
+                                            <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
+                                            <span>Cetak Jadwal Rapi (PDF)</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                @if(Auth::user()->canManage())
+                                    <button type="button" @click="openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
+                                        class="col-span-2 sm:col-span-1 justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                                        <i data-lucide="plus" class="w-4 h-4"></i>
+                                        <span>Tambah Jadwal</span>
+                                    </button>
+                                @endif
+                            </div>
+
+                            <!-- Action Buttons for Kegiatan Akbar -->
+                            <div x-show="kegiatanSubTab === 'agenda'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'agenda' }" class="grid grid-cols-2 gap-2 sm:flex sm:items-center">
                             @if(Auth::user()->canManage())
                                 <button type="button"
                                     @click="showImportAgendaModal = true; if(window.createLucideIcons) window.createLucideIcons();"
@@ -138,16 +135,17 @@
                 <!-- Kajian Search & Filter (Hanya tampil saat subtab Pekanan atau Jumat) -->
                 <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="space-y-4">
                 <!-- Search & Filter Bar -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="relative flex-1 max-w-sm" x-data="{
+                <div class="space-y-2">
+                    <!-- Search Input -->
+                    <div class="relative" x-data="{
                         clearSearch() {
                             const sub = kegiatanSubTab || 'pekanan';
                             $wire.call('clearKajianSearch', sub);
                         }
                     }">
-                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input x-show="kegiatanSubTab === 'pekanan'" wire:key="pekanan-search-input" wire:model.live.debounce.300ms="pekananSearch" type="text" placeholder="Cari judul kajian, narasumber..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                        <input x-show="kegiatanSubTab === 'jumat'" wire:key="jumat-search-input" wire:model.live.debounce.300ms="jumatSearch" type="text" placeholder="Cari tema khutbah, khatib, MC, muadzin..." class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-white focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
                         <button type="button" @click="clearSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Reset pencarian ke data seharusnya">
                             <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -155,7 +153,9 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto">
+
+                    <!-- Filters Row -->
+                    <div class="flex flex-row items-center gap-2">
                         @php
                             $kajianMonthOptions = [['value' => 'all', 'label' => 'Semua Bulan']];
                             for ($m = 1; $m <= 12; $m++) {
@@ -169,29 +169,32 @@
                                 collect($availableKajianYears)->map(fn($yr) => ['value' => (string)$yr, 'label' => (string)$yr])->values()->all()
                             );
                         @endphp
-                        <x-custom-select 
-                            wire:key="kajian-month-filter" 
-                            wire:model.live="kajianMonthFilter" 
-                            :options="$kajianMonthOptions"
-                            placeholder="Semua Bulan"
-                            icon="calendar"
-                            class="w-full sm:w-36"
-                        />
+                        <div class="flex-1">
+                            <x-custom-select 
+                                wire:key="kajian-month-filter" 
+                                wire:model.live="kajianMonthFilter" 
+                                :options="$kajianMonthOptions"
+                                placeholder="Semua Bulan"
+                                icon="calendar"
+                                class="w-full"
+                            />
+                        </div>
 
-                        <x-custom-select 
-                            wire:key="kajian-year-filter" 
-                            wire:model.live="kajianYearFilter" 
-                            :options="$kajianYearOptions"
-                            placeholder="Semua Tahun"
-                            class="w-full sm:w-32"
-                        />
+                        <div class="flex-1">
+                            <x-custom-select 
+                                wire:key="kajian-year-filter" 
+                                wire:model.live="kajianYearFilter" 
+                                :options="$kajianYearOptions"
+                                placeholder="Semua Tahun"
+                                class="w-full"
+                            />
+                        </div>
 
                         @if($kajianMonthFilter !== 'all' || $kajianYearFilter !== 'all' || !empty($pekananSearch) || !empty($jumatSearch) || !empty($search))
                             <button type="button" wire:click="resetKajianFilters"
-                                class="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center h-9 px-3 rounded-lg text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center gap-1"
+                                class="shrink-0 w-9 h-9 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center justify-center"
                                 title="Reset Filter ke Semua">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                                <span>Reset</span>
                             </button>
                         @endif
                     </div>
@@ -1538,26 +1541,26 @@
                         </div>
 
                         <!-- Right Control Group: Indicator Badge & Action Buttons (Align Right on Desktop) -->
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2.5 w-full sm:w-auto">
+                        <div class="flex items-center sm:justify-end gap-2 w-full sm:w-auto">
                             <!-- Indicator Badge: 0/30 Juz Selesai -->
                             <div
-                                class="w-full sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-slate-50 text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs shrink-0">
+                                class="flex-1 min-w-0 sm:flex-none sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-slate-50 text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 shrink-0"></span>
                                 <span class="whitespace-nowrap">{{ $odojCompletedCount }}/30 Juz Selesai</span>
                             </div>
 
                             @if(Auth::user()->canManage())
                                 <!-- Action Buttons: Grid 2 cols on Mobile, Inline on Desktop -->
-                                <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto shrink-0">
-                                    <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                <div class="flex items-center gap-2 sm:w-auto shrink-0">
+                                    <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled" title="Tandai Semua Sudah"
+                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
-                                        <span class="whitespace-nowrap">Semua Sudah</span>
+                                        <span class="whitespace-nowrap hidden sm:inline">Semua Sudah</span>
                                     </button>
-                                    <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled"
-                                        class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                    <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled" title="Reset Semua Belum"
+                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500 shrink-0 inline-block"></i>
-                                        <span class="whitespace-nowrap">Reset Belum</span>
+                                        <span class="whitespace-nowrap hidden sm:inline">Reset Belum</span>
                                     </button>
                                 </div>
                             @endif

@@ -1,43 +1,43 @@
 <div class="space-y-6">
 
     <!-- Header Card Banner -->
-    <div class="bg-white rounded-xl p-5 sm:p-6 border border-gov-border shadow-2xs">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="bg-gov-navy rounded-xl p-5 sm:p-6 border border-gov-border/30 shadow-xs bg-gov-pattern">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
             <div>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">ASPIRASI JAMAAH</span>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Aspirasi Jamaah</span>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-gov-textMain mt-1">Saran & Kritik Jamaah</h2>
-                <p class="text-xs text-slate-500 mt-0.5 max-w-2xl leading-relaxed">
+                <h2 class="text-lg sm:text-xl font-bold text-white">Saran & Kritik Jamaah</h2>
+                <p class="text-xs text-slate-300 mt-0.5 max-w-2xl leading-relaxed">
                     Kelola masukan, pengaduan fasilitas, kebersihan, dan usulan kegiatan yang disampaikan jamaah melalui portal publik.
                 </p>
             </div>
-
-            <div class="flex items-center gap-2">
+            <div class="shrink-0">
                 <a href="{{ route('portal.saran') }}" target="_blank"
-                    class="h-9 px-3.5 text-xs rounded-lg border border-gov-border hover:bg-slate-50 text-slate-700 font-semibold transition shadow-2xs inline-flex items-center gap-1.5 cursor-pointer">
-                    <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    <span>Lihat Halaman Publik</span>
+                    class="h-9 px-3.5 text-xs rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white font-semibold transition shadow-2xs inline-flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    <span>Lihat Portal</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Filter & Search Card -->
-    <div class="bg-white rounded-xl p-3.5 border border-gov-border shadow-2xs">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+    <!-- Filter & Search Bar -->
+    <div class="space-y-2">
 
-            <!-- Search Input -->
-            <div class="relative flex-1">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" wire:model.live.debounce.300ms="saranSearch"
-                    placeholder="Cari pengirim, topik, kontak, atau isi saran..."
-                    class="h-9 w-full pl-9 pr-3 text-xs border border-gov-border rounded-lg bg-slate-50/70 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition">
-            </div>
+        <!-- Search Input -->
+        <div class="relative">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" wire:model.live.debounce.300ms="saranSearch"
+                placeholder="Cari pengirim, topik, kontak, atau isi saran..."
+                class="h-9 w-full pl-9 pr-3 text-xs border border-gov-border rounded-lg bg-white focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs">
+        </div>
 
+        <!-- Filters Row -->
+        <div class="flex flex-row items-center gap-2">
             <!-- Status Filter -->
-            <div class="shrink-0 w-full sm:w-44">
+            <div class="flex-1">
                 <x-custom-select 
                     wire:model.live="saranStatusFilter"
                     :options="[
@@ -53,7 +53,7 @@
             </div>
 
             <!-- Category Filter -->
-            <div class="shrink-0 w-full sm:w-44">
+            <div class="flex-1">
                 <x-custom-select 
                     wire:model.live="saranCategoryFilter"
                     :options="[
@@ -68,8 +68,8 @@
                     class="w-full"
                 />
             </div>
-
         </div>
+
     </div>
 
     <!-- ======================================================== -->
