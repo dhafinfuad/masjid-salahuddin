@@ -136,26 +136,14 @@
                 </div>
             </div>
 
-            <!-- Bottom nav: prev · dots · next (inline) -->
-            <div class="flex items-center justify-center gap-3 mt-2.5">
-                <button type="button" @click="scrollTo(kpiIdx - 1)"
-                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
-                    :class="kpiIdx === 0 ? 'opacity-30 pointer-events-none' : ''">
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <div class="flex items-center gap-1.5">
-                    <template x-for="i in kpiTotal" :key="i">
-                        <button type="button" @click="scrollTo(i - 1)"
-                            class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
-                            :class="kpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300 w-1.5'"
-                        ></button>
-                    </template>
-                </div>
-                <button type="button" @click="scrollTo(kpiIdx + 1)"
-                    class="w-6 h-6 rounded-full border border-gov-border bg-white flex items-center justify-center text-slate-400 hover:text-gov-navy hover:border-gov-navy transition cursor-pointer"
-                    :class="kpiIdx === kpiTotal - 1 ? 'opacity-30 pointer-events-none' : ''">
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                </button>
+            <!-- Bottom nav: dots indicator -->
+            <div class="flex items-center justify-center gap-1.5 mt-2.5">
+                <template x-for="i in kpiTotal" :key="i">
+                    <button type="button" @click="scrollTo(i - 1)"
+                        class="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
+                        :class="kpiIdx === i - 1 ? 'bg-gov-navy w-4' : 'bg-slate-300 w-1.5'"
+                    ></button>
+                </template>
             </div>
         </div>
 
