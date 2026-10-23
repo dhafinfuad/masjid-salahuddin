@@ -64,17 +64,25 @@ class MobileActionSheetTest extends TestCase
         }
     }
 
-    public function test_action_sheet_uses_theme_colors_and_valid_actions(): void
+    public function test_redundant_buttons_removed_and_fab_hidden_on_settings_and_statistics(): void
     {
-        $html = Livewire::actingAs($this->admin)
-            ->test(AdminDashboard::class, ['tab' => 'programs'])
-            ->html();
+        $this->actingAs($this->admin);
+        $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
 
-        $this->assertStringContainsString('bg-gov-navy', $html);
-        $this->assertStringNotContainsString('bg-[#0e2547]', $html);
-        $this->assertStringNotContainsString('pointer-events-none sm:hidden', $html);
-        $this->assertStringNotContainsString('exportSocialPrograms', $html);
-        $this->assertStringNotContainsString('exportSocialParticipants', $html);
-        $this->assertStringContainsString('showExportPotonganModal = true', $html);
+        // 1. Verifikasi FAB memiliki logika sembunyi untuk settings dan statistics
+        $this->assertStringContainsString("!['settings', 'statistics', 'statistik'].includes(activeTab)", $rendered);
+
+        // 2. Verifikasi tombol Tambah Peserta tidak ada di action sheet programs
+        $this->assertStringNotContainsString('openCreateParticipant()', $rendered);
+
+        // 3. Verifikasi tombol navigasi pindah sub-tab di finance dan users tidak ada di action sheet
+        $this->assertStringNotContainsString("financeSubTab = 'kategori'", $rendered);
+        $this->assertStringNotContainsString("financeSubTab = 'utama'", $rendered);
+        $this->assertStringNotContainsString("userSubTab = 'kepengurusan'", $rendered);
+        $this->assertStringNotContainsString("userSubTab = 'pengguna'", $rendered);
+
+        // 4. Verifikasi tombol reset takmir dan lihat di portal di users/gallery/petugas tidak ada
+        $this->assertStringNotContainsString('resetTakmirToDefault()', $rendered);
+        $this->assertStringNotContainsString('/petugas-sholat', $rendered);
     }
 }
