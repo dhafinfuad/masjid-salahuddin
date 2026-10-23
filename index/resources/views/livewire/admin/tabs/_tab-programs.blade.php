@@ -753,7 +753,7 @@
                                 class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
                                 :class="pernyataanModalTab === 'impor' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'">
                                 <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
-                                <span>Unggah & Verifikasi Scan PDF</span>
+                                <span>Unggah Scan</span>
                             </button>
                         </div>
                     @endif
@@ -770,7 +770,7 @@
                                 @if(Auth::user()->canManage())
                                     <!-- Mode Pemilihan Sasaran Pegawai (Hanya untuk Admin / Pengurus) -->
                                     <div>
-                                        <label class="block font-semibold text-slate-700 mb-2 text-xs">Mode Sasaran Pegawai *</label>
+                                        <label class="block font-semibold text-slate-700 mb-2 text-xs">Sasaran Pegawai *</label>
                                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                             <button type="button" @click="printPernyataanMode = 'all'; closePrintDropdowns()"
                                                 class="p-3 rounded-lg border text-left transition flex flex-col justify-between cursor-pointer"
@@ -940,7 +940,7 @@
 
                                     <!-- Tanggal Surat -->
                                     <div class="space-y-1.5">
-                                        <label class="block font-semibold text-slate-700">Tanggal Surat (Titik Tulis Tangan / Cetak)</label>
+                                        <label class="block font-semibold text-slate-700">Tanggal Surat</label>
                                         <input x-model="printPernyataanDateLetter" type="text"
                                             placeholder="Kosongkan untuk garis titik-titik (tulis tangan)"
                                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy text-xs font-medium">
@@ -1027,7 +1027,7 @@
                                     <div class="border-t border-slate-100 pt-3 space-y-3">
                                         <div class="font-bold text-slate-700 flex items-center gap-1.5">
                                             <i data-lucide="user" class="w-3.5 h-3.5 text-gov-navy"></i>
-                                            <span>Sekretaris Pengumpul Berkas (Footer Surat)</span>
+                                            <span>Sekretaris</span>
                                         </div>
 
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1110,9 +1110,9 @@
                                         <div class="flex items-start gap-2.5">
                                             <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
                                             <div>
-                                                <span class="font-bold">Pemrosesan Dokumen Scan Lokal Server:</span>
+                                                <span class="font-bold">Pemrosesan Dokumen :</span>
                                                 <p class="mt-0.5 text-blue-800 text-[11px] leading-relaxed">
-                                                    Unggah berkas pindaian multi-halaman PDF lembar formulir pemotongan tunjangan kinerja (seperti scan mesin). Sistem akan mengekstrak NIP, nama pegawai, dan nominal komitmen zakat/infaq/qurban/santunan secara otomatis untuk diverifikasi.
+                                                    Unggah scan PDF formulir pemotongan tunjangan kinerja. Sistem akan mengekstrak NIP, nama pegawai, dan nominal komitmen zakat/infaq/qurban/santunan secara otomatis untuk diverifikasi.
                                                 </p>
                                             </div>
                                         </div>
@@ -1464,7 +1464,7 @@
                                                         <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
                                                     </div>
                                                     <div>
-                                                        <span class="font-bold text-slate-800">Verifikasi Data Hasil Pindaian</span>
+                                                        <span class="font-bold text-slate-800">Verifikasi Data</span>
                                                     </div>
                                                 </div>
                                                 <span class="text-[11px] font-semibold text-slate-500">
@@ -1516,7 +1516,7 @@
                                                     <!-- 5 Canonical Programs Input Grid -->
                                                     <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2.5">
                                                         <div class="flex items-center justify-between pb-1.5 border-b border-slate-200">
-                                                            <span class="font-bold text-xs text-gov-textMain">Nominal Komitmen / Bulan</span>
+                                                            <span class="font-bold text-xs text-gov-textMain">Nominal / Bulan</span>
                                                             <span class="text-[11px] text-slate-400">Ketik angka murni</span>
                                                         </div>
 
@@ -1589,7 +1589,7 @@
 
                                                         <!-- Live Total Calculation in Rupiah -->
                                                         <div class="mt-2.5 pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-                                                            <span class="font-bold text-slate-700">Total Komitmen / Bulan:</span>
+                                                            <span class="font-bold text-slate-700">Total:</span>
                                                             <span class="font-extrabold text-gov-navy text-sm font-mono"
                                                                   x-text="'Rp ' + (window.formatRibuan(getTotal()) || '0')">
                                                             </span>
