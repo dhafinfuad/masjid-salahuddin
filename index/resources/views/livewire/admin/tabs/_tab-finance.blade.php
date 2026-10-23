@@ -5,10 +5,10 @@
 
                 <!-- Executive Page Header (Consistent with Kegiatan, Kajian, Petugas, Agenda) -->
                 <div
-                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-                    <div class="flex items-center space-x-2.5">
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+                    <div class="hidden sm:flex items-center space-x-2.5">
                         <div
-                            class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+                            class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                             <i data-lucide="wallet" class="w-4 h-4 text-gov-navy"></i>
                         </div>
                         <div>
@@ -59,46 +59,6 @@
                                 <span>Catat Transaksi</span>
                             </button>
                         @endif
-                    </div>
-                </div>
-
-                <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
-                <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
-                    <div class="relative">
-                        <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
-                        <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
-
-                            <!-- Item: Kas Utama -->
-                            <button type="button"
-                                @click="financeSubTab = 'utama'; $wire.set('financeSubTab', 'utama', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="financeSubTab === 'utama' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="financeSubTab === 'utama' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="wallet" class="w-5 h-5 transition"
-                                        :class="financeSubTab === 'utama' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="financeSubTab === 'utama' ? 'text-white' : 'text-slate-600'">Kas Utama</span>
-                            </button>
-
-                            <!-- Item: Kategori -->
-                            <button type="button"
-                                @click="financeSubTab = 'kategori'; $wire.set('financeSubTab', 'kategori', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                                :class="financeSubTab === 'kategori' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                            >
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                                    :class="financeSubTab === 'kategori' ? 'bg-white/15' : 'bg-slate-100'">
-                                    <i data-lucide="tags" class="w-5 h-5 transition"
-                                        :class="financeSubTab === 'kategori' ? 'text-white' : 'text-gov-navy'"></i>
-                                </div>
-                                <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                                    :class="financeSubTab === 'kategori' ? 'text-white' : 'text-slate-600'">Kategori</span>
-                            </button>
-
-                        </div>
                     </div>
                 </div>
 

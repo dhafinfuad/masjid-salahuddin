@@ -4,10 +4,10 @@
             <!-- ======================================================== -->
             <div class="space-y-4">
                 <!-- Top Header & Action Bar (Dinamis sesuai Sub-tab aktif) -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
                     <!-- Left: Icon & Dynamic Title/Subtitle -->
-                    <div class="flex items-center space-x-2.5">
-                        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+                    <div class="hidden sm:flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                             <i data-lucide="calendar-range" class="w-4 h-4 text-gov-navy"></i>
                         </div>
                         <div>
@@ -133,38 +133,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- 4 Sub-tab Unified Filter Navigation Bar -->
-                <div class="text-xs flex flex-col sm:flex-row sm:items-center justify-start gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
-                    <button type="button"
-                        @click="switchSubTab('pekanan')"
-                        :class="kegiatanSubTab === 'pekanan' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-                        <i data-lucide="calendar-days" class="w-4 h-4"></i>
-                        <span>Kajian</span>
-                    </button>
-                    <button type="button"
-                        @click="switchSubTab('jumat')"
-                        :class="kegiatanSubTab === 'jumat' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-                        <i data-lucide="mic" class="w-4 h-4"></i>
-                        <span>Khutbah Jumat</span>
-                    </button>
-                    <button type="button"
-                        @click="switchSubTab('agenda')"
-                        :class="kegiatanSubTab === 'agenda' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-                        <i data-lucide="calendar-range" class="w-4 h-4"></i>
-                        <span>Kegiatan Akbar</span>
-                    </button>
-                    <button type="button"
-                        @click="switchSubTab('odoj')"
-                        :class="kegiatanSubTab === 'odoj' ? 'bg-gov-navy text-white font-bold shadow-2xs' : 'bg-white text-slate-700 border border-gov-border hover:bg-slate-50 font-medium'"
-                        class="h-9 px-3.5 rounded-lg transition whitespace-nowrap cursor-pointer flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-4 h-4"></i>
-                        <span>One Day One Juz</span>
-                    </button>
                 </div>
 
                 <!-- Kajian Search & Filter (Hanya tampil saat subtab Pekanan atau Jumat) -->

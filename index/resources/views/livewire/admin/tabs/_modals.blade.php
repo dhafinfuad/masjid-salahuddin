@@ -2547,7 +2547,7 @@
 
                     if (isset($groupedFinanceCategories)) {
                         if (! $isTesting || $financeType === 'pemasukan') {
-                            $catOptionsPemasukan[] = ['label' => 'ðŸ“¥ PENERIMAAN', 'is_header' => true];
+                            $catOptionsPemasukan[] = ['label' => '📥 PENERIMAAN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Penerimaan'])) {
                                 foreach($groupedFinanceCategories['Penerimaan'] as $fc) {
                                     $catOptionsPemasukan[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2556,13 +2556,13 @@
                         }
 
                         if (! $isTesting || $financeType === 'pengeluaran') {
-                            $catOptionsPengeluaran[] = ['label' => 'ðŸ“¤ PENGELUARAN RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => '📤 PENGELUARAN RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
                                 }
                             }
-                            $catOptionsPengeluaran[] = ['label' => 'ðŸ› ï¸ PENGELUARAN NON-RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => '🛠️ PENGELUARAN NON-RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Non-Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Non-Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2672,7 +2672,7 @@
                         @php
                             $agendaOptions = [['value' => '', 'label' => 'ðŸ¢ Kas Umum Masjid (Rutin Bulanan)']];
                             if (isset($allAgendas) && $allAgendas->isNotEmpty()) {
-                                $agendaOptions[] = ['label' => 'ðŸŽ¯ PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
+                                $agendaOptions[] = ['label' => '🎯 PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
                                 foreach($allAgendas as $ag) {
                                     $agendaOptions[] = ['value' => (string)$ag->id, 'label' => 'Kegiatan: ' . $ag->title];
                                 }
@@ -2910,9 +2910,9 @@
                         <x-custom-select 
                             x-model="financeCategoryForm.group"
                             :options="[
-                                ['value' => 'penerimaan', 'label' => 'ðŸ“¥ Penerimaan (Kas Masuk)'],
-                                ['value' => 'pengeluaran_rutin', 'label' => 'ðŸ“¤ Pengeluaran Rutin'],
-                                ['value' => 'pengeluaran_nonrutin', 'label' => 'ðŸ› ï¸ Pengeluaran Non-Rutin'],
+                                ['value' => 'penerimaan', 'label' => '📥 Penerimaan (Kas Masuk)'],
+                                ['value' => 'pengeluaran_rutin', 'label' => '📤 Pengeluaran Rutin'],
+                                ['value' => 'pengeluaran_nonrutin', 'label' => '🛠️ Pengeluaran Non-Rutin'],
                             ]"
                             placeholder="Pilih Kelompok Pos"
                             buttonClass="p-2.5 bg-slate-50/50"

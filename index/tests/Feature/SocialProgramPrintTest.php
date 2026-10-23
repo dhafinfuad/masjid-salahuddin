@@ -385,7 +385,7 @@ class SocialProgramPrintTest extends TestCase
 
         $component->assertSee('Surat Pernyataan Potongan Tukin');
         $component->assertSee('Adelina Kholifah Putri');
-        $component->assertSee('Buka Dokumen Cetak');
+        $component->assertSee('Cetak Surat');
     }
 
     public function test_user_with_academic_degree_matches_participant_records_without_degree_and_shows_history(): void

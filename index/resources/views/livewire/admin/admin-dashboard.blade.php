@@ -1148,8 +1148,7 @@
             @if($currentTab === 'programs')
                 <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
                     <div class="flex items-center overflow-x-auto no-scrollbar">
-                        
-                        <!-- Tab Aktif / Tidak Aktif: Katalog Program -->
+                        <!-- Tab 1: Katalog Program -->
                         <button type="button"
                             @click="socialSubTab = 'katalog'; $wire.set('socialSubTab', 'katalog', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
                             class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
@@ -1158,7 +1157,7 @@
                             <span>Katalog Program</span>
                         </button>
 
-                        <!-- Tab Aktif / Tidak Aktif: Rekap Peserta -->
+                        <!-- Tab 2: Rekap Peserta -->
                         @if(Auth::user()->canManage())
                             <button type="button"
                                 @click="socialSubTab = 'peserta'; $wire.set('socialSubTab', 'peserta', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
@@ -1169,7 +1168,7 @@
                             </button>
                         @endif
 
-                        <!-- Tab Aktif / Tidak Aktif: Surat Pernyataan -->
+                        <!-- Tab 3: Surat Pernyataan -->
                         <button type="button"
                             @click="socialSubTab = 'pernyataan'; $wire.set('socialSubTab', 'pernyataan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
                             class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
@@ -1178,7 +1177,7 @@
                             <span>Surat Pernyataan</span>
                         </button>
 
-                        <!-- Tab Aktif / Tidak Aktif: Setoran Kantor -->
+                        <!-- Tab 4: Setoran Kantor -->
                         @if(Auth::user()->canManage())
                             <button type="button"
                                 @click="socialSubTab = 'setoran'; $wire.set('socialSubTab', 'setoran', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
@@ -1188,7 +1187,129 @@
                                 <span>Setoran Kantor</span>
                             </button>
                         @endif
+                    </div>
+                </div>
+            @elseif(in_array($currentTab, ['kegiatan', 'kajian', 'agenda']))
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
+                    <div class="flex items-center overflow-x-auto no-scrollbar">
+                        <!-- Tab 1: Kajian -->
+                        <button type="button"
+                            @click="switchSubTab('pekanan')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="kegiatanSubTab === 'pekanan' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>
+                            <span>Kajian</span>
+                        </button>
 
+                        <!-- Tab 2: Khutbah Jumat -->
+                        <button type="button"
+                            @click="switchSubTab('jumat')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="kegiatanSubTab === 'jumat' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+                            <span>Khutbah Jumat</span>
+                        </button>
+
+                        <!-- Tab 3: Kegiatan Akbar -->
+                        <button type="button"
+                            @click="switchSubTab('agenda')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="kegiatanSubTab === 'agenda' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="calendar-range" class="w-3.5 h-3.5"></i>
+                            <span>Kegiatan Akbar</span>
+                        </button>
+
+                        <!-- Tab 4: One Day One Juz -->
+                        <button type="button"
+                            @click="switchSubTab('odoj')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="kegiatanSubTab === 'odoj' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+                            <span>One Day One Juz</span>
+                        </button>
+                    </div>
+                </div>
+            @elseif($currentTab === 'finance')
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
+                    <div class="flex items-center overflow-x-auto no-scrollbar">
+                        <!-- Tab 1: Kas Utama -->
+                        <button type="button"
+                            title="Aliran Kas Utama"
+                            @click="financeSubTab = 'utama'; $wire.set('financeSubTab', 'utama', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="financeSubTab === 'utama' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                            <span>Kas Utama</span>
+                        </button>
+
+                        <!-- Tab 2: Kategori -->
+                        <button type="button"
+                            title="Kelola Kategori Kas"
+                            @click="financeSubTab = 'kategori'; $wire.set('financeSubTab', 'kategori', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="financeSubTab === 'kategori' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="tags" class="w-3.5 h-3.5"></i>
+                            <span>Kategori</span>
+                        </button>
+                    </div>
+                </div>
+            @elseif($currentTab === 'users')
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
+                    <div class="flex items-center overflow-x-auto no-scrollbar">
+                        <!-- Tab 1: Anggota -->
+                        <button type="button"
+                            @click="userSubTab = 'pengguna'; $wire.set('userSubTab', 'pengguna', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="userSubTab === 'pengguna' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                            <span>Anggota</span>
+                        </button>
+
+                        <!-- Tab 2: Pegawai -->
+                        <button type="button"
+                            @click="userSubTab = 'pegawai'; $wire.set('userSubTab', 'pegawai', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="userSubTab === 'pegawai' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="16" rx="3"/>
+                                <circle cx="9" cy="10" r="2"/>
+                                <line x1="15" y1="8" x2="17" y2="8"/>
+                                <line x1="15" y1="12" x2="17" y2="12"/>
+                                <line x1="7" y1="16" x2="17" y2="16"/>
+                            </svg>
+                            <span>Pegawai</span>
+                        </button>
+
+                        <!-- Tab 3: Kepengurusan -->
+                        <button type="button"
+                            @click="userSubTab = 'kepengurusan'; $wire.set('userSubTab', 'kepengurusan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="userSubTab === 'kepengurusan' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span>Kepengurusan</span>
+                        </button>
+                    </div>
+                </div>
+            @elseif($currentTab === 'settings')
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-6">
+                    <div class="flex items-center overflow-x-auto no-scrollbar">
+                        <!-- Tab 1: Pengaturan Masjid -->
+                        <button type="button"
+                            @click="switchSettingsSubTab('masjid')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="settingsSubTab === 'masjid' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+                            <span>Pengaturan Masjid</span>
+                        </button>
+
+                        <!-- Tab 2: Template & Studio Poster -->
+                        <button type="button"
+                            @click="switchSettingsSubTab('poster')"
+                            class="flex items-center gap-1.5 px-3 py-2.5 text-xs whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="settingsSubTab === 'poster' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+                            <span>Template & Studio Poster</span>
+                        </button>
                     </div>
                 </div>
             @endif
@@ -1234,6 +1355,22 @@
 
         <!-- Admin Workspace Body -->
         <div class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
+
+            @if(Auth::user()->isReadOnly())
+                <div
+                    class="bg-amber-50 border border-amber-300 rounded-xl p-3.5 flex items-center justify-between text-xs text-amber-900 shadow-2xs">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-amber-200/70 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-800"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold block">Mode Akses: Penasihat DKM (Viewer / Read-Only Protection)</span>
+                            <span class="text-amber-800 text-xs font-medium">Anda hanya dapat memantau seluruh data dan mengekspor CSV/PDF.</span>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Modular Tab Rendering based on $currentTab -->
             @if($currentTab === 'dashboard')

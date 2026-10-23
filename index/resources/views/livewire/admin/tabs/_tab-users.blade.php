@@ -7,10 +7,10 @@
     <div x-show="userSubTab === 'pengguna'">
         <!-- Top Header & Filter Card -->
         <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-2.5">
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="hidden sm:flex items-center space-x-2.5">
                 <div
-                    class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+                    class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                     <i data-lucide="user-cog" class="w-4 h-4 text-gov-navy"></i>
                 </div>
                 <div>
@@ -41,9 +41,9 @@
 
     <!-- Top Header Card: Pegawai -->
     <div x-show="userSubTab === 'pegawai'" x-cloak>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
-                <div class="hidden sm:flex w-8 h-8 rounded-lg bg-slate-100 text-gov-navy items-center justify-center border border-gov-border shrink-0">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="hidden sm:flex items-center space-x-2.5 min-w-0 flex-1">
+                <div class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
                     <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="4" width="18" height="16" rx="3"/>
                         <circle cx="9" cy="10" r="2"/>
@@ -84,8 +84,8 @@
 
     <!-- Top Header Card: Kepengurusan -->
     <div x-show="userSubTab === 'kepengurusan'" x-cloak>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-            <div class="flex items-center space-x-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-3.5 sm:p-5 rounded-xl border border-gov-border shadow-2xs">
+            <div class="hidden sm:flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-gov-navy flex items-center justify-center border border-blue-200 shrink-0">
                     <i data-lucide="shield-check" class="w-5 h-5 text-gov-navy"></i>
                 </div>
@@ -123,66 +123,6 @@
                         <span>Reset ke Default SK</span>
                     </button>
                 @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- Sub-tab Navigation Bar (Icon Grid Horizontal Scroll) -->
-    <div class="bg-white rounded-xl border border-gov-border shadow-2xs p-3">
-        <div class="relative">
-            <div class="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-white to-transparent z-10 rounded-r-xl"></div>
-            <div class="flex gap-1 overflow-x-auto scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
-
-                <!-- Item: Anggota -->
-                <button type="button"
-                    @click="userSubTab = 'pengguna'; $wire.set('userSubTab', 'pengguna', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                    class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                    :class="userSubTab === 'pengguna' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                >
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                        :class="userSubTab === 'pengguna' ? 'bg-white/15' : 'bg-slate-100'">
-                        <i data-lucide="users" class="w-5 h-5 transition"
-                            :class="userSubTab === 'pengguna' ? 'text-white' : 'text-gov-navy'"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                        :class="userSubTab === 'pengguna' ? 'text-white' : 'text-slate-600'">Anggota</span>
-                </button>
-
-                <!-- Item: Pegawai -->
-                <button type="button"
-                    @click="userSubTab = 'pegawai'; $wire.set('userSubTab', 'pegawai', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                    class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                    :class="userSubTab === 'pegawai' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                >
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                        :class="userSubTab === 'pegawai' ? 'bg-white/15' : 'bg-slate-100'">
-                        <svg class="w-5 h-5 transition" :class="userSubTab === 'pegawai' ? 'text-white' : 'text-gov-navy'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="16" rx="3"/>
-                            <circle cx="9" cy="10" r="2"/>
-                            <line x1="15" y1="8" x2="17" y2="8"/>
-                            <line x1="15" y1="12" x2="17" y2="12"/>
-                            <line x1="7" y1="16" x2="17" y2="16"/>
-                        </svg>
-                    </div>
-                    <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                        :class="userSubTab === 'pegawai' ? 'text-white' : 'text-slate-600'">Pegawai</span>
-                </button>
-
-                <!-- Item: Kepengurusan -->
-                <button type="button"
-                    @click="userSubTab = 'kepengurusan'; $wire.set('userSubTab', 'kepengurusan', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                    class="flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition shrink-0 cursor-pointer min-w-[64px]"
-                    :class="userSubTab === 'kepengurusan' ? 'bg-gov-navy' : 'hover:bg-slate-50'"
-                >
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                        :class="userSubTab === 'kepengurusan' ? 'bg-white/15' : 'bg-slate-100'">
-                        <i data-lucide="shield-check" class="w-5 h-5 transition"
-                            :class="userSubTab === 'kepengurusan' ? 'text-white' : 'text-gov-navy'"></i>
-                    </div>
-                    <span class="text-[11px] font-semibold leading-tight text-center transition whitespace-nowrap"
-                        :class="userSubTab === 'kepengurusan' ? 'text-white' : 'text-slate-600'">Pengurus</span>
-                </button>
-
             </div>
         </div>
     </div>

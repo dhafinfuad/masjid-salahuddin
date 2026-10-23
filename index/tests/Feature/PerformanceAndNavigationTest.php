@@ -337,7 +337,7 @@ class PerformanceAndNavigationTest extends TestCase
         $portalResponse = $this->get('/');
         $portalResponse->assertOk();
         $portalResponse->assertSee('Daftar Sekarang');
-        $portalResponse->assertSee('Silakan login terlebih dahulu untuk mendaftar!');
+        $portalResponse->assertSee(url('/admin/programs?subtab=pernyataan'));
         $portalResponse->assertSee(route('portal.jadwal-sholat'));
         $portalResponse->assertSee(route('portal.petugas-sholat'));
 
