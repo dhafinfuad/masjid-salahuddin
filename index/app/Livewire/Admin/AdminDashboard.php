@@ -6829,6 +6829,10 @@ class AdminDashboard extends Component
                             $prog->monthly_commitment_total = $fallbackMonthly;
                         }
                     }
+
+                    // Cegah accessor model menghitung ulang total seluruh peserta saat nilai user kosong (null)
+                    $prog->setAttribute('monthly_commitment_total', (float) ($prog->getAttributes()['monthly_commitment_total'] ?? 0));
+                    $prog->setAttribute('total_collected', (float) ($prog->getAttributes()['total_collected'] ?? 0));
                 }
 
                 $totalSocialProgramsCount = $allSocialPrograms->count();

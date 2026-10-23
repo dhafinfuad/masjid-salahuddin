@@ -155,12 +155,14 @@
                                     </p>
 
                                     <!-- Realisasi Dana -->
+                                    @if(Auth::user()->canManage())
                                     <div class="bg-slate-50 p-3 rounded-lg border border-gov-border mb-4 flex items-center justify-between text-xs">
                                         <span class="text-slate-500 font-medium">Realisasi Dana:</span>
                                         <span class="font-bold text-gov-textMain">
                                             Rp {{ number_format($prog->total_collected, 0, ',', '.') }}
                                         </span>
                                     </div>
+                                    @endif
 
                                     <!-- Stats Highlights -->
                                     <div class="grid {{ Auth::user()->canManage() ? 'grid-cols-2' : 'grid-cols-1' }} gap-2 text-xs mb-4">
