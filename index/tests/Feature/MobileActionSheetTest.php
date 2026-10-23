@@ -63,4 +63,18 @@ class MobileActionSheetTest extends TestCase
             $this->assertStringContainsString('hidden sm:flex', $html, "Tab {$tab} must hide top action header on mobile using hidden sm:flex");
         }
     }
+
+    public function test_action_sheet_uses_theme_colors_and_valid_actions(): void
+    {
+        $html = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'programs'])
+            ->html();
+
+        $this->assertStringContainsString('bg-gov-navy', $html);
+        $this->assertStringNotContainsString('bg-[#0e2547]', $html);
+        $this->assertStringNotContainsString('pointer-events-none sm:hidden', $html);
+        $this->assertStringNotContainsString('exportSocialPrograms', $html);
+        $this->assertStringNotContainsString('exportSocialParticipants', $html);
+        $this->assertStringContainsString('showExportPotonganModal = true', $html);
+    }
 }

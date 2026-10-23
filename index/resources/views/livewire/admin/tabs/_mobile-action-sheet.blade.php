@@ -6,7 +6,7 @@
 <div class="fixed bottom-6 right-5 z-40 sm:hidden">
     <button type="button"
         @click="openMobileActionSheet()"
-        class="w-14 h-14 rounded-full bg-[#0e2547] text-white flex items-center justify-center shadow-xl shadow-slate-900/35 hover:bg-[#13396B] active:scale-95 transition-all duration-200 cursor-pointer"
+        class="w-14 h-14 rounded-full bg-gov-navy text-white flex items-center justify-center shadow-xl shadow-slate-900/35 hover:bg-gov-navyHover active:scale-95 transition-all duration-200 cursor-pointer"
         title="Menu Tindakan Cepat"
         aria-label="Menu Tindakan Cepat">
         <svg class="w-7 h-7 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -37,10 +37,10 @@
     x-transition:leave="transition ease-in duration-200 transform"
     x-transition:leave-start="translate-y-0"
     x-transition:leave-end="translate-y-full"
-    class="fixed bottom-0 inset-x-0 z-50 pointer-events-none sm:hidden flex flex-col justify-end"
+    class="fixed bottom-0 inset-x-0 z-50 sm:hidden flex flex-col justify-end"
     style="display: none;">
 
-    <div class="pointer-events-auto w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-8 space-y-4 max-h-[85vh] overflow-y-auto">
+    <div class="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-8 space-y-4 max-h-[85vh] overflow-y-auto">
         <!-- Center Drag Indicator Handle -->
         <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
 
@@ -69,7 +69,7 @@
                 <div x-show="kegiatanSubTab === 'pekanan'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateKajian('pekanan')"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -121,7 +121,7 @@
                 <div x-show="kegiatanSubTab === 'jumat'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateKajian('jumat')"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -173,7 +173,7 @@
                 <div x-show="kegiatanSubTab === 'agenda'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateAgenda()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -215,7 +215,7 @@
                 <div x-show="kegiatanSubTab === 'odoj'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openAssignOdoj(1, '')"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -245,7 +245,7 @@
             <div class="space-y-3">
                 @if(Auth::user()->canManage())
                     <button type="button" @click="closeMobileActionSheet(); openCreatePrayerDuty()"
-                        class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                        class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -303,7 +303,7 @@
                 <div x-show="financeSubTab === 'utama'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateFinance()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -353,7 +353,7 @@
                 <div x-show="financeSubTab === 'kategori'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateFinanceCategory()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -392,7 +392,7 @@
                 <div x-show="socialSubTab === 'katalog'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateSocialProgram()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -419,7 +419,7 @@
                                 <span class="text-xs font-semibold text-slate-800 leading-tight">Import File</span>
                             </button>
 
-                            <button type="button" @click="closeMobileActionSheet(); $wire.exportSocialPrograms()"
+                            <button type="button" @click="closeMobileActionSheet(); showExportPotonganModal = true"
                                 class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                                 <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
@@ -441,8 +441,8 @@
                 <!-- Subtab: Peserta -->
                 <div x-show="socialSubTab === 'peserta'" class="space-y-3">
                     @if(Auth::user()->canManage())
-                        <button type="button" @click="closeMobileActionSheet(); $wire.exportSocialParticipants()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                        <button type="button" @click="closeMobileActionSheet(); showExportPotonganModal = true"
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             <span>Download Rekap Peserta</span>
                         </button>
@@ -470,7 +470,7 @@
                 <!-- Subtab: Surat Pernyataan -->
                 <div x-show="socialSubTab === 'pernyataan'" class="space-y-3">
                     <button type="button" @click="closeMobileActionSheet(); openPrintPernyataanModal('cetak')"
-                        class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                        class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                         <span>Cetak Surat Pernyataan</span>
                     </button>
@@ -498,7 +498,7 @@
                 <div x-show="socialSubTab === 'setoran'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); showImportPotonganModal = true"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             <span>Impor Potongan Payroll</span>
                         </button>
@@ -534,7 +534,7 @@
                 <div x-show="userSubTab === 'pengguna'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); openCreateUser()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -566,7 +566,7 @@
                 <div x-show="userSubTab === 'pegawai'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); showEmployeeModal = true; $wire.openCreateEmployeeModal()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -600,7 +600,7 @@
                 <div x-show="userSubTab === 'kepengurusan'" class="space-y-3">
                     @if(Auth::user()->canManage())
                         <button type="button" @click="closeMobileActionSheet(); $wire.openTemplateKepModal()"
-                            class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                            class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                             <span>Template Surat KEP Takmir</span>
                         </button>
@@ -616,8 +616,7 @@
                         </a>
 
                         @if(Auth::user()->canManage())
-                            <button type="button" @click="closeMobileActionSheet(); $wire.resetTakmirToDefault()"
-                                wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
+                            <button type="button" @click="closeMobileActionSheet(); if (confirm('Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?')) { $wire.resetTakmirToDefault() }"
                                 class="flex items-center gap-2.5 p-2.5 rounded-xl border border-rose-200 bg-rose-50/50 hover:bg-rose-50 active:bg-rose-100 transition cursor-pointer text-left">
                                 <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -637,7 +636,7 @@
             <div class="space-y-3">
                 @if(Auth::user()->canManage())
                     <button type="button" @click="closeMobileActionSheet(); $wire.openCreateGalleryModal()"
-                        class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                        class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -672,7 +671,7 @@
         <template x-if="activeTab === 'settings'">
             <div class="space-y-3">
                 <button type="button" @click="closeMobileActionSheet(); $wire.saveSettings()"
-                    class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                    class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     <span>Simpan Pengaturan Masjid</span>
                 </button>
@@ -703,7 +702,7 @@
         <template x-if="activeTab === 'dashboard'">
             <div class="space-y-3">
                 <button type="button" @click="closeMobileActionSheet(); activeTab = 'kegiatan'; kegiatanSubTab = 'pekanan'; openCreateKajian('pekanan')"
-                    class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                    class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -752,7 +751,7 @@
         <template x-if="activeTab === 'saran'">
             <div class="space-y-3">
                 <a href="{{ route('portal.saran') }}" target="_blank" @click="closeMobileActionSheet()"
-                    class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                    class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     <span>Buka Halaman Aspirasi Publik</span>
                 </a>
@@ -783,7 +782,7 @@
         <template x-if="activeTab === 'statistics' || activeTab === 'statistik'">
             <div class="space-y-3">
                 <a href="{{ url('/') }}" target="_blank" @click="closeMobileActionSheet()"
-                    class="w-full py-3 px-4 rounded-xl bg-[#0e2547] hover:bg-[#13396B] active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                    class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     <span>Kunjungi Portal Publik</span>
                 </a>
