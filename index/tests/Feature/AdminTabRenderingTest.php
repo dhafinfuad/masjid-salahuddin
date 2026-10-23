@@ -43,4 +43,18 @@ class AdminTabRenderingTest extends TestCase
             $this->assertNotEmpty(trim($html), "Livewire rendered html for {$tab} should not be empty");
         }
     }
+
+    public function test_navy_header_card_banners_do_not_have_icon_boxes_on_desktop(): void
+    {
+        $tabs = ['kegiatan', 'finance', 'programs', 'users', 'settings', 'petugas', 'galeri', 'saran', 'statistics'];
+
+        foreach ($tabs as $tab) {
+            $html = Livewire::actingAs($this->admin)
+                ->test(AdminDashboard::class, ['tab' => $tab])
+                ->html();
+
+            // Memastikan tidak ada icon box (hidden sm:flex w-9 h-9 bg-white/10) pada header card banner
+            $this->assertStringNotContainsString('hidden sm:flex w-9 h-9 rounded-lg bg-white/10', $html, "Tab {$tab} still contains desktop header icon box");
+        }
+    }
 }

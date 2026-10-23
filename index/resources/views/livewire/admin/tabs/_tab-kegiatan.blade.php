@@ -6,29 +6,24 @@
                 <!-- Top Header & Action Bar (Navy Banner - tampil di semua ukuran) -->
                 <div class="bg-gov-navy rounded-xl p-5 border border-gov-border/30 shadow-xs bg-gov-pattern">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
-                        <!-- Left: Icon & Dynamic Title/Subtitle -->
-                        <div class="flex items-center gap-3">
-                            <div class="hidden sm:flex w-9 h-9 rounded-lg bg-white/10 border border-white/20 items-center justify-center shrink-0">
-                                <i data-lucide="calendar-range" class="w-4 h-4 text-white"></i>
+                        <!-- Left: Dynamic Title/Subtitle -->
+                        <div>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Kegiatan</span>
                             </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                                    <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Manajemen Kegiatan</span>
-                                </div>
-                                <h3 class="font-bold text-base text-white">
-                                    <span x-show="kegiatanSubTab === 'pekanan'">Kajian</span>
-                                    <span x-show="kegiatanSubTab === 'jumat'" x-cloak>Khutbah Jumat</span>
-                                    <span x-show="kegiatanSubTab === 'agenda'" x-cloak>Kegiatan Akbar</span>
-                                    <span x-show="kegiatanSubTab === 'odoj'" x-cloak>One Day One Juz</span>
-                                </h3>
-                                <span class="sr-only">Manajemen Kegiatan Masjid Manajemen Jadwal Kajian Agenda Masjid</span>
-                                <div class="text-xs text-slate-300 mt-0.5">
-                                    <span x-show="kegiatanSubTab === 'pekanan'" x-cloak>Kelola jadwal kajian, narasumber, dan siaran langsung.</span>
-                                    <span x-show="kegiatanSubTab === 'jumat'" x-cloak>Penjadwalan petugas Shalat Jumat, tema khutbah, dan naskah MC.</span>
-                                    <span x-show="kegiatanSubTab === 'agenda'" x-cloak>History, laporan pelaksanaan, anggaran, dan perencanaan kegiatan akbar DKM.</span>
-                                    <span x-show="kegiatanSubTab === 'odoj'" x-cloak>Rotasi otomatis juz harian untuk tadarus Al-Qur'an secara terpadu & laporan bertilawah.</span>
-                                </div>
+                            <h3 class="font-bold text-base text-white">
+                                <span x-show="kegiatanSubTab === 'pekanan'">Kajian</span>
+                                <span x-show="kegiatanSubTab === 'jumat'" x-cloak>Khutbah Jumat</span>
+                                <span x-show="kegiatanSubTab === 'agenda'" x-cloak>Kegiatan Akbar</span>
+                                <span x-show="kegiatanSubTab === 'odoj'" x-cloak>One Day One Juz</span>
+                            </h3>
+                            <span class="sr-only">Manajemen Kegiatan Masjid Manajemen Jadwal Kajian Agenda Masjid</span>
+                            <div class="text-xs text-slate-300 mt-0.5">
+                                <span x-show="kegiatanSubTab === 'pekanan'" x-cloak>Kelola jadwal kajian, narasumber, dan siaran langsung.</span>
+                                <span x-show="kegiatanSubTab === 'jumat'" x-cloak>Penjadwalan petugas Shalat Jumat, tema khutbah, dan naskah MC.</span>
+                                <span x-show="kegiatanSubTab === 'agenda'" x-cloak>History, laporan pelaksanaan, anggaran, dan perencanaan kegiatan akbar DKM.</span>
+                                <span x-show="kegiatanSubTab === 'odoj'" x-cloak>Rotasi otomatis juz harian untuk tadarus Al-Qur'an secara terpadu & laporan bertilawah.</span>
                             </div>
                         </div>
 
