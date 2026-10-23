@@ -1406,10 +1406,6 @@
                                                             </span>
                                                         </div>
                                                         <div class="flex items-center gap-2">
-                                                            <span class="text-[10px] font-semibold"
-                                                                  :class="activeScanIdx === {{ $pIdx }} ? 'text-gov-navy font-bold' : 'text-blue-600 hover:underline'">
-                                                                <span x-text="activeScanIdx === {{ $pIdx }} ? 'Sedang Aktif' : 'Fokus Halaman Ini'"></span>
-                                                            </span>
                                                             <button type="button" @click.stop="$wire.removeScanPage({{ $pIdx }})"
                                                                     title="Hapus Lembar Halaman Ini"
                                                                     class="text-[10px] font-semibold text-rose-500 hover:text-rose-700 hover:underline cursor-pointer">
@@ -1443,9 +1439,6 @@
                                                     class="px-2.5 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition font-medium cursor-pointer">
                                                     Sebelumnya
                                                 </button>
-                                                <span class="font-bold text-gov-textMain">
-                                                    Halaman <span x-text="activeScanIdx + 1"></span> dari <span x-text="totalPages"></span>
-                                                </span>
                                                 <button type="button" @click="nextPage()"
                                                     :disabled="activeScanIdx >= totalPages - 1"
                                                     class="px-2.5 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition font-medium cursor-pointer">
