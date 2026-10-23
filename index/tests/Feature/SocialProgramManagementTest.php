@@ -619,18 +619,43 @@ class SocialProgramManagementTest extends TestCase
         $this->get('/admin/programs?subtab=pernyataan')
             ->assertOk()
             ->assertSee('Surat Pernyataan')
-            ->assertDontSee('openCreateParticipant');
+            ->assertDontSeeHtml('<button type="button" @click="openCreateParticipant()"');
 
         Livewire::withQueryParams(['subtab' => 'pernyataan'])
             ->test(AdminDashboard::class, ['tab' => 'programs'])
             ->assertSet('socialSubTab', 'pernyataan')
-            ->assertDontSeeHtml('openCreateParticipant()');
+            ->assertDontSeeHtml('<button type="button" @click="openCreateParticipant()"')
+            ->assertDontSeeHtml('<span>Peserta</span>');
     }
 
     public function test_portal_card_daftar_sekarang_links_to_admin_programs_surat_pernyataan(): void
     {
         Livewire::test(PortalPage::class)
             ->assertSeeHtml(url('/admin/programs?subtab=pernyataan'));
+    }
+
+    public function test_admin_can_see_and_use_tambah_peserta_button(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->assertSeeHtml('openCreateParticipant()')
+            ->assertSeeHtml('<span>Peserta</span>')
+            ->call('openParticipantModal')
+            ->assertSet('showParticipantModal', true)
+            ->assertSet('isEditingParticipant', false)
+            ->set('participantName', 'Peserta Baru Admin')
+            ->set('participantProgram', $this->yatimProgram->name)
+            ->set('participantAmount', '300000')
+            ->call('saveParticipant')
+            ->assertHasNoErrors()
+            ->assertDispatched('close-participant-modal');
+
+        $this->assertDatabaseHas('program_participants', [
+            'name' => 'Peserta Baru Admin',
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 300000,
+        ]);
     }
 }
 

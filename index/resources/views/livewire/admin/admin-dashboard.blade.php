@@ -794,7 +794,23 @@
             });
         },
         showParticipantModal: false,
-        isEditingParticipant: true,
+        isEditingParticipant: false,
+        openCreateParticipant() {
+            this.isEditingParticipant = false;
+            this.showParticipantModal = true;
+            $wire.set('isEditingParticipant', false, false);
+            $wire.set('editingParticipantId', null, false);
+            $wire.set('participantName', '', false);
+            $wire.set('participantProgram', 'Santunan Anak Yatim', false);
+            $wire.set('participantAmount', '250000', false);
+            const now = new Date();
+            const defaultPeriod = 'Periode ' + (now.getMonth() + 1) + '/' + now.getFullYear();
+            $wire.set('participantPeriod', defaultPeriod, false);
+            $wire.set('participantStatus', 'AKTIF', false);
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
+        },
         openEditParticipant(data) {
             this.isEditingParticipant = true;
             this.showParticipantModal = true;
