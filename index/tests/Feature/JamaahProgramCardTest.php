@@ -59,6 +59,41 @@ class JamaahProgramCardTest extends TestCase
             ->assertDontSee('Realisasi Dana:');
     }
 
+    public function test_jamaah_catalog_toolbar_replaces_summary_cards_and_filters_by_search(): void
+    {
+        $this->seedPrograms();
+        $this->actingAs($this->makeUser('Jamaah', 'Haji Mansyur'));
+
+        $infaqKey = 'socprog-card-' . SocialProgram::where('slug', 'infaq-rutin-pegawai')->value('id');
+        $yatimKey = 'socprog-card-' . SocialProgram::where('slug', 'santunan-anak-yatim')->value('id');
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->assertSee('Cari nama program...')
+            ->assertDontSee('Dana Terhimpun')
+            ->assertSeeHtml($infaqKey)
+            ->assertSeeHtml($yatimKey)
+            ->set('catalogSearch', 'Yatim')
+            ->assertDontSeeHtml($infaqKey)
+            ->assertSeeHtml($yatimKey)
+            ->call('resetCatalogFilters')
+            ->assertSet('catalogSearch', '')
+            ->assertSeeHtml($infaqKey);
+    }
+
+    public function test_jamaah_catalog_period_filter_changes_deduction(): void
+    {
+        $this->seedPrograms();
+        $this->actingAs($this->makeUser('Jamaah', 'Haji Mansyur'));
+
+        // Bulan tahun lalu: tidak ada data -> potongan user Rp 0, tidak bocor total orang lain
+        Livewire::test(AdminDashboard::class, ['tab' => 'programs'])
+            ->assertSee('Rp 100.000')
+            ->set('catalogYear', (string) (now()->year - 1))
+            ->assertDontSee('Rp 100.000')
+            ->assertDontSee('Rp 900.000')
+            ->assertDontSee('Rp 1.000.000');
+    }
+
     public function test_officer_still_sees_totals_and_realisasi_dana(): void
     {
         $this->seedPrograms();

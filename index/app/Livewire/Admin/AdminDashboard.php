@@ -475,6 +475,10 @@ class AdminDashboard extends Component
     public string $socialSubTab = 'katalog'; // 'katalog' | 'peserta' | 'pernyataan' | 'setoran'
     public string $socialProgramFilter = 'all';
     public string $socialParticipantSearch = '';
+    // Filter katalog program sosial (khusus tampilan Jamaah)
+    public string $catalogSearch = '';
+    public string $catalogMonth = '';
+    public string $catalogYear = '';
     public array|string $socialParticipantPeriodFilter = [];
     public string $socialParticipantStatusFilter = 'all'; // deprecated alias
 
@@ -546,6 +550,8 @@ class AdminDashboard extends Component
         $this->financeCategoryId = $this->getDefaultFinanceCategoryId('pemasukan');
 
         $this->agendaDate = Carbon::now()->addDays(7)->format('Y-m-d');
+        $this->catalogMonth = (string) Carbon::now('Asia/Jakarta')->month;
+        $this->catalogYear = (string) Carbon::now('Asia/Jakarta')->year;
         $this->odojDate = Carbon::today()->format('Y-m-d');
 
         if (! session()->has('temp_scan_pdf_path') || ! file_exists(session('temp_scan_pdf_path'))) {
@@ -1490,6 +1496,13 @@ class AdminDashboard extends Component
     {
         $this->socialParticipantSearch = '';
         $this->resetPage('socialParticipantPage');
+    }
+
+    public function resetCatalogFilters(): void
+    {
+        $this->catalogSearch = '';
+        $this->catalogMonth = (string) Carbon::now('Asia/Jakarta')->month;
+        $this->catalogYear = (string) Carbon::now('Asia/Jakarta')->year;
     }
 
     public function updatedSocialParticipantPeriodFilter(): void
@@ -6793,10 +6806,17 @@ class AdminDashboard extends Component
             if ($isJamaah && !empty($userName)) {
                 $trimmedUser = strtolower(trim($userName));
 
+                // Periode & pencarian katalog sesuai filter yang dipilih Jamaah (default: bulan berjalan)
+                $catalogMonthInt = max(1, min(12, (int) ($this->catalogMonth ?: $now->month)));
+                $catalogYearInt = (int) ($this->catalogYear ?: $now->year);
+                $currentPeriod = 'Periode ' . $catalogMonthInt . '/' . $catalogYearInt;
+                $catalogSearchTerm = trim($this->catalogSearch);
+
                 $allSocialPrograms = SocialProgram::withCount(['participants as active_participants_count' => fn($q) => $q->where('period', $currentPeriod)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])])
                     ->withSum(['participants as monthly_commitment_total' => fn($q) => $q->where('period', $currentPeriod)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])], 'monthly_amount')
                     ->withSum(['participants as total_collected' => fn($q) => $q->whereIn('period', $ytdPeriods)->whereRaw('LOWER(TRIM(name)) = ?', [$trimmedUser])], 'monthly_amount')
                     ->withSum(['finances as total_disbursed' => fn($q) => $q->where('type', 'pengeluaran')], 'amount')
+                    ->when($catalogSearchTerm !== '', fn ($q) => $q->where('name', 'like', '%' . $catalogSearchTerm . '%'))
                     ->get();
 
                 foreach ($allSocialPrograms as $prog) {

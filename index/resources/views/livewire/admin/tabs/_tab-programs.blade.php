@@ -79,6 +79,7 @@
                 <!-- SUB-VIEW 1: KATALOG PROGRAM SOSIAL -->
                 <div x-show="socialSubTab === 'katalog'" x-cloak class="space-y-6">
                     <!-- Metric Cards (3 Cards / 2 Cards for Jamaah) -->
+                    @if(Auth::user()->canManage())
                     <div class="grid grid-cols-1 {{ Auth::user()->canManage() ? 'sm:grid-cols-3' : 'sm:grid-cols-2' }} gap-4">
                         <!-- Realisasi Dana Terhimpun -->
                         <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex items-center justify-between">
@@ -118,6 +119,58 @@
                             </div>
                         </div>
                     </div>
+                    @else
+                    @php
+                        $catalogMonthOptions = [];
+                        foreach (range(1, 12) as $mNum) {
+                            $catalogMonthOptions[] = [
+                                'value' => (string) $mNum,
+                                'label' => \Carbon\Carbon::create(2000, $mNum, 1)->translatedFormat('F'),
+                            ];
+                        }
+                        $catalogYearOptions = [];
+                        foreach (range((int) now('Asia/Jakarta')->year, (int) now('Asia/Jakarta')->year - 3) as $yr) {
+                            $catalogYearOptions[] = ['value' => (string) $yr, 'label' => (string) $yr];
+                        }
+                    @endphp
+                    <!-- Filter Toolbar Katalog (Jamaah): Pencarian, Bulan, Tahun -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-gov-border shadow-2xs">
+                        <div class="relative w-full md:w-72">
+                            <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input wire:model.live.debounce.300ms="catalogSearch" type="text"
+                                placeholder="Cari nama program..."
+                                class="h-9 w-full pl-8 pr-9 text-xs rounded-lg border border-gov-border bg-slate-50 font-medium focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                            <button type="button" wire:click="$set('catalogSearch', '')" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 transition cursor-pointer flex items-center justify-center" title="Hapus pencarian">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 w-full md:flex md:items-center md:w-auto text-xs">
+                            <span class="sr-only">BULAN:</span>
+                            <x-custom-select
+                                wire:model.live="catalogMonth"
+                                :options="$catalogMonthOptions"
+                                placeholder="Pilih Bulan"
+                                icon="calendar"
+                                class="w-full md:w-36"
+                            />
+                            <span class="sr-only">TAHUN:</span>
+                            <x-custom-select
+                                wire:model.live="catalogYear"
+                                :options="$catalogYearOptions"
+                                placeholder="Pilih Tahun"
+                                class="w-full md:w-28"
+                            />
+                            <button type="button" wire:click="resetCatalogFilters"
+                                class="col-span-2 md:col-span-1 h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+                    </div>
+                    @endif
 
                     <!-- Program Cards Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -174,7 +227,7 @@
                                             </div>
                                         @endif
                                         <div class="p-2 rounded-lg bg-slate-50/50 border border-slate-100">
-                                            <span class="text-slate-500 block text-[11px]">Potongan Bulan Ini</span>
+                                            <span class="text-slate-500 block text-[11px]">{{ Auth::user()->canManage() ? 'Potongan Bulan Ini' : 'Potongan ' . \Carbon\Carbon::create((int) ($this->catalogYear ?: now()->year), (int) ($this->catalogMonth ?: now()->month), 1)->translatedFormat('F Y') }}</span>
                                             <span class="font-bold text-gov-textMain text-sm">Rp {{ number_format($prog->monthly_commitment_total, 0, ',', '.') }}</span>
                                         </div>
                                     </div>
@@ -637,67 +690,10 @@
                         "></div>
                     @endif
 
-                    <!-- Top Sub-view Header & Sub-segment Switcher -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-gov-border shadow-2xs">
-                        <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200 shrink-0">
-                                <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-base text-gov-textMain">Surat Pernyataan Potongan Tukin</h3>
-                                <p class="text-xs text-slate-500">Cetak lembar formulir kesediaan pemotongan tunjangan kinerja{{ Auth::user()->canManage() ? ' atau impor pindaian (scan) berkas PDF' : '' }}</p>
-                            </div>
-                        </div>
-
-                        @if(Auth::user()->canManage())
-                            <!-- Segmented Sub-tab Switcher (Cetak Formulir vs Impor Scan PDF) -->
-                            <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl text-xs w-full sm:w-auto">
-                                <button type="button" @click="pernyataanModalTab = 'cetak'; $wire.set('pernyataanModalTab', 'cetak', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                    :class="pernyataanModalTab === 'cetak' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                                    class="flex-1 sm:flex-none py-2 px-3.5 rounded-lg transition inline-flex items-center justify-center gap-2 cursor-pointer">
-                                    <i data-lucide="printer" class="w-4 h-4"></i>
-                                    <span>Cetak Formulir</span>
-                                </button>
-                                <button type="button" @click="pernyataanModalTab = 'impor'; $wire.set('pernyataanModalTab', 'impor', false); $nextTick(() => { if (window.createLucideIcons) window.createLucideIcons(); })"
-                                    :class="pernyataanModalTab === 'impor' ? 'bg-white text-gov-navy font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                                    class="flex-1 sm:flex-none py-2 px-3.5 rounded-lg transition inline-flex items-center justify-center gap-2 cursor-pointer">
-                                    <i data-lucide="scan-line" class="w-4 h-4"></i>
-                                    <span>Impor Scan PDF</span>
-                                </button>
-                            </div>
-                        @endif
-                    </div>
-
                     <!-- ============================================== -->
                     <!-- PANEL 1: CETAK FORMULIR -->
                     <!-- ============================================== -->
                     <div x-show="pernyataanModalTab === 'cetak' || {{ !Auth::user()->canManage() ? 'true' : 'false' }}" class="space-y-6">
-
-                        @if(!Auth::user()->canManage())
-                            <!-- Identitas Diri Jamaah / Pegawai (Info Card Elegan) -->
-                            <div class="bg-gradient-to-r from-slate-50 to-blue-50/50 p-5 rounded-xl border border-gov-border shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div class="flex items-center space-x-3.5">
-                                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center border border-blue-200 shrink-0 shadow-2xs">
-                                        <i data-lucide="user-check" class="w-6 h-6 text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center gap-2">
-                                            <h4 class="font-bold text-base text-gov-textMain">{{ Auth::user()->name }}</h4>
-                                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">
-                                                Jamaah
-                                            </span>
-                                        </div>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
-                                            <span>NIP: <strong class="text-slate-700">{{ Auth::user()->nip ?? (Auth::user()->employee->nip_panjang ?? '-') }}</strong></span>
-                                            <span>Jabatan / Unit: <strong class="text-slate-700">{{ Auth::user()->employee->jabatan ?? 'Pegawai Muslim KPP Madya Malang' }}</strong></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-[11px] text-slate-500 bg-white/80 backdrop-blur-xs px-3 py-2 rounded-lg border border-slate-200/80">
-                                    Dokumen cetak otomatis menggunakan identitas profil Anda
-                                </div>
-                            </div>
-                        @endif
 
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                             <!-- Left / Main Form Column -->
