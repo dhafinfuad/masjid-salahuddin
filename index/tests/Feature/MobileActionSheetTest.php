@@ -100,4 +100,17 @@ class MobileActionSheetTest extends TestCase
         $this->assertStringNotContainsString('aktif)', $usersHtml);
         $this->assertStringNotContainsString('pengguna</span>', $usersHtml);
     }
+
+    public function test_agenda_action_sheet_uses_three_columns_compact_layout(): void
+    {
+        $this->actingAs($this->admin);
+        $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
+
+        // Verifikasi subtab agenda memiliki grid-cols-3
+        $this->assertStringContainsString("kegiatanSubTab === 'agenda'", $rendered);
+        $this->assertMatchesRegularExpression(
+            '/kegiatanSubTab\s*===\s*\'agenda\'.*?grid grid-cols-3 gap-2.*?Import File.*?Download Excel.*?Cetak PDF/s',
+            $rendered
+        );
+    }
 }
