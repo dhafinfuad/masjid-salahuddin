@@ -87,7 +87,7 @@
         <!-- Sisi Tengah: Dikosongkan agar tetap bersih & lega -->
         <div class="flex-1"></div>
 
-        <!-- Sisi Kanan: Tombol Aksi Cetak & Unduh -->
+        <!-- Sisi Kanan: Tombol Aksi Cetak -->
         <div class="flex items-center gap-2 shrink-0">
             <!-- Tombol Cetak -->
             <button type="button" onclick="handlePrintDocument()"
@@ -100,18 +100,6 @@
                 </svg>
                 <span>Cetak</span>
             </button>
-
-            <!-- Tombol Unduh -->
-            <a href="{{ $fileUrl }}" download="{{ $downloadFilename }}"
-                class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-950 text-slate-200 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer select-none"
-                title="Unduh Berkas Asli">
-                <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span>Unduh</span>
-            </a>
         </div>
     </header>
 
@@ -137,6 +125,19 @@
         }
 
         function handlePrintDocument() {
+            // Deteksi perangkat iOS atau browser Safari
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            // Pada Safari / iOS, memanggil frame.contentWindow.print() memicu dialog keamanan:
+            // "This website has been blocked from automatically printing."
+            // Membuka berkas langsung di tab baru mengaktifkan print/AirPrint bawaan tanpa blokir.
+            if (isIOS || isSafari) {
+                window.open('{{ $fileUrl }}', '_blank');
+                return;
+            }
+
             const frame = document.getElementById('documentFrame');
             try {
                 if (frame && frame.contentWindow) {
@@ -147,7 +148,7 @@
             } catch (e) {
                 // Cross-origin atau browser sandbox fallback
             }
-            window.print();
+            window.open('{{ $fileUrl }}', '_blank');
         }
     </script>
 </body>

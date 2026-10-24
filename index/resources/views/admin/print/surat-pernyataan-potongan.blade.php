@@ -95,26 +95,26 @@
     </button>
   </header>
 
-  <div class="py-6 print:py-0">
+  <div class="py-4 sm:py-6 print:py-0 overflow-x-auto">
   <!-- Loop Per Lembar Pegawai (A4 = 794px x 1123px) -->
   @foreach($pages as $index => $page)
     <div class="page-container mx-auto flex h-[1123px] w-[794px] flex-col overflow-hidden bg-white text-[#1d1d1b] shadow-lg print:shadow-none mb-8 print:mb-0">
 
       <!-- Header Surat -->
-      <header class="flex-none border-b-[6px] border-[#ffb900] bg-[#06172e] px-12 pb-5 pt-7 text-white">
-        <div class="text-sm font-semibold uppercase tracking-[0.12em] text-[#ffb900]">
+      <header class="flex-none border-b-[5px] border-[#ffb900] bg-[#06172e] px-10 pb-3.5 pt-5 text-white">
+        <div class="text-xs font-semibold uppercase tracking-[0.12em] text-[#ffb900]">
           {{ $settings->name ?? 'Masjid Salahuddin' }} KPP Madya Malang
         </div>
-        <h1 class="mt-2 text-2xl font-extrabold leading-tight">
+        <h1 class="mt-1 text-xl font-extrabold leading-tight">
           Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja
         </h1>
       </header>
 
       <!-- Main Body Konten Surat -->
-      <main class="flex flex-1 flex-col gap-6 px-12 pb-6 pt-6">
+      <main class="flex flex-1 flex-col gap-3.5 px-10 pb-4 pt-3.5">
 
         <!-- 1. Data Pegawai -->
-        <section class="grid grid-cols-[150px_1fr] items-end gap-x-4 gap-y-2.5 text-sm">
+        <section class="grid grid-cols-[140px_1fr] items-end gap-x-4 gap-y-1.5 text-xs sm:text-[13px]">
           <b class="font-semibold text-[#06172e]">Nama</b>
           @if(!empty($page['name']))
             <span class="h-5 border-b border-[#8a8a8a] flex items-center font-bold text-slate-900">{{ $page['name'] }}</span>
@@ -153,15 +153,15 @@
 
         <!-- 2. Pernyataan & Rincian Program Pemotongan -->
         <section>
-          <p class="mb-3.5 text-justify text-sm leading-relaxed">
+          <p class="mb-2 text-justify text-xs sm:text-[13px] leading-relaxed">
             Saya bersedia dipotong Tunjangan Kinerja setiap bulan oleh Bendahara KPP Madya Malang,
             untuk disalurkan kepada Bendahara Masjid Salahuddin, dengan rincian berikut.
             Pemotongan berlaku mulai bulan <span class="font-semibold">{{ $effectiveMonth ?: '________' }}</span> tahun <span class="font-semibold">{{ $effectiveYear ?: '20____' }}</span>.
           </p>
 
-          <table class="w-full border-collapse text-sm leading-[1.4]
-                        [&_th]:border [&_th]:border-[#c3c9d4] [&_th]:bg-[#06172e] [&_th]:px-3 [&_th]:py-[5px] [&_th]:text-left [&_th]:font-bold [&_th]:text-white
-                        [&_td]:border [&_td]:border-[#c3c9d4] [&_td]:px-3 [&_td]:py-[5px]">
+          <table class="w-full border-collapse text-xs sm:text-[13px] leading-[1.3]
+                        [&_th]:border [&_th]:border-[#c3c9d4] [&_th]:bg-[#06172e] [&_th]:px-3 [&_th]:py-1 [&_th]:text-left [&_th]:font-bold [&_th]:text-white
+                        [&_td]:border [&_td]:border-[#c3c9d4] [&_td]:px-3 [&_td]:py-1">
             <thead>
               <tr>
                 <th class="w-9 !text-center">No</th>
@@ -182,9 +182,9 @@
         </section>
 
         <!-- 3. Tanda Tangan Yang Menyatakan (Format Garis Lurus Solid Tanpa Tabrakan Teks) -->
-        <section class="flex justify-end text-sm">
-          <div class="text-center min-w-[260px]">
-            <div class="flex items-center justify-center gap-1.5 whitespace-nowrap leading-none mb-3">
+        <section class="flex justify-end text-xs sm:text-[13px]">
+          <div class="text-center min-w-[240px]">
+            <div class="flex items-center justify-center gap-1.5 whitespace-nowrap leading-none mb-2">
               <span class="text-slate-800">Malang,</span>
               @if(!empty($dateLetter))
                 <span class="font-medium text-slate-900">{{ $dateLetter }}</span>
@@ -194,7 +194,7 @@
                 <span class="inline-block w-12 border-b border-slate-700 h-4"></span>
               @endif
             </div>
-            <p class="leading-none mb-16 text-[#06172e]">Yang menyatakan,</p>
+            <p class="leading-none mb-10 text-[#06172e]">Yang menyatakan,</p>
             <p class="font-bold underline underline-offset-2 text-slate-900 leading-none">
               ( {{ $page['name'] ?: '______________________' }} )
             </p>
@@ -204,16 +204,16 @@
         <!-- 4. Riwayat Potongan (Kondisional: Disembunyikan jika mode Pegawai Baru / Tanpa Riwayat) -->
         @if($page['show_history'])
           <section>
-            <div class="flex items-center justify-between mb-2">
-              <h2 class="text-sm font-bold text-[#06172e]">
+            <div class="flex items-center justify-between mb-1.5">
+              <h2 class="text-xs sm:text-sm font-bold text-[#06172e]">
                 Riwayat Potongan Tahun {{ $year }}
               </h2>
-              <span class="text-[11px] text-slate-500 italic">*Nominal dalam ribuan rupiah</span>
+              <span class="text-[10.5px] text-slate-500 italic">*Nominal dalam ribuan rupiah</span>
             </div>
 
-            <table class="w-full border-collapse text-[13px] leading-[1.4]
-                          [&_th]:border [&_th]:border-[#c3c9d4] [&_th]:bg-[#06172e] [&_th]:px-0.5 [&_th]:py-[5px] [&_th]:text-center [&_th]:font-bold [&_th]:text-white
-                          [&_td]:h-7 [&_td]:border [&_td]:border-[#c3c9d4] [&_td]:px-0.5 [&_td]:py-[5px] [&_td]:text-center">
+            <table class="w-full border-collapse text-[11px] sm:text-xs leading-[1.3]
+                          [&_th]:border [&_th]:border-[#c3c9d4] [&_th]:bg-[#06172e] [&_th]:px-0.5 [&_th]:py-1 [&_th]:text-center [&_th]:font-bold [&_th]:text-white
+                          [&_td]:h-6 [&_td]:border [&_td]:border-[#c3c9d4] [&_td]:px-0.5 [&_td]:py-0.5 [&_td]:text-center">
               <thead>
                 <tr>
                   <th class="w-[155px] !pl-2 !text-left">Program</th>
@@ -242,7 +242,7 @@
         @endif
 
         <!-- 5. Footer Surat -->
-        <footer class="mt-auto flex flex-col gap-1.5 border-t border-[#c3c9d4] pt-3 text-[13px] leading-normal">
+        <footer class="mt-auto flex flex-col gap-1 border-t border-[#c3c9d4] pt-2 pb-1 text-xs leading-normal">
           <p class="text-slate-700">
             Mohon dikumpulkan kepada Sdr. <b class="text-slate-900">{{ $secretaryName }}</b>, Sekretaris Masjid Salahuddin
             ({{ $secretarySection }}).

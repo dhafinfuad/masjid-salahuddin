@@ -35,9 +35,8 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('handleSmartBack');
         $response->assertSee('Kembali');
         $response->assertSee('Cetak');
-        $response->assertSee('Unduh');
+        $response->assertDontSee('Unduh');
         $response->assertSee('src="/sk/sk-takmir.pdf"', false);
-        $response->assertSee('download="sk-takmir.pdf"', false);
     }
 
     public function test_document_viewer_aborts_when_file_is_missing(): void
