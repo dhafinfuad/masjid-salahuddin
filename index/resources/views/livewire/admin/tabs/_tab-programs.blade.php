@@ -376,14 +376,14 @@
                             <div class="flex-1 min-w-0 md:flex-none md:w-56">
                                 @php
                                     $programFilterOptions = array_merge(
-                                        [['value' => 'all', 'label' => 'Semua Program Sosial']],
+                                        [['value' => 'all', 'label' => 'Program Sosial (Semua)']],
                                         $allSocialPrograms->map(fn($sp) => ['value' => (string)$sp->id, 'label' => $sp->name])->values()->all()
                                     );
                                 @endphp
                                 <x-custom-select 
                                     wire:model.live="socialProgramFilter"
                                     :options="$programFilterOptions"
-                                    placeholder="Semua Program Sosial"
+                                    placeholder="Program Sosial (Semua)"
                                     icon="heart-handshake"
                                     class="w-full"
                                 />
@@ -404,7 +404,7 @@
                                             $activeCount = count($activePeriodsList);
                                         @endphp
                                         @if($activeCount === 0)
-                                            <span class="text-gov-textMain font-medium truncate">Semua Periode</span>
+                                            <span class="text-gov-textMain font-medium truncate">Periode (Semua)</span>
                                         @elseif($activeCount === 1)
                                             <span class="text-gov-navy font-bold truncate">
                                                 {{ $activePeriodsList[0] }}

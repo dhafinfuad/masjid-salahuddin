@@ -51,13 +51,13 @@
                 <x-custom-select 
                     wire:model.live="saranStatusFilter" 
                     :options="[
-                        'all' => 'Semua Status',
+                        'all' => 'Status (Semua)',
                         'baru' => 'Baru / Belum Dibaca',
                         'dibaca' => 'Telah Dibaca',
                         'ditindaklanjuti' => 'Ditindaklanjuti',
                         'arsip' => 'Diarsipkan',
                     ]"
-                    placeholder="Semua Status"
+                    placeholder="Status (Semua)"
                     class="w-full"
                 />
             </div>
@@ -67,14 +67,14 @@
                 <x-custom-select 
                     wire:model.live="saranCategoryFilter" 
                     :options="[
-                        'all' => 'Semua Kategori',
+                        'all' => 'Kategori (Semua)',
                         'Fasilitas & Kebersihan' => 'Fasilitas & Kebersihan',
                         'Ibadah & Kajian' => 'Ibadah & Kajian',
                         'Pelayanan DKM' => 'Pelayanan DKM',
                         'Kas & Sosial' => 'Kas & Sosial',
                         'Lainnya' => 'Lainnya',
                     ]"
-                    placeholder="Semua Kategori"
+                    placeholder="Kategori (Semua)"
                     class="w-full"
                 />
             </div>
