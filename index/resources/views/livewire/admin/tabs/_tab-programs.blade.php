@@ -408,8 +408,14 @@
                                         @if($activeCount === 0)
                                             <span class="text-gov-textMain font-medium truncate">Periode (Semua)</span>
                                         @elseif($activeCount === 1)
+                                            @php
+                                                $activePeriodLabel = $activePeriodsList[0];
+                                                if (preg_match('/(?:periode\s*)?(\d{1,2})\/(\d{4})/i', $activePeriodLabel, $spm)) {
+                                                    $activePeriodLabel = sprintf('%02d/%d', (int) $spm[1], (int) $spm[2]);
+                                                }
+                                            @endphp
                                             <span class="text-gov-navy font-bold truncate">
-                                                {{ $activePeriodsList[0] }}
+                                                {{ $activePeriodLabel }}
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1 font-bold text-gov-navy truncate">
@@ -543,8 +549,23 @@
 
                                             <!-- Periode -->
                                             <td class="py-3 px-4 text-center">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
-                                                    {{ $p->period ?: 'Bulanan' }}
+                                                @php
+                                                    $rawPeriod = trim($p->period ?? '');
+                                                    if (empty($rawPeriod)) {
+                                                        $displayPeriod = 'Bulanan';
+                                                    } elseif (preg_match('/(?:periode\s*)?(\d{1,2})\/(\d{4})/i', $rawPeriod, $pm)) {
+                                                        $displayPeriod = sprintf('%02d/%d', (int) $pm[1], (int) $pm[2]);
+                                                    } else {
+                                                        $displayPeriod = preg_replace('/^Periode\s+/i', '', $rawPeriod);
+                                                    }
+
+                                                    $isCurrentPeriod = false;
+                                                    if (preg_match('/(?:periode\s*)?(\d{1,2})\/(\d{4})/i', $rawPeriod, $pm)) {
+                                                        $isCurrentPeriod = ((int) $pm[1] === (int) now()->month && (int) $pm[2] === (int) now()->year);
+                                                    }
+                                                @endphp
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $isCurrentPeriod ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
+                                                    {{ $displayPeriod }}
                                                 </span>
                                             </td>
 
@@ -643,8 +664,23 @@
                                         <h5 class="font-bold text-sm text-gov-textMain">{{ $p->name }}</h5>
                                     </div>
                                     <div>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $p->period === ('Periode ' . now()->month . '/' . now()->year) ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
-                                            {{ $p->period ?: 'Bulanan' }}
+                                        @php
+                                            $rawPeriodMobile = trim($p->period ?? '');
+                                            if (empty($rawPeriodMobile)) {
+                                                $displayPeriodMobile = 'Bulanan';
+                                            } elseif (preg_match('/(?:periode\s*)?(\d{1,2})\/(\d{4})/i', $rawPeriodMobile, $pm)) {
+                                                $displayPeriodMobile = sprintf('%02d/%d', (int) $pm[1], (int) $pm[2]);
+                                            } else {
+                                                $displayPeriodMobile = preg_replace('/^Periode\s+/i', '', $rawPeriodMobile);
+                                            }
+
+                                            $isCurrentPeriodMobile = false;
+                                            if (preg_match('/(?:periode\s*)?(\d{1,2})\/(\d{4})/i', $rawPeriodMobile, $pm)) {
+                                                $isCurrentPeriodMobile = ((int) $pm[1] === (int) now()->month && (int) $pm[2] === (int) now()->year);
+                                            }
+                                        @endphp
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium {{ $isCurrentPeriodMobile ? 'bg-emerald-50 text-emerald-700 border border-emerald-400 font-semibold' : 'bg-slate-100 text-slate-700' }}">
+                                            {{ $displayPeriodMobile }}
                                         </span>
                                     </div>
                                 </div>
