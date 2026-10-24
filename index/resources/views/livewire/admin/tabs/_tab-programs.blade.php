@@ -372,8 +372,8 @@
                         </div>
 
                         <!-- Filter Row -->
-                        <div class="grid grid-cols-2 md:flex md:flex-row md:items-center gap-2 w-full md:w-auto shrink-0">
-                            <div class="w-full md:w-56">
+                        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+                            <div class="flex-1 min-w-0 md:flex-none md:w-56">
                                 @php
                                     $programFilterOptions = array_merge(
                                         [['value' => 'all', 'label' => 'Semua Program Sosial']],
@@ -389,7 +389,7 @@
                                 />
                             </div>
 
-                            <div class="relative w-full md:w-44" x-data="{
+                            <div class="relative flex-1 min-w-0 md:flex-none md:w-44" x-data="{
                                 open: false
                             }">
                                 <button type="button" @click="open = !open"
