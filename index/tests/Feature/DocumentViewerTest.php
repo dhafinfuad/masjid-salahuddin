@@ -35,7 +35,7 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('href="/profil"', false);
         $response->assertSee('Kembali');
         $response->assertSee('Cetak');
-        $response->assertDontSee('Unduh');
+        $response->assertSee('Unduh PDF');
         $response->assertSee('src="/sk/sk-takmir.pdf"', false);
         $response->assertSee('href="/sk/sk-takmir.pdf"', false);
         $response->assertSee('target="_blank"', false);
@@ -81,29 +81,31 @@ class DocumentViewerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Kembali', false);
         $response->assertSee('href=', false);
-        // Pastikan tidak disembunyikan di layar HP
-        $response->assertDontSee('hidden sm:inline-flex', false);
+        // Pastikan tombol Kembali tidak disembunyikan di layar HP
+        $response->assertDontSee('hidden sm:inline-flex items-center gap-1.5" title="Kembali', false);
+        $response->assertSee('inline-flex items-center gap-1.5', false);
     }
 
-    public function test_document_viewer_uses_web_share_api_for_ios(): void
+    public function test_document_viewer_renders_mobile_download_and_desktop_print(): void
     {
         $response = $this->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
 
         $response->assertStatus(200);
-        $response->assertSee('triggerDocumentPrint', false);
-        $response->assertSee('navigator.share', false);
-        $response->assertSee('AbortError', false);
+        $response->assertSee('Cetak', false);
+        $response->assertSee('Unduh PDF', false);
+        $response->assertSee('download=', false);
     }
 
-    public function test_print_views_use_share_or_print_api_for_ios(): void
+    public function test_print_views_render_mobile_download_and_desktop_print(): void
     {
         $this->actingAs($this->admin);
 
         $response = $this->get('/admin/kepengurusan/cetak-sk');
 
         $response->assertStatus(200);
-        $response->assertSee('triggerShareOrPrint', false);
-        $response->assertSee('navigator.share', false);
+        $response->assertSee('downloadOfficialSkPdf', false);
+        $response->assertSee('Unduh PDF', false);
+        $response->assertSee('window.print()', false);
         $response->assertSee('afterprint', false);
     }
 }

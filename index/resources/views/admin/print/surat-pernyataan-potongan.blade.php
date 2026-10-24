@@ -13,6 +13,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- html2pdf.js for Client-Side PDF Generation on Mobile -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
     tailwind.config = {
@@ -80,21 +82,40 @@
       <span>Kembali</span>
     </a>
 
-    <!-- Tombol Cetak / PDF -->
-    <button 
-      type="button"
-      onclick="triggerShareOrPrint('Surat Pernyataan Pemotongan Tunjangan Kinerja')" 
-      class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
-      <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-        <rect x="6" y="14" width="12" height="8"></rect>
-      </svg>
-      <span class="hidden sm:inline">Cetak /</span> Simpan PDF
-    </button>
+    <!-- Action Buttons: Desktop (Cetak) & Mobile (Unduh PDF) -->
+    <div class="flex items-center gap-2">
+      <!-- Desktop: Tombol Cetak / Simpan PDF (hidden di mobile, inline-flex di sm+) -->
+      <button 
+        type="button"
+        onclick="window.print()" 
+        class="hidden sm:inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer"
+        title="Cetak atau Simpan PDF (Browser)">
+        <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Cetak / Simpan PDF</span>
+      </button>
+
+      <!-- Mobile: Tombol Unduh PDF (inline-flex di mobile, hidden di sm+) -->
+      <button 
+        type="button"
+        id="btnDownloadMobile"
+        onclick="downloadSuratPernyataanPdf()" 
+        class="inline-flex sm:hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
+        title="Unduh File PDF">
+        <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span id="labelDownloadMobile">Unduh PDF</span>
+      </button>
+    </div>
   </header>
 
-  <div class="py-4 sm:py-6 print:py-0 overflow-x-auto">
+  <div id="printContainer" class="py-4 sm:py-6 print:py-0 overflow-x-auto">
   <!-- Loop Per Lembar Pegawai (A4 = 794px x 1123px) -->
   @foreach($pages as $index => $page)
     <div class="page-container mx-auto flex h-[1123px] w-[794px] flex-col overflow-hidden bg-white text-[#1d1d1b] shadow-lg print:shadow-none mb-8 print:mb-0">
@@ -260,23 +281,60 @@
       }
     });
 
-    async function triggerShareOrPrint(title) {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
-                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    async function downloadSuratPernyataanPdf() {
+      const btn = document.getElementById('btnDownloadMobile');
+      const label = document.getElementById('labelDownloadMobile');
 
-      if (isMobile && navigator.share) {
-        try {
-          await navigator.share({
-            title: title || document.title,
-            url: window.location.href
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-        }
+      if (typeof html2pdf === 'undefined') {
+        alert("Modul pembuat PDF sedang dimuat, silakan coba sesaat lagi...");
+        return;
       }
 
-      window.print();
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+      if (label) {
+        label.textContent = "Menyiapkan PDF...";
+      }
+
+      const element = document.getElementById('printContainer');
+      const opt = {
+        margin: 0,
+        filename: 'Surat_Pernyataan_Pemotongan_Tunjangan_Kinerja.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          logging: false
+        },
+        jsPDF: {
+          unit: 'px',
+          format: [794, 1123],
+          hotfixes: ['px_scaling'],
+          orientation: 'portrait'
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          before: '.page-container'
+        }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+      } catch (err) {
+        console.error("Gagal generate PDF:", err);
+        alert("Gagal mengunduh PDF: " + (err.message || "Terjadi kesalahan"));
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
+        if (label) {
+          label.textContent = "Unduh PDF";
+        }
+      }
     }
 
     // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)
