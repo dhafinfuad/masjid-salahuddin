@@ -733,42 +733,32 @@
                                             <div class="text-xs text-slate-500">
                                                 {{ Carbon\Carbon::parse($k->date)->translatedFormat('d M Y') }}
                                             </div>
-                                            <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
-                                                @if(Auth::user()->canManage())
-                                                    <button type="button" wire:click="toggleHolidayDisabled({{ $k->id }})"
-                                                        class="inline-flex items-center gap-1 h-5 px-2.5 rounded-full text-[11px] font-semibold transition cursor-pointer border leading-none shrink-0 whitespace-nowrap {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-400 hover:bg-emerald-100' }}"
-                                                        title="Klik untuk mengubah status hari libur">
-                                                        @if($k->is_holiday_disabled)
+                                            @if($k->is_holiday_disabled || !empty($k->notula) || !empty($k->youtube_url))
+                                                <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                                                    @if($k->is_holiday_disabled)
+                                                        <span class="inline-flex items-center gap-1 h-5 px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-300 leading-none shrink-0 whitespace-nowrap" title="Jadwal ditandai sebagai hari libur / cuti bersama">
                                                             <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600 shrink-0 inline-block"></i>
                                                             <span class="whitespace-nowrap">Libur (Nonaktif)</span>
-                                                        @else
-                                                            <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-600 shrink-0 inline-block"></i>
-                                                            <span class="whitespace-nowrap">Petugas Aktif</span>
-                                                        @endif
-                                                    </button>
-                                                @else
-                                                    <span
-                                                        class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold leading-none {{ $k->is_holiday_disabled ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-50 text-emerald-700 border border-emerald-400' }}">
-                                                        {{ $k->is_holiday_disabled ? 'Libur' : 'Aktif' }}
-                                                    </span>
-                                                @endif
+                                                        </span>
+                                                    @endif
 
-                                                @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none shrink-0" title="Notula khutbah tersimpan">
-                                                        <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                        Notula Ada
-                                                    </span>
-                                                @endif
-                                                @if(!empty($k->youtube_url))
-                                                    <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                        class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none shrink-0 transition" title="Buka siaran YouTube">
-                                                        <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                                        </svg>
-                                                        YouTube Ada
-                                                    </a>
-                                                @endif
-                                            </div>
+                                                    @if(!empty($k->notula))
+                                                        <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none shrink-0" title="Notula khutbah tersimpan">
+                                                            <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                                            Notula Ada
+                                                        </span>
+                                                    @endif
+                                                    @if(!empty($k->youtube_url))
+                                                        <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
+                                                            class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none shrink-0 transition" title="Buka siaran YouTube">
+                                                            <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                            </svg>
+                                                            YouTube Ada
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </td>
 
                                         <!-- KHATIB -->
@@ -963,9 +953,6 @@
                                         @if($k->is_holiday_disabled)
                                             <span
                                                 class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 leading-none">Diliburkan</span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none">Aktif</span>
                                         @endif
                                         @if(!empty($k->notula))
                                             <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none" title="Notula khutbah tersimpan">

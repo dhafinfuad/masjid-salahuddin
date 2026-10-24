@@ -338,7 +338,7 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">
-                            <span x-text="kajianForm.type === 'jumat' ? 'Waktu Shalat Jumat (Tersinkron Otomatis)' : (kajianForm.type === 'pekanan' ? 'Waktu Kajian (Ashar + 20 Menit)' : 'Waktu Pelaksanaan (Opsional)')"></span>
+                            <span x-text="kajianForm.type === 'jumat' ? 'Waktu Khutbah' : (kajianForm.type === 'pekanan' ? 'Waktu Kajian' : 'Waktu Kajian')"></span>
                         </label>
                         <input x-model="kajianForm.time_display" type="text"
                             :placeholder="kajianForm.type === 'jumat' ? 'Contoh: 11:49 WIB' : (kajianForm.type === 'pekanan' ? 'Contoh: 15:05 WIB' : 'Contoh: 09:00 WIB')"
