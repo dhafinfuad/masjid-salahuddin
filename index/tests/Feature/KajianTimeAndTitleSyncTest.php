@@ -53,6 +53,15 @@ class KajianTimeAndTitleSyncTest extends TestCase
         // 3. Tematik -> null
         $tematikTime = $this->prayerService->getDefaultKajianTime('tematik', $testDate);
         $this->assertNull($tematikTime);
+
+        // Uji variasi antar bulan (memastikan waktu berbeda-beda tiap bulan dan minggu)
+        $timeJan = $this->prayerService->getDefaultKajianTime('pekanan', '2026-01-15');
+        $timeOct = $this->prayerService->getDefaultKajianTime('pekanan', '2026-10-15');
+        $this->assertNotEquals($timeJan, $timeOct, 'Waktu Ashar Pekanan Januari dan Oktober harus berbeda karena pergerakan matahari.');
+
+        $jumatJan = $this->prayerService->getDefaultKajianTime('jumat', '2026-01-15');
+        $jumatOct = $this->prayerService->getDefaultKajianTime('jumat', '2026-10-15');
+        $this->assertNotEquals($jumatJan, $jumatOct, 'Waktu Dzuhur Jumat Januari dan Oktober harus berbeda karena pergerakan matahari.');
     }
 
     /** @test */
@@ -250,5 +259,83 @@ class KajianTimeAndTitleSyncTest extends TestCase
         // 3. Verifikasi Tematik: time_display dikosongkan (null)
         $tematikRow = \Illuminate\Support\Facades\DB::table('kajians')->find($tematikId);
         $this->assertNull($tematikRow->time_display);
+    }
+
+    /** @test */
+    public function test_artisan_kajian_sync_times_command(): void
+    {
+        $fridayDate = '2026-05-15';
+        $pekananDate = '2026-05-18';
+
+        $jumatId = \Illuminate\Support\Facades\DB::table('kajians')->insertGetId([
+            'type' => 'jumat',
+            'date' => $fridayDate,
+            'time_display' => '11.27',
+            'title' => 'Judul Jumat Lama',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $pekananId = \Illuminate\Support\Facades\DB::table('kajians')->insertGetId([
+            'type' => 'pekanan',
+            'date' => $pekananDate,
+            'time_display' => '15:01',
+            'title' => 'Judul Pekanan',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->artisan('kajian:sync-times', ['--force' => true])
+            ->assertSuccessful();
+
+        $expectedDzuhurMay = $this->prayerService->getDefaultKajianTime('jumat', $fridayDate);
+        $expectedAsharMay = $this->prayerService->getDefaultKajianTime('pekanan', $pekananDate);
+
+        $jRow = \Illuminate\Support\Facades\DB::table('kajians')->find($jumatId);
+        $this->assertEquals($expectedDzuhurMay, $jRow->time_display);
+        $this->assertNull($jRow->title);
+
+        $pRow = \Illuminate\Support\Facades\DB::table('kajians')->find($pekananId);
+        $this->assertEquals($expectedAsharMay, $pRow->time_display);
+    }
+
+    /** @test */
+    public function test_admin_dashboard_mount_self_heals_legacy_1501_and_1127_times(): void
+    {
+        $fridayDate = '2026-11-20';
+        $pekananDate = '2026-11-23';
+
+        // Rekayasa data legacy persis seperti keluhan pengguna
+        $jumatId = \Illuminate\Support\Facades\DB::table('kajians')->insertGetId([
+            'type' => 'jumat',
+            'date' => $fridayDate,
+            'time_display' => '11.27',
+            'title' => 'Khutbah Legacy',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $pekananId = \Illuminate\Support\Facades\DB::table('kajians')->insertGetId([
+            'type' => 'pekanan',
+            'date' => $pekananDate,
+            'time_display' => '15:01',
+            'title' => 'Pekanan Legacy',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Saat admin membuka dashboard, fungsi self-healing harus otomatis mendeteksi dan memperbarui baris-baris ini
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'kegiatan']);
+
+        $expectedDzuhurNov = $this->prayerService->getDefaultKajianTime('jumat', $fridayDate);
+        $expectedAsharNov = $this->prayerService->getDefaultKajianTime('pekanan', $pekananDate);
+
+        $jRow = \Illuminate\Support\Facades\DB::table('kajians')->find($jumatId);
+        $this->assertEquals($expectedDzuhurNov, $jRow->time_display);
+        $this->assertNull($jRow->title);
+
+        $pRow = \Illuminate\Support\Facades\DB::table('kajians')->find($pekananId);
+        $this->assertEquals($expectedAsharNov, $pRow->time_display);
     }
 }

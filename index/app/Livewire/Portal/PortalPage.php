@@ -55,6 +55,7 @@ class PortalPage extends Component
         $this->cityName = $settings->city_name ? ucwords(strtolower($settings->city_name)) : 'Kota Malang';
         $this->loadPrayers($prayerService);
         $this->hijriDate = $prayerService->getHijriDayAndDate();
+        \App\Models\Kajian::syncDynamicTimesAndTitles(false);
     }
 
     public function updatedCityId(PrayerTimeService $prayerService): void

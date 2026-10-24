@@ -94,6 +94,70 @@ class Kajian extends Model
     }
 
     /**
+     * Sinkronisasi dinamis seluruh jadwal kajian dengan waktu sholat sesuai tanggal masing-masing.
+     * - Pekanan: Waktu Ashar tanggal terkait + 20 menit
+     * - Jumat: Title dikosongkan (null), Waktu Dzuhur tanggal terkait + 20 menit
+     * - Tematik: Waktu dikosongkan (null) jika masih memakai default lama
+     */
+    public static function syncDynamicTimesAndTitles(bool $force = false): int
+    {
+        static::ensureColumnsNullable();
+        $prayerService = app(\App\Services\PrayerTimeService::class);
+
+        $query = static::query();
+        if (!$force) {
+            $query->where(function ($q) {
+                $q->where('type', 'jumat')
+                  ->where(function ($q2) {
+                      $q2->whereNotNull('title')
+                         ->orWhere('time_display', 'like', '11.27%')
+                         ->orWhere('time_display', 'like', '11:27%')
+                         ->orWhere('time_display', 'not like', '%WIB')
+                         ->orWhere('time_display', '11:45 - 12:45')
+                         ->orWhereNull('time_display');
+                  });
+            })->orWhere(function ($q) {
+                $q->where('type', 'pekanan')
+                  ->where(function ($q2) {
+                      $q2->where('time_display', 'like', '15:01%')
+                         ->orWhere('time_display', 'like', '15.01%')
+                         ->orWhere('time_display', 'not like', '%WIB')
+                         ->orWhere('time_display', '09:00 - 11:30')
+                         ->orWhereNull('time_display');
+                  });
+            })->orWhere(function ($q) {
+                $q->where('type', 'tematik')
+                  ->whereNotNull('time_display')
+                  ->where('time_display', '09:00 - 11:30');
+            });
+        }
+
+        $kajians = $query->get();
+        $updatedCount = 0;
+
+        foreach ($kajians as $k) {
+            $updates = [];
+            if ($k->type === 'jumat') {
+                $updates['title'] = null;
+                $updates['time_display'] = $prayerService->getDefaultKajianTime('jumat', $k->date);
+            } elseif ($k->type === 'pekanan') {
+                $updates['time_display'] = $prayerService->getDefaultKajianTime('pekanan', $k->date);
+            } elseif ($k->type === 'tematik') {
+                if ($force || $k->time_display === '09:00 - 11:30') {
+                    $updates['time_display'] = null;
+                }
+            }
+
+            if (!empty($updates)) {
+                \Illuminate\Support\Facades\DB::table('kajians')->where('id', $k->id)->update($updates);
+                $updatedCount++;
+            }
+        }
+
+        return $updatedCount;
+    }
+
+    /**
      * Ekstraksi ID video YouTube dari berbagai format link (watch, live, embed, youtu.be, shorts).
      */
     public function getYoutubeIdAttribute(): ?string

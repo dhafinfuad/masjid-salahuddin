@@ -559,6 +559,9 @@ class AdminDashboard extends Component
         $this->catalogYear = (string) Carbon::now('Asia/Jakarta')->year;
         $this->odojDate = Carbon::today()->format('Y-m-d');
 
+        // Self-Healing auto-sync waktu kajian sesuai tanggal jika masih ada data lama
+        Kajian::syncDynamicTimesAndTitles(false);
+
         if (! session()->has('temp_scan_pdf_path') || ! file_exists(session('temp_scan_pdf_path'))) {
             $defaultScanPdf = storage_path('app/private/scan_mesin.pdf');
             if (file_exists($defaultScanPdf)) {

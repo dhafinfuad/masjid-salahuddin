@@ -19,30 +19,7 @@ return new class extends Migration
         });
 
         // Retroactive synchronization for existing kajians records
-        $prayerService = app(PrayerTimeService::class);
-        $kajians = DB::table('kajians')->get();
-
-        foreach ($kajians as $k) {
-            if ($k->type === 'jumat') {
-                // Untuk Jumat: kosongkan title, sinkronkan time_display dengan Waktu Dzuhur + 20 menit
-                $dzuhurTime = $prayerService->getDefaultKajianTime('jumat', $k->date);
-                DB::table('kajians')->where('id', $k->id)->update([
-                    'title' => null,
-                    'time_display' => $dzuhurTime,
-                ]);
-            } elseif ($k->type === 'pekanan') {
-                // Untuk Pekanan: sinkronkan time_display dengan Waktu Ashar + 20 menit
-                $asharTime = $prayerService->getDefaultKajianTime('pekanan', $k->date);
-                DB::table('kajians')->where('id', $k->id)->update([
-                    'time_display' => $asharTime,
-                ]);
-            } elseif ($k->type === 'tematik') {
-                // Untuk Tematik: kosongkan time_display
-                DB::table('kajians')->where('id', $k->id)->update([
-                    'time_display' => null,
-                ]);
-            }
-        }
+        \App\Models\Kajian::syncDynamicTimesAndTitles(true);
     }
 
     /**

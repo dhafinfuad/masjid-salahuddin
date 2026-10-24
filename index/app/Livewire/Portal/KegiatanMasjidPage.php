@@ -89,6 +89,7 @@ class KegiatanMasjidPage extends Component
         if ($categoryFilter !== 'akbar') {
             Kajian::ensureNotulaColumnExists();
             Kajian::ensureYoutubeColumnExists();
+            Kajian::syncDynamicTimesAndTitles(false);
             $kajianQuery = Kajian::query();
 
             if ($monthFilter !== 'all' && is_numeric($monthFilter)) {
