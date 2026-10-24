@@ -761,8 +761,7 @@
                                         <!-- Jam Operasional -->
                                         <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
                                             <span class="text-xs capitalize font-bold text-slate-500 block">Jam Operasional</span>
-                                            <p class="text-gov-textMain font-medium text-xs mt-0.5">Setiap hari • 04:00 — 22:00 WIB</p>
-                                            <span class="text-xs text-slate-500 mt-1 block">Sholat Jumat: Adzan 11:45 • Khutbah 12:00</span>
+                                            <p class="text-gov-textMain font-medium text-xs mt-0.5">Setiap hari : 04:00 — 22:00 WIB</p>
                                         </div>
                 
                                         <!-- Telepon & Email Grid -->
