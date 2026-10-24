@@ -607,15 +607,15 @@
                                             <div class="bg-white/10 backdrop-blur-xs rounded-lg p-2.5 border border-white/15">
                                                 <div class="flex items-center justify-between pb-1 border-b border-white/10">
                                                     <span class="text-[10px] font-bold tracking-wider uppercase text-amber-300">SHOLAT DZUHUR</span>
-                                                    <span class="text-[10px] text-amber-200/70">{{ $dzuhurPrayerTime ?? '11:45' }} WIB</span>
+                                                    <span class="text-[10px] font-semibold text-[#ffb900]">{{ $dzuhurPrayerTime ?? '11:45' }} WIB</span>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-2 mt-1.5">
                                                     <div>
-                                                        <span class="text-[10px] uppercase tracking-wider text-slate-300 block font-medium">Imam</span>
+                                                        <span class="text-[11px] capitalize tracking-wider text-slate-300 block font-medium">Imam</span>
                                                         <span class="text-xs font-semibold text-white truncate block mt-0.5" title="{{ $dzuhurDuty?->imam_name ?: '-' }}">{{ $dzuhurDuty?->imam_name ?: '-' }}</span>
                                                     </div>
                                                     <div>
-                                                        <span class="text-[10px] uppercase tracking-wider text-slate-300 block font-medium">Muadzin</span>
+                                                        <span class="text-[11px] capitalize tracking-wider text-slate-300 block font-medium">Muadzin</span>
                                                         <span class="text-xs font-semibold text-white truncate block mt-0.5" title="{{ $dzuhurDuty?->muadzin_name ?: '-' }}">{{ $dzuhurDuty?->muadzin_name ?: '-' }}</span>
                                                     </div>
                                                 </div>
@@ -625,15 +625,15 @@
                                             <div class="bg-white/10 backdrop-blur-xs rounded-lg p-2.5 border border-white/15">
                                                 <div class="flex items-center justify-between pb-1 border-b border-white/10">
                                                     <span class="text-[10px] font-bold tracking-wider uppercase text-amber-300">SHOLAT ASHAR</span>
-                                                    <span class="text-[10px] text-amber-200/70">{{ $asharPrayerTime ?? '15:00' }} WIB</span>
+                                                    <span class="text-[10px] font-semibold text-[#ffb900]">{{ $asharPrayerTime ?? '15:00' }} WIB</span>
                                                 </div>
                                                 <div class="grid grid-cols-2 gap-2 mt-1.5">
                                                     <div>
-                                                        <span class="text-[10px] uppercase tracking-wider text-slate-300 block font-medium">Imam</span>
+                                                        <span class="text-[11px] capitalize tracking-wider text-slate-300 block font-medium">Imam</span>
                                                         <span class="text-xs font-semibold text-white truncate block mt-0.5" title="{{ $asharDuty?->imam_name ?: '-' }}">{{ $asharDuty?->imam_name ?: '-' }}</span>
                                                     </div>
                                                     <div>
-                                                        <span class="text-[10px] uppercase tracking-wider text-slate-300 block font-medium">Muadzin</span>
+                                                        <span class="text-[11px] capitalize tracking-wider text-slate-300 block font-medium">Muadzin</span>
                                                         <span class="text-xs font-semibold text-white truncate block mt-0.5" title="{{ $asharDuty?->muadzin_name ?: '-' }}">{{ $asharDuty?->muadzin_name ?: '-' }}</span>
                                                     </div>
                                                 </div>
