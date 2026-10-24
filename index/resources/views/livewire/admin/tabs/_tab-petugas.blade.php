@@ -399,14 +399,13 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-400">
-                                            <div class="flex flex-col items-center justify-center space-y-2">
-                                                <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                                <p>Belum ada jadwal penugasan petugas ibadah yang sesuai filter.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <x-empty-state 
+                                        :isTable="true" 
+                                        colspan="6" 
+                                        icon="calendar" 
+                                        title="Tidak ada data petugas sholat" 
+                                        subtitle="Belum ada jadwal penugasan petugas ibadah yang sesuai dengan filter pencarian ini." 
+                                    />
                                 @endforelse
                             </tbody>
                         </table>
@@ -603,12 +602,11 @@
                                 @endif
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400">
-                                <div class="flex flex-col items-center justify-center space-y-2">
-                                    <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                    <p>Belum ada jadwal penugasan petugas ibadah yang sesuai filter.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="calendar" 
+                                title="Tidak ada data petugas sholat" 
+                                subtitle="Belum ada jadwal penugasan petugas ibadah yang sesuai dengan filter pencarian ini." 
+                            />
                         @endforelse
                     </div>
 

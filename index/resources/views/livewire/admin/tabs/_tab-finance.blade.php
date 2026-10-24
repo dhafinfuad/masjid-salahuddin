@@ -607,15 +607,13 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="6" class="p-8 text-center text-slate-400">
-                                                <div class="flex flex-col items-center justify-center py-6">
-                                                    <i data-lucide="receipt" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                                    <p class="font-medium text-slate-500">Tidak ada transaksi kas yang
-                                                        sesuai dengan filter.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="6" 
+                                            icon="receipt" 
+                                            title="Tidak ada data transaksi kas" 
+                                            subtitle="Belum ada transaksi kas yang sesuai dengan kriteria atau filter pencarian ini." 
+                                        />
                                     @endforelse
                                 </tbody>
                             </table>
@@ -738,12 +736,11 @@
                                 @endif
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
-                                <div class="flex flex-col items-center justify-center py-4">
-                                    <i data-lucide="receipt" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                    <p class="font-medium text-slate-500 text-xs">Tidak ada transaksi kas yang sesuai dengan filter.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="receipt" 
+                                title="Tidak ada data transaksi kas" 
+                                subtitle="Belum ada transaksi kas yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
 
 
@@ -1138,15 +1135,13 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="5" class="p-8 text-center text-slate-400">
-                                                <div class="flex flex-col items-center justify-center py-4">
-                                                    <i data-lucide="tags" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                                    <p class="font-medium text-slate-500">Belum ada pos anggaran terdaftar.
-                                                    </p>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="5" 
+                                            icon="tags" 
+                                            title="Tidak ada data pos anggaran" 
+                                            subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
+                                        />
                                     @endforelse
                                 </tbody>
                             </table>
@@ -1219,12 +1214,11 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
-                                <div class="flex flex-col items-center justify-center py-4">
-                                    <i data-lucide="tags" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                    <p class="font-medium text-slate-500">Belum ada pos anggaran terdaftar.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="tags" 
+                                title="Tidak ada data pos anggaran" 
+                                subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
                     </div>
 

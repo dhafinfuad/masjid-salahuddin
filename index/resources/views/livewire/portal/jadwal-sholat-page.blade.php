@@ -261,11 +261,13 @@
                                 <td class="p-3 text-center pr-4 tnum font-bold {{ $isToday ? 'text-gov-navy' : 'text-slate-800' }}">{{ $row['isya'] }}</td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="10" class="p-8 text-center text-slate-400">
-                                    Tidak ada data jadwal sholat untuk periode yang dipilih.
-                                </td>
-                            </tr>
+                            <x-empty-state 
+                                :isTable="true" 
+                                colspan="10" 
+                                icon="calendar" 
+                                title="Tidak ada data jadwal sholat" 
+                                subtitle="Belum ada jadwal sholat yang sesuai untuk periode yang dipilih." 
+                            />
                         @endforelse
                     </tbody>
                 </table>
@@ -329,9 +331,11 @@
                         </div>
                     </div>
                 @empty
-                    <div class="p-8 text-center text-slate-400">
-                        Tidak ada data jadwal sholat untuk periode yang dipilih.
-                    </div>
+                    <x-empty-state 
+                        icon="calendar" 
+                        title="Tidak ada data jadwal sholat" 
+                        subtitle="Belum ada jadwal sholat yang sesuai untuk periode yang dipilih." 
+                    />
                 @endforelse
             </div>
 

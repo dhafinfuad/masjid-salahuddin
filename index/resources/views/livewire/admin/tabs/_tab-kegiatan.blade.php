@@ -449,14 +449,13 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="6" class="p-8 text-center text-slate-400">
-                                            <div class="flex flex-col items-center justify-center space-y-2">
-                                                <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                                <p>Belum ada jadwal kajian yang ditambahkan.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <x-empty-state 
+                                        :isTable="true" 
+                                        colspan="6" 
+                                        icon="book-open" 
+                                        title="Tidak ada data kajian pekanan" 
+                                        subtitle="Belum ada jadwal kajian yang sesuai dengan kriteria atau filter pencarian ini." 
+                                    />
                                 @endforelse
                             </tbody>
                         </table>
@@ -660,12 +659,11 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400">
-                                <div class="flex flex-col items-center justify-center space-y-2">
-                                    <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                    <p>Belum ada jadwal kajian yang ditambahkan.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="book-open" 
+                                title="Tidak ada data kajian pekanan" 
+                                subtitle="Belum ada jadwal kajian yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
                     </div>
 
@@ -914,14 +912,13 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="5" class="p-8 text-center text-slate-400">
-                                            <div class="flex flex-col items-center justify-center space-y-2">
-                                                <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                                <p>Belum ada jadwal Shalat Jumat yang ditambahkan.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <x-empty-state 
+                                        :isTable="true" 
+                                        colspan="5" 
+                                        icon="calendar" 
+                                        title="Tidak ada data jadwal jumat" 
+                                        subtitle="Belum ada jadwal Shalat Jumat yang sesuai dengan kriteria atau filter pencarian ini." 
+                                    />
                                 @endforelse
                             </tbody>
                         </table>
@@ -1113,12 +1110,11 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400">
-                                <div class="flex flex-col items-center justify-center space-y-2">
-                                    <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                    <p>Belum ada jadwal Shalat Jumat yang ditambahkan.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="calendar" 
+                                title="Tidak ada data jadwal jumat" 
+                                subtitle="Belum ada jadwal Shalat Jumat yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
                     </div>
 
@@ -1358,14 +1354,13 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="7" class="p-8 text-center text-slate-400">
-                                            <div class="flex flex-col items-center justify-center space-y-2">
-                                                <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300"></i>
-                                                <p>Belum ada data agenda kegiatan yang sesuai filter.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <x-empty-state 
+                                        :isTable="true" 
+                                        colspan="7" 
+                                        icon="calendar" 
+                                        title="Tidak ada data agenda kegiatan" 
+                                        subtitle="Belum ada data agenda kegiatan yang sesuai dengan kriteria atau filter pencarian ini." 
+                                    />
                                 @endforelse
                             </tbody>
                         </table>
@@ -1487,10 +1482,11 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="p-8 text-center text-slate-400 bg-white rounded-xl border border-gov-border">
-                                <i data-lucide="calendar-x" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
-                                <p>Belum ada data agenda kegiatan yang sesuai filter.</p>
-                            </div>
+                            <x-empty-state 
+                                icon="calendar" 
+                                title="Tidak ada data agenda kegiatan" 
+                                subtitle="Belum ada data agenda kegiatan yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
                     </div>
 

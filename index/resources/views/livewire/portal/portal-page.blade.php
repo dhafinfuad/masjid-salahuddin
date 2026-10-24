@@ -529,8 +529,12 @@
                                                 </div>
                                             </div>
                                         @empty
-                                            <div class="col-span-full py-8 text-center text-slate-400 text-xs">
-                                                Belum ada program sosial yang aktif saat ini.
+                                            <div class="col-span-full">
+                                                <x-empty-state 
+                                                    icon="heart-handshake" 
+                                                    title="Tidak ada program sosial" 
+                                                    subtitle="Belum ada program sosial yang aktif untuk periode saat ini." 
+                                                />
                                             </div>
                                         @endforelse
                 

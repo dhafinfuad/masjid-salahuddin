@@ -232,11 +232,13 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" class="p-8 text-center text-slate-400">
-                                    Tidak ada data penugasan untuk bulan yang dipilih.
-                                </td>
-                            </tr>
+                            <x-empty-state 
+                                :isTable="true" 
+                                colspan="5" 
+                                icon="calendar" 
+                                title="Tidak ada data petugas sholat" 
+                                subtitle="Belum ada data penugasan yang sesuai untuk bulan yang dipilih." 
+                            />
                         @endforelse
                     </tbody>
                 </table>
@@ -323,9 +325,11 @@
                         @endif
                     </div>
                 @empty
-                    <div class="p-8 text-center text-slate-400">
-                        Tidak ada data penugasan untuk bulan yang dipilih.
-                    </div>
+                    <x-empty-state 
+                        icon="calendar" 
+                        title="Tidak ada data petugas sholat" 
+                        subtitle="Belum ada data penugasan yang sesuai untuk bulan yang dipilih." 
+                    />
                 @endforelse
             </div>
 

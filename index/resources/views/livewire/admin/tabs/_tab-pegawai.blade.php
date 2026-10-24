@@ -246,35 +246,13 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="py-12 px-4 text-center">
-                                <div class="flex flex-col items-center justify-center">
-                                    <svg class="w-10 h-10 text-slate-300 mb-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <rect x="3" y="4" width="18" height="16" rx="3"/>
-                                        <circle cx="9" cy="10" r="2"/>
-                                        <line x1="15" y1="8" x2="17" y2="8"/>
-                                        <line x1="15" y1="12" x2="17" y2="12"/>
-                                        <line x1="7" y1="16" x2="17" y2="16"/>
-                                    </svg>
-                                    <h4 class="font-bold text-slate-700 text-sm">Belum Ada Data Pegawai Muslim</h4>
-                                    <p class="text-xs text-slate-400 mt-1 max-w-sm">
-                                        Gunakan tombol "Impor Berkas Pegawai" untuk mengunggah spreadsheet rekap pegawai atau klik "Tambah Pegawai" untuk mencatat manual.
-                                    </p>
-                                    @if(Auth::user()->canManage())
-                                        <div class="mt-4 flex items-center gap-2">
-                                            <button type="button" @click="showImportEmployeeModal = true" wire:click="openImportEmployeeModal"
-                                                class="px-3 py-1.5 rounded-lg bg-gov-navy text-white text-xs font-bold shadow-2xs hover:bg-gov-navyHover transition cursor-pointer">
-                                                Impor Berkas Excel
-                                            </button>
-                                            <button type="button" @click="showEmployeeModal = true" wire:click="openCreateEmployeeModal"
-                                                class="px-3 py-1.5 rounded-lg bg-white border border-gov-border text-slate-700 text-xs font-semibold hover:bg-slate-50 transition cursor-pointer">
-                                                + Tambah Manual
-                                            </button>
-                                        </div>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
+                        <x-empty-state 
+                            :isTable="true" 
+                            colspan="6" 
+                            icon="id-card" 
+                            title="Tidak ada data pegawai" 
+                            subtitle="Belum ada data pegawai yang sesuai dengan kriteria atau filter pencarian ini." 
+                        />
                     @endforelse
                 </tbody>
             </table>
@@ -373,9 +351,11 @@
                 </div>
             </div>
         @empty
-            <div class="bg-white rounded-xl border border-gov-border p-6 text-center text-slate-400 text-xs">
-                Belum ada data pegawai yang sesuai pencarian.
-            </div>
+            <x-empty-state 
+                icon="id-card" 
+                title="Tidak ada data pegawai" 
+                subtitle="Belum ada data pegawai yang sesuai dengan kriteria atau filter pencarian ini." 
+            />
         @endforelse
 
         @if(method_exists($employeesList, 'hasPages') && $employeesList->hasPages())

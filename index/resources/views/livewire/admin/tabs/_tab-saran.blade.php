@@ -229,13 +229,13 @@
 
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="py-12 px-4 text-center text-slate-400 space-y-2">
-                                <svg class="w-8 h-8 mx-auto text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                                <div class="font-bold text-xs text-slate-600">Tidak ada data saran & kritik</div>
-                                <p class="text-[11px] text-slate-400">Belum ada masukan jamaah untuk filter pencarian ini.</p>
-                            </td>
-                        </tr>
+                        <x-empty-state 
+                            :isTable="true" 
+                            colspan="5" 
+                            icon="message-square" 
+                            title="Tidak ada data saran & kritik" 
+                            subtitle="Belum ada masukan jamaah untuk filter pencarian ini." 
+                        />
                     @endforelse
                 </tbody>
             </table>
@@ -406,11 +406,11 @@
 
             </div>
         @empty
-            <div class="p-8 text-center bg-white rounded-xl border border-gov-border shadow-2xs space-y-2 text-slate-400">
-                <svg class="w-8 h-8 mx-auto text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                <div class="font-bold text-xs text-slate-600">Tidak ada data saran & kritik</div>
-                <p class="text-[11px] text-slate-400">Belum ada masukan jamaah untuk filter pencarian ini.</p>
-            </div>
+            <x-empty-state 
+                icon="message-square" 
+                title="Tidak ada data saran & kritik" 
+                subtitle="Belum ada masukan jamaah untuk filter pencarian ini." 
+            />
         @endforelse
 
         <!-- Mobile Pagination -->

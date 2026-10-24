@@ -337,12 +337,13 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-400 text-xs">
-                                    <i data-lucide="users" class="w-8 h-8 mx-auto text-slate-300 mb-2"></i>
-                                    Tidak ada data pengguna yang sesuai dengan kriteria pencarian.
-                                </td>
-                            </tr>
+                            <x-empty-state 
+                                :isTable="true" 
+                                colspan="5" 
+                                icon="users" 
+                                title="Tidak ada data pengguna" 
+                                subtitle="Belum ada pengguna yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
                     </tbody>
                 </table>
@@ -471,12 +472,11 @@
                     </div>
                 </div>
             @empty
-                <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
-                    <div class="flex flex-col items-center justify-center py-4">
-                        <i data-lucide="users" class="w-8 h-8 text-slate-300 mb-2"></i>
-                        <p class="font-medium text-slate-500">Tidak ada data pengguna yang sesuai dengan kriteria pencarian.</p>
-                    </div>
-                </div>
+                <x-empty-state 
+                    icon="users" 
+                    title="Tidak ada data pengguna" 
+                    subtitle="Belum ada pengguna yang sesuai dengan kriteria atau filter pencarian ini." 
+                />
             @endforelse
 
             @if(method_exists($usersList, 'hasPages') && $usersList->hasPages())

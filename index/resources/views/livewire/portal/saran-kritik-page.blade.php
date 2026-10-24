@@ -277,15 +277,11 @@
 
                         </div>
                     @empty
-                        <div class="bg-white rounded-xl p-8 border border-gov-border shadow-2xs text-center space-y-2">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 mx-auto">
-                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            </div>
-                            <h4 class="font-bold text-xs text-gov-textMain pt-1">Belum Ada Aspirasi Publik</h4>
-                            <p class="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
-                                Setiap masukan yang Anda kirimkan melalui formulir di samping akan ditinjau dan ditindaklanjuti secara seksama oleh Pengurus Takmir DKM.
-                            </p>
-                        </div>
+                        <x-empty-state 
+                            icon="message-square" 
+                            title="Tidak ada data aspirasi publik" 
+                            subtitle="Setiap masukan yang Anda kirimkan akan ditinjau dan ditindaklanjuti secara seksama oleh Takmir DKM." 
+                        />
                     @endforelse
                 </div>
 

@@ -338,10 +338,12 @@
                                 @endif
                             </div>
                         @empty
-                            <div class="col-span-full p-12 bg-white rounded-xl border border-gov-border text-center text-slate-400">
-                                <i data-lucide="heart-handshake" class="w-10 h-10 mx-auto text-slate-300 mb-2"></i>
-                                <p class="font-medium text-slate-600 text-sm">Belum ada program sosial yang terdaftar.</p>
-                                <p class="text-xs text-slate-400 mt-1">Klik tombol 'Tambah Program Baru' untuk membuat program sosial pertama.</p>
+                            <div class="col-span-full">
+                                <x-empty-state 
+                                    icon="heart-handshake" 
+                                    title="Tidak ada data program sosial" 
+                                    subtitle="Belum ada program sosial yang sesuai dengan kriteria atau filter pencarian ini." 
+                                />
                             </div>
                         @endforelse
                     </div>
@@ -613,15 +615,13 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="5" class="p-8 text-center text-slate-400">
-                                                <div class="flex flex-col items-center justify-center py-4">
-                                                    <i data-lucide="users" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                                    <p class="font-medium text-slate-500">Tidak ada data peserta ditemukan.</p>
-                                                    <p class="text-xs text-slate-400 mt-1">Coba sesuaikan filter pencarian atau klik 'Daftarkan Peserta'.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="5" 
+                                            icon="users" 
+                                            title="Tidak ada data peserta program" 
+                                            subtitle="Belum ada peserta yang sesuai dengan kriteria atau filter pencarian ini." 
+                                        />
                                     @endforelse
                                 </tbody>
                             </table>
@@ -716,13 +716,11 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-8 text-center text-slate-400 shadow-2xs">
-                                <div class="flex flex-col items-center justify-center py-4">
-                                    <i data-lucide="users" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                    <p class="font-medium text-slate-500">Tidak ada data peserta ditemukan.</p>
-                                    <p class="text-xs text-slate-400 mt-1">Coba sesuaikan filter pencarian atau klik 'Daftarkan Peserta'.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="users" 
+                                title="Tidak ada data peserta program" 
+                                subtitle="Belum ada peserta yang sesuai dengan kriteria atau filter pencarian ini." 
+                            />
                         @endforelse
 
                         @if(method_exists($socialParticipantsList, 'hasPages') && $socialParticipantsList->hasPages())
@@ -1691,14 +1689,13 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="4" class="p-6 text-center text-slate-400">
-                                                <div class="flex flex-col items-center justify-center py-6">
-                                                    <i data-lucide="landmark" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                                    <p class="font-medium text-slate-500">Belum ada riwayat penerimaan transfer kliring.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="4" 
+                                            icon="landmark" 
+                                            title="Tidak ada data transfer kliring" 
+                                            subtitle="Belum ada riwayat penerimaan transfer yang sesuai dengan filter pencarian ini." 
+                                        />
                                     @endforelse
                                 </tbody>
                             </table>
@@ -1729,12 +1726,11 @@
                                 @endif
                             </div>
                         @empty
-                            <div class="bg-white rounded-xl border border-gov-border p-6 text-center text-slate-400 shadow-2xs">
-                                <div class="flex flex-col items-center justify-center py-6">
-                                    <i data-lucide="landmark" class="w-8 h-8 text-slate-300 mb-2"></i>
-                                    <p class="font-medium text-slate-500">Belum ada riwayat penerimaan transfer kliring.</p>
-                                </div>
-                            </div>
+                            <x-empty-state 
+                                icon="landmark" 
+                                title="Tidak ada data transfer kliring" 
+                                subtitle="Belum ada riwayat penerimaan transfer yang sesuai dengan filter pencarian ini." 
+                            />
                         @endforelse
 
                         @if(method_exists($lumpSumHistory, 'hasPages') && $lumpSumHistory->hasPages())
