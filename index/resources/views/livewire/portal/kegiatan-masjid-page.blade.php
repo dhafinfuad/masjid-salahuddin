@@ -89,13 +89,10 @@
 
             <!-- Search & Month/Year Toolbar (Row on Desktop, Stacked on Mobile) -->
             <div class="pt-1">
-                <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     
                     <!-- Search Input (flex-1) -->
                     <div class="flex-1 min-w-0">
-                        <label for="search-activity-input" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                            Pencarian
-                        </label>
                         <div class="relative">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                             <input 
@@ -117,12 +114,9 @@
                     </div>
 
                     <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
-                    <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-end">
+                    <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center">
                         <!-- Filter Bulan (w-full sm:w-48) -->
                         <div class="w-full sm:w-48 shrink-0">
-                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                                Filter Bulan
-                            </label>
                             @php
                                 $actMonthOptions = array_merge(
                                     [['value' => 'all', 'label' => 'Semua Bulan']],
@@ -138,11 +132,7 @@
                             />
                         </div>
 
-                        <!-- Filter Tahun (w-full sm:w-36) -->
                         <div class="w-full sm:w-36 shrink-0">
-                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                                Tahun
-                            </label>
                             <x-custom-select 
                                 id="filter-activity-year" 
                                 wire:model.live="selectedYear" 
@@ -151,16 +141,6 @@
                                 icon="calendar-days"
                             />
                         </div>
-                    </div>
-
-                    <!-- Reset Button -->
-                    <div class="w-full sm:w-auto shrink-0">
-                        <button type="button" wire:click="resetFilters"
-                            class="h-[38px] w-full sm:w-auto px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
-                            title="Reset filter dan pencarian ke kondisi awal">
-                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
-                            <span class="whitespace-nowrap">Reset</span>
-                        </button>
                     </div>
 
                 </div>

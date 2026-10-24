@@ -45,7 +45,7 @@
             </div>
 
             <!-- Filters Toolbar -->
-            <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 
                 <!-- Filter Kota / Kabupaten -->
                 <div class="relative flex-1 min-w-0"
@@ -89,10 +89,6 @@
                      }"
                      @click.outside="open = false"
                      @keydown.escape.window="open = false">
-
-                    <label for="filter-city" class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                        Kota / Kabupaten (Kemenag)
-                    </label>
 
                     <!-- Dropdown Trigger Button -->
                     <button type="button" 
@@ -191,12 +187,9 @@
                 </div>
 
                 <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
-                <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-end">
+                <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center">
                     <!-- Filter Bulan -->
                     <div class="w-full sm:w-44 shrink-0">
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                            Bulan
-                        </label>
                         <x-custom-select 
                             id="filter-month"
                             wire:model.live="selectedMonth"
@@ -208,9 +201,6 @@
 
                     <!-- Filter Tahun -->
                     <div class="w-full sm:w-36 shrink-0">
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                            Tahun
-                        </label>
                         <x-custom-select 
                             id="filter-year"
                             wire:model.live="selectedYear"
@@ -219,16 +209,6 @@
                             icon="calendar-days"
                         />
                     </div>
-                </div>
-
-                <!-- Reset Button -->
-                <div class="w-full sm:w-auto shrink-0">
-                    <button type="button" wire:click="resetFilters"
-                        class="h-[38px] w-full sm:w-auto px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
-                        title="Reset filter ke kondisi awal">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span class="whitespace-nowrap">Reset</span>
-                    </button>
                 </div>
 
             </div>

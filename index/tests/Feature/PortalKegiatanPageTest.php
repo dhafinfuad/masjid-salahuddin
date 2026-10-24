@@ -33,7 +33,7 @@ class PortalKegiatanPageTest extends TestCase
         $response = $this->get(route('portal.kegiatan'));
         $response->assertStatus(200);
         $response->assertSee('Daftar Kegiatan & Ibadah Masjid', false);
-        $response->assertSee('Filter Bulan');
+        $response->assertSee('id="filter-activity-month"', false);
         $response->assertSee('wire:loading.inline-flex', false);
         $response->assertSee('Memperbarui kegiatan...');
     }

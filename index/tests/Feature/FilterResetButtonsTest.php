@@ -184,8 +184,7 @@ class FilterResetButtonsTest extends TestCase
             ->assertSet('search', '')
             ->assertSet('selectedCategory', 'all')
             ->assertSet('selectedMonth', (string) $now->month)
-            ->assertSet('selectedYear', (int) $now->year)
-            ->assertSee('Reset');
+            ->assertSet('selectedYear', (int) $now->year);
     }
 
     public function test_portal_petugas_sholat_page_reset_filters(): void
@@ -198,7 +197,7 @@ class FilterResetButtonsTest extends TestCase
             ->call('resetFilters')
             ->assertSet('selectedMonth', (int) $now->month)
             ->assertSet('selectedYear', (int) $now->year)
-            ->assertSee('Reset');
+            ->assertDontSee('title="Reset filter');
     }
 
     public function test_portal_jadwal_sholat_page_reset_filters(): void
@@ -213,7 +212,7 @@ class FilterResetButtonsTest extends TestCase
             ->assertSet('selectedMonth', (int) $now->month)
             ->assertSet('selectedYear', (int) $now->year)
             ->assertSet('cityId', '1634')
-            ->assertSee('Reset');
+            ->assertDontSee('title="Reset filter');
     }
 
     public function test_portal_profil_masjid_page_reset_filters(): void
