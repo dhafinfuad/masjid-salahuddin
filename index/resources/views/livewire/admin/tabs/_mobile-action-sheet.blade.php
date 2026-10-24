@@ -224,6 +224,36 @@
                             </svg>
                             <span>Atur Juz Harian</span>
                         </button>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button type="button" @click="closeMobileActionSheet(); $wire.setAllOdojStatus('Selesai')"
+                                class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                        <polyline points="24 6 13 17 8 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-semibold text-slate-800 leading-tight block">Semua Selesai</span>
+                                    <span class="text-[10px] text-slate-400 leading-tight block">Tandai 30 Juz</span>
+                                </div>
+                            </button>
+
+                            <button type="button" @click="closeMobileActionSheet(); $wire.setAllOdojStatus('Belum')"
+                                class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
+                                <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 border border-slate-200 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                        <polyline points="3 3 3 8 8 8"></polyline>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-semibold text-slate-800 leading-tight block">Reset Belum</span>
+                                    <span class="text-[10px] text-slate-400 leading-tight block">Kembalikan status</span>
+                                </div>
+                            </button>
+                        </div>
                     @endif
 
                     <button type="button" @click="closeMobileActionSheet(); copyOdojToClipboard({{ Js::from($odojWhatsappText ?? '') }})"

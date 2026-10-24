@@ -1523,27 +1523,37 @@
                             </button>
                         </div>
 
-                        <!-- Right Control Group: Indicator Badge & Action Buttons (Align Right on Desktop) -->
+                        <!-- Right Control Group: Status Notification Banner & Action Buttons (Desktop Only for buttons) -->
                         <div class="flex items-center sm:justify-end gap-2 w-full sm:w-auto">
-                            <!-- Indicator Badge: 0/30 Juz Selesai -->
+                            <!-- Status Notification: 0/30 Juz Selesai -->
                             <div
-                                class="flex-1 min-w-0 sm:flex-none sm:w-auto inline-flex items-center justify-center h-9 px-3 rounded-lg bg-white text-gov-textMain text-xs font-bold border border-gov-border shadow-2xs">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 shrink-0"></span>
-                                <span class="whitespace-nowrap">{{ $odojCompletedCount }}/30 Juz Selesai</span>
+                                class="w-full sm:w-auto min-h-[36px] sm:h-9 px-3.5 sm:px-3 py-2 sm:py-0 rounded-lg bg-emerald-50/80 border border-emerald-200/90 text-xs shadow-2xs select-none cursor-default flex items-center justify-between sm:justify-start gap-2.5">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-md bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                        </svg>
+                                    </div>
+                                    <span class="text-slate-600 font-medium">Status Tilawah:</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="font-bold text-emerald-800 whitespace-nowrap">{{ $odojCompletedCount }}/30 Juz Selesai{{ $odojCompletedCount >= 30 ? ' (Khatam)' : '' }}</span>
+                                </div>
                             </div>
 
                             @if(Auth::user()->canManage())
-                                <!-- Action Buttons: Grid 2 cols on Mobile, Inline on Desktop -->
-                                <div class="flex items-center gap-2 sm:w-auto shrink-0">
-                                    <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled" title="Tandai Semua Sudah"
-                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                <!-- Action Buttons: Desktop Only (di Mobile dipindahkan ke Menu Tindakan Cepat / FAB) -->
+                                <div class="hidden sm:flex items-center gap-2 sm:w-auto shrink-0">
+                                    <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled" title="Tandai Semua Selesai"
+                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
-                                        <span class="whitespace-nowrap hidden sm:inline">Semua Sudah</span>
+                                        <span class="whitespace-nowrap">Semua Selesai</span>
                                     </button>
                                     <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled" title="Reset Semua Belum"
-                                        class="w-9 sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 sm:px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500 shrink-0 inline-block"></i>
-                                        <span class="whitespace-nowrap hidden sm:inline">Reset Belum</span>
+                                        <span class="whitespace-nowrap">Reset Belum</span>
                                     </button>
                                 </div>
                             @endif

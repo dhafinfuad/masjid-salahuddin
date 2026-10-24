@@ -541,5 +541,44 @@ class AgendaAndOdojTest extends TestCase
         $this->assertEquals('Berjalan', $updatedAgenda->status);
         $this->assertEquals('https://youtube.com/watch?v=sampleUpdated', $updatedAgenda->youtube_url);
     }
+
+    public function test_odoj_status_notification_and_batch_actions(): void
+    {
+        $this->actingAs($this->admin);
+
+        $today = Carbon::today()->format('Y-m-d');
+        for ($i = 1; $i <= 30; $i++) {
+            OdojEntry::create([
+                'group_name' => 'Laporan Madya Malang Bertilawah',
+                'jamaah_name' => "Jamaah {$i}",
+                'juz_number' => $i,
+                'target_date' => $today,
+                'status' => 'Belum',
+            ]);
+        }
+
+        $component = Livewire::test(AdminDashboard::class)
+            ->set('currentTab', 'kegiatan')
+            ->set('odojDate', $today);
+
+        // Awalnya 0/30 Juz Selesai
+        $component->assertSee('Status Tilawah:')
+            ->assertSee('0/30 Juz Selesai')
+            ->assertSee('Semua Selesai')
+            ->assertSee('Reset Belum');
+
+        // Panggil setAllOdojStatus('Selesai')
+        $component->call('setAllOdojStatus', 'Selesai')
+            ->assertSee('30/30 Juz Selesai (Khatam)');
+
+        $this->assertEquals(30, OdojEntry::forDate($today)->where('status', 'Selesai')->count());
+
+        // Panggil setAllOdojStatus('Belum')
+        $component->call('setAllOdojStatus', 'Belum')
+            ->assertSee('0/30 Juz Selesai');
+
+        $this->assertEquals(0, OdojEntry::forDate($today)->where('status', 'Selesai')->count());
+    }
 }
+
 
