@@ -105,7 +105,7 @@
       <!-- Tombol Cetak / PDF -->
       <button 
         type="button"
-        onclick="window.print()" 
+        onclick="triggerShareOrPrint('Jadwal Bulanan Penugasan Imam & Muadzin')" 
         class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
         <i data-lucide="printer" class="w-4 h-4"></i>
         <span class="hidden sm:inline">Cetak /</span> Simpan PDF
@@ -247,6 +247,25 @@
         toast.classList.remove('opacity-100');
         toast.classList.add('opacity-0', 'pointer-events-none');
       }, 2400);
+    }
+
+    async function triggerShareOrPrint(title) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({
+            title: title || 'Jadwal Bulanan Penugasan Imam & Muadzin',
+            url: window.location.href
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      window.print();
     }
 
     // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)

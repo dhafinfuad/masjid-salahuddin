@@ -191,7 +191,7 @@
       <!-- Tombol Cetak / PDF -->
       <button 
         type="button"
-        onclick="triggerPrintWithQr()" 
+        onclick="triggerPrintWithQr('Jadwal Penugasan Imam & Muadzin')" 
         class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
         <i data-lucide="printer" class="w-4 h-4"></i>
         <span class="hidden sm:inline">Cetak /</span> Simpan PDF
@@ -477,8 +477,23 @@
     document.addEventListener('DOMContentLoaded', initQrCodes);
     setTimeout(initQrCodes, 150);
 
-    function triggerPrintWithQr() {
+    async function triggerPrintWithQr(title) {
       initQrCodes();
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({
+            title: title || 'Jadwal Penugasan Imam & Muadzin',
+            url: window.location.href
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
       window.print();
     }
 

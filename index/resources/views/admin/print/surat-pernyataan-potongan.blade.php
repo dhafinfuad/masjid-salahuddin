@@ -83,7 +83,7 @@
     <!-- Tombol Cetak / PDF -->
     <button 
       type="button"
-      onclick="window.print()" 
+      onclick="triggerShareOrPrint('Surat Pernyataan Pemotongan Tunjangan Kinerja')" 
       class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
       <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -259,6 +259,25 @@
         window.lucide.createIcons();
       }
     });
+
+    async function triggerShareOrPrint(title) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({
+            title: title || document.title,
+            url: window.location.href
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      window.print();
+    }
 
     // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)
     // agar Safari WebKit me-reset status pencetakan dan tidak memblokir cetak berulang.

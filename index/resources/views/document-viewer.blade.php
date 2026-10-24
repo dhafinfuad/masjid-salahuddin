@@ -91,6 +91,7 @@
         <div class="flex items-center gap-2 shrink-0">
             <!-- Tombol Cetak (Buka Dokumen Asli untuk Cetak / AirPrint / Simpan PDF) -->
             <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer"
+                onclick="event.preventDefault(); triggerDocumentPrint('{{ addslashes($downloadFilename) }}', '{{ $fileUrl }}')"
                 class="inline-flex items-center gap-1.5 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-600 transition-colors shadow-2xs cursor-pointer select-none"
                 title="Buka untuk Cetak / Simpan PDF">
                 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -112,5 +113,27 @@
             title="Pratinjau Dokumen">
         </iframe>
     </main>
+
+    <script>
+        async function triggerDocumentPrint(title, fileUrl) {
+            const fullUrl = fileUrl.startsWith('http') ? fileUrl : (window.location.origin + fileUrl);
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+            if (isMobile && navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title || 'Dokumen Masjid Salahuddin',
+                        url: fullUrl
+                    });
+                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                }
+            }
+
+            window.open(fileUrl, '_blank');
+        }
+    </script>
 </body>
 </html>

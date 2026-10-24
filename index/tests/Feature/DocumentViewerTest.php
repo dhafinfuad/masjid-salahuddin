@@ -84,4 +84,26 @@ class DocumentViewerTest extends TestCase
         // Pastikan tidak disembunyikan di layar HP
         $response->assertDontSee('hidden sm:inline-flex', false);
     }
+
+    public function test_document_viewer_uses_web_share_api_for_ios(): void
+    {
+        $response = $this->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
+
+        $response->assertStatus(200);
+        $response->assertSee('triggerDocumentPrint', false);
+        $response->assertSee('navigator.share', false);
+        $response->assertSee('AbortError', false);
+    }
+
+    public function test_print_views_use_share_or_print_api_for_ios(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/kepengurusan/cetak-sk');
+
+        $response->assertStatus(200);
+        $response->assertSee('triggerShareOrPrint', false);
+        $response->assertSee('navigator.share', false);
+        $response->assertSee('afterprint', false);
+    }
 }

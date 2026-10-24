@@ -104,7 +104,7 @@
           </svg>
           <span>Kembali</span>
         </a>
-        <button type="button" onclick="window.print()" class="px-4 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 active:bg-slate-800 border border-slate-600 text-white font-semibold text-xs shadow-sm transition inline-flex items-center gap-1.5 cursor-pointer">
+        <button type="button" onclick="triggerShareOrPrint('Draf Dokumen Resmi Surat KEP Takmir')" class="px-4 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 active:bg-slate-800 border border-slate-600 text-white font-semibold text-xs shadow-sm transition inline-flex items-center gap-1.5 cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 6 2 18 2 18 9"></polyline>
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -533,6 +533,25 @@
   <script>
     if (window.lucide) {
       window.lucide.createIcons();
+    }
+
+    async function triggerShareOrPrint(title) {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({
+            title: title || document.title,
+            url: window.location.href
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      window.print();
     }
 
     // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)
