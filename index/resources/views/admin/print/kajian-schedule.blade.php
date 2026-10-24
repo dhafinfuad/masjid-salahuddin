@@ -192,7 +192,7 @@
         <button 
           type="button"
           id="btnDownloadMobile"
-          onclick="downloadKajianPdf('Jadwal_Kajian_{{ $monthName }}_{{ $year }}')" 
+          onclick="downloadKajianPdf('Jadwal_{{ ($type ?? 'pekanan') === 'jumat' ? 'Shalat_Jumat' : 'Kajian' }}_{{ $monthName ?? 'Bulan' }}_{{ $year ?? date('Y') }}')" 
           class="inline-flex sm:hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
           title="Unduh File PDF">
           <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -226,7 +226,7 @@
           JADWAL {{ $type === 'jumat' ? 'PETUGAS SHALAT JUMAT' : 'KAJIAN PEKANAN & TEMATIK' }}
         </h3>
         <p class="text-xs text-slate-600 font-medium mt-1">
-          {{ $settings->name ?? 'Masjid Salahuddin' }} • Periode: {{ Carbon\Carbon::now()->translatedFormat('F Y') }}
+          {{ $settings->name ?? 'Masjid Salahuddin' }} • Periode: {{ $monthName ?? Carbon\Carbon::now()->translatedFormat('F') }} {{ $year ?? date('Y') }}
         </p>
       </div>
 

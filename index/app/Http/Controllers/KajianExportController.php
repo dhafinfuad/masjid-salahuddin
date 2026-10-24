@@ -134,10 +134,22 @@ class KajianExportController extends Controller
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'KAJIAN' . $type . date('Y-m')), 0, 10));
         $verifyUrl = url('/admin/kajian/export-pdf?type=' . $type . '&tte=1&hash=' . $tteHash);
 
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        $monthNum = (is_numeric($month) && (int) $month >= 1 && (int) $month <= 12) ? (int) $month : (int) date('n');
+        $monthName = $months[$monthNum] ?? 'Januari';
+        $activeYear = (is_numeric($year) && (int) $year >= 2020) ? (int) $year : (int) date('Y');
+
         return view('admin.print.kajian-schedule', [
             'type' => $type,
             'settings' => $settings,
             'kajians' => $kajians,
+            'month' => $month,
+            'monthName' => $monthName,
+            'year' => $activeYear,
             'printDate' => Carbon::now()->translatedFormat('d F Y'),
             'ketuaDkm' => $ketuaDkm,
             'koordinatorDakwah' => $koordinatorDakwah,
