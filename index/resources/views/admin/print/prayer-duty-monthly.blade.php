@@ -121,9 +121,13 @@
           type="button"
           id="btnDownloadMobile"
           onclick="downloadMonthlyPdf('Jadwal_Penugasan_Imam_Muadzin_{{ $monthName }}_{{ $year }}')" 
-          class="inline-flex sm:hidden items-center gap-1.5 bg-gov-600 hover:bg-gov-700 active:bg-gov-800 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-colors border border-gov-500 shadow-sm cursor-pointer"
+          class="inline-flex sm:hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
           title="Unduh File PDF">
-          <i data-lucide="download" class="w-4 h-4" id="iconDownloadMobile"></i>
+          <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
           <span id="labelDownloadMobile">Unduh PDF</span>
         </button>
       </div>
