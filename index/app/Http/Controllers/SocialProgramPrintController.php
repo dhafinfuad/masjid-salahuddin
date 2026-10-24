@@ -9,6 +9,7 @@ use App\Models\SocialProgram;
 use App\Models\User;
 use App\Services\EmployeeStatusSyncService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -231,7 +232,7 @@ class SocialProgramPrintController extends Controller
     /**
      * Print Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja
      */
-    public function printPdf(Request $request): View
+    public function printPdf(Request $request): Response
     {
         $mode = $request->query('mode', 'all'); // 'all' | 'single' | 'new' | 'blank'
         $year = (int) $request->query('year', now()->year);
@@ -401,7 +402,7 @@ class SocialProgramPrintController extends Controller
             }
         }
 
-        return view('admin.print.surat-pernyataan-potongan', [
+        return response()->view('admin.print.surat-pernyataan-potongan', [
             'pages' => $pages,
             'year' => $year,
             'dateLetter' => $dateLetter,
@@ -411,6 +412,9 @@ class SocialProgramPrintController extends Controller
             'secretarySection' => $secretarySection,
             'settings' => $settings,
             'canonicalPrograms' => $this->canonicalPrograms,
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
         ]);
     }
 

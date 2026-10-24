@@ -97,13 +97,13 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '{{ url('/admin/kepengurusan') }}'; }" class="px-3.5 py-1.5 rounded-lg border border-slate-600 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-xs font-semibold text-slate-200 transition cursor-pointer inline-flex items-center gap-1.5">
+        <a href="{{ url('/admin/kepengurusan') }}" class="px-3.5 py-1.5 rounded-lg border border-slate-600 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-xs font-semibold text-slate-200 transition cursor-pointer inline-flex items-center gap-1.5" title="Kembali ke Kepengurusan">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
           <span>Kembali</span>
-        </button>
+        </a>
         <button type="button" onclick="window.print()" class="px-4 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 active:bg-slate-800 border border-slate-600 text-white font-semibold text-xs shadow-sm transition inline-flex items-center gap-1.5 cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 6 2 18 2 18 9"></polyline>
@@ -534,6 +534,14 @@
     if (window.lucide) {
       window.lucide.createIcons();
     }
+
+    // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)
+    // agar Safari WebKit me-reset status pencetakan dan tidak memblokir cetak berulang.
+    window.addEventListener('afterprint', () => {
+      setTimeout(() => {
+        window.location.replace(window.location.href);
+      }, 150);
+    });
   </script>
 </body>
 </html>

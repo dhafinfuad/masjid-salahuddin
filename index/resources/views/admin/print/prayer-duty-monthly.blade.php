@@ -91,9 +91,8 @@
     <!-- Top Action Bar (Header) -->
     <header class="no-print bg-slate-900 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 border-b border-slate-800 sticky top-0 z-30 shadow-sm">
       <!-- Tombol Kembali -->
-      <button 
-        type="button"
-        onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '{{ url('/petugas-sholat') }}'; }" 
+      <a 
+        href="{{ url('/petugas-sholat') }}" 
         class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer" 
         title="Kembali ke Jadwal Petugas Shalat">
         <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -101,7 +100,7 @@
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
         <span>Kembali</span>
-      </button>
+      </a>
 
       <!-- Tombol Cetak / PDF -->
       <button 
@@ -249,6 +248,14 @@
         toast.classList.add('opacity-0', 'pointer-events-none');
       }, 2400);
     }
+
+    // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)
+    // agar Safari WebKit me-reset status pencetakan dan tidak memblokir cetak berulang.
+    window.addEventListener('afterprint', () => {
+      setTimeout(() => {
+        window.location.replace(window.location.href);
+      }, 150);
+    });
   </script>
 </body>
 </html>

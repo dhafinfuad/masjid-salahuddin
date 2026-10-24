@@ -73,7 +73,7 @@
         
         <!-- Sisi Kiri: Tombol Kembali -->
         <div class="flex items-center shrink-0">
-            <button type="button" onclick="handleSmartBack('{{ $fallbackUrl }}')"
+            <a href="{{ $fallbackUrl }}"
                 class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-950 text-slate-200 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer select-none"
                 title="Kembali ke halaman sebelumnya">
                 <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +81,7 @@
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
                 <span>Kembali</span>
-            </button>
+            </a>
         </div>
 
         <!-- Sisi Tengah: Dikosongkan agar tetap bersih & lega -->
@@ -112,17 +112,5 @@
             title="Pratinjau Dokumen">
         </iframe>
     </main>
-
-    <script>
-        function handleSmartBack(fallbackUrl) {
-            // Jika ada riwayat navigasi di tab yang sama, kembali ke halaman sebelumnya
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                // Jika dibuka di tab baru dari tautan langsung, arahkan ke halaman fallback asal
-                window.location.href = fallbackUrl || '/';
-            }
-        }
-    </script>
 </body>
 </html>

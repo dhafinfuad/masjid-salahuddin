@@ -32,7 +32,7 @@ class DocumentViewerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Penampil Dokumen — Masjid Salahuddin');
-        $response->assertSee('handleSmartBack');
+        $response->assertSee('href="/profil"', false);
         $response->assertSee('Kembali');
         $response->assertSee('Cetak');
         $response->assertDontSee('Unduh');
@@ -40,6 +40,7 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('href="/sk/sk-takmir.pdf"', false);
         $response->assertSee('target="_blank"', false);
         $response->assertDontSee('contentWindow.print');
+        $this->assertStringContainsString('no-store', (string)$response->headers->get('Cache-Control'));
     }
 
     public function test_document_viewer_aborts_when_file_is_missing(): void
@@ -78,8 +79,8 @@ class DocumentViewerTest extends TestCase
         $response = $this->get('/admin/kepengurusan/cetak-sk');
 
         $response->assertStatus(200);
-        $response->assertSee('window.history.back', false);
         $response->assertSee('Kembali', false);
+        $response->assertSee('href=', false);
         // Pastikan tidak disembunyikan di layar HP
         $response->assertDontSee('hidden sm:inline-flex', false);
     }

@@ -52,10 +52,13 @@ class DocumentViewerController extends Controller
             $fallbackUrl = $fallback;
         }
 
-        return view('document-viewer', [
+        return response()->view('document-viewer', [
             'fileUrl' => $cleanFile,
             'downloadFilename' => $downloadFilename,
             'fallbackUrl' => $fallbackUrl,
+        ])->withHeaders([
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
         ]);
     }
 }
