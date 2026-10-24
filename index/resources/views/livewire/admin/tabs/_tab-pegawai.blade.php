@@ -54,31 +54,16 @@
 
         <!-- Filters Row -->
         <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
-            <!-- Filter Status Kepegawaian -->
-            <div class="flex-1 md:w-40">
-                <x-custom-select 
-                    wire:model.live="employeeFilterStatus"
-                    :options="[
-                        'all' => 'Semua Status',
-                        'AKTIF' => 'Aktif',
-                        'MUTASI' => 'Mutasi',
-                        'NONAKTIF' => 'Nonaktif',
-                    ]"
-                    placeholder="Semua Status"
-                    class="w-full"
-                />
-            </div>
-
             <!-- Filter Status Akun Aplikasi -->
-            <div class="flex-1 md:w-40">
+            <div class="flex-1 md:w-44">
                 <x-custom-select 
                     wire:model.live="employeeFilterLink"
                     :options="[
-                        'all' => 'Semua Akun',
+                        'all' => 'Akun (Semua)',
                         'linked' => 'Punya Akun',
                         'unlinked' => 'Belum Akun',
                     ]"
-                    placeholder="Semua Akun"
+                    placeholder="Akun (Semua)"
                     class="w-full"
                 />
             </div>
@@ -120,7 +105,7 @@
                         <th class="py-3 px-4 text-center w-20 rounded-tr-xl">Aksi</th>
                     </tr>
                 </thead>
-                <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="employeeFilterStatus, employeeFilterLink, employeeSearch, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
+                <tbody wire:loading.class="opacity-50 pointer-events-none" wire:target="employeeFilterLink, employeeSearch, gotoPage, nextPage, previousPage" class="divide-y divide-slate-300 transition-opacity duration-150">
                     @forelse($employeesList as $index => $emp)
                         @php
                             $rowNum = $loop->iteration + ($employeesList->firstItem() ? $employeesList->firstItem() - 1 : 0);
