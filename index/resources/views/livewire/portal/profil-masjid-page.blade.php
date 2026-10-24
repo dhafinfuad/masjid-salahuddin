@@ -383,7 +383,7 @@
 
                             <!-- PDF Actions: Buka & Unduh -->
                             <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
-                                <a href="{{ asset('resources/' . $doc['file']) }}" target="_blank" rel="noopener noreferrer"
+                                <a href="{{ route('document.viewer', ['file' => asset('resources/' . $doc['file']), 'fallback' => url('/profil')]) }}"
                                    class="flex-1 py-2 px-3 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition shadow-2xs inline-flex items-center justify-center gap-1.5 cursor-pointer text-center">
                                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                     <span>Buka Dokumen</span>

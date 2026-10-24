@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgendaExportController;
+use App\Http\Controllers\DocumentViewerController;
 use App\Http\Controllers\FinanceExportController;
 use App\Http\Controllers\KajianExportController;
 use App\Http\Controllers\PrayerDutyExportController;
@@ -39,6 +40,7 @@ Route::get('/display', TvDisplayPage::class)->name('display');
 Route::get('/offline', fn() => response()->view('portal.offline'))->name('portal.offline');
 Route::get('/resources/QRIS.webp', fn() => response()->file(public_path('images/QRIS.webp'), ['Content-Type' => 'image/webp']));
 Route::get('/masjid-salahuddin/resources/QRIS.webp', fn() => response()->file(public_path('images/QRIS.webp'), ['Content-Type' => 'image/webp']));
+Route::get('/document-viewer', [DocumentViewerController::class, 'show'])->name('document.viewer');
 
 // Authentication
 if (app()->environment('local')) {

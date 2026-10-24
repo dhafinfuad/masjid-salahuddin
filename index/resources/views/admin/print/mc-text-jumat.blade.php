@@ -90,16 +90,29 @@
   <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl shadow-slate-300/40 border border-slate-200/90 overflow-hidden flex flex-col transition-all print-shadow-none">
     
     <!-- Top Action Bar (Header) - Clean Navy Gov tanpa logo & judul teks -->
-    <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-end gap-2 border-b border-gov-900 sticky top-0 z-30 shadow-sm">
+    <header class="no-print bg-slate-900 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 border-b border-slate-800 sticky top-0 z-30 shadow-sm">
+      <!-- Tombol Kembali -->
+      <button 
+        type="button"
+        onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '{{ url('/admin/kajian') }}'; }" 
+        class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer" 
+        title="Kembali ke Manajemen Kegiatan">
+        <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Kembali</span>
+      </button>
+
       <!-- Quick Action Buttons -->
       <div class="flex items-center gap-2">
         <!-- Ukuran Teks Button untuk kenyamanan membaca -->
-        <div class="flex items-center bg-gov-900 rounded-lg p-0.5 border border-slate-700/70 text-slate-300 mr-1">
-          <button type="button" onclick="adjustFontSize(-1)" title="Perkecil Teks" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+        <div class="flex items-center bg-slate-800 rounded-lg p-0.5 border border-slate-700 text-slate-300 mr-1">
+          <button type="button" onclick="adjustFontSize(-1)" title="Perkecil Teks" class="p-1.5 hover:text-white hover:bg-slate-700 rounded-md transition-colors cursor-pointer">
             <i data-lucide="minus" class="w-3.5 h-3.5"></i>
           </button>
           <span class="text-[11px] px-2 font-mono font-medium text-slate-300">A</span>
-          <button type="button" onclick="adjustFontSize(1)" title="Perbesar Teks" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+          <button type="button" onclick="adjustFontSize(1)" title="Perbesar Teks" class="p-1.5 hover:text-white hover:bg-slate-700 rounded-md transition-colors cursor-pointer">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
           </button>
         </div>
@@ -108,18 +121,9 @@
         <button 
           type="button"
           onclick="window.print()" 
-          class="inline-flex items-center gap-2 bg-gov-700 hover:bg-gov-600 active:bg-gov-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-gov-600/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-gov-300/40 cursor-pointer">
+          class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
           <i data-lucide="printer" class="w-4 h-4"></i>
           <span class="hidden sm:inline">Cetak /</span> Simpan PDF
-        </button>
-
-        <!-- Tombol Tutup -->
-        <button 
-          type="button"
-          onclick="handleCloseNotification()" 
-          class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg border border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400/40 cursor-pointer">
-          <i data-lucide="x" class="w-4 h-4"></i>
-          <span>Tutup</span>
         </button>
       </div>
     </header>

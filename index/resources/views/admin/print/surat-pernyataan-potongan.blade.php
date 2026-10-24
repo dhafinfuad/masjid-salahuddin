@@ -68,38 +68,31 @@
 
   <!-- Top Action Bar (Header) Sesuai Standar Proyek -->
   <header class="no-print bg-slate-900 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 border-b border-slate-800 sticky top-0 z-30 shadow-sm">
-    <div class="flex items-center gap-2">
-      <span class="text-xs sm:text-sm font-bold text-white tracking-wide">
-        Surat Pernyataan Pemotongan Tunjangan Kinerja
-      </span>
-    </div>
+    <!-- Tombol Kembali -->
+    <button 
+      type="button"
+      onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href = '{{ route('admin.tab', ['tab' => 'programs']) }}'; }" 
+      class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
+      title="Kembali ke Manajemen Program Sosial">
+      <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Kembali</span>
+    </button>
 
-    <div class="flex items-center gap-2">
-      <!-- Tombol Cetak / PDF -->
-      <button 
-        type="button"
-        onclick="window.print()" 
-        class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
-        <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 6 2 18 2 18 9"></polyline>
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-          <rect x="6" y="14" width="12" height="8"></rect>
-        </svg>
-        <span class="hidden sm:inline">Cetak /</span> Simpan PDF
-      </button>
-
-      <!-- Tombol Tutup / Kembali -->
-      <a 
-        href="{{ route('admin.tab', ['tab' => 'programs']) }}" 
-        class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-medium px-3.5 py-2 rounded-lg border border-slate-700 transition-colors focus:outline-none cursor-pointer"
-        title="Kembali ke Manajemen Program Sosial">
-        <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        <span>Kembali</span>
-      </a>
-    </div>
+    <!-- Tombol Cetak / PDF -->
+    <button 
+      type="button"
+      onclick="window.print()" 
+      class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
+      <svg class="w-4 h-4 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      <span class="hidden sm:inline">Cetak /</span> Simpan PDF
+    </button>
   </header>
 
   <div class="py-6 print:py-0">

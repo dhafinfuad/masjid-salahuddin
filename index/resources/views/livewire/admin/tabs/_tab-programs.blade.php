@@ -1403,7 +1403,7 @@
                                                         <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
                                                         <span>Putar</span>
                                                     </button>
-                                                    <a :href="pdfBaseUrl + '#page=' + (activeScanIdx + 1)" target="_blank"
+                                                    <a :href="'{{ route('document.viewer') }}?file=' + encodeURIComponent(pdfBaseUrl + '#page=' + (activeScanIdx + 1)) + '&fallback=' + encodeURIComponent('{{ url('/admin/programs') }}')"
                                                         class="h-7 px-3 rounded-lg bg-white hover:bg-slate-100 text-blue-700 hover:text-blue-900 text-xs font-semibold inline-flex items-center gap-1.5 border border-slate-200 shadow-2xs transition cursor-pointer">
                                                         <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
                                                         <span class="hidden sm:inline">Buka di Tab Baru</span>
