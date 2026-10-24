@@ -191,13 +191,12 @@
                             />
                         </div>
 
-                        @if($kajianMonthFilter !== 'all' || $kajianYearFilter !== 'all' || !empty($pekananSearch) || !empty($jumatSearch) || !empty($search))
-                            <button type="button" wire:click="resetKajianFilters"
-                                class="shrink-0 w-9 h-9 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center justify-center"
-                                title="Reset Filter ke Semua">
-                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                            </button>
-                        @endif
+                        <button type="button" wire:click="resetKajianFilters"
+                            class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                            title="Reset filter dan pencarian ke kondisi awal">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="whitespace-nowrap">Reset</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1169,13 +1168,12 @@
                                 />
                             </div>
 
-                            @if($agendaFilterStatus !== 'all' || !empty($agendaSearch))
-                                <button type="button" wire:click="resetAgendaFilters"
-                                    class="shrink-0 w-9 h-9 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 border border-gov-border hover:border-rose-200 transition cursor-pointer flex items-center justify-center"
-                                    title="Reset Filter ke Semua">
-                                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                                </button>
-                            @endif
+                            <button type="button" wire:click="resetAgendaFilters"
+                                class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                                title="Reset filter dan pencarian ke kondisi awal">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                                <span class="whitespace-nowrap">Reset</span>
+                            </button>
                         </div>
                     </div>
 

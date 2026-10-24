@@ -578,6 +578,13 @@
                         icon="calendar"
                         class="w-36"
                     />
+
+                    <button type="button" wire:click="resetFilters"
+                        class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                        title="Reset filter ke kondisi awal">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                        <span class="whitespace-nowrap">Reset</span>
+                    </button>
                 </div>
             </div>
 

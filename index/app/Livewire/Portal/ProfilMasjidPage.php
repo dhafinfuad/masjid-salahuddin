@@ -31,6 +31,12 @@ class ProfilMasjidPage extends Component
         }
     }
 
+    public function resetFilters(): void
+    {
+        $this->gallerySearch = '';
+        $this->galleryYear = 'all';
+    }
+
     public function render()
     {
         $settings = MasjidSetting::getActive();

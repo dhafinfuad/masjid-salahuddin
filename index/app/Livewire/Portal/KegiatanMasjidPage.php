@@ -59,10 +59,11 @@ class KegiatanMasjidPage extends Component
 
     public function resetFilters(): void
     {
+        $now = Carbon::now('Asia/Jakarta');
         $this->search = '';
         $this->selectedCategory = 'all';
-        $this->selectedMonth = 'all';
-        $this->selectedYear = (int) Carbon::now('Asia/Jakarta')->year;
+        $this->selectedMonth = (string) $now->month;
+        $this->selectedYear = (int) $now->year;
         $this->resetPage();
     }
 

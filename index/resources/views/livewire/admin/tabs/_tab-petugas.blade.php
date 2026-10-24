@@ -84,7 +84,7 @@
                     </div>
 
                     <!-- Filters Row -->
-                    <div class="grid grid-cols-3 md:flex md:flex-row md:items-center gap-2 w-full md:w-auto shrink-0">
+                    <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0 flex-wrap sm:flex-nowrap">
                         @php
                             $dutyWeekOptions = [
                                 ['value' => 'all', 'label' => 'Semua Pekan'],
@@ -112,7 +112,7 @@
                             }
                         @endphp
 
-                        <div class="w-full md:w-36">
+                        <div class="flex-1 md:w-36">
                             <x-custom-select 
                                 wire:model.live="prayerDutyFilterWeek" 
                                 :options="$dutyWeekOptions"
@@ -122,7 +122,7 @@
                         </div>
 
                         <span class="sr-only">BULAN:</span>
-                        <div class="w-full md:w-36">
+                        <div class="flex-1 md:w-36">
                             <x-custom-select 
                                 wire:model.live="prayerDutyFilterMonth" 
                                 :options="$dutyMonthOptions"
@@ -133,7 +133,7 @@
                         </div>
 
                         <span class="sr-only">TAHUN:</span>
-                        <div class="w-full md:w-32">
+                        <div class="flex-1 md:w-32">
                             <x-custom-select 
                                 wire:model.live="prayerDutyFilterYear" 
                                 :options="$dutyYearOptions"
@@ -141,6 +141,13 @@
                                 class="w-full"
                             />
                         </div>
+
+                        <button type="button" wire:click="resetPrayerDutyFilters"
+                            class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                            title="Reset filter dan pencarian ke kondisi awal">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="whitespace-nowrap">Reset</span>
+                        </button>
                     </div>
                 </div>
 

@@ -45,10 +45,10 @@
             </div>
 
             <!-- Filters Toolbar -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3">
                 
                 <!-- Filter Kota / Kabupaten -->
-                <div class="relative"
+                <div class="relative flex-1 min-w-0"
                      wire:ignore
                      x-data="{
                          open: false,
@@ -191,7 +191,7 @@
                 </div>
 
                 <!-- Filter Bulan -->
-                <div>
+                <div class="w-full sm:w-44 shrink-0">
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                         Bulan
                     </label>
@@ -205,7 +205,7 @@
                 </div>
 
                 <!-- Filter Tahun -->
-                <div>
+                <div class="w-full sm:w-36 shrink-0">
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
                         Tahun
                     </label>
@@ -216,6 +216,16 @@
                         placeholder="Pilih Tahun"
                         icon="calendar-days"
                     />
+                </div>
+
+                <!-- Reset Button -->
+                <div class="w-full sm:w-auto shrink-0">
+                    <button type="button" wire:click="resetFilters"
+                        class="h-[38px] w-full sm:w-auto px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                        title="Reset filter ke kondisi awal">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
+                        <span class="whitespace-nowrap">Reset</span>
+                    </button>
                 </div>
 
             </div>

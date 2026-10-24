@@ -1356,11 +1356,78 @@ class AdminDashboard extends Component
     {
         $this->pekananSearch = '';
         $this->jumatSearch = '';
-        $this->kajianMonthFilter = 'all';
-        $this->kajianYearFilter = 'all';
         $this->search = '';
+
+        $now = Carbon::now('Asia/Jakarta');
+        [$defaultMonth, $defaultYear] = $this->getDefaultKajianFilterPeriod($now);
+        $this->kajianMonthFilter = (string) $defaultMonth;
+        $this->kajianYearFilter = (string) $defaultYear;
+
         $this->resetPage('pekananPage');
         $this->resetPage('jumatPage');
+    }
+
+    public function resetPrayerDutyFilters(): void
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $startOfMonth = $now->copy()->startOfMonth();
+        $currentWeekNumber = (int) ceil(($now->day + $startOfMonth->dayOfWeekIso - 1) / 7);
+        if ($currentWeekNumber < 1) $currentWeekNumber = 1;
+        if ($currentWeekNumber > 5) $currentWeekNumber = 5;
+
+        $this->search = '';
+        $this->prayerDutyFilterWeek = (string) $currentWeekNumber;
+        $this->prayerDutyFilterMonth = (string) $now->month;
+        $this->prayerDutyFilterYear = (string) $now->year;
+        $this->prayerDutyFilterPrayerTime = 'all';
+    }
+
+    public function resetFinanceFilters(): void
+    {
+        $this->financeSearch = '';
+        $this->financeTypeFilter = 'all';
+        $this->financeMonthFilter = [(string) Carbon::today()->month];
+        $this->financeYearFilter = (string) Carbon::today()->year;
+        $this->resetPage('financePage');
+    }
+
+    public function resetEmployeeFilters(): void
+    {
+        $this->employeeSearch = '';
+        $this->search = '';
+        $this->employeeFilterStatus = 'all';
+        $this->employeeFilterLink = 'all';
+        $this->resetPage('employeePage');
+    }
+
+    public function resetParticipantFilters(): void
+    {
+        $this->socialParticipantSearch = '';
+        $this->socialProgramFilter = 'all';
+        $this->socialParticipantPeriodFilter = [];
+        $this->resetPage('socialParticipantPage');
+    }
+
+    public function resetSaranFilters(): void
+    {
+        $this->saranSearch = '';
+        $this->saranStatusFilter = 'all';
+        $this->saranCategoryFilter = 'all';
+        $this->resetPage('saranPage');
+    }
+
+    public function resetGalleryFilters(): void
+    {
+        $this->gallerySearch = '';
+        $this->galleryYearFilter = 'all';
+        $this->resetPage('galleryPage');
+    }
+
+    public function resetUserFilters(): void
+    {
+        $this->search = '';
+        $this->userFilterRole = 'all';
+        $this->resetPage('usersPage');
     }
 
     /**

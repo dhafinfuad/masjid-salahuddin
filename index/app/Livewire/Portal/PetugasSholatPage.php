@@ -24,6 +24,13 @@ class PetugasSholatPage extends Component
         $this->selectedYear = (int) $now->year;
     }
 
+    public function resetFilters(): void
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $this->selectedMonth = (int) $now->month;
+        $this->selectedYear = (int) $now->year;
+    }
+
     public function render()
     {
         $settings = MasjidSetting::getActive();

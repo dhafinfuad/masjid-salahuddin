@@ -42,6 +42,16 @@ class JadwalSholatPage extends Component
         $this->updatedCityId($prayerService);
     }
 
+    public function resetFilters(PrayerTimeService $prayerService): void
+    {
+        /** @var MasjidSetting $settings */
+        $settings = MasjidSetting::getActive();
+        $this->cityId = $settings->city_id ?: '1634';
+        $this->cityName = $settings->city_name ? ucwords(strtolower($settings->city_name)) : 'Kota Malang';
+        $this->selectedMonth = (int) Carbon::now('Asia/Jakarta')->month;
+        $this->selectedYear = (int) Carbon::now('Asia/Jakarta')->year;
+    }
+
     public function render(PrayerTimeService $prayerService)
     {
         $settings = MasjidSetting::getActive();
