@@ -77,7 +77,22 @@ class PrayerTimeService
     public function getPrayerTimes(?string $cityId = null, ?Carbon $date = null, ?MasjidSetting $settings = null): array
     {
         $date = $date ?? Carbon::now('Asia/Jakarta');
-        $settings = $settings ?? MasjidSetting::getActive();
+        if (!$settings) {
+            try {
+                $settings = MasjidSetting::getActive();
+            } catch (\Throwable $e) {
+                $settings = new MasjidSetting([
+                    'city_id' => '1634',
+                    'city_name' => 'KOTA MALANG',
+                    'subuh_offset' => 2,
+                    'dzuhur_offset' => 2,
+                    'ashar_offset' => 2,
+                    'maghrib_offset' => 2,
+                    'isya_offset' => 2,
+                    'iqamah_delay_minutes' => 10,
+                ]);
+            }
+        }
         $cityId = $cityId ?: ($settings->city_id ?: '1634'); // Default: 1634 (KOTA MALANG)
 
         $dateKey = $date->format('Y-m-d');
