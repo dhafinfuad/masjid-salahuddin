@@ -1546,8 +1546,8 @@
                                 <!-- Action Buttons: Desktop Only (di Mobile dipindahkan ke Menu Tindakan Cepat / FAB) -->
                                 <div class="hidden sm:flex items-center gap-2 sm:w-auto shrink-0">
                                     <button type="button" wire:click="setAllOdojStatus('Selesai')" wire:loading.attr="disabled" title="Tandai Semua Selesai"
-                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
-                                        <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
+                                        class="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-gov-border shadow-2xs transition cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap">
+                                        <i data-lucide="check-check" class="w-3.5 h-3.5 text-slate-500 shrink-0 inline-block"></i>
                                         <span class="whitespace-nowrap">Semua Selesai</span>
                                     </button>
                                     <button type="button" wire:click="setAllOdojStatus('Belum')" wire:loading.attr="disabled" title="Reset Semua Belum"
