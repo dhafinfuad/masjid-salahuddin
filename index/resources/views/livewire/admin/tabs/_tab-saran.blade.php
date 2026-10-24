@@ -45,9 +45,9 @@
         </div>
 
         <!-- Filters Row -->
-        <div class="flex flex-row items-center gap-2 w-full md:w-auto shrink-0">
+        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
             <!-- Status Filter -->
-            <div class="flex-1 md:w-44">
+            <div class="flex-1 min-w-0 md:flex-none md:w-44">
                 <x-custom-select 
                     wire:model.live="saranStatusFilter" 
                     :options="[
@@ -63,7 +63,7 @@
             </div>
 
             <!-- Category Filter -->
-            <div class="flex-1 md:w-52">
+            <div class="flex-1 min-w-0 md:flex-none md:w-52">
                 <x-custom-select 
                     wire:model.live="saranCategoryFilter" 
                     :options="[
@@ -80,7 +80,7 @@
             </div>
 
             <button type="button" wire:click="resetSaranFilters"
-                class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                class="h-9 px-2.5 sm:px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
                 title="Reset filter dan pencarian ke kondisi awal">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
                 <span class="whitespace-nowrap">Reset</span>

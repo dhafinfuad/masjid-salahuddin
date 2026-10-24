@@ -170,7 +170,7 @@
                                 collect($availableKajianYears)->map(fn($yr) => ['value' => (string)$yr, 'label' => (string)$yr])->values()->all()
                             );
                         @endphp
-                        <div class="flex-1 md:w-40">
+                        <div class="flex-1 min-w-0 md:flex-none md:w-40">
                             <x-custom-select 
                                 wire:key="kajian-month-filter" 
                                 wire:model.live="kajianMonthFilter" 
@@ -181,7 +181,7 @@
                             />
                         </div>
 
-                        <div class="flex-1 md:w-32">
+                        <div class="flex-1 min-w-0 md:flex-none md:w-32">
                             <x-custom-select 
                                 wire:key="kajian-year-filter" 
                                 wire:model.live="kajianYearFilter" 
@@ -192,7 +192,7 @@
                         </div>
 
                         <button type="button" wire:click="resetKajianFilters"
-                            class="h-9 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                            class="h-9 px-2.5 sm:px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
                             title="Reset filter dan pencarian ke kondisi awal">
                             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
                             <span class="whitespace-nowrap">Reset</span>
