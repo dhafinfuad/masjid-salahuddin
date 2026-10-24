@@ -22,7 +22,7 @@
 @endphp
 
 @if($isTable)
-    <tr>
+    <tr {{ $attributes }}>
         <td colspan="{{ $colspan }}" class="py-12 px-4 text-center text-slate-400 space-y-2">
             {!! $iconSvg !!}
             <div class="font-bold text-xs text-slate-600">{{ $title }}</div>
@@ -30,7 +30,7 @@
         </td>
     </tr>
 @else
-    <div class="p-8 text-center bg-white rounded-xl border border-gov-border shadow-2xs space-y-2 text-slate-400">
+    <div {{ $attributes->merge(['class' => 'p-8 text-center bg-white rounded-xl border border-gov-border shadow-2xs space-y-2 text-slate-400']) }}>
         {!! $iconSvg !!}
         <div class="font-bold text-xs text-slate-600">{{ $title }}</div>
         <p class="text-[11px] text-slate-400">{{ $subtitle }}</p>

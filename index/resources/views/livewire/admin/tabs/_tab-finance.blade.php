@@ -73,14 +73,26 @@
                 <!-- ==================================================== -->
                 <div x-show="financeSubTab === 'utama'" x-cloak :class="{ 'hidden': financeSubTab !== 'utama' }"
                     class="space-y-5"
+                    wire:key="finance-subtab-utama-{{ $financeYearFilter }}-{{ is_array($financeMonthFilter) ? implode('-', $financeMonthFilter) : $financeMonthFilter }}-{{ count($financesList) }}"
                     x-data="{
                         activeFinanceType: 'all',
                         financeSearch: '',
-                        matches(type, desc, cat, prog) {
+                        items: {{ Js::from($financesList->map(fn($f) => [
+                            'type' => $f->type,
+                            'desc' => strtolower($f->description ?? ''),
+                            'cat' => strtolower($f->category?->name ?? ''),
+                            'prog' => strtolower($f->program_name ?? ''),
+                            'amount' => (string) $f->amount,
+                        ])) }},
+                        matches(type, desc, cat, prog, amount) {
                             const matchType = (this.activeFinanceType === 'all' || this.activeFinanceType === type);
                             const q = (this.financeSearch || '').toLowerCase().trim();
-                            const matchSearch = (!q || desc.includes(q) || cat.includes(q) || prog.includes(q));
+                            const matchSearch = (!q || desc.includes(q) || cat.includes(q) || prog.includes(q) || (amount && amount.toString().includes(q)));
                             return matchType && matchSearch;
+                        },
+                        hasMatches() {
+                            if (!this.items || this.items.length === 0) return true;
+                            return this.items.some(i => this.matches(i.type, i.desc, i.cat, i.prog, i.amount));
                         }
                     }">
 
@@ -484,7 +496,7 @@
                                 <tbody class="divide-y divide-slate-300">
                                     @forelse($financesList as $fin)
                                         <tr wire:key="fin-row-{{ $fin->id }}" 
-                                            x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }})" 
+                                            x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }}, '{{ $fin->amount }}')" 
                                             class="hover:bg-slate-50/80 transition-colors">
                                             <td class="p-3.5 pl-5 whitespace-nowrap">
                                                 <div class="font-medium text-gov-textMain text-xs">
@@ -615,6 +627,18 @@
                                             subtitle="Belum ada transaksi kas yang sesuai dengan kriteria atau filter pencarian ini." 
                                         />
                                     @endforelse
+
+                                    @if(count($financesList) > 0)
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="6" 
+                                            icon="receipt" 
+                                            title="Tidak ada data transaksi kas" 
+                                            subtitle="Belum ada transaksi kas yang sesuai dengan kriteria atau filter pencarian ini." 
+                                            x-show="!hasMatches()"
+                                            x-cloak
+                                        />
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -624,7 +648,7 @@
                     <div class="md:hidden space-y-3">
                         @forelse($financesList as $fin)
                             <div wire:key="fin-card-{{ $fin->id }}" 
-                                x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }})" 
+                                x-show="matches('{{ $fin->type }}', {{ Js::from(strtolower($fin->description ?? '')) }}, {{ Js::from(strtolower($fin->category?->name ?? '')) }}, {{ Js::from(strtolower($fin->program_name ?? '')) }}, '{{ $fin->amount }}')" 
                                 class="bg-white rounded-xl border border-gov-border p-4 shadow-2xs space-y-3">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="space-y-0.5">
@@ -743,6 +767,16 @@
                             />
                         @endforelse
 
+                        @if(count($financesList) > 0)
+                            <x-empty-state 
+                                icon="receipt" 
+                                title="Tidak ada data transaksi kas" 
+                                subtitle="Belum ada transaksi kas yang sesuai dengan kriteria atau filter pencarian ini." 
+                                x-show="!hasMatches()"
+                                x-cloak
+                            />
+                        @endif
+
 
                     </div>
                 </div>
@@ -751,13 +785,24 @@
                 <!-- SUB-TAB 2: KELOLA KATEGORI KAS & POS ANGGARAN -->
                 <!-- ==================================================== -->
                 <div x-show="financeSubTab === 'kategori'" x-cloak :class="{ 'hidden': financeSubTab !== 'kategori' }"
-                    class="space-y-5" x-data="{
+                    class="space-y-5"
+                    wire:key="finance-subtab-kategori-{{ count($financeCategories) }}"
+                    x-data="{
                         catFilter: 'all',
                         catSearch: '',
+                        items: {{ Js::from($financeCategories->map(fn($c) => [
+                            'group' => $c->group,
+                            'name' => strtolower($c->name ?? ''),
+                        ])) }},
                         matches(group, name) {
                             const matchGroup = (this.catFilter === 'all' || this.catFilter === group);
-                            const matchSearch = (!this.catSearch || name.toLowerCase().includes(this.catSearch.toLowerCase()));
+                            const q = (this.catSearch || '').toLowerCase().trim();
+                            const matchSearch = (!q || name.includes(q));
                             return matchGroup && matchSearch;
+                        },
+                        hasMatches() {
+                            if (!this.items || this.items.length === 0) return true;
+                            return this.items.some(i => this.matches(i.group, i.name));
                         }
                     }">
 
@@ -1143,6 +1188,18 @@
                                             subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
                                         />
                                     @endforelse
+
+                                    @if(count($financeCategories) > 0)
+                                        <x-empty-state 
+                                            :isTable="true" 
+                                            colspan="5" 
+                                            icon="tags" 
+                                            title="Tidak ada data pos anggaran" 
+                                            subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
+                                            x-show="!hasMatches()"
+                                            x-cloak
+                                        />
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -1220,6 +1277,16 @@
                                 subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
                             />
                         @endforelse
+
+                        @if(count($financeCategories) > 0)
+                            <x-empty-state 
+                                icon="tags" 
+                                title="Tidak ada data pos anggaran" 
+                                subtitle="Belum ada pos anggaran yang sesuai dengan kriteria atau filter pencarian ini." 
+                                x-show="!hasMatches()"
+                                x-cloak
+                            />
+                        @endif
                     </div>
 
                 </div>
