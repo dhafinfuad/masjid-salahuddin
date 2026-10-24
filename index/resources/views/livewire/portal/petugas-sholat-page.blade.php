@@ -88,45 +88,48 @@
             <!-- Filters Toolbar -->
             <div class="flex flex-col sm:flex-row sm:items-end gap-3 max-w-xl">
                 
-                <!-- Filter Bulan -->
-                <div class="w-full sm:w-48">
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                        Bulan
-                    </label>
-                    <x-custom-select 
-                        id="filter-duty-month"
-                        wire:model.live="selectedMonth"
-                        :options="$months"
-                        placeholder="Pilih Bulan"
-                        icon="calendar"
-                    />
-                </div>
+                <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
+                <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-end">
+                    <!-- Filter Bulan -->
+                    <div class="w-full sm:w-48 shrink-0">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                            Bulan
+                        </label>
+                        <x-custom-select 
+                            id="filter-duty-month"
+                            wire:model.live="selectedMonth"
+                            :options="$months"
+                            placeholder="Pilih Bulan"
+                            icon="calendar"
+                        />
+                    </div>
 
-                <!-- Filter Tahun -->
-                <div class="w-full sm:w-36">
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                        Tahun
-                    </label>
-                    <x-custom-select 
-                        id="filter-duty-year"
-                        wire:model.live="selectedYear"
-                        :options="$years"
-                        placeholder="Pilih Tahun"
-                        icon="calendar-days"
-                    />
+                    <!-- Filter Tahun -->
+                    <div class="w-full sm:w-36 shrink-0">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                            Tahun
+                        </label>
+                        <x-custom-select 
+                            id="filter-duty-year"
+                            wire:model.live="selectedYear"
+                            :options="$years"
+                            placeholder="Pilih Tahun"
+                            icon="calendar-days"
+                        />
+                    </div>
                 </div>
 
                 <!-- Tombol Cetak PDF Resmi & QR Code -->
                 <div class="w-full sm:w-auto flex items-center gap-2">
                     <button type="button" wire:click="resetFilters"
-                        class="h-[38px] w-full sm:w-auto px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                        class="h-[38px] flex-1 sm:flex-none sm:w-auto px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 hover:text-gov-navy text-xs font-semibold shadow-2xs transition cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
                         title="Reset filter ke kondisi awal">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-500"></i>
                         <span class="whitespace-nowrap">Reset</span>
                     </button>
 
                     <a href="{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" target="_blank"
-                       class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+                       class="h-[38px] flex-1 sm:flex-none sm:w-auto px-4 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                        title="Cetak Jadwal Petugas Shalat Bulanan (PDF)">
                         <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                         <span>Cetak PDF</span>

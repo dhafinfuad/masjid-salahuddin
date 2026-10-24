@@ -116,38 +116,41 @@
                         </div>
                     </div>
 
-                    <!-- Filter Bulan (w-full sm:w-48) -->
-                    <div class="w-full sm:w-48 shrink-0">
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                            Filter Bulan
-                        </label>
-                        @php
-                            $actMonthOptions = array_merge(
-                                [['value' => 'all', 'label' => 'Semua Bulan']],
-                                collect($months)->map(fn($name, $num) => ['value' => (string)$num, 'label' => (string)$name])->values()->all()
-                            );
-                        @endphp
-                        <x-custom-select 
-                            id="filter-activity-month" 
-                            wire:model.live="selectedMonth" 
-                            :options="$actMonthOptions"
-                            placeholder="Semua Bulan"
-                            icon="calendar"
-                        />
-                    </div>
+                    <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
+                    <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-end">
+                        <!-- Filter Bulan (w-full sm:w-48) -->
+                        <div class="w-full sm:w-48 shrink-0">
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                                Filter Bulan
+                            </label>
+                            @php
+                                $actMonthOptions = array_merge(
+                                    [['value' => 'all', 'label' => 'Semua Bulan']],
+                                    collect($months)->map(fn($name, $num) => ['value' => (string)$num, 'label' => (string)$name])->values()->all()
+                                );
+                            @endphp
+                            <x-custom-select 
+                                id="filter-activity-month" 
+                                wire:model.live="selectedMonth" 
+                                :options="$actMonthOptions"
+                                placeholder="Semua Bulan"
+                                icon="calendar"
+                            />
+                        </div>
 
-                    <!-- Filter Tahun (w-full sm:w-36) -->
-                    <div class="w-full sm:w-36 shrink-0">
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
-                            Tahun
-                        </label>
-                        <x-custom-select 
-                            id="filter-activity-year" 
-                            wire:model.live="selectedYear" 
-                            :options="$years"
-                            placeholder="Pilih Tahun"
-                            icon="calendar-days"
-                        />
+                        <!-- Filter Tahun (w-full sm:w-36) -->
+                        <div class="w-full sm:w-36 shrink-0">
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5 text-left">
+                                Tahun
+                            </label>
+                            <x-custom-select 
+                                id="filter-activity-year" 
+                                wire:model.live="selectedYear" 
+                                :options="$years"
+                                placeholder="Pilih Tahun"
+                                icon="calendar-days"
+                            />
+                        </div>
                     </div>
 
                     <!-- Reset Button -->
