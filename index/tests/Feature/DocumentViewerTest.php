@@ -37,6 +37,9 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('Cetak');
         $response->assertDontSee('Unduh');
         $response->assertSee('src="/sk/sk-takmir.pdf"', false);
+        $response->assertSee('href="/sk/sk-takmir.pdf"', false);
+        $response->assertSee('target="_blank"', false);
+        $response->assertDontSee('contentWindow.print');
     }
 
     public function test_document_viewer_aborts_when_file_is_missing(): void

@@ -480,9 +480,7 @@
 
     function triggerPrintWithQr() {
       initQrCodes();
-      setTimeout(() => {
-        window.print();
-      }, 200);
+      window.print();
     }
 
     function handleCloseNotification() {
