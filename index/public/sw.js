@@ -4,7 +4,7 @@
  * Architecture: Optimized for Laravel 11 & Livewire 3
  */
 
-const CACHE_NAME = 'masjid-salahuddin-v1.0.0';
+const CACHE_NAME = 'masjid-salahuddin-v1.0.1';
 
 // Assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -57,11 +57,13 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 2. RULE #2: ALWAYS bypass caching for Livewire internals, Admin CMS, and Auth routes
+    // 2. RULE #2: ALWAYS bypass caching for Livewire internals, Admin CMS, Auth, and Document Viewer / PDF
     if (
         url.pathname.startsWith('/livewire/') ||
         url.pathname.startsWith('/admin') ||
-        url.pathname.startsWith('/auth/')
+        url.pathname.startsWith('/auth/') ||
+        url.pathname.startsWith('/document-viewer') ||
+        url.pathname.endsWith('.pdf')
     ) {
         return;
     }
