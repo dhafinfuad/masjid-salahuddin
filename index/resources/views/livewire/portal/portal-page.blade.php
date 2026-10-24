@@ -753,14 +753,14 @@
                                     <div class="space-y-2.5 text-xs">
                                         <!-- Alamat -->
                                         <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
-                                            <span class="text-xs uppercase font-bold text-slate-500 block">ALAMAT</span>
+                                            <span class="text-xs capitalize font-bold text-slate-500 block">Alamat</span>
                                             <p class="text-gov-textMain font-medium text-xs mt-0.5 leading-relaxed">{{ $settings->address }}</p>
                                             <span class="text-xs text-slate-500 mt-1 block italic">Arah Kiblat: {{ $settings->qibla_angle }}° dari Utara</span>
                                         </div>
                 
                                         <!-- Jam Operasional -->
                                         <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80">
-                                            <span class="text-xs uppercase font-bold text-slate-500 block">JAM OPERASIONAL</span>
+                                            <span class="text-xs capitalize font-bold text-slate-500 block">Jam Operasional</span>
                                             <p class="text-gov-textMain font-medium text-xs mt-0.5">Setiap hari • 04:00 — 22:00 WIB</p>
                                             <span class="text-xs text-slate-500 mt-1 block">Sholat Jumat: Adzan 11:45 • Khutbah 12:00</span>
                                         </div>
@@ -770,7 +770,7 @@
                                             <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 min-w-0">
                                                 <i data-lucide="phone" class="w-4 h-4 text-slate-400 shrink-0"></i>
                                                 <div class="min-w-0 flex-1">
-                                                    <span class="text-xs font-bold uppercase text-slate-500 block text-left">TELEPON DKM</span>
+                                                    <span class="text-xs font-bold capitalize text-slate-500 block text-left">Telepon</span>
                                                     <span class="text-gov-textMain font-medium text-xs text-left block truncate" title="{{ $settings->phone }}">{{ $settings->phone }}</span>
                                                 </div>
                                             </div>
@@ -778,7 +778,7 @@
                                             <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 min-w-0">
                                                 <i data-lucide="mail" class="w-4 h-4 text-slate-400 shrink-0"></i>
                                                 <div class="min-w-0 flex-1">
-                                                    <span class="text-xs font-bold uppercase text-slate-500 block text-left">EMAIL RESMI</span>
+                                                    <span class="text-xs font-bold capitalize text-slate-500 block text-left">Email</span>
                                                     <a href="mailto:{{ $settings->email }}" class="text-slate-600 hover:text-gov-navy font-medium text-xs truncate block text-left transition" title="{{ $settings->email }}">{{ $settings->email }}</a>
                                                 </div>
                                             </div>
@@ -789,14 +789,14 @@
                                             <div class="p-2.5 bg-blue-50/60 border border-blue-100 rounded-lg flex items-center gap-2.5 min-w-0">
                                                 <i data-lucide="users" class="w-4 h-4 text-slate-400 shrink-0"></i>
                                                 <div class="min-w-0 flex-1">
-                                                    <span class="text-xs font-bold uppercase text-slate-500 block text-left">KAPASITAS</span>
+                                                    <span class="text-xs font-bold capitalize text-slate-500 block text-left">Kapasitas</span>
                                                     <span class="text-xs font-medium text-gov-textMain block text-left truncate">100 <span class="text-xs font-normal text-slate-500">jamaah</span></span>
                                                 </div>
                                             </div>
                                             <div class="p-2.5 bg-slate-50 border border-slate-200/80 rounded-lg flex items-center gap-2.5 min-w-0">
                                                 <i data-lucide="calendar" class="w-4 h-4 text-slate-400 shrink-0"></i>
                                                 <div class="min-w-0 flex-1">
-                                                    <span class="text-xs font-bold uppercase text-slate-500 block text-left">BERDIRI SEJAK</span>
+                                                    <span class="text-xs font-bold capitalize text-slate-500 block text-left">Berdiri Sejak</span>
                                                     <span class="text-xs font-medium text-gov-textMain block text-left truncate">Tahun 2010</span>
                                                 </div>
                                             </div>
