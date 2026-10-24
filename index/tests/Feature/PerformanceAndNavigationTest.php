@@ -345,7 +345,7 @@ class PerformanceAndNavigationTest extends TestCase
         $jadwalResponse = $this->get('/jadwal-sholat');
         $jadwalResponse->assertOk();
         $jadwalResponse->assertSee('Jadwal Waktu Shalat Bulanan');
-        $jadwalResponse->assertSee('Kota / Kabupaten (Kemenag)');
+        $jadwalResponse->assertSee('filter-city');
         $jadwalResponse->assertSee('Kota Malang');
 
         // 3. Petugas Sholat Bulanan Page

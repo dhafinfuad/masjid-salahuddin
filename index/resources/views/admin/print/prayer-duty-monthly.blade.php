@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- html2pdf.js for Client-Side PDF Generation on Mobile -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
     tailwind.config = {
@@ -102,14 +104,29 @@
         <span>Kembali</span>
       </a>
 
-      <!-- Tombol Cetak / PDF -->
-      <button 
-        type="button"
-        onclick="triggerShareOrPrint('Jadwal Bulanan Penugasan Imam & Muadzin')" 
-        class="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer">
-        <i data-lucide="printer" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Cetak /</span> Simpan PDF
-      </button>
+      <!-- Action Buttons: Desktop (Cetak) & Mobile (Unduh PDF) -->
+      <div class="flex items-center gap-2">
+        <!-- Desktop: Tombol Cetak / Simpan PDF (hidden di mobile, inline-flex di sm+) -->
+        <button 
+          type="button"
+          onclick="window.print()" 
+          class="hidden sm:inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer"
+          title="Cetak atau Simpan PDF (Browser)">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Cetak / Simpan PDF</span>
+        </button>
+
+        <!-- Mobile: Tombol Unduh PDF (inline-flex di mobile, hidden di sm+) -->
+        <button 
+          type="button"
+          id="btnDownloadMobile"
+          onclick="downloadMonthlyPdf('Jadwal_Penugasan_Imam_Muadzin_{{ $monthName }}_{{ $year }}')" 
+          class="inline-flex sm:hidden items-center gap-1.5 bg-gov-600 hover:bg-gov-700 active:bg-gov-800 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-colors border border-gov-500 shadow-sm cursor-pointer"
+          title="Unduh File PDF">
+          <i data-lucide="download" class="w-4 h-4" id="iconDownloadMobile"></i>
+          <span id="labelDownloadMobile">Unduh PDF</span>
+        </button>
+      </div>
     </header>
 
     <main id="contentContainer" class="p-6 sm:p-9 md:p-10 space-y-6 leading-relaxed text-slate-700 transition-all text-xs sm:text-sm">
@@ -249,23 +266,66 @@
       }, 2400);
     }
 
-    async function triggerShareOrPrint(title) {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
-                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    async function downloadMonthlyPdf(filename) {
+      const btn = document.getElementById('btnDownloadMobile');
+      const label = document.getElementById('labelDownloadMobile');
 
-      if (isMobile && navigator.share) {
-        try {
-          await navigator.share({
-            title: title || 'Jadwal Bulanan Penugasan Imam & Muadzin',
-            url: window.location.href
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-        }
+      if (typeof html2pdf === 'undefined') {
+        showToast("Modul pembuat PDF sedang dimuat, silakan coba sesaat lagi...");
+        return;
       }
 
-      window.print();
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+      }
+      if (label) {
+        label.textContent = "Menyiapkan PDF...";
+      }
+      showToast("Sedang memproses dokumen PDF, mohon tunggu...");
+
+      const element = document.getElementById('contentContainer');
+      const cleanFilename = (filename || 'Jadwal_Penugasan_Imam_Muadzin') + '.pdf';
+
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: cleanFilename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          logging: false
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        },
+        pagebreak: {
+          mode: ['avoid-all', 'css', 'legacy'],
+          avoid: 'tr'
+        }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+        showToast("Berkas PDF berhasil diunduh!");
+      } catch (err) {
+        console.error("Gagal generate PDF:", err);
+        showToast("Gagal mengunduh PDF: " + (err.message || "Terjadi kesalahan"));
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
+        if (label) {
+          label.textContent = "Unduh PDF";
+        }
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
     }
 
     // Otomatis refresh state dokumen setelah dialog cetak / AirPrint ditutup (baik selesai cetak maupun Cancel)

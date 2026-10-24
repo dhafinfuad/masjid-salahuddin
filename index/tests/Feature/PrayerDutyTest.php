@@ -775,6 +775,17 @@ class PrayerDutyTest extends TestCase
             'muadzin_name' => 'Muadzin Baru',
         ]);
     }
+
+    public function test_monthly_prayer_duty_print_page_has_mobile_download_and_desktop_print(): void
+    {
+        $response = $this->get('/petugas-sholat/cetak?month=10&year=2026');
+        $response->assertStatus(200);
+        $response->assertSee('html2pdf.bundle.min.js', false);
+        $response->assertSee('downloadMonthlyPdf', false);
+        $response->assertSee('Unduh PDF');
+        $response->assertSee('window.print()');
+        $response->assertSee('Kembali');
+    }
 }
 
 
