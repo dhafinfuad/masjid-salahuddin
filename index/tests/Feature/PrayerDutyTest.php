@@ -46,7 +46,7 @@ class PrayerDutyTest extends TestCase
 
         $response = $this->get('/admin/petugas');
         $response->assertStatus(200);
-        $response->assertSee('Jadwal Penugasan Petugas Ibadah');
+        $response->assertSee('Jadwal Petugas');
         $response->assertSee('Ust. Pujo Santoso');
         $response->assertSee('Mas Zulhaq');
     }

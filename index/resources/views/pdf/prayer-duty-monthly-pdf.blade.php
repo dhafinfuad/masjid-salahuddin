@@ -145,7 +145,7 @@
             width: 44px;
         }
         .duty-name {
-            font-weight: 600;
+            font-weight: normal;
             color: #0f172a;
         }
         .badge-jumat {
@@ -191,14 +191,14 @@
         .sig-city-date {
             font-size: 9px;
             color: #475569;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         .sig-role {
             font-size: 9.5px;
             font-weight: bold;
             color: #06172e;
             text-transform: uppercase;
-            margin-bottom: 35px;
+            margin-bottom: 3px;
         }
         .sig-name {
             font-size: 9.5px;
@@ -211,15 +211,29 @@
             font-size: 8px;
             color: #64748b;
         }
-        .tte-badge {
+        .sig-qr-box {
             display: inline-block;
-            margin: 4px auto;
-            padding: 3px 6px;
-            border: 0.5px dashed #059669;
-            background-color: #f0fdf4;
-            color: #065f46;
-            font-size: 7.5px;
-            border-radius: 3px;
+            margin: 2px 0 4px 0;
+            padding: 2.5px;
+            background-color: #ffffff;
+            border: 0.5px solid #cbd5e1;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .sig-qr-img {
+            width: 52px;
+            height: 52px;
+            display: block;
+            margin: 0 auto;
+        }
+        .sig-qr-label {
+            font-size: 6.5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #475569;
+            text-transform: uppercase;
+            margin-top: 2px;
+            letter-spacing: 0.2px;
         }
     </style>
 </head>
@@ -326,25 +340,29 @@
     <div class="signature-section">
         <table class="signature-table">
             <tr>
-                <td class="sig-box" style="text-align: left; width: 50%;">
+                <td class="sig-box" style="text-align: left; width: 45%;">
                     <div class="sig-city-date">&nbsp;</div>
-                    <div class="sig-role" style="margin-bottom: 25px;">Sekretaris DKM</div>
-                    <div class="tte-badge">
-                        &#10003; Ditandatangani Elektronik (TTE BSrE)<br>
-                        Ref Hash: {{ $tteHash ?? 'TTE-SALAHUDDIN' }}
+                    <div class="sig-role">Sekretaris DKM</div>
+                    <div class="sig-qr-box">
+                        @if(!empty($qrCodeBase64))
+                            <img src="{{ $qrCodeBase64 }}" class="sig-qr-img" alt="QR Verifikasi" />
+                        @endif
+                        <div class="sig-qr-label">TTE BSrE DISAHKAN</div>
                     </div>
-                    <div class="sig-name">{{ $sekretarisDkm->name ?? 'Alan Irfansyah' }}</div>
+                    <div class="sig-name">{{ $sekretarisDkm->name ?? 'Deril Amrizal Kholid' }}</div>
                     <div class="sig-meta">DKM {{ $settings->name ?? 'Masjid Salahuddin' }}</div>
                 </td>
                 <td style="width: 10%;"></td>
-                <td class="sig-box" style="text-align: right; width: 40%;">
+                <td class="sig-box" style="text-align: right; width: 45%;">
                     <div class="sig-city-date">Malang, {{ $printDate ?? date('d F Y') }}</div>
-                    <div class="sig-role" style="margin-bottom: 25px;">Ketua DKM</div>
-                    <div class="tte-badge">
-                        &#10003; Ditandatangani Elektronik (TTE BSrE)<br>
-                        Ref Hash: {{ $tteHash ?? 'TTE-SALAHUDDIN' }}
+                    <div class="sig-role">Ketua DKM</div>
+                    <div class="sig-qr-box">
+                        @if(!empty($qrCodeBase64))
+                            <img src="{{ $qrCodeBase64 }}" class="sig-qr-img" alt="QR Verifikasi" />
+                        @endif
+                        <div class="sig-qr-label">TTE BSrE DISAHKAN</div>
                     </div>
-                    <div class="sig-name">{{ $ketuaDkm->name ?? 'M. Yasak' }}</div>
+                    <div class="sig-name">{{ $ketuaDkm->name ?? 'Moh. Nazil Fuadi Kusmawan' }}</div>
                     <div class="sig-meta">DKM {{ $settings->name ?? 'Masjid Salahuddin' }}</div>
                 </td>
             </tr>

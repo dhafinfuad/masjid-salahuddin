@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kajian;
 use App\Models\MasjidSetting;
 use App\Models\PrayerDuty;
+use App\Services\QrCodeService;
 use App\Services\SimpleXlsxService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -646,7 +647,8 @@ class PrayerDutyExportController extends Controller
             ?? \App\Models\User::where('role', 'like', '%Sekretaris%')->first();
 
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'PETUGAS-BULANAN-' . $month . '-' . $year), 0, 10));
-        $verifyUrl = url('/petugas-sholat/cetak?month=' . $month . '&year=' . $year . '&tte=1&hash=' . $tteHash);
+        $verifyUrl = url('/petugas-sholat?month=' . $month . '&year=' . $year);
+        $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
 
         return [
             'settings' => $settings,
@@ -660,6 +662,7 @@ class PrayerDutyExportController extends Controller
             'isTteSigned' => true,
             'tteHash' => $tteHash,
             'verifyUrl' => $verifyUrl,
+            'qrCodeBase64' => $qrCodeBase64,
         ];
     }
 

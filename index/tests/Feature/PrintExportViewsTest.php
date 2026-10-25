@@ -82,4 +82,28 @@ class PrintExportViewsTest extends TestCase
         $response->assertSee('Unduh PDF', false);
         $response->assertSee('downloadOfficialSkPdf', false);
     }
+
+    public function test_monthly_prayer_duty_direct_pdf_download_with_qrcode(): void
+    {
+        $response = $this->get('/petugas-sholat/unduh-pdf?month=10&year=2026');
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Jadwal_Petugas_Shalat_Bulan_Oktober_2026.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Verify the underlying view data includes QR code and unbolded styling
+        $controller = app(\App\Http\Controllers\PrayerDutyExportController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareMonthlyDutyData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, 10, 2026);
+
+        $this->assertNotEmpty($data['qrCodeBase64']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['qrCodeBase64']);
+        $this->assertEquals(url('/petugas-sholat?month=10&year=2026'), $data['verifyUrl']);
+
+        $viewHtml = view('pdf.prayer-duty-monthly-pdf', $data)->render();
+        $this->assertStringContainsString('font-weight: normal;', $viewHtml);
+        $this->assertStringContainsString('sig-qr-box', $viewHtml);
+        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+    }
 }
