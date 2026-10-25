@@ -1,99 +1,4 @@
-<div x-data="{ 
-        showQrModal: false,
-        renderQr() {
-            const container = document.getElementById('portalQrcodeContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            const url = '{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}';
-            if (typeof QRCode !== 'undefined') {
-                new QRCode(container, {
-                    text: url,
-                    width: 176,
-                    height: 176,
-                    colorDark: '#06172e',
-                    colorLight: '#ffffff',
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-            }
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        },
-        openQr() {
-            this.showQrModal = true;
-            this.$nextTick(() => {
-                if (typeof QRCode === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = '{{ asset('vendor/qrcode.min.js') }}';
-                    script.onload = () => this.renderQr();
-                    script.onerror = () => {
-                        const cdnScript = document.createElement('script');
-                        cdnScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-                        cdnScript.onload = () => this.renderQr();
-                        document.head.appendChild(cdnScript);
-                    };
-                    document.head.appendChild(script);
-                } else {
-                    this.renderQr();
-                }
-            });
-        },
-        isDownloadingPdf: false,
-        async downloadMonthlyDirectPdf() {
-            if (this.isDownloadingPdf) return;
-            this.isDownloadingPdf = true;
-
-            const month = (this.$wire && this.$wire.selectedMonth) ? this.$wire.selectedMonth : '{{ $selectedMonth }}';
-            const year = (this.$wire && this.$wire.selectedYear) ? this.$wire.selectedYear : '{{ $selectedYear }}';
-            const downloadUrl = `{{ url('/petugas-sholat/unduh-pdf') }}?month=${month}&year=${year}`;
-            const filename = `Jadwal_Petugas_Shalat_Bulan_${month}_${year}.pdf`;
-
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-            // 1. Pada perangkat seluler / iOS PWA: gunakan Web Share API untuk lembar berbagi native jika didukung
-            if (isMobile && navigator.canShare) {
-                try {
-                    const res = await fetch(downloadUrl);
-                    if (res.ok) {
-                        const blob = await res.blob();
-                        const file = new File([blob], filename, { type: 'application/pdf' });
-                        if (navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                files: [file],
-                                title: filename.replace('.pdf', '')
-                            });
-                            this.isDownloadingPdf = false;
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    if (e.name === 'AbortError') {
-                        this.isDownloadingPdf = false;
-                        return;
-                    }
-                    console.warn('Share API gagal, beralih ke direct download:', e);
-                }
-            }
-
-            // 2. Pada Desktop, Android, dan browser biasa:
-            // Memicu unduhan via pembuatan tag <a> tersembunyi (tanpa target="_blank")
-            // Respons server dengan Content-Disposition: attachment memastikan halaman TIDAK berpindah
-            // dan TIDAK membuka tab baru sama sekali.
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = filename;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-
-            setTimeout(() => {
-                if (link.parentNode) {
-                    link.parentNode.removeChild(link);
-                }
-                this.isDownloadingPdf = false;
-            }, 1500);
-        }
-    }" 
+<div x-data="petugasSholatComponent()" 
     class="min-h-screen flex flex-col bg-gov-canvas text-gov-textMain">
     
     <!-- Top Sticky Header -->
@@ -175,21 +80,17 @@
                             :disabled="isDownloadingPdf"
                             class="h-[38px] w-full sm:w-auto px-4 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-75 disabled:cursor-wait"
                             title="Unduh Jadwal Petugas Shalat Bulanan (PDF)">
-                        <template x-if="!isDownloadingPdf">
-                            <span class="inline-flex items-center gap-1.5">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                <span>Unduh PDF</span>
-                            </span>
-                        </template>
-                        <template x-if="isDownloadingPdf">
-                            <span class="inline-flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Menyiapkan PDF...</span>
-                            </span>
-                        </template>
+                        <span x-show="!isDownloadingPdf" class="inline-flex items-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Unduh PDF</span>
+                        </span>
+                        <span x-show="isDownloadingPdf" style="display: none;" class="inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Menyiapkan PDF...</span>
+                        </span>
                     </button>
                 </div>
 
@@ -465,4 +366,104 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function petugasSholatComponent() {
+            return {
+                showQrModal: false,
+                isDownloadingPdf: false,
+                renderQr() {
+                    const container = document.getElementById('portalQrcodeContainer');
+                    if (!container) return;
+                    container.innerHTML = '';
+                    const url = '{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}';
+                    if (typeof QRCode !== 'undefined') {
+                        new QRCode(container, {
+                            text: url,
+                            width: 176,
+                            height: 176,
+                            colorDark: '#06172e',
+                            colorLight: '#ffffff',
+                            correctLevel: QRCode.CorrectLevel.M
+                        });
+                    }
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                },
+                openQr() {
+                    this.showQrModal = true;
+                    this.$nextTick(() => {
+                        if (typeof QRCode === 'undefined') {
+                            const script = document.createElement('script');
+                            script.src = '{{ asset('vendor/qrcode.min.js') }}';
+                            script.onload = () => this.renderQr();
+                            script.onerror = () => {
+                                const cdnScript = document.createElement('script');
+                                cdnScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+                                cdnScript.onload = () => this.renderQr();
+                                document.head.appendChild(cdnScript);
+                            };
+                            document.head.appendChild(script);
+                        } else {
+                            this.renderQr();
+                        }
+                    });
+                },
+                async downloadMonthlyDirectPdf() {
+                    if (this.isDownloadingPdf) return;
+                    this.isDownloadingPdf = true;
+
+                    const month = (this.$wire && this.$wire.selectedMonth) ? this.$wire.selectedMonth : '{{ $selectedMonth }}';
+                    const year = (this.$wire && this.$wire.selectedYear) ? this.$wire.selectedYear : '{{ $selectedYear }}';
+                    const downloadUrl = `{{ url('/petugas-sholat/unduh-pdf') }}?month=${month}&year=${year}`;
+                    const filename = `Jadwal_Petugas_Shalat_Bulan_${month}_${year}.pdf`;
+
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                    // 1. Pada perangkat seluler / iOS PWA: gunakan Web Share API untuk lembar berbagi native jika didukung
+                    if (isMobile && navigator.canShare) {
+                        try {
+                            const res = await fetch(downloadUrl);
+                            if (res.ok) {
+                                const blob = await res.blob();
+                                const file = new File([blob], filename, { type: 'application/pdf' });
+                                if (navigator.canShare({ files: [file] })) {
+                                    await navigator.share({
+                                        files: [file],
+                                        title: filename.replace('.pdf', '')
+                                    });
+                                    this.isDownloadingPdf = false;
+                                    return;
+                                }
+                            }
+                        } catch (e) {
+                            if (e.name === 'AbortError') {
+                                this.isDownloadingPdf = false;
+                                return;
+                            }
+                            console.warn('Share API gagal, beralih ke direct download:', e);
+                        }
+                    }
+
+                    // 2. Pada Desktop, Android, dan browser biasa:
+                    // Memicu unduhan via tag <a> tersembunyi
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = filename;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+
+                    setTimeout(() => {
+                        if (link.parentNode) {
+                            link.parentNode.removeChild(link);
+                        }
+                        this.isDownloadingPdf = false;
+                    }, 1500);
+                }
+            };
+        }
+        window.petugasSholatComponent = petugasSholatComponent;
+    </script>
 </div>
