@@ -224,7 +224,7 @@
             border: none;
             background: transparent;
             padding: 0;
-            height: 50px;
+            height: 75px;
             vertical-align: bottom;
             text-align: left;
         }

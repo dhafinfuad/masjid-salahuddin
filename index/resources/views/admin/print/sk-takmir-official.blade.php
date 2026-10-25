@@ -280,7 +280,7 @@
         </p>
         <table class="w-full border-none bg-transparent my-1 border-collapse">
           <tr>
-            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+            <td class="border-none bg-transparent p-0 h-[75px] align-bottom text-left">
               <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
             </td>
           </tr>
@@ -426,7 +426,7 @@
         </p>
         <table class="w-full border-none bg-transparent my-1 border-collapse">
           <tr>
-            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+            <td class="border-none bg-transparent p-0 h-[75px] align-bottom text-left">
               <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
             </td>
           </tr>
@@ -555,7 +555,7 @@
         </p>
         <table class="w-full border-none bg-transparent my-1 border-collapse">
           <tr>
-            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+            <td class="border-none bg-transparent p-0 h-[75px] align-bottom text-left">
               <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
             </td>
           </tr>
