@@ -278,7 +278,14 @@
         <p class="font-bold uppercase mt-2">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        <div class="h-20"></div>
+        @if(!empty($qrCodeBase64))
+          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
+            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
+            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
+          </div>
+        @else
+          <div class="h-20"></div>
+        @endif
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>
@@ -421,7 +428,14 @@
         <p class="font-bold uppercase">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        <div class="h-16"></div>
+        @if(!empty($qrCodeBase64))
+          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
+            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
+            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
+          </div>
+        @else
+          <div class="h-16"></div>
+        @endif
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>
@@ -547,7 +561,14 @@
         <p class="font-bold uppercase">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        <div class="h-16"></div>
+        @if(!empty($qrCodeBase64))
+          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
+            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
+            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
+          </div>
+        @else
+          <div class="h-16"></div>
+        @endif
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>
@@ -563,49 +584,59 @@
     }
 
     async function downloadOfficialSkPdf(filename) {
-      const btn = document.getElementById('btnDownloadMobile');
-      const label = document.getElementById('labelDownloadMobile');
+      const url = "{{ route('admin.kepengurusan.download-sk-pdf') }}" + window.location.search;
+      const cleanFilename = (filename || 'Draf_Dokumen_Resmi_SK_Takmir') + '.pdf';
 
-      if (typeof html2pdf === 'undefined') {
-        alert("Modul pembuat PDF sedang dimuat, silakan coba sesaat lagi...");
+      if (typeof window.downloadPdfDirect === 'function') {
+        await window.downloadPdfDirect(url, cleanFilename);
         return;
       }
+
+      const btn = document.getElementById('btnDownloadMobile');
+      const label = document.getElementById('labelDownloadMobile');
 
       if (btn) {
         btn.disabled = true;
         btn.classList.add('opacity-75', 'cursor-not-allowed');
       }
       if (label) {
-        label.textContent = "Menyiapkan PDF...";
+        label.textContent = "Mengunduh...";
       }
 
-      const element = document.getElementById('printContainer');
-      const opt = {
-        margin: [0, 0, 0, 0],
-        filename: (filename || 'Draf_Dokumen_Resmi_SK_Takmir') + '.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          logging: false
-        },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        },
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          before: '.page-container'
-        }
-      };
-
       try {
-        await html2pdf().set(opt).from(element).save();
+        const response = await fetch(url, {
+          headers: { 'Accept': 'application/pdf' }
+        });
+        if (!response.ok) {
+          throw new Error("Gagal mengambil file PDF: " + response.statusText);
+        }
+
+        const blob = await response.blob();
+        const file = new File([blob], cleanFilename, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: cleanFilename,
+            text: 'Draf Dokumen Resmi Surat KEP Takmir'
+          });
+          return;
+        }
+
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = cleanFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 3000);
       } catch (err) {
-        console.error("Gagal generate PDF:", err);
-        alert("Gagal mengunduh PDF: " + (err.message || "Terjadi kesalahan"));
+        if (err.name !== 'AbortError') {
+          console.error("Gagal generate PDF:", err);
+          window.location.href = url;
+        }
       } finally {
         if (btn) {
           btn.disabled = false;

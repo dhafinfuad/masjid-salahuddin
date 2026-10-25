@@ -83,6 +83,32 @@ class PrintExportViewsTest extends TestCase
         $response->assertSee('downloadOfficialSkPdf', false);
     }
 
+    public function test_takmir_official_sk_direct_pdf_download(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $response = $this->get('/admin/kepengurusan/unduh-sk-pdf');
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('Draf_Dokumen_Resmi_SK_Takmir_2026-2029.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Verify underlying view data contains QR code and Kemenkeu Kop
+        $controller = app(\App\Http\Controllers\TakmirDocController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareOfficialSkData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, request());
+
+        $this->assertNotEmpty($data['qrCodeBase64']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['qrCodeBase64']);
+
+        $viewHtml = view('pdf.sk-takmir-official-pdf', $data)->render();
+        $this->assertStringContainsString('KEPUTUSAN KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG', $viewHtml);
+        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+        $this->assertStringContainsString('SUSUNAN PENGURUS TAKMIR MASJID SALAHUDDIN', $viewHtml);
+        $this->assertStringContainsString('PENJABARAN TUGAS POKOK DAN FUNGSI (TUPOKSI)', $viewHtml);
+    }
+
     public function test_monthly_prayer_duty_direct_pdf_download_with_qrcode(): void
     {
         $response = $this->get('/petugas-sholat/unduh-pdf?month=10&year=2026');
@@ -158,4 +184,85 @@ class PrintExportViewsTest extends TestCase
         $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
         $this->assertStringContainsString('TOTAL ANGGARAN', $viewHtml);
     }
+
+    public function test_finance_print_pdf_view_renders_without_errors(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        // Monthly
+        $responseMonthly = $this->get('/admin/finance/export-pdf?type=monthly&month=10&year=2026');
+        $responseMonthly->assertStatus(200);
+        $responseMonthly->assertSee('Unduh PDF', false);
+        $responseMonthly->assertSee('downloadFinancePdf', false);
+
+        // Agenda
+        $agenda = \App\Models\Agenda::create([
+            'title' => 'Peringatan Maulid Nabi 1448 H',
+            'event_date' => '2026-09-15',
+            'budget' => 15000000,
+            'status' => 'TERLAKSANA',
+        ]);
+
+        $responseAgenda = $this->get('/admin/finance/export-pdf?type=agenda&agenda_id=' . $agenda->id);
+        $responseAgenda->assertStatus(200);
+        $responseAgenda->assertSee('Unduh PDF', false);
+        $responseAgenda->assertSee('downloadFinancePdf', false);
+    }
+
+    public function test_finance_direct_pdf_download_monthly(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $response = $this->get('/admin/finance/unduh-pdf?type=monthly&month=10&year=2026');
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Laporan_Arus_Kas_Bulan_10_2026.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Verify underlying view contains QR code and table elements
+        $controller = app(\App\Http\Controllers\FinanceExportController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareFinanceReportData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, request()->merge(['type' => 'monthly', 'month' => 10, 'year' => 2026]));
+
+        $this->assertNotEmpty($data['qrCodeBase64']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['qrCodeBase64']);
+
+        $viewHtml = view('pdf.finance-report-pdf', $data)->render();
+        $this->assertStringContainsString('LAPORAN ARUS KAS MASJID SALAHUDDIN', $viewHtml);
+        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+    }
+
+    public function test_finance_direct_pdf_download_agenda(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $agenda = \App\Models\Agenda::create([
+            'title' => 'Santunan Anak Yatim Muharram',
+            'event_date' => '2026-07-20',
+            'budget' => 8000000,
+            'status' => 'TERLAKSANA',
+        ]);
+
+        $response = $this->get('/admin/finance/unduh-pdf?type=agenda&agenda_id=' . $agenda->id);
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=LPJ_Keuangan_santunan-anak-yatim-muharram.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Verify underlying view contains QR code and table elements
+        $controller = app(\App\Http\Controllers\FinanceExportController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareFinanceReportData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, request()->merge(['type' => 'agenda', 'agenda_id' => $agenda->id]));
+
+        $this->assertNotEmpty($data['qrCodeBase64']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['qrCodeBase64']);
+
+        $viewHtml = view('pdf.finance-report-pdf', $data)->render();
+        $this->assertStringContainsString('LAPORAN PERTANGGUNGJAWABAN (LPJ) KEUANGAN KEGIATAN', $viewHtml);
+        $this->assertStringContainsString('Santunan Anak Yatim Muharram', $viewHtml);
+        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+    }
 }
+

@@ -51,8 +51,8 @@
                                     <button type="button"
                                         @click="openFinanceExport = false; showPrintFinanceModal = true; $wire.openPrintFinanceModal()"
                                         class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
-                                        <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                        <span>Cetak Laporan (PDF)</span>
+                                        <i data-lucide="file-down" class="w-4 h-4 text-rose-600"></i>
+                                        <span>Unduh Laporan (PDF)</span>
                                     </button>
                                 </div>
                             </div>

@@ -7,9 +7,12 @@ use App\Models\Finance;
 use App\Models\FinanceCategory;
 use App\Models\MasjidSetting;
 use App\Models\User;
+use App\Services\QrCodeService;
 use App\Services\TteSignatureService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FinanceExportController extends Controller
@@ -66,10 +69,9 @@ class FinanceExportController extends Controller
     }
 
     /**
-     * Printable Clean PDF View for Financial Report
-     * Supports both Monthly Routine Cash Flow and Thematic Agenda LPJ
+     * Prepare data for Financial Report (both Monthly Routine and Thematic Agenda LPJ)
      */
-    public function printPdf(Request $request)
+    protected function prepareFinanceReportData(Request $request): array
     {
         $settings = MasjidSetting::getActive();
         $reportType = $request->query('type', 'monthly'); // 'monthly' | 'agenda'
@@ -103,7 +105,11 @@ class FinanceExportController extends Controller
             $saldoKegiatan = $totalPenerimaan - $totalPengeluaran;
             $silpa = (float) $agenda->budget - $totalPengeluaran;
 
-            return view('admin.print.finance-report', [
+            $tteHash = $customTteHash ?: ('TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'FINANCE_AGENDA_' . $agenda->id), 0, 10)));
+            $verifyUrl = url('/admin/finance/export-pdf?type=agenda&agenda_id=' . $agenda->id . '&tte=' . ($isTteSigned ? '1' : '0') . '&hash=' . $tteHash);
+            $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
+
+            return [
                 'settings' => $settings,
                 'reportType' => 'agenda',
                 'agenda' => $agenda,
@@ -116,9 +122,13 @@ class FinanceExportController extends Controller
                 'silpa' => $silpa,
                 'isTteSigned' => $isTteSigned,
                 'customTteHash' => $customTteHash,
+                'tteHash' => $tteHash,
+                'verifyUrl' => $verifyUrl,
+                'qrCodeBase64' => $qrCodeBase64,
+                'printDate' => Carbon::now()->translatedFormat('d F Y'),
                 'ketuaDkm' => $ketuaDkm,
                 'bendaharaDkm' => $bendaharaDkm,
-            ]);
+            ];
         }
 
         // Mode 1: Monthly Cash Flow (Continuous Carry-Over Balance)
@@ -198,7 +208,11 @@ class FinanceExportController extends Controller
         $totalPengeluaran = $subtotalRutin + $subtotalNonRutin;
         $saldoAkhir = $totalKasTersedia - $totalPengeluaran;
 
-        return view('admin.print.finance-report', [
+        $tteHash = $customTteHash ?: ('TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'FINANCE_MONTHLY_' . $year . '_' . $month), 0, 10)));
+        $verifyUrl = url('/admin/finance/export-pdf?type=monthly&month=' . $month . '&year=' . $year . '&tte=' . ($isTteSigned ? '1' : '0') . '&hash=' . $tteHash);
+        $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
+
+        return [
             'settings' => $settings,
             'reportType' => 'monthly',
             'periodLabel' => $periodLabel,
@@ -220,8 +234,54 @@ class FinanceExportController extends Controller
             'saldoAkhir' => $saldoAkhir,
             'isTteSigned' => $isTteSigned,
             'customTteHash' => $customTteHash,
+            'tteHash' => $tteHash,
+            'verifyUrl' => $verifyUrl,
+            'qrCodeBase64' => $qrCodeBase64,
+            'printDate' => Carbon::now()->translatedFormat('d F Y'),
             'ketuaDkm' => $ketuaDkm,
             'bendaharaDkm' => $bendaharaDkm,
+        ];
+    }
+
+    /**
+     * Printable Clean PDF View for Financial Report (HTML View)
+     * Supports both Monthly Routine Cash Flow and Thematic Agenda LPJ
+     */
+    public function printPdf(Request $request)
+    {
+        $data = $this->prepareFinanceReportData($request);
+        return view('admin.print.finance-report', $data);
+    }
+
+    /**
+     * Direct Server-Side Stream PDF Download for Financial Report (No blank tab, instant download)
+     */
+    public function downloadPdf(Request $request): StreamedResponse
+    {
+        $data = $this->prepareFinanceReportData($request);
+
+        if ($data['reportType'] === 'agenda') {
+            $slug = Str::slug($data['agenda']->title ?? 'Agenda');
+            $cleanFilename = "LPJ_Keuangan_{$slug}.pdf";
+        } else {
+            $m = $data['month'];
+            $y = $data['year'];
+            $cleanFilename = "Laporan_Arus_Kas_Bulan_{$m}_{$y}.pdf";
+        }
+
+        $pdf = Pdf::loadView('pdf.finance-report-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 }

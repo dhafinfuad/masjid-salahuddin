@@ -361,7 +361,7 @@
                             <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0 mb-1">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             </div>
-                            <span class="text-[11px] font-semibold text-slate-800 leading-tight">Cetak PDF</span>
+                            <span class="text-[11px] font-semibold text-slate-800 leading-tight">Unduh PDF</span>
                         </button>
                     </div>
                 </div>

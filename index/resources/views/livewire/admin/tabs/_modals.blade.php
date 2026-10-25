@@ -1931,11 +1931,17 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <button type="button"
+                        @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Draf_Dokumen_Resmi_SK_Takmir_{{ $docSkPeriode }}.pdf')"
+                        class="h-8 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                        title="Unduh Draf PDF Resmi Standar Naskah Dinas Langsung">
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+                        <span class="hidden sm:inline">Unduh Draf PDF</span>
+                    </button>
                     <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
-                       class="h-8 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
-                       title="Cetak atau Unduh Draf PDF Resmi Standar Naskah Dinas">
-                        <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span class="hidden sm:inline">Cetak Draf PDF</span>
+                       class="h-8 px-2.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 text-xs shadow-2xs transition inline-flex items-center justify-center cursor-pointer"
+                       title="Pratinjau di Tab Baru">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                     </a>
                     <button type="button" @click="showTemplateKepModal = false"
                         class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-200/60 transition cursor-pointer">
@@ -2254,10 +2260,17 @@
             <!-- Modal Footer -->
             <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
+                    <button type="button"
+                        @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Draf_Dokumen_Resmi_SK_Takmir_{{ $docSkPeriode }}.pdf')"
+                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
+                        <span>Unduh Draf PDF Resmi</span>
+                    </button>
                     <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
-                       class="h-9 px-3.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                       class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                       title="Pratinjau Dokumen di Tab Baru">
                         <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
-                        <span>Cetak / Unduh Draf PDF Resmi</span>
+                        <span>Pratinjau</span>
                     </a>
                 </div>
 
@@ -3147,15 +3160,16 @@
                     <button type="button" @click="showPrintFinanceModal = false"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
 
-                    <a :href="'{{ url('/admin/finance/export-pdf') }}?' + (
+                    <button type="button"
+                        @click="showPrintFinanceModal = false; window.downloadPdfDirect('{{ url('/admin/finance/unduh-pdf') }}?' + (
                             $wire.printReportType === 'agenda' 
                                 ? ('type=agenda&agenda_id=' + $wire.printAgendaId + '&tte=' + ($wire.tteSigned ? '1' : '0'))
                                 : ('type=monthly&month=' + $wire.printMonth + '&year=' + $wire.printYear + '&tte=' + ($wire.tteSigned ? '1' : '0'))
-                        )" target="_blank" @click="showPrintFinanceModal = false"
+                        ), ($wire.printReportType === 'agenda' ? 'LPJ_Keuangan_Agenda.pdf' : ('Laporan_Arus_Kas_Bulan_' + $wire.printMonth + '_' + $wire.printYear + '.pdf')))"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs inline-flex items-center justify-center gap-2 shadow-2xs shrink-0 cursor-pointer">
-                        <i data-lucide="printer" class="w-4 h-4"></i>
-                        <span>Buka Laporan PDF</span>
-                    </a>
+                        <i data-lucide="file-down" class="w-4 h-4"></i>
+                        <span>Unduh Laporan (PDF)</span>
+                    </button>
                 </div>
             </div>
         </div>

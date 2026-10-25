@@ -214,8 +214,16 @@
                 <span class="inline-block w-12 border-b border-slate-700 h-4"></span>
               @endif
             </div>
-            <p class="leading-none mb-10 text-[#06172e]">Yang menyatakan,</p>
-            <p class="font-bold underline underline-offset-2 text-slate-900 leading-none">
+            <p class="leading-none mb-2 text-[#06172e]">Yang menyatakan,</p>
+            @if(!empty($page['qr_code']))
+              <div class="inline-block my-1 p-1 bg-white border border-slate-300 rounded shadow-2xs text-center">
+                <img src="{{ $page['qr_code'] }}" class="w-12 h-12 mx-auto block" alt="QR Verifikasi Blangko">
+                <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">BLANGKO RESMI KEMENKEU</div>
+              </div>
+            @else
+              <div class="h-10"></div>
+            @endif
+            <p class="font-bold underline underline-offset-2 text-slate-900 leading-none mt-2">
               ( {{ $page['name'] ?: '______________________' }} )
             </p>
           </div>
@@ -282,50 +290,59 @@
     });
 
     async function downloadSuratPernyataanPdf() {
-      const btn = document.getElementById('btnDownloadMobile');
-      const label = document.getElementById('labelDownloadMobile');
+      const url = "{{ route('admin.programs.download-pdf') }}" + window.location.search;
+      const filename = 'Surat_Pernyataan_Pemotongan_Tunjangan_Kinerja.pdf';
 
-      if (typeof html2pdf === 'undefined') {
-        alert("Modul pembuat PDF sedang dimuat, silakan coba sesaat lagi...");
+      if (typeof window.downloadPdfDirect === 'function') {
+        await window.downloadPdfDirect(url, filename);
         return;
       }
+
+      const btn = document.getElementById('btnDownloadMobile');
+      const label = document.getElementById('labelDownloadMobile');
 
       if (btn) {
         btn.disabled = true;
         btn.classList.add('opacity-75', 'cursor-not-allowed');
       }
       if (label) {
-        label.textContent = "Menyiapkan PDF...";
+        label.textContent = "Mengunduh...";
       }
 
-      const element = document.getElementById('printContainer');
-      const opt = {
-        margin: 0,
-        filename: 'Surat_Pernyataan_Pemotongan_Tunjangan_Kinerja.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          logging: false
-        },
-        jsPDF: {
-          unit: 'px',
-          format: [794, 1123],
-          hotfixes: ['px_scaling'],
-          orientation: 'portrait'
-        },
-        pagebreak: {
-          mode: ['css', 'legacy'],
-          before: '.page-container'
-        }
-      };
-
       try {
-        await html2pdf().set(opt).from(element).save();
+        const response = await fetch(url, {
+          headers: { 'Accept': 'application/pdf' }
+        });
+        if (!response.ok) {
+          throw new Error("Gagal mengambil file PDF: " + response.statusText);
+        }
+
+        const blob = await response.blob();
+        const file = new File([blob], filename, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: filename,
+            text: 'Dokumen Resmi Surat Pernyataan Potongan Tukin'
+          });
+          return;
+        }
+
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 3000);
       } catch (err) {
-        console.error("Gagal generate PDF:", err);
-        alert("Gagal mengunduh PDF: " + (err.message || "Terjadi kesalahan"));
+        if (err.name !== 'AbortError') {
+          console.error("Gagal generate PDF:", err);
+          window.location.href = url;
+        }
       } finally {
         if (btn) {
           btn.disabled = false;

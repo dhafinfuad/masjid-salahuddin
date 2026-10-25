@@ -8,10 +8,13 @@ use App\Models\ProgramParticipant;
 use App\Models\SocialProgram;
 use App\Models\User;
 use App\Services\EmployeeStatusSyncService;
+use App\Services\QrCodeService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SocialProgramPrintController extends Controller
 {
@@ -230,9 +233,9 @@ class SocialProgramPrintController extends Controller
     }
 
     /**
-     * Print Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja
+     * Prepare dataset for Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja
      */
-    public function printPdf(Request $request): Response
+    protected function prepareSuratPernyataanData(Request $request): array
     {
         $mode = $request->query('mode', 'all'); // 'all' | 'single' | 'new' | 'blank'
         $year = (int) $request->query('year', now()->year);
@@ -402,7 +405,16 @@ class SocialProgramPrintController extends Controller
             }
         }
 
-        return response()->view('admin.print.surat-pernyataan-potongan', [
+        // Generate base64 verification QR code for each page in dataset
+        foreach ($pages as &$pageItem) {
+            $empName = $pageItem['name'] ?? '';
+            $verifyUrl = url('/admin/programs/print-surat-pernyataan?mode=' . ($mode === 'all' && $empName ? 'single' : $mode) . '&year=' . $year . ($empName ? '&employee_name=' . urlencode($empName) : ''));
+            $pageItem['qr_code'] = QrCodeService::generateBase64($verifyUrl, 4);
+        }
+        unset($pageItem);
+
+        return [
+            'mode' => $mode,
             'pages' => $pages,
             'year' => $year,
             'dateLetter' => $dateLetter,
@@ -412,9 +424,51 @@ class SocialProgramPrintController extends Controller
             'secretarySection' => $secretarySection,
             'settings' => $settings,
             'canonicalPrograms' => $this->canonicalPrograms,
-        ])->withHeaders([
+        ];
+    }
+
+    /**
+     * Print Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja (HTML View)
+     */
+    public function printPdf(Request $request): Response
+    {
+        $data = $this->prepareSuratPernyataanData($request);
+
+        return response()->view('admin.print.surat-pernyataan-potongan', $data)->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
             'Pragma' => 'no-cache',
+        ]);
+    }
+
+    /**
+     * Direct Server-Side Stream PDF Download for Surat Pernyataan (No blank tab, instant download)
+     */
+    public function downloadPdf(Request $request): StreamedResponse
+    {
+        $data = $this->prepareSuratPernyataanData($request);
+
+        if ($data['mode'] === 'single' && !empty($data['pages'][0]['name'])) {
+            $slug = Str::slug($data['pages'][0]['name']);
+            $cleanFilename = "Surat_Pernyataan_Pemotongan_Tukin_{$slug}.pdf";
+        } elseif ($data['mode'] === 'blank') {
+            $cleanFilename = "Blangko_Kosong_Surat_Pernyataan_Pemotongan_Tukin.pdf";
+        } else {
+            $cleanFilename = "Surat_Pernyataan_Pemotongan_Tukin_Tahun_{$data['year']}.pdf";
+        }
+
+        $pdf = Pdf::loadView('pdf.surat-pernyataan-potongan-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 

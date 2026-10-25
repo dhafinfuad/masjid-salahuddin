@@ -438,5 +438,37 @@ class SocialProgramPrintTest extends TestCase
         $adminResp->assertSee('Riwayat Potongan Tahun 2026');
         $adminResp->assertSee('50k');
     }
+
+    public function test_direct_pdf_download_surat_pernyataan(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Test single mode
+        $response = $this->get('/admin/programs/unduh-pdf?mode=single&year=2026&employee_name=' . urlencode($this->employee->name) . '&employee_id=' . $this->employee->id);
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Surat_Pernyataan_Pemotongan_Tukin_ichtiar-rachmatullah.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Test underlying view data contains QR code and Kemenkeu header
+        $controller = app(\App\Http\Controllers\SocialProgramPrintController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareSuratPernyataanData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, request()->merge([
+            'mode' => 'single',
+            'year' => 2026,
+            'employee_name' => $this->employee->name,
+            'employee_id' => $this->employee->id,
+        ]));
+
+        $this->assertNotEmpty($data['pages'][0]['qr_code']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['pages'][0]['qr_code']);
+
+        $viewHtml = view('pdf.surat-pernyataan-potongan-pdf', $data)->render();
+        $this->assertStringContainsString('Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja', $viewHtml);
+        $this->assertStringContainsString('BLANGKO RESMI KEMENKEU', $viewHtml);
+        $this->assertStringContainsString('Ichtiar Rachmatullah', $viewHtml);
+    }
 }
+
 

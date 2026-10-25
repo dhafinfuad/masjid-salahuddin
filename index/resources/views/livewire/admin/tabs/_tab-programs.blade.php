@@ -1090,12 +1090,18 @@
                                 @endif
 
                                 <!-- Submit Action Bar -->
-                                <div class="pt-4 flex items-center justify-end border-t border-slate-100">
+                                <div class="pt-4 flex flex-wrap items-center justify-end gap-2.5 border-t border-slate-100">
+                                    <button type="button"
+                                        @click="window.downloadPdfDirect('{{ route('admin.programs.download-pdf') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection), 'Surat_Pernyataan_Pemotongan_Tukin_' + (printPernyataanEmployeeName ? printPernyataanEmployeeName.replace(/\s+/g, '_') : (printPernyataanMode === 'blank' ? 'Blangko_Kosong' : 'Semua')) + '.pdf')"
+                                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                                        <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
+                                        <span>Unduh Surat (PDF)</span>
+                                    </button>
                                     <a :href="'{{ route('admin.programs.print-surat-pernyataan') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection)"
                                         target="_blank"
-                                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                                        <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
-                                        <span>Cetak Surat</span>
+                                        class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-2">
+                                        <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
+                                        <span>Pratinjau / Cetak</span>
                                     </a>
                                 </div>
                             </div>
