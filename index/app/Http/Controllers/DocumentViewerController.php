@@ -40,8 +40,35 @@ class DocumentViewerController extends Controller
             $cleanFile = '/' . ltrim($cleanFile, '/');
         }
 
-        // Redirect langsung ke file PDF fisik agar browser menggunakan PDF viewer bawaan (tanpa header wrapper)
-        return redirect()->away($cleanFile, 302, [
+        $userAgent = (string) $request->header('User-Agent', '');
+        $isMobile = (bool) preg_match('/(iPhone|iPod|iPad|Android|Mobile|Silk|Kindle|BlackBerry|Opera Mini)/i', $userAgent);
+
+        // Jika Desktop (non-mobile) dan tidak dipaksa view=mobile, redirect langsung ke berkas fisik PDF (membuka PDFium native)
+        if (! $isMobile && $request->query('view') !== 'mobile') {
+            return redirect()->away($cleanFile, 302, [
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache',
+            ]);
+        }
+
+        // Tentukan nama file untuk unduhan
+        $downloadFilename = basename(parse_url($cleanFile, PHP_URL_PATH));
+        if (empty($downloadFilename) || ! str_contains($downloadFilename, '.')) {
+            $downloadFilename = 'dokumen.pdf';
+        }
+
+        // Fallback sanitization
+        $fallbackUrl = '/';
+        if (! empty($fallback) && (str_starts_with($fallback, '/') || str_starts_with($fallback, config('app.url')))) {
+            $fallbackUrl = $fallback;
+        }
+
+        // Tampilkan Penampil PDF.js Responsif dengan Toolbar Lengkap untuk Mobile
+        return response()->view('document-viewer', [
+            'fileUrl' => $cleanFile,
+            'downloadFilename' => $downloadFilename,
+            'fallbackUrl' => $fallbackUrl,
+        ])->withHeaders([
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
             'Pragma' => 'no-cache',
         ]);

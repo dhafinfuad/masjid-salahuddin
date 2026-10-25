@@ -26,12 +26,32 @@ class DocumentViewerTest extends TestCase
         ]);
     }
 
-    public function test_document_viewer_redirects_directly_to_valid_file(): void
+    public function test_document_viewer_redirects_on_desktop_user_agent(): void
     {
-        $response = $this->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
+        $response = $this->withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        ])->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
 
         $response->assertStatus(302);
         $response->assertRedirect('/sk/sk-takmir.pdf');
+        $this->assertStringContainsString('no-store', (string)$response->headers->get('Cache-Control'));
+    }
+
+    public function test_document_viewer_renders_pdfjs_viewer_on_mobile_user_agent(): void
+    {
+        $response = $this->withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+        ])->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
+
+        $response->assertStatus(200);
+        $response->assertSee('pdf.min.js', false);
+        $response->assertSee('btnPrevPage', false);
+        $response->assertSee('btnNextPage', false);
+        $response->assertSee('btnZoomIn', false);
+        $response->assertSee('btnZoomOut', false);
+        $response->assertSee('pageIndicator', false);
+        $response->assertSee('Kembali', false);
+        $response->assertSee('Unduh', false);
         $this->assertStringContainsString('no-store', (string)$response->headers->get('Cache-Control'));
     }
 
