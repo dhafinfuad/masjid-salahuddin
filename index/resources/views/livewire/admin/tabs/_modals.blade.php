@@ -1934,10 +1934,10 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-gov-textMain leading-tight">
-                            Template Surat Keputusan Kepala KPP Madya Malang
+                            Template Surat Keputusan
                         </h3>
                         <p class="text-xs text-slate-500 mt-0.5">
-                            Tentang Perubahan Susunan Pengurus Takmir Masjid Salahuddin Periode {{ $docSkPeriode }}
+                            Susunan Kepengurusan
                         </p>
                     </div>
                 </div>
