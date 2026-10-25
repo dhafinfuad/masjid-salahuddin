@@ -1791,24 +1791,24 @@
                 </div>
 
                 <!-- Input Berkas PDF -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Pilih File PDF Dokumen Legalitas * <span class="text-slate-400 font-normal">(Maks. 10MB)</span></label>
+                <div x-data="{ isDragging: false, isUploading: false, progress: 0 }"
+                     x-on:livewire-upload-start="isUploading = true"
+                     x-on:livewire-upload-finish="isUploading = false"
+                     x-on:livewire-upload-error="isUploading = false"
+                     x-on:livewire-upload-progress="progress = $event.detail.progress">
+                    <label class="block font-semibold text-slate-700 mb-1">Pilih File PDF Dokumen Legalitas * <span class="text-slate-400 font-normal">(Maks. 15MB)</span></label>
 
-                    <div x-data="{ isDragging: false }"
-                         @dragenter.prevent="isDragging = true"
+                    <div @dragenter.prevent="isDragging = true"
                          @dragover.prevent="isDragging = true"
                          @dragleave.prevent="isDragging = false"
-                         @drop="isDragging = false"
+                         @drop.prevent="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { @this.upload('uploadDocFile', $event.dataTransfer.files[0]); }"
                          :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
-                         class="relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-200 cursor-pointer group">
+                         class="relative border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 cursor-pointer group">
                         <input id="uploadDocFileInput"
                                wire:model="uploadDocFile"
+                               wire:key="upload-doc-file-input-{{ $uploadDocTarget }}"
                                type="file"
                                accept="application/pdf"
-                               @dragenter="isDragging = true"
-                               @dragover.prevent="isDragging = true"
-                               @dragleave="isDragging = false"
-                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
 
                         <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
@@ -1825,13 +1825,37 @@
                                 <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file</span> atau seret PDF dokumen ke area ini
                             </p>
                             <p class="text-[11px] text-slate-500">
-                                Berkas resmi SK / Legalitas PDF (Maksimal 10 MB)
+                                Berkas resmi SK / Legalitas PDF (Maksimal 15 MB)
                             </p>
+                        </div>
+
+                        <!-- Upload Progress Bar -->
+                        <div x-show="isUploading" x-cloak class="mt-3">
+                            <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-gov-navy h-1.5 rounded-full transition-all duration-150" :style="'width: ' + progress + '%'"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1 font-medium" x-text="'Sedang mengunggah berkas: ' + progress + '%'"></p>
                         </div>
                     </div>
 
+                    <!-- Selected File Info -->
+                    @if($uploadDocFile)
+                        <div class="mt-2.5 p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold flex items-center justify-between gap-2 shadow-2xs">
+                            <div class="flex items-center gap-2 truncate">
+                                <svg class="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                                <span class="truncate">{{ is_object($uploadDocFile) && method_exists($uploadDocFile, 'getClientOriginalName') ? $uploadDocFile->getClientOriginalName() : 'Berkas PDF Terpilih' }}</span>
+                                <span class="text-[10px] text-emerald-700 font-mono bg-emerald-100 px-1.5 py-0.5 rounded shrink-0">Siap Diunggah</span>
+                            </div>
+                            <button type="button" wire:click="$set('uploadDocFile', null)" class="text-slate-400 hover:text-rose-600 p-1 rounded-md transition cursor-pointer" title="Batalkan berkas ini">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                    @endif
+
                     @error('uploadDocFile')
-                        <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
+                        <span class="text-xs font-medium text-rose-600 block mt-1.5">{{ $message }}</span>
                     @enderror
 
                     <div wire:loading.inline-flex wire:target="uploadDocFile" style="display: none;"
@@ -1840,16 +1864,12 @@
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span class="whitespace-nowrap leading-none">Mengunggah berkas ke buffer...</span>
+                        <span class="whitespace-nowrap leading-none">Memproses berkas ke server...</span>
                     </div>
                 </div>
 
-                <!-- Metadata Opsional / Otomatis -->
+                <!-- Metadata Form Input -->
                 <div class="border-t border-slate-200 pt-3 space-y-3">
-                    <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Perbarui Informasi Dokumen (Opsional)
-                    </div>
-
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nomor Dokumen / Surat Keputusan</label>
                         <input wire:model="uploadDocNumber" type="text" placeholder="Contoh: KEP-48/KPP.1209/2026"
@@ -1857,19 +1877,11 @@
                         @error('uploadDocNumber') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Tanggal Penetapan / Berlaku</label>
-                            <input wire:model="uploadDocDate" type="text" placeholder="23 Januari 2026"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                            @error('uploadDocDate') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Jumlah Halaman</label>
-                            <input wire:model="uploadDocPages" type="text" placeholder="Contoh: 3 Halaman"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                            @error('uploadDocPages') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                        </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Tanggal Penetapan / Berlaku</label>
+                        <input wire:model="uploadDocDate" type="date"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-slate-800">
+                        @error('uploadDocDate') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -1882,10 +1894,10 @@
                 <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showUploadDocModal = false"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="submit" wire:loading.attr="disabled"
+                    <button type="submit" wire:loading.attr="disabled" wire:target="saveUploadDoc, uploadDocFile"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="saveUploadDoc">Unggah & Simpan Dokumen</span>
-                        <span wire:loading.inline-flex wire:target="saveUploadDoc" style="display: none;"
+                        <span wire:loading.remove wire:target="saveUploadDoc, uploadDocFile">Unggah & Simpan Dokumen</span>
+                        <span wire:loading.inline-flex wire:target="saveUploadDoc, uploadDocFile" style="display: none;"
                             class="items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1895,7 +1907,7 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            <span class="whitespace-nowrap">Mengunggah...</span>
+                            <span class="whitespace-nowrap">Menyimpan berkas...</span>
                         </span>
                     </button>
                 </div>

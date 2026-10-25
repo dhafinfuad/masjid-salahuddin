@@ -21,17 +21,6 @@
         </div>
 
         <div class="p-5 space-y-6">
-            
-            <!-- Banner Edukasi -->
-            <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-blue-900 text-xs flex items-start gap-3">
-                <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-                <div class="space-y-1">
-                    <p class="font-semibold text-blue-900">Pengelolaan Kepengurusan Terintegrasi Surat KEP</p>
-                    <p class="text-blue-700 text-[11px] leading-relaxed">
-                        Seluruh nama pimpinan, sekretaris, bendahara, dan 4 bidang di bawah terhubung langsung dengan Surat Keputusan resmi. Untuk melakukan pergantian pengurus atau memperbarui periode, klik tombol <strong>Template Surat KEP Takmir</strong> di atas.
-                    </p>
-                </div>
-            </div>
 
             <!-- Pimpinan Harian -->
             <div>

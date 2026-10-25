@@ -166,6 +166,12 @@ class MasjidSetting extends Model
             }
         }
 
+        foreach ($stored as $k => $item) {
+            if (! isset($defaults[$k]) && is_array($item)) {
+                $defaults[$k] = $item;
+            }
+        }
+
         return $defaults;
     }
 

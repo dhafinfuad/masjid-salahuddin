@@ -166,4 +166,56 @@ class AdminTakmirKepTest extends TestCase
         $this->assertStringContainsString('application/pdf', (string)$response->headers->get('Content-Type'));
         $this->assertStringContainsString('attachment', (string)$response->headers->get('Content-Disposition'));
     }
+
+    public function test_can_upload_doc_file_and_updates_database(): void
+    {
+        $this->actingAs($this->master);
+
+        $file = UploadedFile::fake()->create('dokumen_sk.pdf', 100, 'application/pdf');
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openUploadDoc', 'sk_lengkap')
+            ->set('uploadDocFile', $file)
+            ->set('uploadDocNumber', 'KEP-777/TEST/2026')
+            ->set('uploadDocDate', '2026-08-17')
+            ->call('saveUploadDoc')
+            ->assertHasNoErrors()
+            ->assertSet('showUploadDocModal', false)
+            ->assertSet('docSkNumber', 'KEP-777/TEST/2026')
+            ->assertSet('docSkDate', '17 Agustus 2026');
+
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+
+        $this->assertEquals('KEP-777/TEST/2026', $docs['sk_lengkap']['number'] ?? '');
+        $this->assertEquals('KEP-777/TEST/2026', $docs['sk']['number'] ?? '');
+        $this->assertEquals('17 Agustus 2026', $docs['sk_lengkap']['date'] ?? '');
+        $this->assertEquals('17 Agustus 2026', $docs['sk']['date'] ?? '');
+        $this->assertNotEmpty($docs['sk_lengkap']['file'] ?? '');
+
+        // Cleanup fake test file
+        $testFilePath = public_path('resources/' . ($docs['sk_lengkap']['file'] ?? ''));
+        if (file_exists($testFilePath)) {
+            @unlink($testFilePath);
+        }
+    }
+
+    public function test_upload_doc_requires_pdf_file(): void
+    {
+        $this->actingAs($this->master);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openUploadDoc', 'sk_lengkap')
+            ->set('uploadDocFile', null)
+            ->call('saveUploadDoc')
+            ->assertHasErrors(['uploadDocFile' => 'required']);
+
+        $imageFile = UploadedFile::fake()->image('avatar.jpg');
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openUploadDoc', 'sk_lengkap')
+            ->set('uploadDocFile', $imageFile)
+            ->call('saveUploadDoc')
+            ->assertHasErrors(['uploadDocFile' => 'mimes']);
+    }
 }

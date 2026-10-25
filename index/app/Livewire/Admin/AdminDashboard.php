@@ -327,7 +327,6 @@ class AdminDashboard extends Component
     public mixed $uploadDocFile = null;
     public string $uploadDocNumber = '';
     public string $uploadDocDate = '';
-    public string $uploadDocPages = '';
 
     // Template Dokumen KEP Takmir State
     public bool $showTemplateKepModal = false;
@@ -4575,15 +4574,32 @@ class AdminDashboard extends Component
         }
 
         $this->uploadDocTarget = in_array($target, ['sk', 'lampiran1', 'lampiran2', 'sk_lengkap']) ? $target : 'sk_lengkap';
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+
         if ($this->uploadDocTarget === 'sk_lengkap') {
             $this->uploadDocTitle = 'Dokumen Resmi SK Takmir & Seluruh Lampiran';
         } else {
-            $settings = MasjidSetting::getActive();
-            $docs = $settings->getTakmirDocuments();
             $this->uploadDocTitle = $docs[$this->uploadDocTarget]['title'] ?? 'Dokumen Resmi Takmir';
         }
 
+        $this->uploadDocNumber = $docs['sk_lengkap']['number'] ?? $docs['sk']['number'] ?? $this->docSkNumber ?? 'KEP-48/KPP.1209/2026';
+        
+        $rawDate = $docs['sk_lengkap']['date'] ?? $docs['sk']['date'] ?? $this->docSkDate ?? '2026-04-14';
+        try {
+            $monthMap = [
+                'januari' => 'january', 'februari' => 'february', 'maret' => 'march',
+                'mei' => 'may', 'juni' => 'june', 'juli' => 'july', 'agustus' => 'august',
+                'oktober' => 'october', 'desember' => 'december',
+            ];
+            $normalizedDate = str_ireplace(array_keys($monthMap), array_values($monthMap), (string) $rawDate);
+            $this->uploadDocDate = Carbon::parse($normalizedDate)->format('Y-m-d');
+        } catch (\Throwable $e) {
+            $this->uploadDocDate = date('Y-m-d');
+        }
+
         $this->uploadDocFile = null;
+        $this->resetErrorBag();
         $this->showUploadDocModal = true;
         $this->dispatch('open-upload-doc-modal');
     }
@@ -4597,6 +4613,8 @@ class AdminDashboard extends Component
 
         $this->validate([
             'uploadDocFile' => 'required|file|mimes:pdf|max:15360',
+            'uploadDocNumber' => 'nullable|string|max:255',
+            'uploadDocDate' => 'nullable|date',
         ], [
             'uploadDocFile.required' => 'Silakan pilih berkas PDF untuk diunggah.',
             'uploadDocFile.mimes' => 'Format berkas harus berupa dokumen PDF (.pdf).',
@@ -4620,13 +4638,42 @@ class AdminDashboard extends Component
         }
 
         $targetPath = $destinationDir . DIRECTORY_SEPARATOR . $targetFileName;
-        copy($this->uploadDocFile->getRealPath(), $targetPath);
+        if (! @copy($this->uploadDocFile->getRealPath(), $targetPath)) {
+            file_put_contents($targetPath, file_get_contents($this->uploadDocFile->getRealPath()));
+        }
+
+        $formattedDate = $this->uploadDocDate 
+            ? Carbon::parse($this->uploadDocDate)->locale('id')->translatedFormat('d F Y') 
+            : ($docs['sk']['date'] ?? '14 April 2026');
+
+        if (! isset($docs[$this->uploadDocTarget]) || ! is_array($docs[$this->uploadDocTarget])) {
+            $docs[$this->uploadDocTarget] = [];
+        }
 
         $docs[$this->uploadDocTarget]['file'] = $targetFileName;
         $docs[$this->uploadDocTarget]['updated_at'] = Carbon::now('Asia/Jakarta')->format('d M Y H:i');
         $docs[$this->uploadDocTarget]['file_size'] = round(filesize($targetPath) / 1024, 1) . ' KB';
+
+        if (! empty($this->uploadDocNumber)) {
+            $cleanNumber = trim($this->uploadDocNumber);
+            $docs[$this->uploadDocTarget]['number'] = $cleanNumber;
+            $docs['sk']['number'] = $cleanNumber;
+            $this->docSkNumber = $cleanNumber;
+        }
+
+        if (! empty($this->uploadDocDate)) {
+            $docs[$this->uploadDocTarget]['date'] = $formattedDate;
+            $docs['sk']['date'] = $formattedDate;
+            $this->docSkDate = $formattedDate;
+        }
+
         if ($this->uploadDocTarget === 'sk_lengkap') {
             $docs['sk_lengkap']['title'] = 'Dokumen Resmi SK Takmir Lengkap Beserta Lampiran';
+            if (isset($docs['sk']) && is_array($docs['sk'])) {
+                $docs['sk']['file'] = $targetFileName;
+                $docs['sk']['updated_at'] = $docs[$this->uploadDocTarget]['updated_at'];
+                $docs['sk']['file_size'] = $docs[$this->uploadDocTarget]['file_size'];
+            }
         }
 
         $settings->takmir_documents = $docs;
