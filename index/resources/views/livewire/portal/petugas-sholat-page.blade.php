@@ -45,131 +45,53 @@
 
             const month = (this.$wire && this.$wire.selectedMonth) ? this.$wire.selectedMonth : '{{ $selectedMonth }}';
             const year = (this.$wire && this.$wire.selectedYear) ? this.$wire.selectedYear : '{{ $selectedYear }}';
-            const printUrl = `{{ url('/petugas-sholat/cetak') }}?month=${month}&year=${year}`;
+            const downloadUrl = `{{ url('/petugas-sholat/unduh-pdf') }}?month=${month}&year=${year}`;
             const filename = `Jadwal_Petugas_Shalat_Bulan_${month}_${year}.pdf`;
 
-            try {
-                // Buat iframe tersembunyi berukuran 1024px agar hasil layout cetak konsisten dan rapi
-                const iframe = document.createElement('iframe');
-                iframe.style.position = 'fixed';
-                iframe.style.top = '-9999px';
-                iframe.style.left = '-9999px';
-                iframe.style.width = '1024px';
-                iframe.style.height = '1400px';
-                iframe.style.opacity = '0';
-                iframe.style.pointerEvents = 'none';
-                iframe.style.border = 'none';
-                iframe.src = printUrl;
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-                const loadPromise = new Promise((resolve, reject) => {
-                    const timeoutId = setTimeout(() => {
-                        reject(new Error('Waktu tunggu pemuatan dokumen melebihi batas'));
-                    }, 15000);
-
-                    iframe.onload = () => {
-                        clearTimeout(timeoutId);
-                        resolve();
-                    };
-                    iframe.onerror = () => {
-                        clearTimeout(timeoutId);
-                        reject(new Error('Gagal memuat dokumen cetak'));
-                    };
-                });
-
-                document.body.appendChild(iframe);
-                await loadPromise;
-
-                // Beri jeda 400ms agar styling Tailwind dan webfont di dalam iframe selesai dirender
-                await new Promise(r => setTimeout(r, 400));
-
-                const iframeWin = iframe.contentWindow;
-                const iframeDoc = iframe.contentDocument || iframeWin.document;
-                const contentContainer = iframeDoc.getElementById('contentContainer');
-
-                if (!contentContainer) {
-                    throw new Error('Konten dokumen tidak ditemukan');
-                }
-
-                const pdfWorker = iframeWin.html2pdf || window.html2pdf;
-                if (!pdfWorker) {
-                    throw new Error('Modul pembuat PDF belum siap');
-                }
-
-                const opt = {
-                    margin: [8, 8, 8, 8],
-                    filename: filename,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        letterRendering: true,
-                        logging: false,
-                        windowWidth: 1024
-                    },
-                    jsPDF: {
-                        unit: 'mm',
-                        format: 'a4',
-                        orientation: 'portrait'
-                    },
-                    pagebreak: {
-                        mode: ['avoid-all', 'css', 'legacy'],
-                        avoid: 'tr'
-                    }
-                };
-
-                const pdfBlob = await pdfWorker().set(opt).from(contentContainer).output('blob');
-
-                if (iframe.parentNode) {
-                    iframe.parentNode.removeChild(iframe);
-                }
-
-                const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-
-                // 1. Pada perangkat mobile / iOS PWA: gunakan Web Share API untuk lembar berbagi native
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                if (isMobile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                    try {
-                        await navigator.share({
-                            files: [pdfFile],
-                            title: filename.replace('.pdf', '')
-                        });
-                        return;
-                    } catch (shareErr) {
-                        if (shareErr.name === 'AbortError') {
+            // 1. Pada perangkat seluler / iOS PWA: gunakan Web Share API untuk lembar berbagi native jika didukung
+            if (isMobile && navigator.canShare) {
+                try {
+                    const res = await fetch(downloadUrl);
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const file = new File([blob], filename, { type: 'application/pdf' });
+                        if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: filename.replace('.pdf', '')
+                            });
+                            this.isDownloadingPdf = false;
                             return;
                         }
-                        console.warn('Share API gagal, beralih ke unduh blob:', shareErr);
                     }
+                } catch (e) {
+                    if (e.name === 'AbortError') {
+                        this.isDownloadingPdf = false;
+                        return;
+                    }
+                    console.warn('Share API gagal, beralih ke direct download:', e);
                 }
-
-                // 2. Pada Desktop & Android: unduh file PDF langsung tanpa membuka tab baru
-                const blobUrl = URL.createObjectURL(pdfBlob);
-                const downloadLink = document.createElement('a');
-                downloadLink.style.display = 'none';
-                downloadLink.href = blobUrl;
-                downloadLink.download = filename;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-
-                setTimeout(() => {
-                    if (downloadLink.parentNode) {
-                        downloadLink.parentNode.removeChild(downloadLink);
-                    }
-                    URL.revokeObjectURL(blobUrl);
-                }, 3000);
-
-            } catch (err) {
-                console.error('Direct PDF download error:', err);
-                // Fallback aman jika rendering di background gagal: buka halaman cetak di tab baru
-                window.open(printUrl, '_blank');
-            } finally {
-                this.isDownloadingPdf = false;
-                this.$nextTick(() => {
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
-                    }
-                });
             }
+
+            // 2. Pada Desktop, Android, dan browser biasa:
+            // Memicu unduhan via pembuatan tag <a> tersembunyi (tanpa target="_blank")
+            // Respons server dengan Content-Disposition: attachment memastikan halaman TIDAK berpindah
+            // dan TIDAK membuka tab baru sama sekali.
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+
+            setTimeout(() => {
+                if (link.parentNode) {
+                    link.parentNode.removeChild(link);
+                }
+                this.isDownloadingPdf = false;
+            }, 1500);
         }
     }" 
     class="min-h-screen flex flex-col bg-gov-canvas text-gov-textMain">
@@ -543,7 +465,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Library html2pdf vendor preloaded -->
-    <script src="{{ asset('vendor/html2pdf.bundle.min.js') }}"></script>
 </div>

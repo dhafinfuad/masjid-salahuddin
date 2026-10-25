@@ -6,9 +6,11 @@ use App\Models\Kajian;
 use App\Models\MasjidSetting;
 use App\Models\PrayerDuty;
 use App\Services\SimpleXlsxService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PrayerDutyExportController extends Controller
 {
@@ -512,15 +514,11 @@ class PrayerDutyExportController extends Controller
     }
 
     /**
-     * Printable Monthly Schedule for Prayer Duties (Public / Admin)
+     * Helper to prepare monthly duty schedule data for both HTML view and binary PDF stream.
      */
-    public function printMonthlyPdf(Request $request)
+    private function prepareMonthlyDutyData(int $month, int $year): array
     {
         $settings = MasjidSetting::getActive();
-        $now = Carbon::now('Asia/Jakarta');
-        $month = (int) $request->query('month', $now->month);
-        $year = (int) $request->query('year', $now->year);
-
         $startDate = Carbon::create($year, $month, 1, 0, 0, 0, 'Asia/Jakarta')->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
         $daysInMonth = $startDate->daysInMonth;
@@ -650,7 +648,7 @@ class PrayerDutyExportController extends Controller
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'PETUGAS-BULANAN-' . $month . '-' . $year), 0, 10));
         $verifyUrl = url('/petugas-sholat/cetak?month=' . $month . '&year=' . $year . '&tte=1&hash=' . $tteHash);
 
-        return view('admin.print.prayer-duty-monthly', [
+        return [
             'settings' => $settings,
             'roster' => $roster,
             'monthName' => $months[$month] ?? 'Januari',
@@ -662,6 +660,47 @@ class PrayerDutyExportController extends Controller
             'isTteSigned' => true,
             'tteHash' => $tteHash,
             'verifyUrl' => $verifyUrl,
+        ];
+    }
+
+    /**
+     * Printable Monthly Schedule for Prayer Duties (Public / Admin HTML Preview)
+     */
+    public function printMonthlyPdf(Request $request)
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $month = (int) $request->query('month', $now->month);
+        $year = (int) $request->query('year', $now->year);
+        $data = $this->prepareMonthlyDutyData($month, $year);
+
+        return view('admin.print.prayer-duty-monthly', $data);
+    }
+
+    /**
+     * Direct Binary PDF Stream Download for Monthly Prayer Duty Schedule (No preview, no new tab)
+     */
+    public function downloadMonthlyPdf(Request $request): StreamedResponse
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $month = (int) $request->query('month', $now->month);
+        $year = (int) $request->query('year', $now->year);
+        $data = $this->prepareMonthlyDutyData($month, $year);
+        $monthName = $data['monthName'];
+        $cleanFilename = "Jadwal_Petugas_Shalat_Bulan_{$monthName}_{$year}.pdf";
+
+        $pdf = Pdf::loadView('pdf.prayer-duty-monthly-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 }

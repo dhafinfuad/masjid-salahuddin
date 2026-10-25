@@ -30,6 +30,7 @@ Route::get('/kegiatan-masjid', fn() => redirect()->route('portal.kegiatan'));
 Route::get('/jadwal-sholat', JadwalSholatPage::class)->name('portal.jadwal-sholat');
 Route::get('/petugas-sholat', PetugasSholatPage::class)->name('portal.petugas-sholat');
 Route::get('/petugas-sholat/cetak', [PrayerDutyExportController::class, 'printMonthlyPdf'])->name('portal.petugas-sholat.print');
+Route::get('/petugas-sholat/unduh-pdf', [PrayerDutyExportController::class, 'downloadMonthlyPdf'])->name('portal.petugas-sholat.download-pdf');
 Route::get('/profil', ProfilMasjidPage::class)->name('portal.profil');
 Route::get('/profil-masjid', fn() => redirect()->route('portal.profil'));
 Route::get('/saran', SaranKritikPage::class)->name('portal.saran');

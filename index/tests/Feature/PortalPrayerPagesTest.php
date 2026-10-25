@@ -391,13 +391,25 @@ class PortalPrayerPagesTest extends TestCase
         $response->assertSee(':disabled="isDownloadingPdf"', false);
         $response->assertSee('Unduh PDF');
         $response->assertSee('Menyiapkan PDF...');
-        $response->assertSee('html2pdf.bundle.min.js');
+        $response->assertSee(route('portal.petugas-sholat.download-pdf'));
 
-        // Pastikan endpoint cetak bulanan tetap berfungsi untuk iframe background renderer
+        // Pastikan endpoint cetak bulanan HTML preview tetap berfungsi
         $printResponse = $this->get(route('portal.petugas-sholat.print'));
         $printResponse->assertOk();
         $printResponse->assertSee('contentContainer', false);
         $printResponse->assertSee('JADWAL PENUGASAN IMAM, KHATIB &amp; MUADZIN', false);
+
+        // Pastikan endpoint unduh langsung mengembalikan binary PDF attachment
+        $downloadResponse = $this->get(route('portal.petugas-sholat.download-pdf', ['month' => 10, 'year' => 2026]));
+        $downloadResponse->assertOk();
+        $downloadResponse->assertHeader('Content-Type', 'application/pdf');
+        $contentDisposition = $downloadResponse->headers->get('Content-Disposition') ?? '';
+        $this->assertStringContainsString('attachment', $contentDisposition);
+        $this->assertStringContainsString('Jadwal_Petugas_Shalat_Bulan_Oktober_2026.pdf', $contentDisposition);
+        
+        // Verifikasi berkas biner diawali signature PDF (%PDF-)
+        $content = $downloadResponse->streamedContent();
+        $this->assertStringStartsWith('%PDF-', $content);
     }
 }
 
