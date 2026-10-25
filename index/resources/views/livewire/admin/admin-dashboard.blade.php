@@ -1100,12 +1100,6 @@
                     <i data-lucide="message-square-quote" class="w-4 h-4 text-slate-400"></i>
                     <span class="text-xs font-medium">Saran & Kritik</span>
                 </a>
-
-                <a href="{{ url('/admin/users') }}" wire:navigate
-                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ $currentTab === 'users' ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
-                    <i data-lucide="user-cog" class="w-4 h-4 text-slate-400"></i>
-                    <span class="text-xs font-medium">Pengguna</span>
-                </a>
                 @endunless
             </div>
 
@@ -1115,16 +1109,22 @@
                 <span
                     class="text-xs uppercase tracking-wider text-slate-400 font-semibold px-3 block mb-1.5">SISTEM</span>
 
-                <a href="{{ url('/admin/statistics') }}" wire:navigate
-                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ in_array($currentTab, ['statistics', 'statistik']) ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
-                    <span class="text-xs font-medium">Statistik Pengunjung</span>
-                </a>
-
                 <a href="{{ url('/admin/settings') }}" wire:navigate
                     class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ $currentTab === 'settings' ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
                     <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i>
                     <span class="text-xs font-medium">Pengaturan</span>
+                </a>
+
+                <a href="{{ url('/admin/users') }}" wire:navigate
+                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ $currentTab === 'users' ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <i data-lucide="user-cog" class="w-4 h-4 text-slate-400"></i>
+                    <span class="text-xs font-medium">Pengguna</span>
+                </a>
+
+                <a href="{{ url('/admin/statistics') }}" wire:navigate
+                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer {{ in_array($currentTab, ['statistics', 'statistik']) ? 'bg-white/10 text-white border-amber-400' : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+                    <span class="text-xs font-medium">Statistik Pengunjung</span>
                 </a>
                 @endunless
 
