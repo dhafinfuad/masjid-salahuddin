@@ -40,7 +40,8 @@ class ProfilMasjidPage extends Component
     public function render()
     {
         $settings = MasjidSetting::getActive();
-        $documents = array_values($settings->getTakmirDocuments());
+        $allDocs = $settings->getTakmirDocuments();
+        $documents = array_values(array_filter($allDocs, fn($k) => in_array($k, ['sk', 'lampiran1', 'lampiran2']), ARRAY_FILTER_USE_KEY));
         $pengurus = $settings->getTakmirStructure();
 
         ActivityGallery::ensureTableExists();

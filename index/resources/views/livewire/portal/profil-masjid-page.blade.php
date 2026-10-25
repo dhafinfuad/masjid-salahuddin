@@ -366,30 +366,33 @@
                             <div class="space-y-2">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="w-9 h-9 rounded-xl bg-slate-50 border border-gov-border flex items-center justify-center text-gov-navy shrink-0 shadow-2xs">
-                                        <i data-lucide="{{ $doc['icon'] }}" class="w-4 h-4"></i>
+                                        <i data-lucide="{{ $doc['icon'] ?? 'file-text' }}" class="w-4 h-4"></i>
                                     </div>
-                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $doc['badge_color'] }}">
-                                        {{ $doc['badge'] }}
+                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $doc['badge_color'] ?? 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
+                                        {{ $doc['badge'] ?? 'SK Resmi' }}
                                     </span>
                                 </div>
                                 <div>
-                                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain leading-snug">{{ $doc['title'] }}</h4>
-                                    <p class="text-[11px] font-mono text-slate-500 mt-0.5">{{ $doc['number'] }}</p>
+                                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain leading-snug">{{ $doc['title'] ?? 'Dokumen Resmi' }}</h4>
+                                    <p class="text-[11px] font-mono text-slate-500 mt-0.5">{{ $doc['number'] ?? '' }}</p>
                                 </div>
                                 <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">
-                                    {{ $doc['description'] }}
+                                    {{ $doc['description'] ?? '' }}
                                 </p>
                             </div>
 
                             <!-- PDF Actions: Buka & Unduh -->
+                            @php
+                                $docFile = $doc['file'] ?? '';
+                            @endphp
                             <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
-                                <a href="{{ route('document.viewer', ['file' => asset('resources/' . $doc['file']), 'fallback' => url('/profil')]) }}"
-                                   onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . $doc['file']) }}', '_blank'); }"
+                                <a href="{{ route('document.viewer', ['file' => asset('resources/' . $docFile), 'fallback' => url('/profil')]) }}"
+                                   onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . $docFile) }}', '_blank'); }"
                                    class="flex-1 py-2 px-3 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition shadow-2xs inline-flex items-center justify-center gap-1.5 cursor-pointer text-center">
                                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                     <span>Buka Dokumen</span>
                                 </a>
-                                <a href="{{ asset('resources/' . $doc['file']) }}" target="_blank" rel="noopener noreferrer" download="{{ $doc['file'] }}"
+                                <a href="{{ asset('resources/' . $docFile) }}" target="_blank" rel="noopener noreferrer" download="{{ $docFile }}"
                                    class="p-2 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 transition shadow-2xs inline-flex items-center justify-center cursor-pointer shrink-0"
                                    title="Unduh Berkas PDF">
                                     <i data-lucide="download" class="w-3.5 h-3.5"></i>

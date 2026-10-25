@@ -149,6 +149,17 @@ class MasjidSetting extends Model
                 'icon' => 'clipboard-check',
                 'badge_color' => 'bg-amber-50 text-amber-700 border-amber-200',
             ],
+            'sk_lengkap' => [
+                'key' => 'sk_lengkap',
+                'title' => 'Dokumen Resmi SK Takmir & Seluruh Lampiran',
+                'number' => 'KEP-48/KPP.1209/2026',
+                'date' => '14 April 2026',
+                'description' => 'Dokumen resmi lengkap Surat Keputusan (SK) Takmir beserta Lampiran I (Susunan Pengurus) dan Lampiran II (Tupoksi Kerja).',
+                'file' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
+                'badge' => 'SK Lengkap',
+                'icon' => 'file-text',
+                'badge_color' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            ],
         ];
     }
 
@@ -168,7 +179,17 @@ class MasjidSetting extends Model
 
         foreach ($stored as $k => $item) {
             if (! isset($defaults[$k]) && is_array($item)) {
-                $defaults[$k] = $item;
+                $defaults[$k] = array_merge([
+                    'key' => $k,
+                    'title' => 'Dokumen Resmi Takmir',
+                    'number' => '-',
+                    'date' => '-',
+                    'description' => '',
+                    'file' => '',
+                    'badge' => 'Dokumen',
+                    'icon' => 'file-text',
+                    'badge_color' => 'bg-slate-50 text-slate-700 border-slate-200',
+                ], $item);
             }
         }
 
