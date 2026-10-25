@@ -278,14 +278,13 @@
         <p class="font-bold uppercase mt-2">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        @if(!empty($qrCodeBase64))
-          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
-            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
-            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
-          </div>
-        @else
-          <div class="h-20"></div>
-        @endif
+        <table class="w-full border-none bg-transparent my-1 border-collapse">
+          <tr>
+            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+              <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
+            </td>
+          </tr>
+        </table>
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>
@@ -304,10 +303,7 @@
   <div class="page-container page-break">
     
     <!-- Kop Lampiran I -->
-    <div class="pb-3 border-b border-slate-400 mb-6 flex items-start justify-between text-[9pt]">
-      <div class="font-semibold text-slate-600">
-        KANTOR PELAYANAN PAJAK MADYA MALANG
-      </div>
+    <div class="pb-3 border-b border-slate-400 mb-6 flex items-start justify-end text-[9pt]">
       <div class="text-right text-slate-800 space-y-0.5">
         <p class="font-bold">LAMPIRAN I KEPUTUSAN KEPALA KPP MADYA MALANG</p>
         <p>NOMOR : {{ $skNumber }}</p>
@@ -428,14 +424,13 @@
         <p class="font-bold uppercase">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        @if(!empty($qrCodeBase64))
-          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
-            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
-            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
-          </div>
-        @else
-          <div class="h-16"></div>
-        @endif
+        <table class="w-full border-none bg-transparent my-1 border-collapse">
+          <tr>
+            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+              <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
+            </td>
+          </tr>
+        </table>
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>
@@ -451,10 +446,7 @@
   <div class="page-container page-break">
     
     <!-- Kop Lampiran II -->
-    <div class="pb-3 border-b border-slate-400 mb-6 flex items-start justify-between text-[9pt]">
-      <div class="font-semibold text-slate-600">
-        KANTOR PELAYANAN PAJAK MADYA MALANG
-      </div>
+    <div class="pb-3 border-b border-slate-400 mb-6 flex items-start justify-end text-[9pt]">
       <div class="text-right text-slate-800 space-y-0.5">
         <p class="font-bold">LAMPIRAN II KEPUTUSAN KEPALA KPP MADYA MALANG</p>
         <p>NOMOR : {{ $skNumber }}</p>
@@ -561,14 +553,13 @@
         <p class="font-bold uppercase">
           KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,
         </p>
-        @if(!empty($qrCodeBase64))
-          <div class="my-1.5 p-1 bg-white border border-slate-300 rounded shadow-2xs inline-block text-center">
-            <img src="{{ $qrCodeBase64 }}" class="w-12 h-12 mx-auto block" alt="QR Code TTE BSrE">
-            <div class="text-[6.5px] font-mono font-bold text-slate-600 mt-0.5 tracking-wider uppercase">TTE BSrE DISAHKAN</div>
-          </div>
-        @else
-          <div class="h-16"></div>
-        @endif
+        <table class="w-full border-none bg-transparent my-1 border-collapse">
+          <tr>
+            <td class="border-none bg-transparent p-0 h-[50px] align-bottom text-left">
+              <span class="text-[8pt] text-slate-400 font-normal block leading-tight">Ditandatangani secara elektronik</span>
+            </td>
+          </tr>
+        </table>
         <p class="font-extrabold text-[10.5pt] underline text-slate-900 uppercase">
           {{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}
         </p>

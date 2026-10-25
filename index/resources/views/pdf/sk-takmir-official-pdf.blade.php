@@ -213,29 +213,26 @@
             color: #475569;
         }
 
-        .sig-qr-box {
-            display: inline-block;
-            margin: 2px 0;
-            padding: 2.5px;
-            background-color: #ffffff;
-            border: 0.5px solid #cbd5e1;
-            border-radius: 4px;
-            text-align: center;
+        .sig-tte-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+            background: transparent;
+            margin: 2px 0 1px 0;
         }
-        .sig-qr-img {
-            width: 46px;
-            height: 46px;
-            display: block;
-            margin: 0 auto;
+        .sig-tte-table td {
+            border: none;
+            background: transparent;
+            padding: 0;
+            height: 50px;
+            vertical-align: bottom;
+            text-align: left;
         }
-        .sig-qr-label {
-            font-size: 5.5px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            color: #475569;
-            text-transform: uppercase;
-            margin-top: 1px;
-            letter-spacing: 0.2px;
+        .sig-tte-note {
+            font-size: 7.5pt;
+            color: #94a3b8;
+            line-height: 1.2;
+            margin-bottom: 2px;
         }
 
         /* Lampiran Header */
@@ -454,14 +451,13 @@
                     <div class="sig-date">Ditetapkan di Malang</div>
                     <div class="sig-date">pada tanggal {{ $skDate }}</div>
                     <div class="sig-official-role">KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,</div>
-                    @if(!empty($qrCodeBase64))
-                        <div class="sig-qr-box">
-                            <img src="{{ $qrCodeBase64 }}" class="sig-qr-img" alt="QR Code TTE BSrE">
-                            <div class="sig-qr-label">TTE BSrE DISAHKAN</div>
-                        </div>
-                    @else
-                        <div style="height: 48px;"></div>
-                    @endif
+                    <table class="sig-tte-table">
+                        <tr>
+                            <td>
+                                <div class="sig-tte-note">Ditandatangani secara elektronik</div>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="sig-name">{{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}</div>
                     <div class="sig-meta">Pembina Takmir Masjid Salahuddin</div>
                 </td>
@@ -475,7 +471,6 @@
     <div class="page-container page-break">
         <!-- Kop Lampiran I -->
         <div class="lampiran-kop">
-            <div class="lampiran-kop-left">Kantor Pelayanan Pajak Madya Malang</div>
             <div class="lampiran-kop-right">
                 <strong>LAMPIRAN I KEPUTUSAN KEPALA KPP MADYA MALANG</strong><br>
                 NOMOR : {{ $skNumber }}<br>
@@ -579,14 +574,13 @@
                 <td></td>
                 <td class="sig-box">
                     <div class="sig-official-role">KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,</div>
-                    @if(!empty($qrCodeBase64))
-                        <div class="sig-qr-box">
-                            <img src="{{ $qrCodeBase64 }}" class="sig-qr-img" alt="QR Code TTE BSrE">
-                            <div class="sig-qr-label">TTE BSrE DISAHKAN</div>
-                        </div>
-                    @else
-                        <div style="height: 48px;"></div>
-                    @endif
+                    <table class="sig-tte-table">
+                        <tr>
+                            <td>
+                                <div class="sig-tte-note">Ditandatangani secara elektronik</div>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="sig-name">{{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}</div>
                     <div class="sig-meta">Pembina Takmir Masjid Salahuddin</div>
                 </td>
@@ -600,7 +594,6 @@
     <div class="page-container">
         <!-- Kop Lampiran II -->
         <div class="lampiran-kop">
-            <div class="lampiran-kop-left">Kantor Pelayanan Pajak Madya Malang</div>
             <div class="lampiran-kop-right">
                 <strong>LAMPIRAN II KEPUTUSAN KEPALA KPP MADYA MALANG</strong><br>
                 NOMOR : {{ $skNumber }}<br>
@@ -697,14 +690,13 @@
                 <td></td>
                 <td class="sig-box">
                     <div class="sig-official-role">KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG,</div>
-                    @if(!empty($qrCodeBase64))
-                        <div class="sig-qr-box">
-                            <img src="{{ $qrCodeBase64 }}" class="sig-qr-img" alt="QR Code TTE BSrE">
-                            <div class="sig-qr-label">TTE BSrE DISAHKAN</div>
-                        </div>
-                    @else
-                        <div style="height: 48px;"></div>
-                    @endif
+                    <table class="sig-tte-table">
+                        <tr>
+                            <td>
+                                <div class="sig-tte-note">Ditandatangani secara elektronik</div>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="sig-name">{{ $struct['pembina']['name'] ?? 'Teguh Iman Wirotomo' }}</div>
                     <div class="sig-meta">Pembina Takmir Masjid Salahuddin</div>
                 </td>
