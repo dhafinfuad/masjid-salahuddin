@@ -434,16 +434,29 @@
                                                         {{ $agenda->description }}
                                                     </p>
                                                 </div>
-                                                @if(!empty($agenda->youtube_url))
-                                                    <div class="pt-2 border-t border-slate-100 flex items-center justify-end mt-auto">
-                                                        <a href="{{ $agenda->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                                            title="Tonton Siaran Agenda di YouTube">
-                                                            <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                                            </svg>
-                                                            <span>YouTube</span>
-                                                        </a>
+                                                @if(!empty($agenda->report_pdf_path) || !empty($agenda->youtube_url))
+                                                    <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end mt-auto gap-1.5">
+                                                        @if(!empty($agenda->report_pdf_path))
+                                                            <button type="button"
+                                                                @click="window.downloadPdfDirect('{{ route('admin.agenda.lpj', $agenda->id) }}', 'LPJ_{{ \Illuminate\Support\Str::slug($agenda->title) }}.pdf')"
+                                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                                style="width: 96px; min-width: 96px; max-width: 96px;"
+                                                                title="Unduh Dokumen LPJ (PDF)">
+                                                                <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
+                                                                <span>Unduh LPJ</span>
+                                                            </button>
+                                                        @endif
+                                                        @if(!empty($agenda->youtube_url))
+                                                            <a href="{{ $agenda->youtube_url }}" target="_blank" rel="noopener noreferrer"
+                                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                                style="width: 96px; min-width: 96px; max-width: 96px;"
+                                                                title="Tonton Siaran Agenda di YouTube">
+                                                                <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                                </svg>
+                                                                <span>YouTube</span>
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 @endif
                                             </div>
@@ -456,8 +469,18 @@
                                          class="bg-white p-8 rounded-xl text-center text-slate-400 border border-dashed border-gov-border"
                                          style="display: none;">
                                         <i data-lucide="calendar-x" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
-                                        <p class="text-xs font-semibold text-gov-textMain">Tidak ada kegiatan yang cocok dengan filter atau kata kunci ini.</p>
-                                        <p class="text-xs text-slate-500 mt-1">Coba hapus kata pencarian atau pilih tab "Semua".</p>
+                                        <template x-if="activeFilter === 'akbar' && agendas.length === 0">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gov-textMain">Belum ada agenda kegiatan akbar di tahun {{ $currentYear ?? date('Y') }}.</p>
+                                                <p class="text-xs text-slate-500 mt-1">Agenda kegiatan akbar akan diperbarui secara otomatis setiap pergantian tahun.</p>
+                                            </div>
+                                        </template>
+                                        <template x-if="!(activeFilter === 'akbar' && agendas.length === 0)">
+                                            <div>
+                                                <p class="text-xs font-semibold text-gov-textMain">Tidak ada kegiatan yang cocok dengan filter atau kata kunci ini.</p>
+                                                <p class="text-xs text-slate-500 mt-1">Coba hapus kata pencarian atau pilih tab "Semua".</p>
+                                            </div>
+                                        </template>
                                     </div>
 
                                     <!-- Footer Action: Selengkapnya -->

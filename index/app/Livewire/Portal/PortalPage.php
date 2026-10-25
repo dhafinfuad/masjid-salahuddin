@@ -222,13 +222,42 @@ class PortalPage extends Component
         Kajian::ensureNotulaColumnExists();
         $today = Carbon::today('Asia/Jakarta');
         $todayDate = $today->format('Y-m-d');
-        $kajians = Kajian::where('date', '>=', $today->copy()->subDays(1))
+        $currentYear = $today->year;
+
+        // 1. Ambil 2 card Kajian mendatang (Pekanan & Tematik)
+        $upcomingKajian = Kajian::kajianUmum()
+            ->whereDate('date', '>=', $today)
             ->orderBy('date', 'asc')
-            ->take(8)
+            ->take(2)
             ->get();
-        if ($kajians->isEmpty()) {
-            $kajians = Kajian::orderBy('date', 'desc')->take(8)->get();
+        if ($upcomingKajian->count() < 2) {
+            $needed = 2 - $upcomingKajian->count();
+            $fallbackKajian = Kajian::kajianUmum()
+                ->whereNotIn('id', $upcomingKajian->pluck('id'))
+                ->orderBy('date', 'desc')
+                ->take($needed)
+                ->get();
+            $upcomingKajian = $upcomingKajian->concat($fallbackKajian);
         }
+
+        // 2. Ambil 2 card Khutbah Jumat mendatang
+        $upcomingJumat = Kajian::jumat()
+            ->whereDate('date', '>=', $today)
+            ->orderBy('date', 'asc')
+            ->take(2)
+            ->get();
+        if ($upcomingJumat->count() < 2) {
+            $needed = 2 - $upcomingJumat->count();
+            $fallbackJumat = Kajian::jumat()
+                ->whereNotIn('id', $upcomingJumat->pluck('id'))
+                ->orderBy('date', 'desc')
+                ->take($needed)
+                ->get();
+            $upcomingJumat = $upcomingJumat->concat($fallbackJumat);
+        }
+
+        // 3. Gabungkan dan urutkan secara kronologis berdasarkan tanggal
+        $kajians = $upcomingKajian->concat($upcomingJumat)->sortBy('date')->values();
 
         // Cari ID kajian terdekat berikutnya (dimulai dari hari ini ke depan)
         $nextKajian = $kajians->first(function ($k) use ($todayDate) {
@@ -254,8 +283,10 @@ class PortalPage extends Component
                 ->first();
         }
 
-        // Agenda Kegiatan Besar Masjid (Riil)
-        $agendas = Agenda::orderBy('event_date', 'asc')->get();
+        // Agenda Kegiatan Besar Masjid (Dinamis sesuai tahun berjalan)
+        $agendas = Agenda::whereYear('event_date', $currentYear)
+            ->orderBy('event_date', 'asc')
+            ->get();
 
         // Target Petugas Sholat: Adaptif terhadap jam dan hari
         $now = Carbon::now('Asia/Jakarta');
@@ -364,6 +395,7 @@ class PortalPage extends Component
             'kajians' => $kajians,
             'nextKajianId' => $nextKajianId,
             'todayDate' => $todayDate,
+            'currentYear' => $currentYear,
             'currentFridayKajian' => $currentFridayKajian,
             'agendas' => $agendas,
             'cities' => app(PrayerTimeService::class)->getCities(),
