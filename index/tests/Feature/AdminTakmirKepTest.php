@@ -113,7 +113,8 @@ class AdminTakmirKepTest extends TestCase
             ->call('saveTemplateKep')
             ->assertHasNoErrors()
             ->assertSet('showTemplateKepModal', false)
-            ->assertDispatched('close-template-kep-modal');
+            ->assertDispatched('close-template-kep-modal')
+            ->assertDispatched('download-kep-pdf');
 
         $settings = MasjidSetting::getActive();
         $docs = $settings->getTakmirDocuments();

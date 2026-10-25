@@ -166,6 +166,12 @@
                         if (link.parentNode) link.parentNode.removeChild(link);
                     }, 1500);
                 };
+
+                window.addEventListener('download-kep-pdf', (e) => {
+                    if (e.detail && e.detail.url) {
+                        window.downloadPdfDirect(e.detail.url, e.detail.filename);
+                    }
+                });
             })();
         </script>
 

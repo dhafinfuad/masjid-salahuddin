@@ -4839,7 +4839,7 @@ class AdminDashboard extends Component
         $this->dispatch('close-template-kep-modal');
     }
 
-    public function saveTemplateKep(): void
+    public function saveTemplateKep(bool $andDownload = true): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Anda tidak memiliki izin untuk memperbarui kepengurusan.');
@@ -4855,7 +4855,6 @@ class AdminDashboard extends Component
             'wakilKetuaName' => 'required|string|max:255',
             'sekretarisNames' => 'required|string',
             'bendaharaNames' => 'required|string',
-            'templateKepPdfFile' => 'nullable|file|mimes:pdf|max:20480',
         ], [
             'docSkNumber.required' => 'Nomor Keputusan (SK) wajib diisi.',
             'docSkDate.required' => 'Tanggal Penetapan SK wajib diisi.',
@@ -4865,8 +4864,6 @@ class AdminDashboard extends Component
             'wakilKetuaName.required' => 'Nama Wakil Ketua Takmir wajib diisi.',
             'sekretarisNames.required' => 'Daftar nama Sekretaris wajib diisi.',
             'bendaharaNames.required' => 'Daftar nama Bendahara wajib diisi.',
-            'templateKepPdfFile.mimes' => 'Berkas pindaian KEP harus berupa dokumen PDF (.pdf).',
-            'templateKepPdfFile.max' => 'Ukuran berkas PDF maksimal 20 MB.',
         ]);
 
         $settings = MasjidSetting::getActive();
@@ -4878,6 +4875,11 @@ class AdminDashboard extends Component
         $docs['sk']['date'] = trim($this->docSkDate);
         $docs['sk']['title'] = trim($this->docSkTitle) ?: 'Surat Keputusan Kepala KPP Madya Malang';
         $docs['sk']['description'] = trim($this->docSkDescription) ?: ('Keputusan tentang Perubahan Susunan Pengurus Takmir Masjid Sholahuddin KPP Madya Malang Periode ' . trim($this->docSkPeriode));
+
+        if (isset($docs['sk_lengkap']) && is_array($docs['sk_lengkap'])) {
+            $docs['sk_lengkap']['number'] = trim($this->docSkNumber);
+            $docs['sk_lengkap']['date'] = trim($this->docSkDate);
+        }
 
         // 2. Simpan Struktur Personalia Pengurus & Tupoksi
         $struct['pembina']['role'] = $this->pembinaRole ?: 'Pembina';
@@ -4922,22 +4924,6 @@ class AdminDashboard extends Component
         $struct['bidang'][3]['anggota'] = $this->parseLines($this->bidang3Anggota);
         $struct['bidang'][3]['tupoksi'] = $this->parseLines($this->bidang3Tupoksi);
 
-        // 3. Jika ada Berkas PDF KEP Final yang diunggah
-        if ($this->templateKepPdfFile) {
-            $destinationDir = public_path('resources');
-            if (! is_dir($destinationDir)) {
-                mkdir($destinationDir, 0755, true);
-            }
-            $cleanSkName = preg_replace('/[^A-Za-z0-9_-]/', '_', $this->docSkNumber);
-            $fileName = 'Surat_Keputusan_Takmir_' . $cleanSkName . '.pdf';
-            $targetPath = $destinationDir . DIRECTORY_SEPARATOR . $fileName;
-            copy($this->templateKepPdfFile->getRealPath(), $targetPath);
-
-            $docs['sk']['file'] = $fileName;
-            $docs['sk']['updated_at'] = Carbon::now('Asia/Jakarta')->format('d M Y H:i');
-            $docs['sk']['file_size'] = round(filesize($targetPath) / 1024, 1) . ' KB';
-        }
-
         $settings->takmir_documents = $docs;
         $settings->takmir_structure = $struct;
         $settings->save();
@@ -4945,7 +4931,16 @@ class AdminDashboard extends Component
         $this->templateKepPdfFile = null;
         $this->showTemplateKepModal = false;
         $this->dispatch('close-template-kep-modal');
-        $this->notify('Seluruh data kepengurusan Takmir berhasil diperbarui dari Surat KEP.');
+
+        if ($andDownload) {
+            $slug = Str::slug($this->docSkPeriode ?: '2026-2029');
+            $downloadUrl = route('admin.kepengurusan.download-sk-pdf');
+            $filename = 'Dokumen_Resmi_SK_Takmir_' . $slug . '.pdf';
+            $this->dispatch('download-kep-pdf', url: $downloadUrl, filename: $filename);
+            $this->notify('Data kepengurusan berhasil disimpan & berkas PDF sedang diunduh.');
+        } else {
+            $this->notify('Seluruh data kepengurusan Takmir berhasil diperbarui dari Surat KEP.');
+        }
     }
 
     protected function parseLines(string $text): array

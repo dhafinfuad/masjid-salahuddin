@@ -1921,6 +1921,7 @@
     <!-- ======================================================== -->
     <div x-show="showTemplateKepModal" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el)) showTemplateKepModal = false"
+        @download-kep-pdf.window="window.downloadPdfDirect($event.detail.url, $event.detail.filename)"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
         style="display: none;" @keydown.escape.window="showTemplateKepModal = false">
         <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-gov-border flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
@@ -1988,12 +1989,6 @@
                         :class="kepActiveTab === 'tupoksi' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
                         <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
                         <span>4. Rincian Tupoksi</span>
-                    </button>
-                    <button type="button" @click="kepActiveTab = 'upload'"
-                        class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
-                        :class="kepActiveTab === 'upload' ? 'border-gov-navy text-gov-navy font-bold' : 'border-transparent text-slate-500 hover:text-gov-navy hover:bg-slate-50'">
-                        <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
-                        <span>5. Berkas PDF Final</span>
                     </button>
                 </nav>
             </div>
@@ -2202,104 +2197,28 @@
                     </div>
                 </div>
 
-                <!-- TAB 5: UNGGAH PDF KEP FINAL -->
-                <div x-show="kepActiveTab === 'upload'" x-cloak class="space-y-4">
-                    <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-900 text-xs flex items-start gap-2.5">
-                        <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-                        <div class="space-y-1">
-                            <p class="font-semibold text-blue-900">Unggah Berkas Pindaian PDF KEP yang Telah Bertanda Tangan</p>
-                            <p class="text-blue-700 text-[11px] leading-relaxed">
-                                Setelah draf dicetak dan ditandatangani secara resmi (basah maupun tersertifikasi), Anda dapat mengunggah hasil pindaian (.pdf) di sini. Sistem akan otomatis memperbarui file SK utama pada portal publik.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Pilih Berkas PDF KEP Final <span class="text-slate-400 font-normal">(Maksimal 20 MB, Opsional)</span></label>
-
-                        <div x-data="{ isDragging: false }"
-                             @dragenter.prevent="isDragging = true"
-                             @dragover.prevent="isDragging = true"
-                             @dragleave.prevent="isDragging = false"
-                             @drop="isDragging = false"
-                             :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
-                             class="relative border-2 border-dashed rounded-xl p-5 text-center transition cursor-pointer group">
-                            <input wire:model="templateKepPdfFile"
-                                   type="file"
-                                   accept="application/pdf"
-                                   @dragenter="isDragging = true"
-                                   @dragover.prevent="isDragging = true"
-                                   @dragleave="isDragging = false"
-                                   @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
-                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-
-                            <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-gov-navy flex items-center justify-center shadow-2xs">
-                                    <i data-lucide="upload" class="w-5 h-5"></i>
-                                </div>
-                                <p class="text-xs text-slate-700 font-semibold mt-1">
-                                    <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih file PDF</span> atau tarik berkas ke sini
-                                </p>
-                                <p class="text-[11px] text-slate-400">
-                                    Dokumen resmi format PDF (.pdf) hingga 20 MB
-                                </p>
-                            </div>
-                        </div>
-
-                        @error('templateKepPdfFile')
-                            <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
-                        @enderror
-
-                        <div wire:loading.inline-flex wire:target="templateKepPdfFile" style="display: none;"
-                            class="inline-flex flex-row items-center gap-2 text-xs font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0 whitespace-nowrap mt-2">
-                            <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-amber-600 inline-block" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap leading-none">Memproses unggahan berkas...</span>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Modal Footer -->
-            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                    <button type="button"
-                        @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Draf_Dokumen_Resmi_SK_Takmir_{{ $docSkPeriode }}.pdf')"
-                        class="h-9 px-3.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+            <!-- Modal Footer: 2 Buttons Clean Layout -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5">
+                <button type="button" @click="showTemplateKepModal = false"
+                    class="w-full sm:w-auto h-10 sm:h-9 px-4 rounded-xl sm:rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition cursor-pointer text-center inline-flex items-center justify-center">
+                    Batal
+                </button>
+                <button type="button" wire:click="saveTemplateKep(true)" wire:loading.attr="disabled" wire:target="saveTemplateKep"
+                    class="w-full sm:w-auto h-10 sm:h-9 px-5 rounded-xl sm:rounded-lg bg-gov-navy hover:bg-gov-navyHover active:bg-gov-navy text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                    <div wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none;" class="inline-flex items-center justify-center gap-2 shrink-0">
+                        <svg class="w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap">Menyimpan & Menyiapkan PDF...</span>
+                    </div>
+                    <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
                         <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
-                        <span>Unduh Draf PDF Resmi</span>
-                    </button>
-                    <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
-                       class="h-9 px-3 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
-                       title="Pratinjau Dokumen di Tab Baru">
-                        <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
-                        <span>Pratinjau</span>
-                    </a>
-                </div>
-
-                <div class="flex items-center justify-end gap-2">
-                    <button type="button" @click="showTemplateKepModal = false"
-                        class="h-9 px-4 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold text-xs transition cursor-pointer">
-                        Batal
-                    </button>
-                    <button type="button" wire:click="saveTemplateKep" wire:loading.attr="disabled"
-                        class="h-9 px-5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <div wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none;" class="inline-flex flex-row items-center gap-2 shrink-0 whitespace-nowrap">
-                            <svg class="w-3.5 h-3.5 animate-spin shrink-0 inline-block text-white" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap leading-none">Menyimpan...</span>
-                        </div>
-                        <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center gap-1.5">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
-                            <span>Simpan & Terapkan ke Database</span>
-                        </span>
-                    </button>
-                </div>
+                        <span>Simpan & Unduh PDF</span>
+                    </span>
+                </button>
             </div>
 
         </div>
