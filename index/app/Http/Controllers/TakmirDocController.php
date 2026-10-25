@@ -66,6 +66,23 @@ class TakmirDocController extends Controller
      */
     public function downloadOfficialSkPdf(Request $request): StreamedResponse
     {
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+
+        // Jika pengurus telah mengunggah berkas PDF resmi lengkap manual, utamakan berkas tersebut
+        if (!empty($docs['sk_lengkap']['file'])) {
+            $filePath = public_path('resources/' . $docs['sk_lengkap']['file']);
+            if (file_exists($filePath)) {
+                $cleanFilename = $docs['sk_lengkap']['file'];
+                return response()->streamDownload(function () use ($filePath) {
+                    readfile($filePath);
+                }, $cleanFilename, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
+                ]);
+            }
+        }
+
         $data = $this->prepareOfficialSkData($request);
         $cleanFilename = 'Draf_Dokumen_Resmi_SK_Takmir_' . Str::slug($data['periode']) . '.pdf';
 

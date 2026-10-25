@@ -501,6 +501,26 @@
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                             <span>Template Surat KEP Takmir</span>
                         </button>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button type="button" @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Dokumen_Resmi_SK_Takmir_{{ \Illuminate\Support\Str::slug($docSkPeriode ?? '2026-2029') }}.pdf')"
+                                class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                                <svg class="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                <span class="text-xs font-semibold text-slate-800">Unduh PDF</span>
+                            </button>
+
+                            <button type="button" @click="closeMobileActionSheet(); $wire.openUploadDoc('sk_lengkap')"
+                                class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                                <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                                <span class="text-xs font-semibold text-slate-800">Unggah PDF</span>
+                            </button>
+                        </div>
+                    @else
+                        <button type="button" @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Dokumen_Resmi_SK_Takmir_{{ \Illuminate\Support\Str::slug($docSkPeriode ?? '2026-2029') }}.pdf')"
+                            class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                            <svg class="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <span class="text-xs font-semibold text-slate-800">Unduh Dokumen PDF Resmi</span>
+                        </button>
                     @endif
                 </div>
             </div>

@@ -98,19 +98,21 @@
                         </button>
                     @endif
 
-                    <a href="{{ url('/profil') }}" target="_blank"
-                        class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-white/70"></i>
-                        <span>Lihat Portal</span>
-                    </a>
+                    <button type="button"
+                        @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Dokumen_Resmi_SK_Takmir_{{ \Illuminate\Support\Str::slug($docSkPeriode ?? '2026-2029') }}.pdf')"
+                        class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                        title="Unduh 1 Berkas Dokumen Resmi PDF Lengkap (KEP + Lampiran I + Lampiran II)">
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-slate-200"></i>
+                        <span>Unduh PDF</span>
+                    </button>
 
                     @if(Auth::user()->canManage())
                         <button type="button" 
-                            wire:click="resetTakmirToDefault"
-                            wire:confirm="Kembalikan seluruh data dokumen SK, susunan pengurus, dan tupoksi ke standar SK KEP-48 awal?"
-                            class="h-9 px-3.5 rounded-lg border border-rose-300/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-200 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-300"></i>
-                            <span>Reset Default</span>
+                            wire:click="openUploadDoc('sk_lengkap')"
+                            class="h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Unggah Dokumen Resmi SK Takmir & Seluruh Lampiran (PDF)">
+                            <i data-lucide="upload" class="w-3.5 h-3.5 text-amber-300"></i>
+                            <span>Unggah PDF</span>
                         </button>
                     @endif
                 </div>

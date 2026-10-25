@@ -1786,7 +1786,7 @@
                         <span class="font-bold text-gov-navy text-xs">{{ $uploadDocTitle ?: 'Surat Keputusan / Lampiran' }}</span>
                     </div>
                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 text-gov-navy uppercase tracking-wider border border-gov-navy/20">
-                        Target: {{ strtoupper($uploadDocTarget) }}
+                        Target: {{ strtoupper(str_replace('_', ' ', $uploadDocTarget)) }}
                     </span>
                 </div>
 

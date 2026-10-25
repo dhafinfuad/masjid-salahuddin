@@ -144,4 +144,26 @@ class AdminTakmirKepTest extends TestCase
         $docs = $settings->getTakmirDocuments();
         $this->assertNotEquals('KEP-999/KPP.1209/2099', $docs['sk']['number'] ?? '');
     }
+
+    public function test_can_open_upload_doc_modal_for_sk_lengkap(): void
+    {
+        $this->actingAs($this->master);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openUploadDoc', 'sk_lengkap')
+            ->assertSet('uploadDocTarget', 'sk_lengkap')
+            ->assertSet('uploadDocTitle', 'Dokumen Resmi SK Takmir & Seluruh Lampiran')
+            ->assertSet('showUploadDocModal', true)
+            ->assertDispatched('open-upload-doc-modal');
+    }
+
+    public function test_can_download_official_sk_pdf_route(): void
+    {
+        $this->actingAs($this->master);
+
+        $response = $this->get(route('admin.kepengurusan.download-sk-pdf'));
+        $response->assertStatus(200);
+        $this->assertStringContainsString('application/pdf', (string)$response->headers->get('Content-Type'));
+        $this->assertStringContainsString('attachment', (string)$response->headers->get('Content-Disposition'));
+    }
 }

@@ -4567,14 +4567,22 @@ class AdminDashboard extends Component
         }
     }
 
-    public function openUploadDoc(string $target): void
+    public function openUploadDoc(string $target = 'sk_lengkap'): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Hanya pengurus yang berwenang mengunggah dokumen.');
             return;
         }
 
-        $this->uploadDocTarget = in_array($target, ['sk', 'lampiran1', 'lampiran2']) ? $target : 'sk';
+        $this->uploadDocTarget = in_array($target, ['sk', 'lampiran1', 'lampiran2', 'sk_lengkap']) ? $target : 'sk_lengkap';
+        if ($this->uploadDocTarget === 'sk_lengkap') {
+            $this->uploadDocTitle = 'Dokumen Resmi SK Takmir & Seluruh Lampiran';
+        } else {
+            $settings = MasjidSetting::getActive();
+            $docs = $settings->getTakmirDocuments();
+            $this->uploadDocTitle = $docs[$this->uploadDocTarget]['title'] ?? 'Dokumen Resmi Takmir';
+        }
+
         $this->uploadDocFile = null;
         $this->showUploadDocModal = true;
         $this->dispatch('open-upload-doc-modal');
@@ -4602,6 +4610,7 @@ class AdminDashboard extends Component
             'sk' => 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf',
             'lampiran1' => 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf',
             'lampiran2' => 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf',
+            'sk_lengkap' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
         ];
 
         $targetFileName = $fileNames[$this->uploadDocTarget] ?? ($this->uploadDocTarget . '.pdf');
@@ -4616,6 +4625,9 @@ class AdminDashboard extends Component
         $docs[$this->uploadDocTarget]['file'] = $targetFileName;
         $docs[$this->uploadDocTarget]['updated_at'] = Carbon::now('Asia/Jakarta')->format('d M Y H:i');
         $docs[$this->uploadDocTarget]['file_size'] = round(filesize($targetPath) / 1024, 1) . ' KB';
+        if ($this->uploadDocTarget === 'sk_lengkap') {
+            $docs['sk_lengkap']['title'] = 'Dokumen Resmi SK Takmir Lengkap Beserta Lampiran';
+        }
 
         $settings->takmir_documents = $docs;
         $settings->save();
