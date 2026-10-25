@@ -69,8 +69,11 @@ class TakmirDocController extends Controller
         $settings = MasjidSetting::getActive();
         $docs = $settings->getTakmirDocuments();
 
+        $isFreshRequested = $request->boolean('fresh') || $request->query('source') === 'template';
+
         // Jika pengurus telah mengunggah berkas PDF resmi lengkap manual, utamakan berkas tersebut
-        if (!empty($docs['sk_lengkap']['file'])) {
+        // KECUALI jika diminta unduhan dinamis segar dari hasil formulir template SK (fresh=1)
+        if (! $isFreshRequested && !empty($docs['sk_lengkap']['file'])) {
             $filePath = public_path('resources/' . $docs['sk_lengkap']['file']);
             if (file_exists($filePath)) {
                 $cleanFilename = $docs['sk_lengkap']['file'];
@@ -84,7 +87,7 @@ class TakmirDocController extends Controller
         }
 
         $data = $this->prepareOfficialSkData($request);
-        $cleanFilename = 'Draf_Dokumen_Resmi_SK_Takmir_' . Str::slug($data['periode']) . '.pdf';
+        $cleanFilename = 'Dokumen_Resmi_SK_Takmir_' . Str::slug($data['periode']) . '.pdf';
 
         $pdf = Pdf::loadView('pdf.sk-takmir-official-pdf', $data)
             ->setPaper('a4', 'portrait')

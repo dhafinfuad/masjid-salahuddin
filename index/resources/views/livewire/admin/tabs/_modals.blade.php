@@ -1943,24 +1943,11 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <button type="button"
-                        @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Draf_Dokumen_Resmi_SK_Takmir_{{ $docSkPeriode }}.pdf')"
-                        class="h-8 px-3 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
-                        title="Unduh Draf PDF Resmi Standar Naskah Dinas Langsung">
-                        <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span class="hidden sm:inline">Unduh Draf PDF</span>
-                    </button>
-                    <a href="{{ route('admin.kepengurusan.print-sk') }}" target="_blank"
-                       class="h-8 px-2.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 text-xs shadow-2xs transition inline-flex items-center justify-center cursor-pointer"
-                       title="Pratinjau di Tab Baru">
-                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                    </a>
-                    <button type="button" @click="showTemplateKepModal = false"
-                        class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-200/60 transition cursor-pointer">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
+                <button type="button" @click="showTemplateKepModal = false"
+                    class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-200/60 transition cursor-pointer"
+                    title="Tutup Modal">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
 
             <!-- Modal Nav Tabs -->

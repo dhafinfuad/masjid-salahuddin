@@ -168,6 +168,42 @@ class AdminTakmirKepTest extends TestCase
         $this->assertStringContainsString('attachment', (string)$response->headers->get('Content-Disposition'));
     }
 
+    public function test_can_download_fresh_dynamic_sk_pdf_even_if_uploaded_file_exists(): void
+    {
+        $this->actingAs($this->master);
+
+        // Pasang dummy file sk_lengkap di settings
+        $settings = MasjidSetting::getActive();
+        $docs = $settings->getTakmirDocuments();
+        $docs['sk_lengkap']['file'] = 'uploaded_scan.pdf';
+        $settings->takmir_documents = $docs;
+        $settings->save();
+
+        // Buat file fisik sementara
+        $dummyPath = public_path('resources/uploaded_scan.pdf');
+        if (!is_dir(dirname($dummyPath))) {
+            mkdir(dirname($dummyPath), 0755, true);
+        }
+        file_put_contents($dummyPath, '%PDF-1.4 dummy static file');
+
+        try {
+            // Panggilan tanpa fresh=1 mengunduh file pindaian lama
+            $responseStatic = $this->get(route('admin.kepengurusan.download-sk-pdf'));
+            $responseStatic->assertStatus(200);
+            $this->assertStringContainsString('uploaded_scan.pdf', (string)$responseStatic->headers->get('Content-Disposition'));
+
+            // Panggilan dengan fresh=1 men-generate dokumen dinamis baru (Dokumen_Resmi_SK_Takmir_...)
+            $responseFresh = $this->get(route('admin.kepengurusan.download-sk-pdf', ['fresh' => 1]));
+            $responseFresh->assertStatus(200);
+            $this->assertStringContainsString('Dokumen_Resmi_SK_Takmir_', (string)$responseFresh->headers->get('Content-Disposition'));
+            $this->assertStringContainsString('application/pdf', (string)$responseFresh->headers->get('Content-Type'));
+        } finally {
+            if (file_exists($dummyPath)) {
+                @unlink($dummyPath);
+            }
+        }
+    }
+
     public function test_can_upload_doc_file_and_updates_database(): void
     {
         $this->actingAs($this->master);

@@ -4934,7 +4934,7 @@ class AdminDashboard extends Component
 
         if ($andDownload) {
             $slug = Str::slug($this->docSkPeriode ?: '2026-2029');
-            $downloadUrl = route('admin.kepengurusan.download-sk-pdf');
+            $downloadUrl = route('admin.kepengurusan.download-sk-pdf', ['fresh' => 1, 'periode' => $this->docSkPeriode ?: '2026-2029']);
             $filename = 'Dokumen_Resmi_SK_Takmir_' . $slug . '.pdf';
             $this->dispatch('download-kep-pdf', url: $downloadUrl, filename: $filename);
             $this->notify('Data kepengurusan berhasil disimpan & berkas PDF sedang diunduh.');
