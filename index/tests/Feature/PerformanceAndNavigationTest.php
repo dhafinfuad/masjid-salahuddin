@@ -158,19 +158,19 @@ class PerformanceAndNavigationTest extends TestCase
             // 1. Search in Pekanan only
             ->set('pekananSearch', 'Tafsir')
             ->assertSee('Tafsir Ibnu Katsir')
-            ->assertSee('Menjaga Keikhlasan') // Jumat is NOT filtered by pekananSearch!
+            ->assertSee('Dr. H. Mulyadi, M.Ag') // Jumat is NOT filtered by pekananSearch!
             ->assertSee('Peringatan Nuzulul Quran') // Agenda is NOT filtered by pekananSearch!
             // 2. Search in Jumat only
             ->set('pekananSearch', '')
-            ->set('jumatSearch', 'Keikhlasan')
+            ->set('jumatSearch', 'Mulyadi')
             ->assertSee('Tafsir Ibnu Katsir') // Pekanan is NOT filtered by jumatSearch!
-            ->assertSee('Menjaga Keikhlasan')
+            ->assertSee('Dr. H. Mulyadi, M.Ag')
             ->assertSee('Peringatan Nuzulul Quran') // Agenda is NOT filtered by jumatSearch!
             // 3. Search in Agenda only
             ->set('jumatSearch', '')
             ->set('agendaSearch', 'Nuzulul')
             ->assertSee('Tafsir Ibnu Katsir') // Pekanan is NOT filtered by agendaSearch!
-            ->assertSee('Menjaga Keikhlasan') // Jumat is NOT filtered by agendaSearch!
+            ->assertSee('Dr. H. Mulyadi, M.Ag') // Jumat is NOT filtered by agendaSearch!
             ->assertSee('Peringatan Nuzulul Quran')
             // 4. Reset filters
             ->call('resetKajianFilters')
@@ -352,8 +352,8 @@ class PerformanceAndNavigationTest extends TestCase
         $petugasResponse = $this->get('/petugas-sholat');
         $petugasResponse->assertOk();
         $petugasResponse->assertSee('Jadwal Petugas Shalat Bulanan');
-        $petugasResponse->assertSee('Cetak PDF');
-        $petugasResponse->assertSee(route('portal.petugas-sholat.print'));
+        $petugasResponse->assertSee('Unduh PDF');
+        $petugasResponse->assertSee(route('portal.petugas-sholat.download-pdf'));
 
         // 4. Cetak PDF Official View
         $cetakResponse = $this->get('/petugas-sholat/cetak?month=9&year=2026');
