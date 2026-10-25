@@ -1201,12 +1201,6 @@
                                             <x-sort-icon field="budget" table="agenda" />
                                         </div>
                                     </th>
-                                    <th wire:click="sortBy('committee_members', 'agenda')" class="p-3.5 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors group select-none">
-                                        <div class="flex items-center gap-1">
-                                            <span>Panitia</span>
-                                            <x-sort-icon field="committee_members" table="agenda" />
-                                        </div>
-                                    </th>
                                     <th wire:click="sortBy('status', 'agenda')" class="p-3.5 w-32 whitespace-nowrap cursor-pointer hover:bg-slate-100 transition-colors group select-none">
                                         <div class="flex items-center gap-1">
                                             <span>Status</span>
@@ -1249,13 +1243,6 @@
                                         </td>
                                         <td class="p-3.5 font-bold text-slate-800 whitespace-nowrap">
                                             {{ $agenda->formatted_budget }}
-                                        </td>
-                                        <td class="p-3.5 whitespace-nowrap">
-                                            <span
-                                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                                                <i data-lucide="users" class="w-3 h-3 text-slate-500"></i>
-                                                <span>{{ $agenda->committee_count }} Orang</span>
-                                            </span>
                                         </td>
                                         <td class="p-3.5 whitespace-nowrap">
                                             @if(Auth::user()->canManage())
@@ -1303,15 +1290,21 @@
                                                     @keydown.escape.window="openMenu = false"
                                                     class="absolute right-3 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
                                                     
-                                                    <div class="py-1">
-                                                        <!-- Cetak Berkas LPJ -->
-                                                        <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" target="_blank"
-                                                            @click="openMenu = false"
-                                                            class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
-                                                            <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                                                            <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Cetak Berkas LPJ</div>
-                                                        </a>
-                                                    </div>
+                                                    @if(!empty($agenda->report_pdf_path))
+                                                        <div class="py-1">
+                                                            <!-- Unduh LPJ -->
+                                                            <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" download
+                                                                @click="openMenu = false"
+                                                                class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
+                                                                <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                                    <polyline points="7 10 12 15 17 10"/>
+                                                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                                                </svg>
+                                                                <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Unduh LPJ</div>
+                                                            </a>
+                                                        </div>
+                                                    @endif
 
                                                     @if(Auth::user()->canManage())
                                                         <div class="py-1">
@@ -1358,7 +1351,7 @@
                                 @empty
                                     <x-empty-state 
                                         :isTable="true" 
-                                        colspan="7" 
+                                        colspan="6" 
                                         icon="calendar" 
                                         title="Tidak ada data agenda kegiatan" 
                                         subtitle="Belum ada data agenda kegiatan yang sesuai dengan kriteria atau filter pencarian ini." 
@@ -1420,15 +1413,21 @@
                                                 @keydown.escape.window="openMenu = false"
                                                 class="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
                                                 
-                                                <div class="py-1">
-                                                    <!-- Cetak Berkas LPJ -->
-                                                    <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" target="_blank"
-                                                        @click="openMenu = false"
-                                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
-                                                        <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Cetak Berkas LPJ</div>
-                                                    </a>
-                                                </div>
+                                                @if(!empty($agenda->report_pdf_path))
+                                                    <div class="py-1">
+                                                        <!-- Unduh LPJ -->
+                                                        <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" download
+                                                            @click="openMenu = false"
+                                                            class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
+                                                            <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                                <polyline points="7 10 12 15 17 10"/>
+                                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                                            </svg>
+                                                            <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Unduh LPJ</div>
+                                                        </a>
+                                                    </div>
+                                                @endif
 
                                                 @if(Auth::user()->canManage())
                                                     <div class="py-1">
@@ -1472,14 +1471,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                                <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
                                     <div>
                                         <span class="text-slate-400 text-[10px] uppercase font-bold block">Anggaran</span>
                                         <span class="font-bold text-slate-800">{{ $agenda->formatted_budget }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-400 text-[10px] uppercase font-bold block">Panitia</span>
-                                        <span class="font-medium text-slate-700">{{ $agenda->committee_count }} Orang</span>
                                     </div>
                                 </div>
                             </div>

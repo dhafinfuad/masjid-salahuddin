@@ -365,23 +365,12 @@
                 @endphp
                 <div class="border border-gov-border rounded-xl p-4 sm:p-5 bg-white hover:border-slate-300 transition flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
                     <div class="space-y-2 max-w-2xl">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 sm:w-10 h-9 sm:h-10 rounded-xl bg-slate-50 border border-gov-border flex items-center justify-center text-gov-navy shrink-0 shadow-2xs">
-                                <i data-lucide="{{ $sk['icon'] ?? 'file-text' }}" class="w-4 sm:w-5 h-4 sm:h-5"></i>
-                            </div>
-                            <span class="inline-flex items-center h-[20px] sm:h-[22px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $sk['badge_color'] ?? 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
-                                {{ $sk['badge'] ?? 'SK Resmi' }}
-                            </span>
-                            @if(!empty($sk['date']))
-                                <span class="text-xs text-slate-400">• {{ $sk['date'] }}</span>
-                            @endif
-                        </div>
                         <div>
                             <h4 class="text-xs sm:text-sm font-bold text-gov-textMain leading-snug">{{ $sk['title'] ?? 'Surat Keputusan Kepala KPP Madya Malang' }}</h4>
                             <p class="text-[11px] font-mono text-slate-500 mt-0.5">{{ $sk['number'] ?? 'KEP-48/KPP.1209/2026' }}</p>
                         </div>
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            {{ $sk['description'] ?? 'Keputusan tentang Perubahan Susunan Pengurus Takmir Masjid Sholahuddin KPP Madya Malang Periode 2026-2029.' }}
+                            {{ $sk['description'] ?? 'Keputusan tentang Perubahan Susunan Pengurus Takmir Masjid Salahuddin KPP Madya Malang.' }}
                         </p>
                     </div>
 
@@ -409,11 +398,8 @@
                     </div>
 
                     <!-- Pembina Card -->
-                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="border border-gov-border rounded-xl p-4 sm:p-5 bg-white hover:border-slate-300 transition flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-amber-100/70 border border-amber-300 flex items-center justify-center text-gov-navy font-bold text-xs shrink-0">
-                                SK
-                            </div>
                             <div>
                                 <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-300 leading-none">
                                     {{ $pengurus['pembina']['role'] }}
@@ -421,9 +407,6 @@
                                 <h4 class="text-sm font-bold text-gov-textMain mt-1">{{ $pengurus['pembina']['name'] }}</h4>
                                 <p class="text-xs text-slate-500">{{ $pengurus['pembina']['title'] }}</p>
                             </div>
-                        </div>
-                        <div class="text-xs text-slate-500 max-w-md sm:text-right">
-                            Memberikan arahan umum, pembinaan keagamaan, serta pengawasan keselarasan program masjid.
                         </div>
                     </div>
 

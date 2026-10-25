@@ -7245,8 +7245,8 @@ class AdminDashboard extends Component
             'availablePeriods' => $availablePeriods,
             'distinctParticipantNames' => (function() {
                 try {
-                    if (\Illuminate\Support\Facades\Schema::hasTable('program_participants')) {
-                        return ProgramParticipant::distinct()->orderBy('name')->pluck('name')->filter()->values();
+                    if (\Illuminate\Support\Facades\Schema::hasTable('employees')) {
+                        return Employee::where('status', 'AKTIF')->orderBy('name')->pluck('name')->filter()->values();
                     }
                 } catch (\Throwable $e) {
                     report($e);

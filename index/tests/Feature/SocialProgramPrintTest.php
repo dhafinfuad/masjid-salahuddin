@@ -469,6 +469,52 @@ class SocialProgramPrintTest extends TestCase
         $this->assertStringContainsString('BLANGKO RESMI KEMENKEU', $viewHtml);
         $this->assertStringContainsString('Ichtiar Rachmatullah', $viewHtml);
     }
+
+    public function test_distinct_participant_names_only_shows_active_employees_from_employees_table(): void
+    {
+        $this->actingAs($this->admin);
+
+        $activeEmp = Employee::create([
+            'name' => 'Budi Santoso Aktif',
+            'status' => 'AKTIF',
+            'nip_pendek' => '123456789',
+            'nip_panjang' => '199001012015011001',
+            'jabatan' => 'Pelaksana',
+            'unit_kerja' => 'KPP Madya Malang',
+        ]);
+
+        $inactiveEmp = Employee::create([
+            'name' => 'Alifiah Setianingroem Inaktif',
+            'status' => 'NONAKTIF',
+            'nip_pendek' => '987654321',
+            'nip_panjang' => '199201012017012002',
+            'jabatan' => 'Pelaksana',
+            'unit_kerja' => 'KPP Madya Malang',
+        ]);
+
+        ProgramParticipant::create([
+            'name' => 'Alifiah Setianingroem Inaktif',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 50000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        ProgramParticipant::create([
+            'name' => 'Zulfa OrangLuar BukanPegawai',
+            'program_name' => $this->yatimProgram->name,
+            'social_program_id' => $this->yatimProgram->id,
+            'monthly_amount' => 100000,
+            'period' => 'Periode 1/2026',
+        ]);
+
+        $test = \Livewire\Livewire::test(\App\Livewire\Admin\AdminDashboard::class);
+        $names = $test->viewData('distinctParticipantNames');
+
+        $this->assertTrue($names->contains('Budi Santoso Aktif'));
+        $this->assertFalse($names->contains('Alifiah Setianingroem Inaktif'));
+        $this->assertFalse($names->contains('Zulfa OrangLuar BukanPegawai'));
+    }
 }
 
 

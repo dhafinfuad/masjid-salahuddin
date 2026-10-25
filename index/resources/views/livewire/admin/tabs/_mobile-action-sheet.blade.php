@@ -4,7 +4,7 @@
 
 <!-- 1. Circular (+) Floating Action Button (Mobile Only) -->
 <div class="fixed bottom-6 right-5 z-40 sm:hidden"
-    x-show="!['settings', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'programs' && socialSubTab === 'pernyataan')"
+    x-show="!['dashboard', 'settings', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'programs' && socialSubTab === 'pernyataan')"
     x-cloak>
     <button type="button"
         @click="openMobileActionSheet()"

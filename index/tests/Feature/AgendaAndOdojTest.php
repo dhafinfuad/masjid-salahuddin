@@ -265,7 +265,37 @@ class AgendaAndOdojTest extends TestCase
         $response = $this->get("/admin/agenda/lpj/{$agenda->id}");
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/pdf');
-        $this->assertStringContainsString('inline', $response->headers->get('Content-Disposition') ?? '');
+        $this->assertStringContainsString('attachment', $response->headers->get('Content-Disposition') ?? '');
+        $this->assertStringContainsString('LPJ_peringatan-nuzulul-quran-akbar.pdf', $response->headers->get('Content-Disposition') ?? '');
+    }
+
+    public function test_unduh_lpj_button_is_only_visible_when_pdf_is_uploaded(): void
+    {
+        $this->actingAs($this->admin);
+
+        $agendaWithoutPdf = Agenda::create([
+            'title' => 'Agenda Tanpa Berkas LPJ',
+            'event_date' => '2026-05-10',
+            'budget' => 5000000,
+            'status' => 'SELESAI',
+            'report_pdf_path' => null,
+        ]);
+
+        $agendaWithPdf = Agenda::create([
+            'title' => 'Agenda Dengan Berkas LPJ',
+            'event_date' => '2026-06-10',
+            'budget' => 10000000,
+            'status' => 'SELESAI',
+            'report_pdf_path' => 'lpj/sample_test.pdf',
+        ]);
+
+        Livewire::test(AdminDashboard::class)
+            ->set('currentTab', 'kegiatan')
+            ->set('kegiatanSubTab', 'agenda')
+            ->assertDontSeeHtml('Cetak Berkas LPJ')
+            ->assertSeeHtml('Unduh LPJ')
+            ->assertSeeHtml(route('admin.agenda.lpj', $agendaWithPdf->id))
+            ->assertDontSeeHtml(route('admin.agenda.lpj', $agendaWithoutPdf->id));
     }
 
     public function test_uploading_non_pdf_file_for_agenda_lpj_is_rejected(): void

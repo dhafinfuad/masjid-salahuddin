@@ -142,33 +142,36 @@ class AgendaExportController extends Controller
     }
 
     /**
-     * Print single Agenda LPJ / View uploaded PDF document
+     * Print single Agenda LPJ / Direct Download uploaded PDF document
      */
     public function printLpj(int $id)
     {
         $agenda = Agenda::findOrFail($id);
 
         if (!empty($agenda->report_pdf_path)) {
+            $safeName = 'LPJ_' . Str::slug($agenda->title) . '.pdf';
+
             // Cek di disk public Storage
             if (Storage::disk('public')->exists($agenda->report_pdf_path)) {
                 $filePath = Storage::disk('public')->path($agenda->report_pdf_path);
-                $mimeType = Storage::disk('public')->mimeType($agenda->report_pdf_path) ?: 'application/pdf';
-                $safeName = 'LPJ_' . Str::slug($agenda->title) . '.pdf';
-
-                return response()->file($filePath, [
-                    'Content-Type' => $mimeType,
-                    'Content-Disposition' => 'inline; filename="' . $safeName . '"',
+                return response()->download($filePath, $safeName, [
+                    'Content-Type' => 'application/pdf',
                 ]);
             }
 
             // Cek jika path tersimpan langsung di public/storage
             $directPath = public_path('storage/' . $agenda->report_pdf_path);
             if (file_exists($directPath)) {
-                $safeName = 'LPJ_' . Str::slug($agenda->title) . '.pdf';
-
-                return response()->file($directPath, [
+                return response()->download($directPath, $safeName, [
                     'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="' . $safeName . '"',
+                ]);
+            }
+
+            // Cek jika path tersimpan langsung di root public/
+            $publicPath = public_path($agenda->report_pdf_path);
+            if (file_exists($publicPath)) {
+                return response()->download($publicPath, $safeName, [
+                    'Content-Type' => 'application/pdf',
                 ]);
             }
         }

@@ -1192,23 +1192,23 @@
         style="display: none;" @keydown.escape.window="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }">
         <div
             class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <div class="flex items-start justify-between border-b border-slate-200 pb-3.5">
                 <div>
                     <h3 class="text-base font-bold text-gov-textMain tracking-tight"
                         x-text="isEditingAgenda ? 'Edit Perencanaan Kegiatan' : 'Buat Perencanaan Kegiatan'"></h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Lengkapi parameter kegiatan, susunan panitia, estimasi
-                        anggaran, dan berkas LPJ.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Lengkapi parameter kegiatan, estimasi anggaran, dan berkas LPJ.</p>
                 </div>
                 <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
-                    class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    title="Tutup Modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <form @submit.prevent="$wire.saveAgenda(agendaForm)" class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Left Column -->
-                    <div class="space-y-3">
+                    <div class="space-y-3.5">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Nama Kegiatan <span
                                     class="text-rose-500">*</span></label>
@@ -1231,13 +1231,6 @@
                         </div>
 
                         <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Tujuan / Deskripsi Kegiatan</label>
-                            <textarea x-model="agendaForm.description" rows="3"
-                                placeholder="Jelaskan tujuan kegiatan dan sasaran jamaah..."
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
-                        </div>
-
-                        <div>
                             <label class="block font-semibold text-slate-700 mb-1">Status Kegiatan</label>
                             <x-custom-select
                                 x-model="agendaForm.status"
@@ -1251,29 +1244,10 @@
                                 buttonClass="p-2.5 bg-slate-50/50"
                             />
                         </div>
-
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">
-                                <span>Link YouTube Video / Siaran</span>
-                                <span class="text-[10px] text-slate-400 font-normal ml-1">(Opsional)</span>
-                            </label>
-                            <input x-model="agendaForm.youtube_url" type="url" placeholder="https://www.youtube.com/watch?v=..."
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                        </div>
                     </div>
 
                     <!-- Right Column -->
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Daftar Panitia (Satu nama per
-                                baris)</label>
-                            <textarea x-model="agendaForm.committee_members" rows="3"
-                                placeholder="Khudori (Ketua)&#10;Junaedi (Sekretaris)&#10;Bu Indah (Bendahara)"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-mono text-[11px]"></textarea>
-                            <span class="text-[10px] text-slate-400">Tulis satu nama panitia dan perannya per
-                                baris.</span>
-                        </div>
-
+                    <div class="space-y-3.5">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Anggaran Kegiatan (Rp)</label>
                             <input type="text" inputmode="numeric"

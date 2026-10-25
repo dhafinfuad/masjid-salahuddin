@@ -848,12 +848,12 @@
 
                                     <!-- Single Mode: Pilih Nama Pegawai dari Rekapitulasi -->
                                     <div x-show="printPernyataanMode === 'single'" class="space-y-1.5">
-                                        <label class="block font-semibold text-slate-700">Pilih Nama Pegawai Rekapitulasi *</label>
+                                        <label class="block font-semibold text-slate-700">Pilih Nama Pegawai *</label>
                                         <div class="relative" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'z-40' : 'z-10'"
                                             @click.outside="if (printPernyataanOpenDropdown === 'singleEmp') closePrintDropdowns()">
                                             <button type="button" @click.stop="togglePrintDropdown('singleEmp')"
                                                 class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 hover:bg-slate-100/70 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy cursor-pointer font-medium text-xs text-gov-textMain shadow-2xs flex items-center justify-between gap-2 text-left">
-                                                <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai yang Ada di Rekapitulasi --'"></span>
+                                                <span class="truncate" x-text="printPernyataanEmployeeName ? printPernyataanEmployeeName : '-- Pilih Nama Pegawai Aktif --'"></span>
                                                 <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" :class="printPernyataanOpenDropdown === 'singleEmp' ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="m6 9 6 6 6-6"/>
                                                 </svg>
