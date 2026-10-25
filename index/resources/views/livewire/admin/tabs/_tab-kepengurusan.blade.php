@@ -35,12 +35,20 @@
                 </div>
 
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
-                       onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . ($takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '_blank'); }"
-                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span>Lihat PDF</span>
-                    </a>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button"
+                            @click="window.downloadPdfDirect('{{ asset('resources/' . ($takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '{{ $takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf' }}')"
+                            class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Unduh Berkas PDF Langsung">
+                            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                        <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['sk']['file'] ?? 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
+                           class="h-9 w-9 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-600 shadow-2xs transition inline-flex items-center justify-center cursor-pointer shrink-0"
+                           title="Pratinjau Dokumen di Penampil">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
 
                     @if(Auth::user()->canManage())
                         <button type="button"
@@ -81,12 +89,20 @@
                 </div>
 
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
-                       onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . ($takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '_blank'); }"
-                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span>Lihat PDF</span>
-                    </a>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button"
+                            @click="window.downloadPdfDirect('{{ asset('resources/' . ($takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '{{ $takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf' }}')"
+                            class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Unduh Berkas PDF Langsung">
+                            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                        <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['lampiran1']['file'] ?? 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
+                           class="h-9 w-9 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-600 shadow-2xs transition inline-flex items-center justify-center cursor-pointer shrink-0"
+                           title="Pratinjau Dokumen di Penampil">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
 
                     @if(Auth::user()->canManage())
                         <button type="button"
@@ -127,12 +143,20 @@
                 </div>
 
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
-                       onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . ($takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '_blank'); }"
-                       class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span>Lihat PDF</span>
-                    </a>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button"
+                            @click="window.downloadPdfDirect('{{ asset('resources/' . ($takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf')) }}', '{{ $takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf' }}')"
+                            class="h-9 px-3.5 rounded-lg border border-gov-border bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                            title="Unduh Berkas PDF Langsung">
+                            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                        <a href="{{ route('document.viewer', ['file' => asset('resources/' . ($takmirDocs['lampiran2']['file'] ?? 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf')), 'fallback' => url('/admin/kepengurusan')]) }}" 
+                           class="h-9 w-9 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-600 shadow-2xs transition inline-flex items-center justify-center cursor-pointer shrink-0"
+                           title="Pratinjau Dokumen di Penampil">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
 
                     @if(Auth::user()->canManage())
                         <button type="button"

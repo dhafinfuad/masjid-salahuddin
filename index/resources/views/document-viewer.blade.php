@@ -143,16 +143,16 @@
         <!-- Sisi Kanan: Tombol Unduh PDF (Buka di In-App Safari dengan tombol Done & Share Sheet seperti Gambar 2) -->
         <div class="flex items-center gap-1 sm:gap-2 shrink-0">
             <!-- Tombol Unduh PDF -->
-            <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer" download="{{ $downloadFilename }}"
+            <button type="button" onclick="downloadCurrentDocument()"
                 class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer select-none"
-                title="Unduh / Buka Dokumen PDF">
+                title="Unduh Dokumen PDF">
                 <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <span>Unduh</span>
-            </a>
+                <span id="labelDownloadDoc">Unduh</span>
+            </button>
         </div>
     </header>
 
@@ -172,9 +172,9 @@
             </div>
             <h4 class="text-sm font-bold text-white mb-1">Gagal Membuka Dokumen</h4>
             <p id="pdfErrorMessage" class="text-xs text-slate-400 mb-4 max-w-sm">Berkas PDF tidak dapat dimuat atau rusak.</p>
-            <a href="{{ $fileUrl }}" download="{{ $downloadFilename }}" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition">
+            <button type="button" onclick="downloadCurrentDocument()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition cursor-pointer">
                 Unduh Berkas Langsung
-            </a>
+            </button>
         </div>
 
         <!-- Rendered Pages Container -->
@@ -366,6 +366,46 @@
                     updatePageButtons();
                 }
             }, { passive: true });
+        }
+
+        async function downloadCurrentDocument() {
+            const url = "{{ $fileUrl }}";
+            const filename = "{{ $downloadFilename }}";
+            const label = document.getElementById('labelDownloadDoc');
+
+            if (label) label.textContent = 'Mengunduh...';
+
+            try {
+                const response = await fetch(url, { headers: { 'Accept': 'application/pdf' } });
+                if (!response.ok) throw new Error("Gagal mengambil file PDF");
+                const blob = await response.blob();
+                const file = new File([blob], filename, { type: 'application/pdf' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: filename,
+                        text: 'Dokumen PDF Masjid Salahuddin'
+                    });
+                    return;
+                }
+
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 3000);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    window.location.href = url;
+                }
+            } finally {
+                if (label) label.textContent = 'Unduh';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initPdfViewer);

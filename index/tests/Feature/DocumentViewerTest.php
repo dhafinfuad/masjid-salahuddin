@@ -52,7 +52,7 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('pageIndicator', false);
         $response->assertSee('Kembali', false);
         $response->assertSee('Unduh', false);
-        $response->assertSee('target="_blank"', false);
+        $response->assertSee('downloadCurrentDocument', false);
         $response->assertDontSee('Cetak', false);
         $this->assertStringContainsString('no-store', (string)$response->headers->get('Cache-Control'));
     }
