@@ -1781,17 +1781,6 @@
             </div>
 
             <form wire:submit.prevent="saveUploadDoc" class="space-y-3.5 text-xs">
-                <!-- Info Target Berkas -->
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
-                    <div>
-                        <span class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block">Dokumen Target</span>
-                        <span class="font-bold text-gov-navy text-xs">{{ $uploadDocTitle ?: 'Surat Keputusan / Lampiran' }}</span>
-                    </div>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 text-gov-navy uppercase tracking-wider border border-gov-navy/20">
-                        Target: {{ strtoupper(str_replace('_', ' ', $uploadDocTarget)) }}
-                    </span>
-                </div>
-
                 <!-- Input Berkas PDF -->
                 <div x-data="{ isDragging: false, isUploading: false, progress: 0 }"
                      x-on:livewire-upload-start="isUploading = true"
