@@ -1760,21 +1760,23 @@
         style="display: none;" @keydown.escape.window="showUploadDocModal = false">
         <div
             class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-gov-navy/10 text-gov-navy flex items-center justify-center">
-                        <i data-lucide="file-up" class="w-4 h-4"></i>
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3.5">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-gov-navy/10 text-gov-navy flex items-center justify-center shrink-0 shadow-2xs">
+                        <i data-lucide="file-up" class="w-5 h-5"></i>
                     </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Unggah Dokumen Resmi</h3>
-                        <p class="text-xs text-slate-500 font-medium truncate max-w-70 sm:max-w-none">
+                    <div class="min-w-0">
+                        <h3 class="text-base font-bold text-gov-textMain leading-tight">Unggah Dokumen Resmi</h3>
+                        <p class="text-xs text-slate-500 font-medium truncate mt-0.5" title="{{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}">
                             {{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}
                         </p>
                     </div>
                 </div>
                 <button type="button" @click="showUploadDocModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    title="Tutup Modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
