@@ -301,9 +301,9 @@ class PrayerDutyExportController extends Controller
     }
 
     /**
-     * Printable Clean PDF/Print View for Prayer Duty Schedule
+     * Prepare roster schedule data for weekly/monthly prayer duties
      */
-    public function printPdf(Request $request)
+    protected function prepareRosterPdfData(Request $request): array
     {
         $settings = MasjidSetting::getActive();
         $week = $request->query('week', 'all');
@@ -492,13 +492,22 @@ class PrayerDutyExportController extends Controller
 
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'PETUGAS' . ($week ?? 'ALL') . date('Y-m')), 0, 10));
         $verifyUrl = url('/admin/petugas/export-pdf?week=' . $week . '&tte=1&hash=' . $tteHash);
+        $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
 
-        return view('admin.print.prayer-duty-roster', [
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+        $monthName = $months[$selectedMonthNum] ?? 'Januari';
+
+        return [
             'settings' => $settings,
             'duties' => $duties,
             'week' => $week,
             'prayerTime' => $prayerTime,
             'month' => $month,
+            'monthName' => $monthName,
             'selectedMonthNum' => $selectedMonthNum,
             'selectedYearNum' => $selectedYearNum,
             'selectedWeekNum' => $selectedWeekNum,
@@ -511,6 +520,43 @@ class PrayerDutyExportController extends Controller
             'isTteSigned' => true,
             'tteHash' => $tteHash,
             'verifyUrl' => $verifyUrl,
+            'qrCodeBase64' => $qrCodeBase64,
+        ];
+    }
+
+    /**
+     * Printable Clean PDF/Print View for Prayer Duty Schedule (HTML View)
+     */
+    public function printPdf(Request $request)
+    {
+        $data = $this->prepareRosterPdfData($request);
+        return view('admin.print.prayer-duty-roster', $data);
+    }
+
+    /**
+     * Direct Server-Side Stream PDF Download for Prayer Duty Roster (No blank tab)
+     */
+    public function downloadRosterPdf(Request $request): StreamedResponse
+    {
+        $data = $this->prepareRosterPdfData($request);
+        $monthName = $data['monthName'];
+        $year = $data['selectedYearNum'];
+        $week = $data['week'] !== 'all' ? "Pekan_{$data['week']}_" : "";
+        $cleanFilename = "Roster_Petugas_Ibadah_{$week}{$monthName}_{$year}.pdf";
+
+        $pdf = Pdf::loadView('pdf.prayer-duty-roster-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 

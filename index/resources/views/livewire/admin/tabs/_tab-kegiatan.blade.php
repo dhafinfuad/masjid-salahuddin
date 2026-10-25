@@ -54,10 +54,10 @@
                                             <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                             <span>Download Excel (.xlsx)</span>
                                         </a>
-                                        <a :href="'{{ route('admin.kajian.export-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter" target="_blank"
+                                        <a :href="'{{ route('admin.kajian.download-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
                                             class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
-                                            <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                            <span>Cetak Jadwal Rapi (PDF)</span>
+                                            <i data-lucide="file-down" class="w-4 h-4 text-rose-600"></i>
+                                            <span>Unduh Jadwal (PDF)</span>
                                         </a>
                                     </div>
                                 </div>

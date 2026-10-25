@@ -203,10 +203,8 @@
         </button>
 
         <!-- Mobile: Tombol Unduh PDF (inline-flex di mobile, hidden di sm+) -->
-        <button 
-          type="button"
-          id="btnDownloadMobile"
-          onclick="downloadRosterPdf('Jadwal_Penugasan_Imam_Muadzin')" 
+        <a 
+          href="{{ url('/admin/petugas/unduh-pdf?week=' . $week . '&month=' . $month . '&year=' . ($year ?? '')) }}" 
           class="inline-flex sm:hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
           title="Unduh File PDF">
           <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -214,8 +212,8 @@
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          <span id="labelDownloadMobile">Unduh PDF</span>
-        </button>
+          <span>Unduh PDF</span>
+        </a>
       </div>
     </header>
 

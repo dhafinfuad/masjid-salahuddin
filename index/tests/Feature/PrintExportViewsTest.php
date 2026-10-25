@@ -106,4 +106,31 @@ class PrintExportViewsTest extends TestCase
         $this->assertStringContainsString('sig-qr-box', $viewHtml);
         $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
     }
+
+    public function test_kajian_direct_pdf_download(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        // Test Pekanan
+        $responsePekanan = $this->get('/admin/kajian/unduh-pdf?type=pekanan&month=10&year=2026');
+        $responsePekanan->assertStatus(200);
+        $responsePekanan->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Jadwal_Kajian_Pekanan_Oktober_2026.pdf', str_replace('"', '', $responsePekanan->headers->get('content-disposition')));
+
+        // Test Jumat
+        $responseJumat = $this->get('/admin/kajian/unduh-pdf?type=jumat&month=10&year=2026');
+        $responseJumat->assertStatus(200);
+        $responseJumat->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Jadwal_Shalat_Jumat_Oktober_2026.pdf', str_replace('"', '', $responseJumat->headers->get('content-disposition')));
+    }
+
+    public function test_prayer_duty_roster_direct_pdf_download(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $response = $this->get('/admin/petugas/unduh-pdf?week=all&month=10&year=2026');
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Roster_Petugas_Ibadah_Oktober_2026.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+    }
 }

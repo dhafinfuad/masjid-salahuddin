@@ -77,7 +77,9 @@ Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Http\Request $requ
 
 // Document Print & TTE Verification Views (Public so QR Code scanned from printed documents can be viewed/verified)
 Route::get('/admin/kajian/export-pdf', [KajianExportController::class, 'printPdf'])->name('admin.kajian.export-pdf');
+Route::get('/admin/kajian/unduh-pdf', [KajianExportController::class, 'downloadPdf'])->name('admin.kajian.download-pdf');
 Route::get('/admin/petugas/export-pdf', [PrayerDutyExportController::class, 'printPdf'])->name('admin.petugas.export-pdf');
+Route::get('/admin/petugas/unduh-pdf', [PrayerDutyExportController::class, 'downloadRosterPdf'])->name('admin.petugas.download-pdf');
 Route::get('/admin/agenda/export-pdf', [AgendaExportController::class, 'printPdf'])->name('admin.agenda.export-pdf');
 Route::get('/admin/agenda/lpj/{id}', [AgendaExportController::class, 'printLpj'])->name('admin.agenda.lpj');
 Route::get('/admin/finance/export-pdf', [FinanceExportController::class, 'printPdf'])->name('admin.finance.export-pdf');

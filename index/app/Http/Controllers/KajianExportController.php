@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Kajian;
 use App\Models\MasjidSetting;
 use App\Models\User;
+use App\Services\QrCodeService;
 use App\Services\SimpleXlsxService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class KajianExportController extends Controller
 {
@@ -107,9 +110,9 @@ class KajianExportController extends Controller
     }
 
     /**
-     * Printable Clean PDF View for Schedule
+     * Prepare schedule data for Kajian / Jumat
      */
-    public function printPdf(Request $request)
+    protected function prepareKajianScheduleData(Request $request): array
     {
         $type = $request->query('type', 'pekanan');
         $month = $request->query('month', 'all');
@@ -133,6 +136,7 @@ class KajianExportController extends Controller
 
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'KAJIAN' . $type . date('Y-m')), 0, 10));
         $verifyUrl = url('/admin/kajian/export-pdf?type=' . $type . '&tte=1&hash=' . $tteHash);
+        $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
 
         $months = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -143,7 +147,7 @@ class KajianExportController extends Controller
         $monthName = $months[$monthNum] ?? 'Januari';
         $activeYear = (is_numeric($year) && (int) $year >= 2020) ? (int) $year : (int) date('Y');
 
-        return view('admin.print.kajian-schedule', [
+        return [
             'type' => $type,
             'settings' => $settings,
             'kajians' => $kajians,
@@ -156,6 +160,41 @@ class KajianExportController extends Controller
             'isTteSigned' => true,
             'tteHash' => $tteHash,
             'verifyUrl' => $verifyUrl,
+            'qrCodeBase64' => $qrCodeBase64,
+        ];
+    }
+
+    /**
+     * Printable Clean PDF View for Schedule (HTML preview / browser print)
+     */
+    public function printPdf(Request $request)
+    {
+        $data = $this->prepareKajianScheduleData($request);
+        return view('admin.print.kajian-schedule', $data);
+    }
+
+    /**
+     * Direct Server-Side Stream PDF Download (No blank tab, instant download)
+     */
+    public function downloadPdf(Request $request): StreamedResponse
+    {
+        $data = $this->prepareKajianScheduleData($request);
+        $typeLabel = ($data['type'] === 'jumat') ? 'Shalat_Jumat' : 'Kajian_Pekanan';
+        $cleanFilename = "Jadwal_{$typeLabel}_{$data['monthName']}_{$data['year']}.pdf";
+
+        $pdf = Pdf::loadView('pdf.kajian-schedule-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 
