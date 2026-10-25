@@ -37,6 +37,139 @@
                     this.renderQr();
                 }
             });
+        },
+        isDownloadingPdf: false,
+        async downloadMonthlyDirectPdf() {
+            if (this.isDownloadingPdf) return;
+            this.isDownloadingPdf = true;
+
+            const month = (this.$wire && this.$wire.selectedMonth) ? this.$wire.selectedMonth : '{{ $selectedMonth }}';
+            const year = (this.$wire && this.$wire.selectedYear) ? this.$wire.selectedYear : '{{ $selectedYear }}';
+            const printUrl = `{{ url('/petugas-sholat/cetak') }}?month=${month}&year=${year}`;
+            const filename = `Jadwal_Petugas_Shalat_Bulan_${month}_${year}.pdf`;
+
+            try {
+                // Buat iframe tersembunyi berukuran 1024px agar hasil layout cetak konsisten dan rapi
+                const iframe = document.createElement('iframe');
+                iframe.style.position = 'fixed';
+                iframe.style.top = '-9999px';
+                iframe.style.left = '-9999px';
+                iframe.style.width = '1024px';
+                iframe.style.height = '1400px';
+                iframe.style.opacity = '0';
+                iframe.style.pointerEvents = 'none';
+                iframe.style.border = 'none';
+                iframe.src = printUrl;
+
+                const loadPromise = new Promise((resolve, reject) => {
+                    const timeoutId = setTimeout(() => {
+                        reject(new Error('Waktu tunggu pemuatan dokumen melebihi batas'));
+                    }, 15000);
+
+                    iframe.onload = () => {
+                        clearTimeout(timeoutId);
+                        resolve();
+                    };
+                    iframe.onerror = () => {
+                        clearTimeout(timeoutId);
+                        reject(new Error('Gagal memuat dokumen cetak'));
+                    };
+                });
+
+                document.body.appendChild(iframe);
+                await loadPromise;
+
+                // Beri jeda 400ms agar styling Tailwind dan webfont di dalam iframe selesai dirender
+                await new Promise(r => setTimeout(r, 400));
+
+                const iframeWin = iframe.contentWindow;
+                const iframeDoc = iframe.contentDocument || iframeWin.document;
+                const contentContainer = iframeDoc.getElementById('contentContainer');
+
+                if (!contentContainer) {
+                    throw new Error('Konten dokumen tidak ditemukan');
+                }
+
+                const pdfWorker = iframeWin.html2pdf || window.html2pdf;
+                if (!pdfWorker) {
+                    throw new Error('Modul pembuat PDF belum siap');
+                }
+
+                const opt = {
+                    margin: [8, 8, 8, 8],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        letterRendering: true,
+                        logging: false,
+                        windowWidth: 1024
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait'
+                    },
+                    pagebreak: {
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        avoid: 'tr'
+                    }
+                };
+
+                const pdfBlob = await pdfWorker().set(opt).from(contentContainer).output('blob');
+
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+
+                const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+                // 1. Pada perangkat mobile / iOS PWA: gunakan Web Share API untuk lembar berbagi native
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    try {
+                        await navigator.share({
+                            files: [pdfFile],
+                            title: filename.replace('.pdf', '')
+                        });
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') {
+                            return;
+                        }
+                        console.warn('Share API gagal, beralih ke unduh blob:', shareErr);
+                    }
+                }
+
+                // 2. Pada Desktop & Android: unduh file PDF langsung tanpa membuka tab baru
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                const downloadLink = document.createElement('a');
+                downloadLink.style.display = 'none';
+                downloadLink.href = blobUrl;
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+
+                setTimeout(() => {
+                    if (downloadLink.parentNode) {
+                        downloadLink.parentNode.removeChild(downloadLink);
+                    }
+                    URL.revokeObjectURL(blobUrl);
+                }, 3000);
+
+            } catch (err) {
+                console.error('Direct PDF download error:', err);
+                // Fallback aman jika rendering di background gagal: buka halaman cetak di tab baru
+                window.open(printUrl, '_blank');
+            } finally {
+                this.isDownloadingPdf = false;
+                this.$nextTick(() => {
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                });
+            }
         }
     }" 
     class="min-h-screen flex flex-col bg-gov-canvas text-gov-textMain">
@@ -113,14 +246,29 @@
                     </div>
                 </div>
 
-                <!-- Tombol Cetak PDF Resmi & QR Code -->
+                <!-- Tombol Unduh PDF Langsung (Uji Coba Direct Download) -->
                 <div class="w-full sm:w-auto">
-                    <a href="{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" target="_blank"
-                       class="h-[38px] w-full sm:w-auto px-4 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                       title="Cetak Jadwal Petugas Shalat Bulanan (PDF)">
-                        <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                        <span>Cetak PDF</span>
-                    </a>
+                    <button type="button" 
+                            @click="downloadMonthlyDirectPdf()" 
+                            :disabled="isDownloadingPdf"
+                            class="h-[38px] w-full sm:w-auto px-4 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap disabled:opacity-75 disabled:cursor-wait"
+                            title="Unduh Jadwal Petugas Shalat Bulanan (PDF)">
+                        <template x-if="!isDownloadingPdf">
+                            <span class="inline-flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Unduh PDF</span>
+                            </span>
+                        </template>
+                        <template x-if="isDownloadingPdf">
+                            <span class="inline-flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Menyiapkan PDF...</span>
+                            </span>
+                        </template>
+                    </button>
                 </div>
 
             </div>
@@ -395,4 +543,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Library html2pdf vendor preloaded -->
+    <script src="{{ asset('vendor/html2pdf.bundle.min.js') }}"></script>
 </div>

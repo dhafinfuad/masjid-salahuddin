@@ -382,6 +382,23 @@ class PortalPrayerPagesTest extends TestCase
         $response->assertSee(route('portal.petugas-sholat'));
         $response->assertSee('wire:navigate', false);
     }
+
+    public function test_petugas_sholat_page_renders_direct_pdf_download_button_with_loading_indicator(): void
+    {
+        $response = $this->get(route('portal.petugas-sholat'));
+        $response->assertOk();
+        $response->assertSee('downloadMonthlyDirectPdf()', false);
+        $response->assertSee(':disabled="isDownloadingPdf"', false);
+        $response->assertSee('Unduh PDF');
+        $response->assertSee('Menyiapkan PDF...');
+        $response->assertSee('html2pdf.bundle.min.js');
+
+        // Pastikan endpoint cetak bulanan tetap berfungsi untuk iframe background renderer
+        $printResponse = $this->get(route('portal.petugas-sholat.print'));
+        $printResponse->assertOk();
+        $printResponse->assertSee('contentContainer', false);
+        $printResponse->assertSee('JADWAL PENUGASAN IMAM, KHATIB &amp; MUADZIN', false);
+    }
 }
 
 

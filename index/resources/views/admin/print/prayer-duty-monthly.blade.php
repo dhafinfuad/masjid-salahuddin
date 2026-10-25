@@ -12,8 +12,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- html2pdf.js for Client-Side PDF Generation on Mobile -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- html2pdf.js for Client-Side PDF Generation on Mobile (Local Vendor + CDN Fallback) -->
+  <script src="{{ asset('vendor/html2pdf.bundle.min.js') }}"></script>
+  <script>
+    if (typeof html2pdf === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>');
+    }
+  </script>
 
   <script>
     tailwind.config = {
@@ -140,7 +145,7 @@
         <h3 class="text-base sm:text-lg font-bold text-gov-950 uppercase tracking-wide inline-block border-b-2 border-gov-700 pb-0.5">
           JADWAL PENUGASAN IMAM, KHATIB &amp; MUADZIN
         </h3>
-        <p class="text-xs text-slate-500 font-medium mt-1">Bulan: {{ $monthName }} {{ $year }}</p>
+        <p class="text-xs text-slate-500 font-medium mt-1">{{ $settings->name ?? 'Masjid Salahuddin' }} • Bulan: {{ $monthName }} {{ $year }}</p>
       </div>
 
       <!-- Tabel Penugasan Bulanan -->
