@@ -140,24 +140,12 @@
             </div>
         </div>
 
-        <!-- Sisi Kanan: Tombol Unduh PDF & Bagikan/Cetak -->
+        <!-- Sisi Kanan: Tombol Unduh PDF (Buka di In-App Safari dengan tombol Done & Share Sheet seperti Gambar 2) -->
         <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-            <!-- Tombol Cetak / Bagikan -->
-            <button type="button" onclick="triggerMobileShareOrPrint()"
-                class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-950 text-slate-200 hover:text-white text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
-                title="Cetak atau Bagikan Dokumen">
-                <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
-                </svg>
-                <span class="hidden md:inline">Cetak</span>
-            </button>
-
             <!-- Tombol Unduh PDF -->
-            <a href="{{ $fileUrl }}" download="{{ $downloadFilename }}"
-                class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer"
-                title="Unduh Berkas PDF Fisik">
+            <a href="{{ $fileUrl }}" target="_blank" rel="noopener noreferrer" download="{{ $downloadFilename }}"
+                class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer select-none"
+                title="Unduh / Buka Dokumen PDF">
                 <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -378,25 +366,6 @@
                     updatePageButtons();
                 }
             }, { passive: true });
-        }
-
-        async function triggerMobileShareOrPrint() {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const fullUrl = PDF_URL.startsWith('http') ? PDF_URL : (window.location.origin + PDF_URL);
-
-            if (isMobile && navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Dokumen Masjid Salahuddin',
-                        url: fullUrl
-                    });
-                    return;
-                } catch (e) {
-                    if (e.name === 'AbortError') return;
-                }
-            }
-
-            window.print();
         }
 
         document.addEventListener('DOMContentLoaded', initPdfViewer);

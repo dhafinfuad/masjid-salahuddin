@@ -389,7 +389,7 @@
                                     <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                                     <span>Buka Dokumen</span>
                                 </a>
-                                <a href="{{ asset('resources/' . $doc['file']) }}" download="{{ $doc['file'] }}"
+                                <a href="{{ asset('resources/' . $doc['file']) }}" target="_blank" rel="noopener noreferrer" download="{{ $doc['file'] }}"
                                    class="p-2 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 transition shadow-2xs inline-flex items-center justify-center cursor-pointer shrink-0"
                                    title="Unduh Berkas PDF">
                                     <i data-lucide="download" class="w-3.5 h-3.5"></i>
