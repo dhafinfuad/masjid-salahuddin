@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Agenda;
 use App\Models\MasjidSetting;
+use App\Models\User;
+use App\Services\QrCodeService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -62,17 +65,17 @@ class AgendaExportController extends Controller
     }
 
     /**
-     * Print all agendas as formal printable schedule/report
+     * Prepare data for Agenda schedule export / PDF
      */
-    public function printPdf(Request $request)
+    protected function prepareAgendaScheduleData(Request $request): array
     {
         $agendas = Agenda::orderBy('event_date', 'desc')->get();
         $settings = MasjidSetting::getActive() ?? MasjidSetting::first();
         $printDate = Carbon::now()->translatedFormat('d F Y');
 
         // Penandatangan resmi
-        $ketuaDkm = \App\Models\User::where('role', 'Ketua')->where('status', 'AKTIF')->first()
-            ?? \App\Models\User::where('role', 'like', '%Ketua%')->first();
+        $ketuaDkm = User::where('role', 'Ketua')->where('status', 'AKTIF')->first()
+            ?? User::where('role', 'like', '%Ketua%')->first();
 
         // Cari Ketua Panitia / Acara dari agenda yang ada, atau panitia/sekretaris
         $ketuaAcara = null;
@@ -83,15 +86,17 @@ class AgendaExportController extends Controller
             }
         }
         if (!$ketuaAcara) {
-            $sekretaris = \App\Models\User::where('role', 'Sekretaris')->where('status', 'AKTIF')->first();
+            $sekretaris = User::where('role', 'Sekretaris')->where('status', 'AKTIF')->first();
             $ketuaAcara = $sekretaris?->name ?? 'Ichtiar Rachmatullah';
         }
 
         $tteHash = 'TTE-' . strtoupper(substr(md5(($settings->name ?? 'MS') . 'AGENDA' . date('Y-m')), 0, 10));
         $verifyUrl = url('/admin/agenda/export-pdf?tte=1&hash=' . $tteHash);
+        $qrCodeBase64 = QrCodeService::generateBase64($verifyUrl, 4);
 
-        return view('admin.print.agenda-schedule', [
+        return [
             'agendas' => $agendas,
+            'totalBudget' => $agendas->sum('budget'),
             'settings' => $settings,
             'printDate' => $printDate,
             'ketuaDkm' => $ketuaDkm,
@@ -99,6 +104,40 @@ class AgendaExportController extends Controller
             'isTteSigned' => true,
             'tteHash' => $tteHash,
             'verifyUrl' => $verifyUrl,
+            'qrCodeBase64' => $qrCodeBase64,
+        ];
+    }
+
+    /**
+     * Print all agendas as formal printable schedule/report (HTML View)
+     */
+    public function printPdf(Request $request)
+    {
+        $data = $this->prepareAgendaScheduleData($request);
+        return view('admin.print.agenda-schedule', $data);
+    }
+
+    /**
+     * Direct Server-Side Stream PDF Download for Agenda Kegiatan (No blank tab, instant download)
+     */
+    public function downloadPdf(Request $request): StreamedResponse
+    {
+        $data = $this->prepareAgendaScheduleData($request);
+        $cleanFilename = 'Agenda_Kegiatan_Masjid_' . date('Y-m-d') . '.pdf';
+
+        $pdf = Pdf::loadView('pdf.agenda-schedule-pdf', $data)
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif',
+            ]);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $cleanFilename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $cleanFilename . '"',
         ]);
     }
 

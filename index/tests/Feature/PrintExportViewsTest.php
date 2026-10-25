@@ -133,4 +133,29 @@ class PrintExportViewsTest extends TestCase
         $response->assertHeader('content-type', 'application/pdf');
         $this->assertStringContainsString('filename=Roster_Petugas_Ibadah_Oktober_2026.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
     }
+
+    public function test_agenda_direct_pdf_download(): void
+    {
+        $this->actingAs($this->adminUser);
+
+        $response = $this->get('/admin/agenda/unduh-pdf');
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringContainsString('filename=Agenda_Kegiatan_Masjid_' . date('Y-m-d') . '.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+
+        // Verify underlying view contains QR code and table elements
+        $controller = app(\App\Http\Controllers\AgendaExportController::class);
+        $reflection = new \ReflectionClass($controller);
+        $method = $reflection->getMethod('prepareAgendaScheduleData');
+        $method->setAccessible(true);
+        $data = $method->invoke($controller, request());
+
+        $this->assertNotEmpty($data['qrCodeBase64']);
+        $this->assertStringStartsWith('data:image/png;base64,', $data['qrCodeBase64']);
+
+        $viewHtml = view('pdf.agenda-schedule-pdf', $data)->render();
+        $this->assertStringContainsString('DAFTAR PERENCANAAN &amp; REALISASI AGENDA KEGIATAN', $viewHtml);
+        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+        $this->assertStringContainsString('TOTAL ANGGARAN', $viewHtml);
+    }
 }

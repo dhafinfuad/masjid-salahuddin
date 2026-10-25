@@ -81,6 +81,7 @@ Route::get('/admin/kajian/unduh-pdf', [KajianExportController::class, 'downloadP
 Route::get('/admin/petugas/export-pdf', [PrayerDutyExportController::class, 'printPdf'])->name('admin.petugas.export-pdf');
 Route::get('/admin/petugas/unduh-pdf', [PrayerDutyExportController::class, 'downloadRosterPdf'])->name('admin.petugas.download-pdf');
 Route::get('/admin/agenda/export-pdf', [AgendaExportController::class, 'printPdf'])->name('admin.agenda.export-pdf');
+Route::get('/admin/agenda/unduh-pdf', [AgendaExportController::class, 'downloadPdf'])->name('admin.agenda.download-pdf');
 Route::get('/admin/agenda/lpj/{id}', [AgendaExportController::class, 'printLpj'])->name('admin.agenda.lpj');
 Route::get('/admin/finance/export-pdf', [FinanceExportController::class, 'printPdf'])->name('admin.finance.export-pdf');
 Route::get('/admin/kepengurusan/cetak-sk', [TakmirDocController::class, 'printOfficialSk'])->name('admin.kepengurusan.print-sk');

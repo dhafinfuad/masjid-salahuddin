@@ -108,14 +108,14 @@
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Direktori Asatidz</span>
                         </button>
 
-                        <a :href="'{{ route('admin.kajian.download-pdf') }}?type=pekanan&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                            @click="closeMobileActionSheet()"
+                        <button type="button"
+                            @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.kajian.download-pdf') }}?type=pekanan&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, 'Jadwal_Kajian_Pekanan_' + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.pdf')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             </div>
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Unduh PDF</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -160,14 +160,14 @@
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Data Ustadz</span>
                         </button>
 
-                        <a :href="'{{ route('admin.kajian.download-pdf') }}?type=jumat&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                            @click="closeMobileActionSheet()"
+                        <button type="button"
+                            @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.kajian.download-pdf') }}?type=jumat&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, 'Jadwal_Shalat_Jumat_' + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.pdf')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             </div>
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Unduh PDF</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -203,13 +203,14 @@
                             <span class="text-[11px] font-semibold text-slate-800 leading-tight">Download Excel</span>
                         </a>
 
-                        <a href="{{ route('admin.agenda.export-pdf') }}" target="_blank" @click="closeMobileActionSheet()"
+                        <button type="button"
+                            @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.agenda.download-pdf') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.pdf')"
                             class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                             <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0 mb-1">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             </div>
-                            <span class="text-[11px] font-semibold text-slate-800 leading-tight">Cetak PDF</span>
-                        </a>
+                            <span class="text-[11px] font-semibold text-slate-800 leading-tight">Unduh PDF</span>
+                        </button>
                     </div>
                 </div>
 
@@ -306,14 +307,14 @@
                         <span class="text-[11px] font-semibold text-slate-800 leading-tight">Download Excel</span>
                     </a>
 
-                    <a :href="'{{ route('admin.petugas.download-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
-                        @click="closeMobileActionSheet()"
+                    <button type="button"
+                        @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.petugas.download-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear, 'Roster_Petugas_Ibadah_' + ($wire.prayerDutyFilterWeek !== 'all' ? 'Pekan_' + $wire.prayerDutyFilterWeek + '_' : '') + $wire.prayerDutyFilterMonth + '_' + $wire.prayerDutyFilterYear + '.pdf')"
                         class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                         <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center shrink-0 mb-1">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                         </div>
                         <span class="text-[11px] font-semibold text-slate-800 leading-tight">Unduh PDF</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </template>

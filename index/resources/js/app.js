@@ -61,6 +61,74 @@ window.isBackdropClick = (e, element) => {
     return (_lastMouseDownTarget === el) && (_lastMouseUpTarget === el) && (e.target === el);
 };
 
+// 4b. Universal Direct PDF Downloader (iOS PWA Share Sheet & Blob Direct Download)
+window.downloadPdfDirect = async (downloadUrl, filename) => {
+    if (!downloadUrl) return;
+    const defaultFilename = filename || 'dokumen.pdf';
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    // 1. Pada perangkat iOS / Mobile (terutama iOS PWA Standalone):
+    // Web Share API Level 2 memunculkan native iOS Share Sheet ("Simpan ke File", AirDrop, WhatsApp)
+    // Mencegah iOS PWA beralih layar / membuka PDF viewer bawaan "1 of 1"
+    if (isMobile && navigator.canShare) {
+        try {
+            const res = await fetch(downloadUrl);
+            if (res.ok) {
+                const blob = await res.blob();
+                const file = new File([blob], defaultFilename, { type: 'application/pdf' });
+                if (navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: defaultFilename.replace('.pdf', '')
+                    });
+                    return;
+                }
+            }
+        } catch (e) {
+            if (e.name === 'AbortError') {
+                return;
+            }
+            console.warn('[PDF Download] Web Share API tidak dapat memproses berkas, beralih ke blob link:', e);
+        }
+    }
+
+    // 2. Pada Desktop, Android, atau browser biasa:
+    // Gunakan fetch blob + Object URL dengan tag <a> tersembunyi untuk unduh langsung tanpa tab baru
+    try {
+        const res = await fetch(downloadUrl);
+        if (res.ok) {
+            const blob = await res.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = defaultFilename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                if (link.parentNode) link.parentNode.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            }, 2500);
+            return;
+        }
+    } catch (e) {
+        console.warn('[PDF Download] Fetch blob gagal, memicu fallback link langsung:', e);
+    }
+
+    // 3. Fallback terakhir: tag <a> langsung
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = defaultFilename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+    }, 1500);
+};
+
 // 5. Global Thousand Separator (Ribuan Titik) Helpers & Alpine Directive
 window.formatRibuan = (val) => {
     if (val === null || val === undefined || val === '') return '';

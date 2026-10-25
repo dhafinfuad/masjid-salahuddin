@@ -54,11 +54,12 @@
                                             <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                             <span>Download Excel (.xlsx)</span>
                                         </a>
-                                        <a :href="'{{ route('admin.kajian.download-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
+                                        <button type="button"
+                                            @click="openExport = false; window.downloadPdfDirect('{{ route('admin.kajian.download-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, (kegiatanSubTab === 'jumat' ? 'Jadwal_Shalat_Jumat_' : 'Jadwal_Kajian_Pekanan_') + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.pdf')"
+                                            class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
                                             <i data-lucide="file-down" class="w-4 h-4 text-rose-600"></i>
                                             <span>Unduh Jadwal (PDF)</span>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -96,11 +97,12 @@
                                             <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                             <span>Download Format Excel (.csv)</span>
                                         </a>
-                                        <a href="{{ route('admin.agenda.export-pdf') }}" target="_blank"
-                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium">
-                                            <i data-lucide="printer" class="w-4 h-4 text-rose-600"></i>
-                                            <span>Cetak Format Rapi (PDF)</span>
-                                        </a>
+                                        <button type="button"
+                                            @click="openExport = false; window.downloadPdfDirect('{{ route('admin.agenda.download-pdf') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.pdf')"
+                                            class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
+                                            <i data-lucide="file-down" class="w-4 h-4 text-rose-600"></i>
+                                            <span>Unduh Format Rapi (PDF)</span>
+                                        </button>
                                     </div>
                                 </div>
 
