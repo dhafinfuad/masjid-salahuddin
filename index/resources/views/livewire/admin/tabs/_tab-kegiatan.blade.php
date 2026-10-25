@@ -1293,8 +1293,8 @@
                                                     @if(!empty($agenda->report_pdf_path))
                                                         <div class="py-1">
                                                             <!-- Unduh LPJ -->
-                                                            <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" download
-                                                                @click="openMenu = false"
+                                                            <button type="button"
+                                                                @click="openMenu = false; window.downloadPdfDirect('{{ route('admin.agenda.lpj', $agenda->id) }}', 'LPJ_{{ \Illuminate\Support\Str::slug($agenda->title) }}.pdf')"
                                                                 class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
                                                                 <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1302,7 +1302,7 @@
                                                                     <line x1="12" y1="15" x2="12" y2="3"/>
                                                                 </svg>
                                                                 <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Unduh LPJ</div>
-                                                            </a>
+                                                            </button>
                                                         </div>
                                                     @endif
 
@@ -1416,8 +1416,8 @@
                                                 @if(!empty($agenda->report_pdf_path))
                                                     <div class="py-1">
                                                         <!-- Unduh LPJ -->
-                                                        <a href="{{ route('admin.agenda.lpj', $agenda->id) }}" download
-                                                            @click="openMenu = false"
+                                                        <button type="button"
+                                                            @click="openMenu = false; window.downloadPdfDirect('{{ route('admin.agenda.lpj', $agenda->id) }}', 'LPJ_{{ \Illuminate\Support\Str::slug($agenda->title) }}.pdf')"
                                                             class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
                                                             <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1425,7 +1425,7 @@
                                                                 <line x1="12" y1="15" x2="12" y2="3"/>
                                                             </svg>
                                                             <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Unduh LPJ</div>
-                                                        </a>
+                                                        </button>
                                                     </div>
                                                 @endif
 
