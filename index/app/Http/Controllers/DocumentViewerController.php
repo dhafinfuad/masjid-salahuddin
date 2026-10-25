@@ -40,23 +40,8 @@ class DocumentViewerController extends Controller
             $cleanFile = '/' . ltrim($cleanFile, '/');
         }
 
-        // Tentukan nama file untuk unduhan
-        $downloadFilename = basename(parse_url($cleanFile, PHP_URL_PATH));
-        if (empty($downloadFilename) || ! str_contains($downloadFilename, '.')) {
-            $downloadFilename = 'dokumen.pdf';
-        }
-
-        // Fallback sanitization
-        $fallbackUrl = '/';
-        if (! empty($fallback) && (str_starts_with($fallback, '/') || str_starts_with($fallback, config('app.url')))) {
-            $fallbackUrl = $fallback;
-        }
-
-        return response()->view('document-viewer', [
-            'fileUrl' => $cleanFile,
-            'downloadFilename' => $downloadFilename,
-            'fallbackUrl' => $fallbackUrl,
-        ])->withHeaders([
+        // Redirect langsung ke file PDF fisik agar browser menggunakan PDF viewer bawaan (tanpa header wrapper)
+        return redirect()->away($cleanFile, 302, [
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
             'Pragma' => 'no-cache',
         ]);

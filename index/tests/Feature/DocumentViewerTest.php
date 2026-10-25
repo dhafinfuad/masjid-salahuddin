@@ -26,20 +26,12 @@ class DocumentViewerTest extends TestCase
         ]);
     }
 
-    public function test_document_viewer_renders_properly_with_valid_file(): void
+    public function test_document_viewer_redirects_directly_to_valid_file(): void
     {
         $response = $this->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
 
-        $response->assertStatus(200);
-        $response->assertSee('Penampil Dokumen — Masjid Salahuddin');
-        $response->assertSee('href="/profil"', false);
-        $response->assertSee('Kembali');
-        $response->assertSee('Cetak');
-        $response->assertSee('Unduh PDF');
-        $response->assertSee('src="/sk/sk-takmir.pdf"', false);
-        $response->assertSee('href="/sk/sk-takmir.pdf"', false);
-        $response->assertSee('target="_blank"', false);
-        $response->assertDontSee('contentWindow.print');
+        $response->assertStatus(302);
+        $response->assertRedirect('/sk/sk-takmir.pdf');
         $this->assertStringContainsString('no-store', (string)$response->headers->get('Cache-Control'));
     }
 
@@ -86,14 +78,13 @@ class DocumentViewerTest extends TestCase
         $response->assertSee('inline-flex items-center gap-1.5', false);
     }
 
-    public function test_document_viewer_renders_mobile_download_and_desktop_print(): void
+    public function test_profil_page_renders_direct_pdf_links_with_target_blank(): void
     {
-        $response = $this->get('/document-viewer?file=/sk/sk-takmir.pdf&fallback=/profil');
+        $response = $this->get('/profil');
 
         $response->assertStatus(200);
-        $response->assertSee('Cetak', false);
-        $response->assertSee('Unduh PDF', false);
-        $response->assertSee('download=', false);
+        $response->assertSee('target="_blank"', false);
+        $response->assertSee('.pdf', false);
     }
 
     public function test_print_views_render_mobile_download_and_desktop_print(): void
