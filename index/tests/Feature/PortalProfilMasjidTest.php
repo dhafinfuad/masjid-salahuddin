@@ -20,6 +20,22 @@ class PortalProfilMasjidTest extends TestCase
         $response->assertSee('Kepengurusan');
     }
 
+    public function test_only_single_sk_card_and_unduh_pdf_button_are_rendered(): void
+    {
+        $response = $this->get(route('portal.profil'));
+        $response->assertStatus(200);
+
+        // SK Card and Unduh PDF button must exist
+        $response->assertSee('Surat Keputusan Kepala KPP Madya Malang');
+        $response->assertSee('Unduh PDF');
+        $response->assertSee(route('admin.kepengurusan.download-sk-pdf'));
+
+        // Lampiran I, Lampiran II, and Buka Dokumen must NOT exist
+        $response->assertDontSee('Lampiran I: Susunan Pengurus Takmir');
+        $response->assertDontSee('Lampiran II: Penjabaran Tugas & Wewenang');
+        $response->assertDontSee('Buka Dokumen');
+    }
+
     public function test_profil_masjid_page_handles_custom_or_partial_takmir_documents_gracefully(): void
     {
         $settings = MasjidSetting::getActive();
@@ -43,6 +59,9 @@ class PortalProfilMasjidTest extends TestCase
         Livewire::test(ProfilMasjidPage::class)
             ->set('activeTab', 'pengurus')
             ->assertStatus(200)
-            ->assertSee('Surat Keputusan Custom');
+            ->assertSee('Surat Keputusan Custom')
+            ->assertSee('Unduh PDF')
+            ->assertDontSee('Lampiran I: Susunan Pengurus Takmir')
+            ->assertDontSee('Buka Dokumen');
     }
 }

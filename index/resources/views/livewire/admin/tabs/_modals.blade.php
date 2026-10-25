@@ -2003,12 +2003,6 @@
                 
                 <!-- TAB 1: IDENTITAS DOKUMEN SK -->
                 <div x-show="kepActiveTab === 'identitas'" class="space-y-4">
-                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2.5">
-                        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-                        <p class="leading-relaxed">
-                            Data identitas di bawah ini menjadi konsiderans utama Surat Keputusan (SK) resmi yang diterbitkan dan ditandatangani oleh Kepala Kantor Pelayanan Pajak Madya Malang.
-                        </p>
-                    </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div class="space-y-1.5">

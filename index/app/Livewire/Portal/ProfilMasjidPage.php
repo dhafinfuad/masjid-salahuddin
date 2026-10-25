@@ -41,7 +41,15 @@ class ProfilMasjidPage extends Component
     {
         $settings = MasjidSetting::getActive();
         $allDocs = $settings->getTakmirDocuments();
-        $documents = array_values(array_filter($allDocs, fn($k) => in_array($k, ['sk', 'lampiran1', 'lampiran2']), ARRAY_FILTER_USE_KEY));
+        $docSk = $allDocs['sk'] ?? ($allDocs['sk_lengkap'] ?? null);
+
+        if ($docSk && preg_match('/(\d{4}\s*[-–]\s*\d{4})/', $docSk['description'] ?? '', $m)) {
+            $docSkPeriode = str_replace(' ', '', $m[1]);
+        } else {
+            $docSkPeriode = '2026-2029';
+        }
+
+        $documents = $docSk ? [$docSk] : [];
         $pengurus = $settings->getTakmirStructure();
 
         ActivityGallery::ensureTableExists();
@@ -78,6 +86,8 @@ class ProfilMasjidPage extends Component
         return view('livewire.portal.profil-masjid-page', [
             'settings' => $settings,
             'documents' => $documents,
+            'docSk' => $docSk,
+            'docSkPeriode' => $docSkPeriode,
             'pengurus' => $pengurus,
             'galleries' => $galleries,
             'galleryYears' => $galleryYears,

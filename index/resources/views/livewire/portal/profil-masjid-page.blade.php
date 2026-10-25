@@ -345,7 +345,7 @@
         <!-- ======================================================== -->
         <div x-show="activeTab === 'pengurus'" class="space-y-6" style="display: none;">
 
-            <!-- Section 1: 3 Dokumen PDF Resmi (Unduh & Buka) -->
+            <!-- Section 1: Dokumen PDF Resmi (Unduh) -->
             <div class="bg-white rounded-xl p-5 sm:p-6 border border-gov-border shadow-2xs space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
@@ -354,52 +354,47 @@
                         </div>
                         <div>
                             <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Dokumen Keputusan Resmi (PDF)</h3>
-                            <p class="text-xs text-slate-500">Dasar hukum pengangkatan dan penetapan kepengurusan Takmir Masjid Salahuddin Periode 2026-2029</p>
+                            <p class="text-xs text-slate-500">Dasar hukum pengangkatan dan penetapan kepengurusan Takmir Masjid Salahuddin Periode {{ $docSkPeriode ?? '2026-2029' }}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3 PDF Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    @foreach($documents as $doc)
-                        <div class="border border-gov-border rounded-xl p-4 bg-white hover:border-slate-400 transition flex flex-col justify-between space-y-3">
-                            <div class="space-y-2">
-                                <div class="flex items-start justify-between gap-2">
-                                    <div class="w-9 h-9 rounded-xl bg-slate-50 border border-gov-border flex items-center justify-center text-gov-navy shrink-0 shadow-2xs">
-                                        <i data-lucide="{{ $doc['icon'] ?? 'file-text' }}" class="w-4 h-4"></i>
-                                    </div>
-                                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $doc['badge_color'] ?? 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
-                                        {{ $doc['badge'] ?? 'SK Resmi' }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain leading-snug">{{ $doc['title'] ?? 'Dokumen Resmi' }}</h4>
-                                    <p class="text-[11px] font-mono text-slate-500 mt-0.5">{{ $doc['number'] ?? '' }}</p>
-                                </div>
-                                <p class="text-xs text-slate-500 leading-relaxed line-clamp-3">
-                                    {{ $doc['description'] ?? '' }}
-                                </p>
+                <!-- Single SK PDF Card (Full width / responsive container) -->
+                @php
+                    $sk = $docSk ?? ($documents[0] ?? []);
+                @endphp
+                <div class="border border-gov-border rounded-xl p-4 sm:p-5 bg-white hover:border-slate-300 transition flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
+                    <div class="space-y-2 max-w-2xl">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 sm:w-10 h-9 sm:h-10 rounded-xl bg-slate-50 border border-gov-border flex items-center justify-center text-gov-navy shrink-0 shadow-2xs">
+                                <i data-lucide="{{ $sk['icon'] ?? 'file-text' }}" class="w-4 sm:w-5 h-4 sm:h-5"></i>
                             </div>
-
-                            <!-- PDF Actions: Buka & Unduh -->
-                            @php
-                                $docFile = $doc['file'] ?? '';
-                            @endphp
-                            <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
-                                <a href="{{ route('document.viewer', ['file' => asset('resources/' . $docFile), 'fallback' => url('/profil')]) }}"
-                                   onclick="if (window.innerWidth >= 768 && !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))) { event.preventDefault(); window.open('{{ asset('resources/' . $docFile) }}', '_blank'); }"
-                                   class="flex-1 py-2 px-3 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition shadow-2xs inline-flex items-center justify-center gap-1.5 cursor-pointer text-center">
-                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                    <span>Buka Dokumen</span>
-                                </a>
-                                <a href="{{ asset('resources/' . $docFile) }}" target="_blank" rel="noopener noreferrer" download="{{ $docFile }}"
-                                   class="p-2 rounded-lg border border-gov-border bg-slate-50 hover:bg-slate-100 text-slate-700 transition shadow-2xs inline-flex items-center justify-center cursor-pointer shrink-0"
-                                   title="Unduh Berkas PDF">
-                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                </a>
-                            </div>
+                            <span class="inline-flex items-center h-[20px] sm:h-[22px] px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $sk['badge_color'] ?? 'bg-emerald-50 text-emerald-700 border-emerald-200' }}">
+                                {{ $sk['badge'] ?? 'SK Resmi' }}
+                            </span>
+                            @if(!empty($sk['date']))
+                                <span class="text-xs text-slate-400">• {{ $sk['date'] }}</span>
+                            @endif
                         </div>
-                    @endforeach
+                        <div>
+                            <h4 class="text-xs sm:text-sm font-bold text-gov-textMain leading-snug">{{ $sk['title'] ?? 'Surat Keputusan Kepala KPP Madya Malang' }}</h4>
+                            <p class="text-[11px] font-mono text-slate-500 mt-0.5">{{ $sk['number'] ?? 'KEP-48/KPP.1209/2026' }}</p>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            {{ $sk['description'] ?? 'Keputusan tentang Perubahan Susunan Pengurus Takmir Masjid Sholahuddin KPP Madya Malang Periode 2026-2029.' }}
+                        </p>
+                    </div>
+
+                    <!-- PDF Action: Single Unduh PDF Button with identical mechanism to /admin/users -->
+                    <div class="shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 flex items-center">
+                        <button type="button"
+                            @click="window.downloadPdfDirect('{{ route('admin.kepengurusan.download-sk-pdf') }}', 'Dokumen_Resmi_SK_Takmir_{{ \Illuminate\Support\Str::slug($docSkPeriode ?? '2026-2029') }}.pdf')"
+                            class="w-full sm:w-auto h-10 px-5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer"
+                            title="Unduh 1 Berkas Dokumen Resmi PDF Lengkap (KEP + Lampiran I + Lampiran II)">
+                            <i data-lucide="download" class="w-4 h-4 text-white"></i>
+                            <span>Unduh PDF</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
