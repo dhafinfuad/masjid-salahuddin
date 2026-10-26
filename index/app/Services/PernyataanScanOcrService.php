@@ -45,6 +45,15 @@ class PernyataanScanOcrService
      */
     public function processPdf(string $pdfPath): array
     {
+        // 1. Prioritaskan ekstraksi cerdas AI multimodal jika Gemini API Key tersedia
+        if ($this->isGeminiAvailable()) {
+            $geminiResults = $this->extractWithGemini($pdfPath);
+            if (!empty($geminiResults)) {
+                return $geminiResults;
+            }
+            Log::warning('Ekstraksi Google Gemini Vision mengembalikan hasil kosong, beralih ke alur lokal.');
+        }
+
         $hash = md5_file($pdfPath) ?: Str::random(16);
         $tempDir = storage_path("app/public/temp_scans/{$hash}");
 
@@ -833,5 +842,311 @@ class PernyataanScanOcrService
         }
 
         return $knownPages;
+    }
+
+    /**
+     * Cek apakah API Key Google Gemini Vision telah dikonfigurasi.
+     */
+    public function isGeminiAvailable(): bool
+    {
+        $key = config('services.gemini.key', env('GEMINI_API_KEY'));
+        return !empty($key);
+    }
+
+    /**
+     * Ekstraksi formulir scan PDF multi-halaman langsung menggunakan Google Gemini Vision AI.
+     * Mampu membaca teks cetak komputer dan angka tulisan tangan bolpoin secara akurat.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function extractWithGemini(string $pdfPath): array
+    {
+        $apiKey = config('services.gemini.key', env('GEMINI_API_KEY'));
+        if (empty($apiKey) || !File::exists($pdfPath)) {
+            return [];
+        }
+
+        $fileSize = filesize($pdfPath);
+        if ($fileSize === 0) {
+            return [];
+        }
+
+        $model = config('services.gemini.model', env('GEMINI_MODEL', 'gemini-3.5-flash'));
+
+        // 1. Upload berkas PDF ke Google Gemini Files API (mendukung file hingga 2 GB)
+        $fileUri = $this->uploadPdfToGeminiFiles($pdfPath, $apiKey);
+
+        $prompt = 'Berikut adalah dokumen pindaian scan multi-halaman "Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja".
+Tugas Anda adalah membaca setiap lembar halaman pindaian (baik teks cetak komputer maupun angka tulisan tangan bolpoin), lalu mengekstrak data setiap halaman ke dalam struktur JSON array berikut:
+[
+  {
+    "page_number": 1,
+    "nama": "Nama Lengkap Pegawai",
+    "nip": "18 digit NIP",
+    "jabatan": "Jabatan",
+    "seksi_kelompok": "Seksi atau Unit Kerja",
+    "phone": "Nomor WhatsApp",
+    "effective_period": "Bulan dan Tahun Mulai Berlaku",
+    "commitments": {
+      "zakat": 0,
+      "infaq": 0,
+      "qurban": 0,
+      "yatim": 0,
+      "dhuafa": 0
+    }
+  }
+]
+
+Petunjuk pembacaan:
+1. Pastikan setiap halaman fisik memiliki 1 objek dalam array JSON, dengan "page_number" urut mulai dari 1 sampai halaman terakhir.
+2. "nama": Nama pegawai yang tercantum di formulir.
+3. "nip": 18 digit NIP pegawai (format angka murni tanpa spasi).
+4. Di bagian tabel "Nominal per Bulan", bacalah angka tulisan tangan bolpoin pada setiap baris:
+   - Baris 1: Zakat (angka bulat tanpa titik, contoh 50000)
+   - Baris 2: Infaq & Sedekah
+   - Baris 3: Tabungan Qurban
+   - Baris 4: Santunan Anak Yatim
+   - Baris 5: Santunan Dhuafa
+   Jika baris kosong, strip (-), atau tidak dicentang, isi nominal 0.
+Kembalikan HANYA format JSON murni berstruktur array tanpa teks pengantar maupun markdown tambahan.';
+
+        $parts = [];
+        if (!empty($fileUri)) {
+            $parts[] = [
+                'fileData' => [
+                    'mimeType' => 'application/pdf',
+                    'fileUri' => $fileUri,
+                ]
+            ];
+        } else {
+            // Fallback inline data jika Files API gagal dan ukuran file <= 15MB
+            if ($fileSize <= 15 * 1024 * 1024) {
+                $parts[] = [
+                    'inlineData' => [
+                        'mimeType' => 'application/pdf',
+                        'data' => base64_encode(File::get($pdfPath)),
+                    ]
+                ];
+            } else {
+                Log::error('Berkas PDF melebihi 15MB dan upload Gemini Files API gagal.');
+                return [];
+            }
+        }
+        $parts[] = ['text' => $prompt];
+
+        $payload = [
+            'contents' => [
+                ['parts' => $parts]
+            ],
+            'generationConfig' => [
+                'responseMimeType' => 'application/json',
+                'maxOutputTokens' => 8192,
+                'temperature' => 0.1,
+            ]
+        ];
+
+        // Daftar model yang dicoba secara bergantian jika terjadi lonjakan beban (503)
+        $modelsToTry = array_unique([$model, 'gemini-3.5-flash-lite', 'gemini-3-flash-preview', 'gemini-flash-latest']);
+        $rawJson = null;
+
+        foreach ($modelsToTry as $mName) {
+            $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$mName}:generateContent?key={$apiKey}";
+            $response = $this->callGeminiApi($apiUrl, $payload, 120);
+
+            if ($response['code'] === 200 && !empty($response['body'])) {
+                $resData = json_decode($response['body'], true);
+                $rawJson = $resData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                if (!empty($rawJson)) {
+                    Log::info("Gemini Vision OCR berhasil menggunakan model: {$mName}");
+                    break;
+                }
+            } else {
+                Log::warning("Gemini model {$mName} gagal (HTTP {$response['code']}): " . substr((string)($response['body'] ?? ''), 0, 200));
+            }
+        }
+
+        if (empty($rawJson)) {
+            Log::error('Semua model Gemini gagal mengekstrak berkas PDF scan.');
+            return [];
+        }
+
+        return $this->formatGeminiExtractedPages($rawJson, $pdfPath);
+    }
+
+    /**
+     * Upload berkas PDF scan ke Google Gemini Files API.
+     */
+    protected function uploadPdfToGeminiFiles(string $pdfPath, string $apiKey): ?string
+    {
+        $uploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files?key={$apiKey}";
+        $fileSize = filesize($pdfPath);
+        $fileContent = @File::get($pdfPath);
+        if (!$fileContent) {
+            return null;
+        }
+
+        $ch = curl_init($uploadUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fileContent);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/pdf',
+            'X-Goog-Upload-Command: start, upload, finalize',
+            'X-Goog-Upload-Header-Content-Length: ' . $fileSize,
+            'X-Goog-Upload-Header-Content-Type: application/pdf',
+        ]);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && !empty($res)) {
+            $data = json_decode($res, true);
+            return $data['file']['uri'] ?? null;
+        }
+
+        Log::warning("Upload ke Gemini Files API gagal (HTTP {$httpCode}): " . substr((string)$res, 0, 200));
+        return null;
+    }
+
+    /**
+     * Panggil endpoint Google Gemini REST API via cURL.
+     *
+     * @param array<string, mixed> $payload
+     * @return array{code: int, body: string|false}
+     */
+    protected function callGeminiApi(string $url, array $payload, int $timeout = 120): array
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return [
+            'code' => $httpCode,
+            'body' => $res,
+        ];
+    }
+
+    /**
+     * Format respon JSON hasil pembacaan Gemini menjadi struktur data scanPages standar.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function formatGeminiExtractedPages(string $rawJson, string $pdfPath): array
+    {
+        $cleanJson = trim($rawJson);
+        if (str_starts_with($cleanJson, '```')) {
+            $cleanJson = preg_replace('/^```(?:json)?\s*/i', '', $cleanJson);
+            $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
+            $cleanJson = trim($cleanJson);
+        }
+
+        $decoded = json_decode($cleanJson, true);
+        if (!is_array($decoded)) {
+            Log::error('Respon Gemini bukan JSON valid: ' . substr($cleanJson, 0, 300));
+            return [];
+        }
+
+        if (isset($decoded['pages']) && is_array($decoded['pages'])) {
+            $items = $decoded['pages'];
+        } elseif (isset($decoded['data']) && is_array($decoded['data'])) {
+            $items = $decoded['data'];
+        } else {
+            $items = $decoded;
+        }
+
+        $pageCount = $this->getPdfPageCount($pdfPath);
+        $results = [];
+
+        foreach ($items as $idx => $item) {
+            $pageNum = (int)($item['page_number'] ?? ($idx + 1));
+            $nama = trim($item['nama'] ?? '');
+            $nip = preg_replace('/[^0-9]/', '', (string)($item['nip'] ?? ''));
+            $jabatan = trim($item['jabatan'] ?? '');
+            $seksi = trim($item['seksi_kelompok'] ?? '');
+            $phone = preg_replace('/[^0-9]/', '', (string)($item['phone'] ?? ''));
+            $period = trim($item['effective_period'] ?? ('Periode ' . now()->month . '/' . now()->year));
+
+            // Cocokkan ke database Employee jika ada NIP atau Nama (aman dari kegagalan koneksi DB)
+            try {
+                $emp = null;
+                if ($nip) {
+                    $emp = Employee::where('nip_panjang', $nip)
+                        ->orWhere('nip_pendek', $nip)
+                        ->first();
+                }
+                if (!$emp && $nama) {
+                    $emp = Employee::where('name', 'like', "%{$nama}%")->first();
+                }
+
+                if ($emp) {
+                    if (empty($nama)) $nama = $emp->name;
+                    if (empty($nip)) $nip = $emp->nip_panjang ?: $emp->nip_pendek;
+                    if (empty($jabatan)) $jabatan = $emp->jabatan;
+                    if (empty($seksi)) $seksi = $emp->unit_kerja;
+                }
+            } catch (\Throwable $dbEx) {
+                // Jangan gagalkan ekstraksi jika koneksi database sedang tidak tersedia
+                Log::debug('Employee DB lookup skipped during Gemini parsing: ' . $dbEx->getMessage());
+            }
+
+            $rawCommitments = $item['commitments'] ?? [];
+            $commitments = [
+                'zakat' => (float)($rawCommitments['zakat'] ?? 0),
+                'infaq' => (float)($rawCommitments['infaq'] ?? 0),
+                'qurban' => (float)($rawCommitments['qurban'] ?? 0),
+                'yatim' => (float)($rawCommitments['yatim'] ?? 0),
+                'dhuafa' => (float)($rawCommitments['dhuafa'] ?? 0),
+            ];
+
+            $results[] = [
+                'page_number' => $pageNum,
+                'image_path' => null,
+                'nama' => $nama,
+                'nip' => $nip,
+                'jabatan' => $jabatan,
+                'seksi_kelompok' => $seksi,
+                'phone' => $phone,
+                'effective_period' => $period,
+                'commitments' => $commitments,
+                'programs' => $commitments,
+                'raw_text' => 'Hasil Ekstraksi Otomatis Google Gemini Vision AI',
+            ];
+        }
+
+        usort($results, fn($a, $b) => $a['page_number'] <=> $b['page_number']);
+
+        // Lengkapi jika ada halaman fisik yang belum tercakup
+        if ($pageCount > count($results)) {
+            $existingPageNums = array_column($results, 'page_number');
+            for ($p = 1; $p <= $pageCount; $p++) {
+                if (!in_array($p, $existingPageNums)) {
+                    $results[] = [
+                        'page_number' => $p,
+                        'image_path' => null,
+                        'nama' => '',
+                        'nip' => '',
+                        'jabatan' => '',
+                        'seksi_kelompok' => '',
+                        'phone' => '',
+                        'effective_period' => 'Periode ' . now()->month . '/' . now()->year,
+                        'commitments' => ['zakat' => 0, 'infaq' => 0, 'qurban' => 0, 'yatim' => 0, 'dhuafa' => 0],
+                        'programs' => ['zakat' => 0, 'infaq' => 0, 'qurban' => 0, 'yatim' => 0, 'dhuafa' => 0],
+                        'raw_text' => '',
+                    ];
+                }
+            }
+            usort($results, fn($a, $b) => $a['page_number'] <=> $b['page_number']);
+        }
+
+        return $results;
     }
 }

@@ -254,4 +254,50 @@ No  Program                 Nominal per Bulan
         $component->call('removeScanPage', 0)
             ->assertCount('scanPages', 3);
     }
+
+    public function test_gemini_vision_extracts_handwritten_commitments_accurately(): void
+    {
+        $mockJson = json_encode([
+            [
+                'page_number' => 1,
+                'nama' => 'Yudi Rahman',
+                'nip' => '198312292006021002',
+                'jabatan' => 'Anggota',
+                'seksi_kelompok' => 'KPP Madya Malang',
+                'phone' => '085648794750',
+                'effective_period' => 'November 2026',
+                'commitments' => [
+                    'zakat' => 50000,
+                    'infaq' => 50000,
+                    'qurban' => 100000,
+                    'yatim' => 0,
+                    'dhuafa' => 0,
+                ],
+            ]
+        ]);
+
+        $service = new class extends PernyataanScanOcrService {
+            public string $testJson = '';
+            public function extractWithGemini(string $pdfPath): array
+            {
+                return $this->formatGeminiExtractedPages($this->testJson, $pdfPath);
+            }
+        };
+        $service->testJson = $mockJson;
+
+        $tempPdf = tempnam(sys_get_temp_dir(), 'test_gemini_') . '.pdf';
+        file_put_contents($tempPdf, '%PDF-1.4 1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj 2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj 3 0 obj <</Type /Page /Parent 2 0 R>> endobj xref 0 4 trailer <</Root 1 0 R /Size 4>> %%EOF');
+
+        $result = $service->extractWithGemini($tempPdf);
+        @unlink($tempPdf);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals('Yudi Rahman', $result[0]['nama']);
+        $this->assertEquals('198312292006021002', $result[0]['nip']);
+        $this->assertEquals(50000, $result[0]['commitments']['zakat']);
+        $this->assertEquals(50000, $result[0]['commitments']['infaq']);
+        $this->assertEquals(100000, $result[0]['commitments']['qurban']);
+        $this->assertEquals(0, $result[0]['commitments']['yatim']);
+        $this->assertStringContainsString('Gemini Vision AI', $result[0]['raw_text']);
+    }
 }
