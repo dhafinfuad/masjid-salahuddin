@@ -10,15 +10,13 @@
             
             <!-- Top Action Bar (Header) - Clean Navy Gov -->
             <header class="no-print bg-gov-950 text-white px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2.5 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
-                <!-- Left: Title & Badge -->
-                <div class="flex items-center gap-2 text-gov-300 text-xs sm:text-sm font-semibold tracking-wide min-w-0 max-w-[45%] sm:max-w-[40%]">
+                <!-- Left: Title -->
+                <div class="flex items-center gap-2 text-gov-300 text-xs sm:text-sm font-semibold tracking-wide min-w-0 max-w-[50%]">
                     <svg class="w-4 h-4 text-gov-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                         <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
                     </svg>
                     <span class="hidden xs:inline">Notula</span>
-                    <span class="text-[10px] font-normal px-2 py-0.5 rounded-full bg-gov-900 text-gov-300 border border-slate-700/70 capitalize shrink-0"
-                        x-text="notulaForm.type === 'tematik' ? 'Tematik' : (notulaForm.type === 'jumat' ? 'Shalat Jumat' : 'Pekanan')"></span>
                     <span class="truncate text-slate-300 text-xs font-normal" x-show="notulaForm.title" x-text="notulaForm.title"></span>
                 </div>
 
@@ -51,32 +49,11 @@
                         </button>
                     </div>
 
-                    <!-- Cetak / PDF Button -->
-                    <button type="button" 
-                        @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(notulaForm.raw_text, notulaForm), notulaForm.title || 'Notula Kajian') : window.print()" 
-                        class="inline-flex items-center gap-1.5 bg-gov-700 hover:bg-gov-600 active:bg-gov-800 text-white text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors border border-gov-600/60 shadow-xs cursor-pointer"
-                        title="Cetak atau Simpan PDF">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                        <span class="hidden sm:inline">Cetak /</span><span>PDF</span>
-                    </button>
-
-                    <!-- Simpan Button -->
-                    <button type="button"
-                        @click="$wire.saveNotula(notulaForm.id, notulaForm.raw_text)"
-                        wire:loading.attr="disabled"
-                        class="inline-flex items-center gap-1.5 bg-gov-navy hover:bg-gov-navyHover active:bg-gov-900 text-white text-xs font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors border border-gov-navy shadow-xs cursor-pointer disabled:opacity-50"
-                        title="Simpan Perubahan Notula ke Database">
-                        <svg wire:loading.remove wire:target="saveNotula" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        <svg wire:loading wire:target="saveNotula" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                        <span wire:loading.remove wire:target="saveNotula">Simpan</span>
-                        <span wire:loading wire:target="saveNotula">Menyimpan...</span>
-                    </button>
-
-                    <!-- Tutup Button -->
+                    <!-- Tombol X Tutup Modal -->
                     <button type="button" @click="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
-                        class="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-300 hover:text-white text-xs font-medium px-2.5 py-1.5 sm:py-2 rounded-lg border border-slate-700 transition-colors cursor-pointer">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        <span class="hidden sm:inline">Tutup</span>
+                        class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                        title="Tutup Modal">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
                 </div>
             </header>
