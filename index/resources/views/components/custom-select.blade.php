@@ -73,7 +73,13 @@
         @endif
         options: {{ Js::from($normalizedOptions) }},
         get currentLabel() {
-            const found = this.options.find(o => !o.is_header && String(o.value) === String(this.selected));
+            const isNullOrEmpty = (v) => v === null || typeof v === 'undefined' || v === '';
+            const found = this.options.find(o => {
+                if (o.is_header) return false;
+                if (String(o.value) === String(this.selected)) return true;
+                if (isNullOrEmpty(o.value) && isNullOrEmpty(this.selected)) return true;
+                return false;
+            });
             if (found) return found.label;
             return {{ Js::from($placeholder) }} || (this.options.find(o => !o.is_header) ? this.options.find(o => !o.is_header).label : '');
         },

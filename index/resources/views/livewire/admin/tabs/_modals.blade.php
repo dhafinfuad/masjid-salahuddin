@@ -707,13 +707,9 @@
                 <button type="button" @click="importKajianTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importKajianTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“‹ Copypaste Excel
+                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
                 </button>
-                <button type="button" @click="importKajianTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
-                    :class="importKajianTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“ Upload File Excel
-                </button>
+                <button type="button" @click="importKajianTab = 'file'" class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5" :class="importKajianTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Upload File Excel</span></button>
             </div>
 
             <!-- TAB 1: COPYPASTE DARI EXCEL -->
@@ -1074,7 +1070,7 @@
                 <button type="button" @click="importDutyTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importDutyTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“‹ Copypaste Excel
+                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
                 </button>
                 <button type="button" @click="importDutyTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
@@ -1448,7 +1444,7 @@
                 <button type="button" @click="importAgendaTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importAgendaTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“‹ Copypaste Excel
+                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
                 </button>
                 <button type="button" @click="importAgendaTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
@@ -2883,9 +2879,9 @@
                         <x-custom-select 
                             x-model="financeCategoryForm.group"
                             :options="[
-                                ['value' => 'penerimaan', 'label' => '📥 Penerimaan (Kas Masuk)'],
-                                ['value' => 'pengeluaran_rutin', 'label' => '📤 Pengeluaran Rutin'],
-                                ['value' => 'pengeluaran_nonrutin', 'label' => '🛠️ Pengeluaran Non-Rutin'],
+                                ['value' => 'penerimaan', 'label' => 'Penerimaan (Kas Masuk)'],
+                                ['value' => 'pengeluaran_rutin', 'label' => 'Pengeluaran Rutin'],
+                                ['value' => 'pengeluaran_nonrutin', 'label' => 'Pengeluaran Non-Rutin'],
                             ]"
                             placeholder="Pilih Kelompok Pos"
                             buttonClass="p-2.5 bg-slate-50/50"
@@ -3162,14 +3158,16 @@
             <!-- Tab Selector: Copypaste Excel vs Upload CSV -->
             <div class="flex items-center p-1 bg-slate-100 rounded-lg">
                 <button type="button" @click="importFinanceTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importFinanceTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📋 Copypaste Excel
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    <span>Copypaste Excel</span>
                 </button>
                 <button type="button" @click="importFinanceTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importFinanceTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    📁 Upload File Excel / CSV
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload File Excel / CSV</span>
                 </button>
             </div>
 
@@ -4254,8 +4252,9 @@
 
             <!-- Footer -->
             <div class="flex items-center justify-between border-t border-slate-200 pt-3 shrink-0 text-xs">
-                <div class="text-[11px] text-slate-500">
-                    ðŸ’¡ <strong>Otomatisasi:</strong> Jadwal kajian baru atau lama dengan nama ustadz yang sama akan langsung menggunakan foto ini.
+                <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    <span><strong>Otomatisasi:</strong> Jadwal kajian baru atau lama dengan nama ustadz yang sama akan langsung menggunakan foto ini.</span>
                 </div>
                 <button type="button" @click="showUstadzModal = false; $wire.closeUstadzModal()"
                     class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition cursor-pointer">
@@ -4389,7 +4388,7 @@
                             <svg class="w-4 h-4 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <div class="leading-relaxed">
                                 <span class="font-semibold block text-rose-700">{{ $message }}</span>
-                                <span class="text-[11px] text-rose-600 block mt-0.5">Saran: Jika foto dari kamera DSLR/HP beresolusi sangat besar (10â€“15 MB per foto), pilih 1â€“2 foto sekaligus atau sesuaikan batas <code class="bg-rose-100 px-1 py-0.5 rounded font-mono text-[10px]">client_max_body_size</code> di Nginx server.</span>
+                                <span class="text-[11px] text-rose-600 block mt-0.5">Saran: Jika foto dari kamera DSLR/HP beresolusi sangat besar (10-15 MB per foto), pilih 1-2 foto sekaligus atau sesuaikan batas <code class="bg-rose-100 px-1 py-0.5 rounded font-mono text-[10px]">client_max_body_size</code> di Nginx server.</span>
                             </div>
                         </div>
                     @enderror
@@ -4651,7 +4650,7 @@
                             <span x-text="galleryLightboxModal.date"></span>
                         </span>
                         
-                        <span class="text-slate-500 shrink-0">â€¢</span>
+                        <span class="text-slate-500 shrink-0">&bull;</span>
                         
                         <!-- Lokasi -->
                         <span class="inline-flex items-center gap-1 min-w-0 truncate text-slate-300">
