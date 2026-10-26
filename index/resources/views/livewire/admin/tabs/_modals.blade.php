@@ -771,6 +771,33 @@
 
             <!-- TAB 2: UPLOAD FILE EXCEL -->
             <div x-show="importKajianTab === 'file'" class="space-y-3 text-xs">
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
                     <span class="font-bold flex items-center gap-1.5">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
@@ -1102,6 +1129,33 @@
 
             <!-- TAB 2: UPLOAD FILE EXCEL -->
             <div x-show="importDutyTab === 'file'" class="space-y-3 text-xs">
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format jadwal petugas shalat rawatib (Dzuhur & Ashar).</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', 'petugas_sholat') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
                     <span class="font-bold flex items-center gap-1.5">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
@@ -1447,15 +1501,41 @@
                 </div>
             </div>
 
-            <!-- TAB 2: UPLOAD FILE CSV -->
+            <!-- TAB 2: UPLOAD FILE EXCEL / CSV -->
             <div x-show="importAgendaTab === 'file'" class="space-y-3 text-xs">
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format rekap agenda kegiatan akbar dan anggaran.</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', 'agenda_akbar') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
                     <span class="font-bold flex items-center gap-1.5">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah File CSV:</span>
+                        <span>Petunjuk Unggah Berkas:</span>
                     </span>
-                    <p class="text-xs text-sky-800">Unggah berkas <strong>.csv</strong> atau <strong>.txt</strong>
-                        dengan pemisah koma, titik-koma, atau tab maksimal 2 MB.</p>
+                    <p class="text-xs text-sky-800">Unggah berkas berformat <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, atau <strong>.txt</strong> dengan ukuran maksimal 5 MB.</p>
                 </div>
 
                 <div x-data="{ isDragging: false }"
@@ -1466,7 +1546,7 @@
                     <input id="importAgendaFile"
                            type="file"
                            wire:model="importAgendaFile"
-                           accept=".csv,.txt"
+                           accept=".xlsx,.xls,.csv,.txt"
                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                            @dragenter="isDragging = true"
                            @dragover.prevent="isDragging = true"
@@ -1485,7 +1565,7 @@
                         <div class="text-xs text-slate-600">
                             <span class="font-bold text-gov-navy group-hover:underline">Pilih file</span> atau seret & lepas berkas ke area ini
                         </div>
-                        <p class="text-[11px] text-slate-400">Format: CSV / TXT (Maksimal 2 MB)</p>
+                        <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv, atau .txt (Maksimal 5 MB)</p>
                         @if($importAgendaFile)
                             <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
                                 <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -3084,12 +3164,12 @@
                 <button type="button" @click="importFinanceTab = 'paste'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importFinanceTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“‹ Copypaste Excel
+                    📋 Copypaste Excel
                 </button>
                 <button type="button" @click="importFinanceTab = 'file'"
                     class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
                     :class="importFinanceTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“ Upload File CSV
+                    📁 Upload File Excel / CSV
                 </button>
             </div>
 
@@ -3137,15 +3217,41 @@
                 </div>
             </div>
 
-            <!-- TAB 2: UPLOAD FILE CSV -->
+            <!-- TAB 2: UPLOAD FILE EXCEL / CSV -->
             <div x-show="importFinanceTab === 'file'" class="space-y-3 text-xs">
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format rekap transaksi arus kas (masuk & keluar).</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', 'kas') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
                     <span class="font-bold flex items-center gap-1.5">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah File CSV:</span>
+                        <span>Petunjuk Unggah Berkas:</span>
                     </span>
-                    <p class="text-xs text-sky-800">Unggah berkas <strong>.csv</strong> atau <strong>.txt</strong>
-                        dengan pemisah koma atau tab maksimal 2 MB.</p>
+                    <p class="text-xs text-sky-800">Unggah berkas berformat <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, atau <strong>.txt</strong> dengan ukuran maksimal 5 MB.</p>
                 </div>
 
                 <div x-data="{ isDragging: false }"
@@ -3156,7 +3262,7 @@
                     <input id="importFinanceFile"
                            type="file"
                            wire:model="importFinanceFile"
-                           accept=".csv,.txt"
+                           accept=".xlsx,.xls,.csv,.txt"
                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                            @dragenter="isDragging = true"
                            @dragover.prevent="isDragging = true"
@@ -3176,7 +3282,7 @@
                             <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
                             <span>atau seret & lepas berkas ke area ini</span>
                         </div>
-                        <p class="text-[11px] text-slate-400">Format: CSV / TXT (Maksimal 2 MB)</p>
+                        <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv, atau .txt (Maksimal 5 MB)</p>
                         @if($importFinanceFile)
                             <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
                                 <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>

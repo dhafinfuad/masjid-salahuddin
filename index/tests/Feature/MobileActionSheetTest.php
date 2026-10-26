@@ -70,7 +70,7 @@ class MobileActionSheetTest extends TestCase
         $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
 
         // 1. Verifikasi FAB memiliki logika sembunyi untuk settings, statistics, dan saran
-        $this->assertStringContainsString("!['settings', 'statistics', 'statistik', 'saran'].includes(activeTab)", $rendered);
+        $this->assertStringContainsString("['dashboard', 'settings', 'statistics', 'statistik', 'saran'].includes(activeTab)", $rendered);
 
         // 2. Verifikasi tombol Tambah Peserta tidak ada di action sheet programs
         $this->assertStringNotContainsString('openCreateParticipant()', $rendered);
@@ -109,7 +109,7 @@ class MobileActionSheetTest extends TestCase
         // Verifikasi subtab agenda memiliki grid-cols-3
         $this->assertStringContainsString("kegiatanSubTab === 'agenda'", $rendered);
         $this->assertMatchesRegularExpression(
-            '/kegiatanSubTab\s*===\s*\'agenda\'.*?grid grid-cols-3 gap-2.*?Import File.*?Download Excel.*?Cetak PDF/s',
+            '/kegiatanSubTab\s*===\s*\'agenda\'.*?grid grid-cols-3 gap-2.*?Import File.*?Download Excel.*?(Unduh|Cetak) PDF/s',
             $rendered
         );
     }

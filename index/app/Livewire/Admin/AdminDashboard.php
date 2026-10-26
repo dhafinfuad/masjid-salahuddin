@@ -2747,9 +2747,11 @@ class AdminDashboard extends Component
                         'time_display' => $time,
                         'title' => $title,
                         'khatib_name' => $khatib,
+                        'speaker_name' => $khatib,
                         'mc_name' => $mc,
                         'muadzin_name' => $muadzin,
                         'khatib_phone' => $khatibPhone,
+                        'speaker_phone' => $khatibPhone,
                         'is_holiday_disabled' => $isHoliday,
                     ]);
                 } else {
@@ -2759,9 +2761,11 @@ class AdminDashboard extends Component
                         'time_display' => $time,
                         'title' => $title,
                         'khatib_name' => $khatib,
+                        'speaker_name' => $khatib,
                         'mc_name' => $mc,
                         'muadzin_name' => $muadzin,
                         'khatib_phone' => $khatibPhone,
+                        'speaker_phone' => $khatibPhone,
                         'is_holiday_disabled' => $isHoliday,
                     ]);
                 }
@@ -3449,13 +3453,58 @@ class AdminDashboard extends Component
         }
 
         $this->validate([
-            'importAgendaFile' => 'required|file|mimes:csv,txt|max:2048',
+            'importAgendaFile' => 'required|file|max:5120|extensions:xlsx,xls,csv,txt',
+        ], [
+            'importAgendaFile.required' => 'Silakan pilih berkas Excel atau CSV terlebih dahulu.',
+            'importAgendaFile.extensions' => 'Berkas harus berupa .xlsx, .xls, .csv, atau .txt.',
         ]);
 
         $path = $this->importAgendaFile->getRealPath();
-        $content = file_get_contents($path);
-        $this->importAgendaPasteText = $content;
-        $this->processImportAgendaPaste();
+        $ext = $this->importAgendaFile->getClientOriginalExtension();
+
+        $rows = SimpleXlsxService::parseFile($path, $ext);
+        $importedCount = 0;
+
+        foreach ($rows as $index => $cols) {
+            if (empty($cols)) continue;
+            $cols = array_map(fn($v) => trim((string)$v), $cols);
+            if (empty($cols[0])) continue;
+
+            // Skip header line
+            if ($index === 0 && (stripos($cols[0], 'nama') !== false || stripos($cols[0], 'agenda') !== false || stripos($cols[0], 'no') !== false)) {
+                continue;
+            }
+
+            // Detect if first column is sequence number
+            $title = is_numeric($cols[0]) && isset($cols[1]) ? $cols[1] : $cols[0];
+            $dateStr = isset($cols[2]) ? $cols[2] : (isset($cols[1]) ? $cols[1] : '');
+            $budgetRaw = isset($cols[3]) ? $cols[3] : '0';
+            $committee = isset($cols[4]) ? str_replace('; ', "\n", $cols[4]) : '';
+            $status = isset($cols[5]) && in_array(trim($cols[5]), ['Direncanakan', 'Berjalan', 'SELESAI']) ? trim($cols[5]) : 'Direncanakan';
+
+            try {
+                $parsedDate = SimpleXlsxService::parseFlexibleDate($dateStr) ?? Carbon::parse($dateStr)->format('Y-m-d');
+            } catch (\Exception $e) {
+                $parsedDate = Carbon::now()->addDays(7)->format('Y-m-d');
+            }
+
+            $budgetClean = (float) preg_replace('/[^0-9.]/', '', $budgetRaw);
+
+            Agenda::create([
+                'title' => $title,
+                'event_date' => $parsedDate,
+                'budget' => $budgetClean,
+                'committee_members' => $committee,
+                'status' => $status,
+                'description' => 'Diimpor dari berkas Excel/Spreadsheet',
+            ]);
+            $importedCount++;
+        }
+
+        $this->notify("Berhasil mengimpor {$importedCount} agenda kegiatan akbar!");
+        $this->showImportAgendaModal = false;
+        $this->importAgendaFile = null;
+        $this->dispatch('close-import-agenda-modal');
     }
 
     // ==========================================
@@ -5392,19 +5441,22 @@ class AdminDashboard extends Component
             return;
         }
 
-        if (! $this->importFinanceFile) {
-            $this->notify('Silakan pilih berkas CSV terlebih dahulu.');
-            return;
-        }
+        $this->validate([
+            'importFinanceFile' => 'required|file|max:5120|extensions:xlsx,xls,csv,txt',
+        ], [
+            'importFinanceFile.required' => 'Silakan pilih berkas Excel atau CSV terlebih dahulu.',
+            'importFinanceFile.extensions' => 'Berkas harus berupa .xlsx, .xls, .csv, atau .txt.',
+        ]);
 
         $path = $this->importFinanceFile->getRealPath();
-        $handle = fopen($path, 'r');
+        $ext = $this->importFinanceFile->getClientOriginalExtension();
+        $rows = SimpleXlsxService::parseFile($path, $ext);
         $count = 0;
-        $row = 0;
 
-        while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-            $row++;
-            if ($row === 1 && (str_contains(strtolower($data[0] ?? ''), 'tipe') || str_contains(strtolower($data[0] ?? ''), 'tanggal'))) {
+        foreach ($rows as $index => $data) {
+            if (empty($data)) continue;
+            $data = array_map(fn($v) => trim((string)$v), $data);
+            if ($index === 0 && (str_contains(strtolower($data[0] ?? ''), 'tipe') || str_contains(strtolower($data[0] ?? ''), 'tanggal') || str_contains(strtolower($data[0] ?? ''), 'kategori'))) {
                 continue;
             }
 
@@ -5421,10 +5473,17 @@ class AdminDashboard extends Component
             $date = Carbon::today()->toDateString();
             $desc = 'Impor Berkas ' . $catName;
 
-            if (isset($data[3]) && preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($data[3]))) {
-                $date = trim($data[3]);
-                $desc = trim($data[4] ?? $desc);
-            } elseif (isset($data[3])) {
+            if (isset($data[3])) {
+                $parsedDate = SimpleXlsxService::parseFlexibleDate($data[3]);
+                if ($parsedDate) {
+                    $date = $parsedDate;
+                } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($data[3]))) {
+                    $date = trim($data[3]);
+                }
+            }
+            if (isset($data[4]) && trim($data[4]) !== '') {
+                $desc = trim($data[4]);
+            } elseif (isset($data[3]) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($data[3])) && SimpleXlsxService::parseFlexibleDate($data[3]) === null) {
                 $desc = trim($data[3]);
             }
 
@@ -5440,10 +5499,9 @@ class AdminDashboard extends Component
             $count++;
         }
 
-        fclose($handle);
         $this->importFinanceFile = null;
         $this->showFinanceImportModal = false;
-        $this->notify("Berhasil mengimpor {$count} baris transaksi kas dari berkas.");
+        $this->notify("Berhasil mengimpor {$count} data transaksi kas dari file Excel/CSV.");
     }
 
     public function exportFinanceCsv()

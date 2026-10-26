@@ -90,7 +90,7 @@ class PrintExportViewsTest extends TestCase
         $response = $this->get('/admin/kepengurusan/unduh-sk-pdf');
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/pdf');
-        $this->assertStringContainsString('Draf_Dokumen_Resmi_SK_Takmir_2026-2029.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
+        $this->assertStringContainsString('Dokumen_Resmi_SK_Takmir_2026-2029.pdf', str_replace('"', '', $response->headers->get('content-disposition')));
 
         // Verify underlying view data contains QR code and Kemenkeu Kop
         $controller = app(\App\Http\Controllers\TakmirDocController::class);
@@ -104,7 +104,7 @@ class PrintExportViewsTest extends TestCase
 
         $viewHtml = view('pdf.sk-takmir-official-pdf', $data)->render();
         $this->assertStringContainsString('KEPUTUSAN KEPALA KANTOR PELAYANAN PAJAK MADYA MALANG', $viewHtml);
-        $this->assertStringContainsString('TTE BSrE DISAHKAN', $viewHtml);
+        $this->assertStringContainsString('Ditandatangani secara elektronik', $viewHtml);
         $this->assertStringContainsString('SUSUNAN PENGURUS TAKMIR MASJID SALAHUDDIN', $viewHtml);
         $this->assertStringContainsString('PENJABARAN TUGAS POKOK DAN FUNGSI (TUPOKSI)', $viewHtml);
     }

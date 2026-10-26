@@ -95,6 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/agenda/export-excel', [AgendaExportController::class, 'exportExcel'])->name('admin.agenda.export-excel');
     Route::get('/admin/finance/export-excel', [FinanceExportController::class, 'exportExcel'])->name('admin.finance.export-excel');
     Route::get('/admin/programs/export-excel', [SocialProgramExportController::class, 'exportExcel'])->name('admin.programs.export-excel');
+    Route::get('/admin/template-import/{type}', [\App\Http\Controllers\ImportTemplateController::class, 'download'])->name('admin.template-import');
     Route::get('/admin/programs/print-surat-pernyataan', [SocialProgramPrintController::class, 'printPdf'])->name('admin.programs.print-surat-pernyataan');
     Route::get('/admin/programs/unduh-pdf', [SocialProgramPrintController::class, 'downloadPdf'])->name('admin.programs.download-pdf');
     Route::get('/admin/programs/preview-scan-pernyataan', function () {
