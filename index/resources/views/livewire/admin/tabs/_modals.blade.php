@@ -114,14 +114,78 @@
                         </div>
                     </div>
 
+                    <!-- Smart Banner: Deteksi Otomatis Transkrip Mentah YouTube -->
+                    <div x-show="isYoutubeTranscript(notulaForm.raw_text)"
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="opacity-0 -translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-2"
+                        class="bg-gradient-to-r from-gov-navy to-gov-800 text-white rounded-xl p-4 sm:p-5 shadow-lg border border-gov-700/80 space-y-3.5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0 text-amber-300 shadow-inner">
+                                    <svg class="w-5 h-5 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                                    </svg>
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-sm text-white tracking-wide">Transkrip Mentah YouTube Terdeteksi!</h4>
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold border border-amber-400/30">Google Gemini AI</span>
+                                    </div>
+                                    <p class="text-xs text-slate-200 leading-relaxed">
+                                        Naskah yang Anda tempelkan memuat timestamp waktu dan gaya tutur lisan YouTube. Sistem dapat secara otomatis merapikan timestamp, menyelaraskan bahasa, mengekstrak ayat Al-Qur'an &amp; hadits berharakat Arab lengkap, serta menyusun risalah eksekutif formal secara instan.
+                                    </p>
+                                </div>
+                            </div>
+                            <button type="button" @click="notulaTranscriptDismissed = true" title="Tutup pemberitahuan"
+                                class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Action Bar inside Smart Banner -->
+                        <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                            <button type="button" @click="notulaTranscriptDismissed = true"
+                                class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer">
+                                Abaikan
+                            </button>
+                            <button type="button"
+                                @click="$wire.transformTranscriptToNotula(notulaForm.id, notulaForm.raw_text)"
+                                wire:loading.attr="disabled"
+                                wire:target="transformTranscriptToNotula"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 text-xs font-bold shadow-md transition-all cursor-pointer disabled:opacity-50">
+                                <svg wire:loading.remove wire:target="transformTranscriptToNotula" class="w-4 h-4 text-slate-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <svg wire:loading wire:target="transformTranscriptToNotula" class="w-4 h-4 animate-spin text-slate-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                <span wire:loading.remove wire:target="transformTranscriptToNotula">Transformasikan Menjadi Notula Eksekutif (AI)</span>
+                                <span wire:loading wire:target="transformTranscriptToNotula">Memproses Transkrip dengan Gemini AI...</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Textarea Editor -->
                     <div class="bg-white rounded-xl border border-slate-300 shadow-2xs overflow-hidden focus-within:ring-2 focus-within:ring-gov-navy/20 focus-within:border-gov-navy transition">
-                        <div class="bg-slate-100/80 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <div class="bg-slate-100/80 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
                             <span class="font-medium flex items-center gap-1.5 text-slate-700">
                                 <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 Editor Naskah Notula
                             </span>
                             <div class="flex items-center gap-3">
+                                <button type="button"
+                                    x-show="notulaForm.raw_text && notulaForm.raw_text.trim().length > 50"
+                                    @click="$wire.transformTranscriptToNotula(notulaForm.id, notulaForm.raw_text)"
+                                    wire:loading.attr="disabled"
+                                    wire:target="transformTranscriptToNotula"
+                                    title="Transformasikan transkrip mentah YouTube menjadi notula eksekutif"
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-semibold text-[11px] transition cursor-pointer disabled:opacity-50">
+                                    <svg wire:loading.remove wire:target="transformTranscriptToNotula" class="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    <svg wire:loading wire:target="transformTranscriptToNotula" class="w-3.5 h-3.5 animate-spin text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                    <span wire:loading.remove wire:target="transformTranscriptToNotula">✨ Ubah Jadi Notula AI</span>
+                                    <span wire:loading wire:target="transformTranscriptToNotula">Memproses AI...</span>
+                                </button>
                                 <span>Karakter: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').length"></strong></span>
                                 <span>Kata: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').trim() ? (notulaForm.raw_text || '').trim().split(/\s+/).length : 0"></strong></span>
                             </div>

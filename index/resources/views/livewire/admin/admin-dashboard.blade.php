@@ -244,6 +244,14 @@
           showNotulaModal: false,
           notulaActiveTab: 'preview',
           notulaFontSizeIndex: 1,
+          notulaTranscriptDismissed: false,
+          isYoutubeTranscript(text) {
+              if (!text || typeof text !== 'string' || text.length < 40 || this.notulaTranscriptDismissed) return false;
+              const hasDetikPattern = /\b\d+(\.\d+)?\s*detik\b/i.test(text);
+              const hasTimestamp = /\b\d{1,2}:\d{2}\b/.test(text) && (text.toLowerCase().includes('transkrip') || text.toLowerCase().includes('telusuri') || text.toLowerCase().includes('detik'));
+              const hasHeader = /^\s*(?:transkrip|telusuri transkrip|transcript)/im.test(text.slice(0, 300));
+              return hasDetikPattern || (hasTimestamp && hasHeader) || (hasHeader && /\b\d+\b/.test(text));
+          },
           notulaForm: {
               id: null,
               title: '',
@@ -257,6 +265,7 @@
               if (Array.isArray(data) && data.length > 0) data = data[0];
               if (data && data.data && typeof data.data === 'object') data = data.data;
               if (!data || typeof data !== 'object') return;
+              this.notulaTranscriptDismissed = false;
               this.notulaForm = {
                   id: data.id,
                   title: data.title || '',
@@ -1033,6 +1042,7 @@
     @open-notula-modal.window="openNotulaModal($event.detail)"
     @close-notula-modal.window="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
     @notula-saved.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (notulaForm && d && d.id == notulaForm.id) { notulaForm.raw_text = d.notula; if ($refs.notulaTextarea) { $refs.notulaTextarea.value = d.notula; } }"
+    @notula-transformed.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (notulaForm && d) { notulaForm.raw_text = d.notula; if ($refs.notulaTextarea) { $refs.notulaTextarea.value = d.notula; } notulaActiveTab = 'preview'; notulaTranscriptDismissed = false; }"
     @open-youtube-modal.window="openYoutubeModal($event.detail)"
     @close-youtube-modal.window="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
     @youtube-saved.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (youtubeForm && d && d.id == youtubeForm.id) { youtubeForm.youtube_url = d.youtube_url; }"

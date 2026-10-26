@@ -1952,6 +1952,53 @@ class AdminDashboard extends Component
         $this->dispatch('notula-saved', ['id' => $k->id, 'notula' => $content]);
     }
 
+    public function transformTranscriptToNotula(?int $id = null, ?string $rawTranscript = null): void
+    {
+        if (! Auth::user() || ! Auth::user()->isMaster()) {
+            $this->notify('Akses ditolak: Hanya Pengurus dengan role Master yang berhak mentransformasi Notula.');
+            return;
+        }
+
+        $targetId = $id ? (int) $id : $this->notulaKajianId;
+        $transcript = $rawTranscript !== null ? $rawTranscript : $this->notulaRawText;
+
+        if (empty(trim((string) $transcript))) {
+            $this->notify('Naskah transkrip tidak boleh kosong.');
+            return;
+        }
+
+        $k = $targetId ? Kajian::find($targetId) : null;
+        $speaker = $k ? ($k->speaker_name ?: ($k->khatib_name ?: 'Asatidz')) : ($this->notulaSpeaker ?: 'Asatidz');
+        $title = $k ? $k->title : ($this->notulaTitle ?: 'Kajian Islam Tematik');
+        $type = $k ? $k->type : ($this->notulaType ?: 'tematik');
+        $date = $k && $k->date ? Carbon::parse($k->date)->translatedFormat('l, d F Y') : ($this->notulaDate ?: Carbon::now()->translatedFormat('l, d F Y'));
+
+        $aiService = app(\App\Services\NotulaAiService::class);
+        if (! $aiService->isAvailable()) {
+            $this->notify('Gagal: Google Gemini API Key belum disetel pada server.');
+            return;
+        }
+
+        try {
+            $generatedMarkdown = $aiService->generateFromTranscript($transcript, [
+                'title' => $title,
+                'speaker_name' => $speaker,
+                'type' => $type,
+                'date' => $date,
+            ]);
+
+            $this->notulaRawText = $generatedMarkdown;
+            $this->notify('Transkrip YouTube berhasil ditransformasikan menjadi Notula Eksekutif.');
+            $this->dispatch('notula-transformed', [
+                'id' => $targetId,
+                'notula' => $generatedMarkdown,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Transformasi Transkrip Notula Gagal: ' . $e->getMessage());
+            $this->notify('Gagal mentransformasi transkrip: ' . $e->getMessage());
+        }
+    }
+
     // ==========================================
     // Link YouTube Kegiatan Methods
     // ==========================================
