@@ -92,4 +92,23 @@ class KajianModalStateTest extends TestCase
             'khatib_name' => 'Ustadz Ahmad',
         ]);
     }
+
+    /** @test */
+    public function test_open_and_close_import_kajian_modal_state_and_events(): void
+    {
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'kegiatan'])
+            ->call('openImportKajian', 'jumat')
+            ->assertSet('showImportKajianModal', true)
+            ->assertSet('importKajianType', 'jumat')
+            ->assertSet('importKajianTab', 'paste')
+            ->assertDispatched('open-import-kajian-modal', type: 'jumat')
+            ->call('closeImportKajianModal')
+            ->assertSet('showImportKajianModal', false)
+            ->assertDispatched('close-import-kajian-modal')
+            ->call('openImportKajian', 'pekanan')
+            ->assertSet('showImportKajianModal', true)
+            ->assertSet('importKajianType', 'pekanan')
+            ->assertDispatched('open-import-kajian-modal', type: 'pekanan');
+    }
 }

@@ -2493,7 +2493,15 @@ class AdminDashboard extends Component
         $this->importKajianPasteText = '';
         $this->importKajianFile = null;
         $this->showImportKajianModal = true;
-        $this->dispatch('open-import-kajian-modal');
+        $this->dispatch('open-import-kajian-modal', type: $type);
+    }
+
+    public function closeImportKajianModal(): void
+    {
+        $this->showImportKajianModal = false;
+        $this->importKajianPasteText = '';
+        $this->importKajianFile = null;
+        $this->dispatch('close-import-kajian-modal');
     }
 
     public function processImportKajianPaste(): void

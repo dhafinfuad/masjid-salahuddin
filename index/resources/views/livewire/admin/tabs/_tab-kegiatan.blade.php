@@ -33,7 +33,7 @@
                             <div x-show="kegiatanSubTab === 'pekanan' || kegiatanSubTab === 'jumat'" x-cloak :class="{ 'hidden': kegiatanSubTab !== 'pekanan' && kegiatanSubTab !== 'jumat' }" class="flex items-center gap-2">
                                 @if(Auth::user()->canManage())
                                     <button type="button"
-                                        @click="showImportKajianModal = true; $wire.openImportKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
+                                        @click="importKajianType = (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan'); importKajianTab = 'paste'; showImportKajianModal = true; $wire.openImportKajian(importKajianType)"
                                         class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
                                         <i data-lucide="file-up" class="w-4 h-4 text-white/70"></i>
                                         <span>Import</span>

@@ -692,12 +692,16 @@
             class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <h3 class="text-base font-bold text-gov-textMain">Import Jadwal Kajian</h3>
+                    <h3 class="text-base font-bold text-gov-textMain"
+                        x-text="importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian'">
+                        {{ $importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian' }}
+                    </h3>
                     <p class="text-xs text-slate-500">Target Impor: <strong
-                            class="text-gov-navy uppercase">{{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian' }}</strong>
+                            class="text-gov-navy uppercase"
+                            x-text="importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian'">{{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian' }}</strong>
                     </p>
                 </div>
-                <button type="button" @click="showImportKajianModal = false"
+                <button type="button" @click="showImportKajianModal = false; $wire.closeImportKajianModal()"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
                         data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -719,26 +723,28 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    @if($importKajianType === 'pekanan')
+                    <div x-show="importKajianType === 'pekanan'">
                         <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
                             [No] \t [Jenis] \t [Hari & Tanggal] \t [Waktu] \t [Judul Kajian] \t [Pembicara] \t [No HP]
                         </p>
-                        <p class="text-xs text-amber-800">Cukup blok tabel di Excel/Google Sheets, tekan
+                        <p class="text-xs text-amber-800 mt-1">Cukup blok tabel di Excel/Google Sheets, tekan
                             <strong>Ctrl+C</strong>, lalu paste ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
                         </p>
-                    @else
+                    </div>
+                    <div x-show="importKajianType === 'jumat'" x-cloak>
                         <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
                             [No] \t [Hari & Tanggal] \t [Waktu] \t [Status Libur] \t [Judul Khutbah] \t [Khatib] \t [MC] \t [Muadzin] \t [No HP]
                         </p>
-                        <p class="text-xs text-amber-800">Cukup blok tabel di Excel/Google Sheets, tekan
+                        <p class="text-xs text-amber-800 mt-1">Cukup blok tabel di Excel/Google Sheets, tekan
                             <strong>Ctrl+C</strong>, lalu paste ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
                         </p>
-                    @endif
+                    </div>
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Tempelkan Teks Excel di Sini *</label>
                     <textarea wire:model="importKajianPasteText" rows="6"
+                        :placeholder="importKajianType === 'jumat' ? '2026-09-18&#9;11:30 - 12:30&#9;Normal&#9;Taqwa dan Integritas&#9;Ust. Firdaus&#9;Bpk. Ahmad&#9;Mas Bilal&#9;08123456789' : '2026-09-17&#9;09:00 - 11:30&#9;Tafsir Al-Kahfi&#9;Ust. Firdaus&#9;08123456789'"
                         placeholder="2026-09-17&#9;09:00 - 11:30&#9;Tafsir Al-Kahfi&#9;Ust. Firdaus&#9;08123456789"
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-mono text-xs transition"></textarea>
                 </div>
@@ -780,10 +786,14 @@
                         </div>
                         <div>
                             <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.</span>
+                            <span class="text-[11px] text-slate-500 block"
+                                  x-text="importKajianType === 'jumat' ? 'Unduh format baku Shalat Jumat siap isi.' : 'Unduh format baku Kajian Pekanan siap isi.'">
+                                Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.
+                            </span>
                         </div>
                     </div>
-                    <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
+                    <a :href="importKajianType === 'jumat' ? '{{ route('admin.template-import', 'kajian_jumat') }}' : '{{ route('admin.template-import', 'kajian_pekanan') }}'"
+                       href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

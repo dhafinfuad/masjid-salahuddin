@@ -123,6 +123,7 @@
          ustadzPhotoMap: {{ Js::from($ustadzPhotoMap) }},
          ustadzDirectory: {{ Js::from($ustadzListForDatalist ?? []) }},
          importKajianTab: 'paste',
+         importKajianType: '{{ $importKajianType ?? 'pekanan' }}',
          showPrayerDutyModal: {{ $showPrayerDutyModal ? 'true' : 'false' }},
          showImportDutyModal: false,
          importDutyTab: 'paste',
@@ -967,7 +968,7 @@
     @open-kajian-modal.window="showKajianModal = true; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', true, false); }"
     @close-kajian-modal.window="showKajianModal = false; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', false, false); }"
     @open-ustadz-modal.window="showUstadzModal = true; $wire.set('showUstadzModal', true, false)" @close-ustadz-modal.window="showUstadzModal = false; $wire.set('showUstadzModal', false, false)"
-    @open-import-kajian-modal.window="showImportKajianModal = true"
+    @open-import-kajian-modal.window="if ($event.detail && $event.detail.type) { importKajianType = $event.detail.type; } showImportKajianModal = true"
     @close-import-kajian-modal.window="showImportKajianModal = false"
     @open-notula-modal.window="openNotulaModal($event.detail)"
     @close-notula-modal.window="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
