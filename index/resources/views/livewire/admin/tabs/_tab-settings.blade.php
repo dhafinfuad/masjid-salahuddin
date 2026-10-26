@@ -91,7 +91,7 @@
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Arah Kiblat (° dari Utara)</label>
+                        <label class="block font-semibold text-slate-700 mb-1">Arah Kiblat (&deg; dari Utara)</label>
                         <input wire:model="settingsQiblaAngle" type="number" step="0.01" @disabled(Auth::user()->isReadOnly())
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition disabled:opacity-60 disabled:cursor-not-allowed">
                     </div>

@@ -718,7 +718,7 @@ class AdminDashboard extends Component
             default => 'Admin Dashboard',
         };
 
-        return "{$tabTitle} — Masjid Salahuddin";
+        return "{$tabTitle} - Masjid Salahuddin";
     }
 
     public function switchKegiatanSubTab(string $subTab): void
@@ -1225,7 +1225,7 @@ class AdminDashboard extends Component
         ]);
 
         $this->quickTicketCode = '';
-        $this->notify("✓ Sukses! {$reg->full_name} ({$code}) berhasil Check-In Hadir.");
+        $this->notify("Sukses! {$reg->full_name} ({$code}) berhasil Check-In Hadir.");
     }
 
     public function toggleAttendance(int $id): void
@@ -1250,7 +1250,7 @@ class AdminDashboard extends Component
                 'checked_in_at' => now(),
                 'checked_in_by' => Auth::id(),
             ]);
-            $this->notify("✓ {$reg->full_name} berhasil check-in (Hadir)!");
+            $this->notify("{$reg->full_name} berhasil check-in (Hadir)!");
         }
     }
 

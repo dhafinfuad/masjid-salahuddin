@@ -1068,14 +1068,16 @@
             <!-- Tab Selector di dalam Modal: Copypaste Excel vs Upload CSV -->
             <div class="flex items-center p-1 bg-slate-100 rounded-lg">
                 <button type="button" @click="importDutyTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importDutyTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    <span>Copypaste Excel</span>
                 </button>
                 <button type="button" @click="importDutyTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importDutyTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“ Upload File Excel
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload File Excel</span>
                 </button>
             </div>
 
@@ -1442,14 +1444,16 @@
             <!-- Tab Selector: Copypaste Excel vs Upload CSV -->
             <div class="flex items-center p-1 bg-slate-100 rounded-lg">
                 <button type="button" @click="importAgendaTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importAgendaTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    <span>Copypaste Excel</span>
                 </button>
                 <button type="button" @click="importAgendaTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
+                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                     :class="importAgendaTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    ðŸ“ Upload File CSV
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span>Upload File Excel / CSV</span>
                 </button>
             </div>
 
@@ -2516,7 +2520,7 @@
 
                     if (isset($groupedFinanceCategories)) {
                         if (! $isTesting || $financeType === 'pemasukan') {
-                            $catOptionsPemasukan[] = ['label' => '📥 PENERIMAAN', 'is_header' => true];
+                            $catOptionsPemasukan[] = ['label' => 'PENERIMAAN (KAS MASUK)', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Penerimaan'])) {
                                 foreach($groupedFinanceCategories['Penerimaan'] as $fc) {
                                     $catOptionsPemasukan[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2525,13 +2529,13 @@
                         }
 
                         if (! $isTesting || $financeType === 'pengeluaran') {
-                            $catOptionsPengeluaran[] = ['label' => '📤 PENGELUARAN RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => 'PENGELUARAN RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
                                 }
                             }
-                            $catOptionsPengeluaran[] = ['label' => '🛠️ PENGELUARAN NON-RUTIN', 'is_header' => true];
+                            $catOptionsPengeluaran[] = ['label' => 'PENGELUARAN NON-RUTIN', 'is_header' => true];
                             if (isset($groupedFinanceCategories['Pengeluaran Non-Rutin'])) {
                                 foreach($groupedFinanceCategories['Pengeluaran Non-Rutin'] as $fc) {
                                     $catOptionsPengeluaran[] = ['value' => (string)$fc->id, 'label' => $fc->name];
@@ -2641,7 +2645,7 @@
                         @php
                             $agendaOptions = [['value' => '', 'label' => 'Kas Umum Masjid (Rutin Bulanan)']];
                             if (isset($allAgendas) && $allAgendas->isNotEmpty()) {
-                                $agendaOptions[] = ['label' => '🎯 PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
+                                $agendaOptions[] = ['label' => 'PROGRAM TEMATIK / AGENDA KEGIATAN', 'is_header' => true];
                                 foreach($allAgendas as $ag) {
                                     $agendaOptions[] = ['value' => (string)$ag->id, 'label' => 'Kegiatan: ' . $ag->title];
                                 }
@@ -2650,7 +2654,7 @@
                         <x-custom-select 
                             wire:model="financeAgendaId"
                             :options="$agendaOptions"
-                            placeholder="ðŸ¢ Kas Umum Masjid (Rutin Bulanan)"
+                            placeholder="Kas Umum Masjid (Rutin Bulanan)"
                             buttonClass="p-2.5 bg-slate-50/50"
                         />
                     </div>

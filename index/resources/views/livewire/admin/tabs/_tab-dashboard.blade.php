@@ -173,7 +173,7 @@
                                             <div class="font-bold text-gov-textMain truncate text-xs">{{ $fin->description ?: ($fin->category->name ?? 'Kas') }}</div>
                                             <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
                                                 <span>{{ $fDate->format('d M Y') }}</span>
-                                                <span>•</span>
+                                                <span>&bull;</span>
                                                 <span class="truncate max-w-25">{{ $fin->category->name ?? '-' }}</span>
                                             </div>
                                         </div>

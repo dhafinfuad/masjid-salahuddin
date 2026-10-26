@@ -58,7 +58,7 @@
              } else if (this.activeTab === 'saran') {
                  tabTitle = 'Saran & Kritik Jamaah';
              }
-             document.title = tabTitle + ' — Masjid Salahuddin';
+             document.title = tabTitle + ' - Masjid Salahuddin';
          },
          switchSubTab(tab) {
              this.kegiatanSubTab = tab;

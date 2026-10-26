@@ -938,8 +938,8 @@
                             <!-- WhatsApp Header Bar -->
                             <div class="bg-[#075e54] text-white px-3.5 py-2.5 flex items-center justify-between shrink-0">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-inner">
-                                        🕌
+                                    <div class="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white shrink-0 shadow-inner">
+                                        <svg class="w-4 h-4 text-emerald-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 8 4.5v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12z"/><path d="M12 3v6"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/></svg>
                                     </div>
                                     <div class="leading-tight min-w-0">
                                         <p class="text-xs font-bold text-white truncate" x-text="masjid_line2 || 'Masjid Salahuddin'"></p>

@@ -88,18 +88,17 @@
                         @php
                             $dutyWeekOptions = [
                                 ['value' => 'all', 'label' => 'Semua Pekan'],
-                                ['value' => '1', 'label' => 'Pekan 1' . ($currentWeekNumber === 1 ? ' ⭐' : '')],
-                                ['value' => '2', 'label' => 'Pekan 2' . ($currentWeekNumber === 2 ? ' ⭐' : '')],
-                                ['value' => '3', 'label' => 'Pekan 3' . ($currentWeekNumber === 3 ? ' ⭐' : '')],
-                                ['value' => '4', 'label' => 'Pekan 4' . ($currentWeekNumber === 4 ? ' ⭐' : '')],
-                                ['value' => '5', 'label' => 'Pekan 5' . ($currentWeekNumber === 5 ? ' ⭐' : '')],
+                                ['value' => '1', 'label' => 'Pekan 1'],
+                                ['value' => '2', 'label' => 'Pekan 2'],
+                                ['value' => '3', 'label' => 'Pekan 3'],
+                                ['value' => '4', 'label' => 'Pekan 4'],
+                                ['value' => '5', 'label' => 'Pekan 5'],
                             ];
                             $dutyMonthOptions = [];
                             foreach($dutyMonths as $mNum => $mName) {
-                                $isThisMonth = (int) $mNum === (int) Carbon\Carbon::now('Asia/Jakarta')->month;
                                 $dutyMonthOptions[] = [
                                     'value' => (string)$mNum, 
-                                    'label' => $mName . ($isThisMonth ? ' ⭐' : ''),
+                                    'label' => $mName,
                                 ];
                             }
                             $dutyYearOptions = [['value' => 'all', 'label' => 'Semua Tahun']];

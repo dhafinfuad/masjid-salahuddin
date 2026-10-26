@@ -1404,7 +1404,7 @@
                                                 </div>
                                                 <div class="flex items-center gap-1.5">
                                                     <button type="button" @click="rotatePage(activeScanIdx)"
-                                                        title="Putar Dokumen 180°"
+                                                        title="Putar Dokumen 180&deg;"
                                                         class="h-7 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-semibold inline-flex items-center gap-1 border border-slate-200 shadow-2xs transition cursor-pointer">
                                                         <i data-lucide="rotate-cw" class="w-3.5 h-3.5 text-slate-500"></i>
                                                         <span>Putar</span>

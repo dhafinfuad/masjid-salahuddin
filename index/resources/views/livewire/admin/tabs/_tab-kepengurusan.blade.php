@@ -14,7 +14,7 @@
                 <div>
                     <h4 class="text-sm font-bold text-gov-textMain">Susunan Personalia Takmir Berjalan</h4>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        Berdasarkan Keputusan Nomor <span class="font-mono font-semibold text-gov-navy">{{ $docSkNumber }}</span> • Periode <span class="font-semibold text-gov-textMain">{{ $docSkPeriode }}</span>
+                        Berdasarkan Keputusan Nomor <span class="font-mono font-semibold text-gov-navy">{{ $docSkNumber }}</span> &bull; Periode <span class="font-semibold text-gov-textMain">{{ $docSkPeriode }}</span>
                     </p>
                 </div>
             </div>

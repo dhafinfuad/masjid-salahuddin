@@ -243,7 +243,7 @@
                                 <!-- Tooltip on Hover -->
                                 <div class="opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-150 absolute -top-13 {{ $tooltipAlign }} bg-gov-navy text-white text-[11px] py-1.5 px-3 rounded-lg shadow-xl whitespace-nowrap z-30 border border-slate-700/80">
                                     <div class="font-bold text-amber-300 text-center">{{ $bar['date_label'] }}</div>
-                                    <div class="text-center font-medium">{{ $bar['count'] }} hits • {{ $bar['unique'] }} unik</div>
+                                    <div class="text-center font-medium">{{ $bar['count'] }} hits &bull; {{ $bar['unique'] }} unik</div>
                                     <div class="absolute -bottom-1 {{ $caretAlign }} w-2 h-2 bg-gov-navy border-r border-b border-slate-700/80 rotate-45"></div>
                                 </div>
 
@@ -413,7 +413,7 @@
                             <td class="py-2.5 px-3 whitespace-nowrap text-slate-600">
                                 <div class="flex items-center gap-1.5">
                                     <span class="font-medium text-gov-textMain">{{ $log->browser ?? 'Browser' }}</span>
-                                    <span class="text-slate-300">•</span>
+                                    <span class="text-slate-300">&bull;</span>
                                     <span class="text-slate-500 text-[11px]">{{ $log->platform ?? 'OS' }}</span>
                                 </div>
                             </td>

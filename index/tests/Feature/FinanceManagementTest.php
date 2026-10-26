@@ -437,27 +437,27 @@ class FinanceManagementTest extends TestCase
             ->call('openFinanceModal')
             ->assertSet('financeType', 'pemasukan')
             ->assertSet('financeCategoryId', $this->categoryInfaq->id)
-            ->assertSee('📥 PENERIMAAN')
+            ->assertSee('PENERIMAAN (KAS MASUK)')
             ->assertSeeHtml('<option value="' . $this->categoryInfaq->id . '">' . $this->categoryInfaq->name . '</option>')
-            ->assertDontSee('📤 PENGELUARAN RUTIN')
+            ->assertDontSee('PENGELUARAN RUTIN')
             ->assertDontSeeHtml('<option value="' . $this->categoryOperasional->id . '">' . $this->categoryOperasional->name . '</option>');
 
         // Switch to pengeluaran
         $component->call('setFinanceType', 'pengeluaran')
             ->assertSet('financeType', 'pengeluaran')
             ->assertSet('financeCategoryId', $this->categoryOperasional->id)
-            ->assertSee('📤 PENGELUARAN RUTIN')
+            ->assertSee('PENGELUARAN RUTIN')
             ->assertSeeHtml('<option value="' . $this->categoryOperasional->id . '">' . $this->categoryOperasional->name . '</option>')
-            ->assertDontSee('📥 PENERIMAAN')
+            ->assertDontSee('PENERIMAAN (KAS MASUK)')
             ->assertDontSeeHtml('<option value="' . $this->categoryInfaq->id . '">' . $this->categoryInfaq->name . '</option>');
 
         // Switch back to pemasukan
         $component->call('setFinanceType', 'pemasukan')
             ->assertSet('financeType', 'pemasukan')
             ->assertSet('financeCategoryId', $this->categoryInfaq->id)
-            ->assertSee('📥 PENERIMAAN')
+            ->assertSee('PENERIMAAN (KAS MASUK)')
             ->assertSeeHtml('<option value="' . $this->categoryInfaq->id . '">' . $this->categoryInfaq->name . '</option>')
-            ->assertDontSee('📤 PENGELUARAN RUTIN')
+            ->assertDontSee('PENGELUARAN RUTIN')
             ->assertDontSeeHtml('<option value="' . $this->categoryOperasional->id . '">' . $this->categoryOperasional->name . '</option>');
     }
 
