@@ -113,7 +113,10 @@ class PortalKegiatanCardTest extends TestCase
         Livewire::test(PortalPage::class)
             ->assertSeeHtml('Unduh LPJ')
             ->assertSeeHtml(route('admin.agenda.lpj', $agenda->id))
-            ->assertSeeHtml('w-[96px] justify-center inline-flex items-center')
+            ->assertSeeHtml('min-w-[96px] justify-center inline-flex items-center')
+            ->assertSeeHtml('whitespace-nowrap')
+            ->assertSeeHtml('10 Jun 2026')
+            ->assertDontSeeHtml('Rp 65.000.000')
             ->assertSeeHtml('YouTube');
     }
 }

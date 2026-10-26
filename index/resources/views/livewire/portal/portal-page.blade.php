@@ -422,8 +422,8 @@
                                                     <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none {{ $agenda->status === 'SELESAI' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-emerald-50 text-emerald-700 border-emerald-400' }}">
                                                         {{ ucfirst(strtolower($agenda->status ?: 'Aktif')) }}
                                                     </span>
-                                                    <span class="text-xs font-semibold text-slate-600">
-                                                        {{ $agenda->budget ? 'Rp ' . number_format($agenda->budget, 0, ',', '.') : ($agenda->event_date ? $agenda->event_date->translatedFormat('d M Y') : '-') }}
+                                                    <span class="text-xs font-semibold text-slate-600 whitespace-nowrap shrink-0">
+                                                        {{ $agenda->event_date ? $agenda->event_date->translatedFormat('d M Y') : '-' }}
                                                     </span>
                                                 </div>
                                                 <div>
@@ -439,11 +439,11 @@
                                                         @if(!empty($agenda->report_pdf_path))
                                                             <button type="button"
                                                                 @click="window.downloadPdfDirect('{{ route('admin.agenda.lpj', $agenda->id) }}', 'LPJ_{{ \Illuminate\Support\Str::slug($agenda->title) }}.pdf')"
-                                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                                                style="width: 96px; min-width: 96px; max-width: 96px;"
+                                                                class="w-auto min-w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
+                                                                style="min-width: 96px;"
                                                                 title="Unduh Dokumen LPJ (PDF)">
                                                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
-                                                                <span>Unduh LPJ</span>
+                                                                <span class="whitespace-nowrap">Unduh LPJ</span>
                                                             </button>
                                                         @endif
                                                         @if(!empty($agenda->youtube_url))
