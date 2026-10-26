@@ -693,9 +693,23 @@
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
                     <h3 class="text-base font-bold text-gov-textMain">Import Jadwal Kajian</h3>
-                    <p class="text-xs text-slate-500">Target Impor: <strong
-                            class="text-gov-navy uppercase">{{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian' }}</strong>
-                    </p>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <span class="text-xs text-slate-500">Target Impor:</span>
+                        <div class="inline-flex p-0.5 bg-slate-100 rounded-lg text-xs font-semibold">
+                            <button type="button" 
+                                    @click="importKajianType = 'pekanan'; $wire.set('importKajianType', 'pekanan', false)" 
+                                    :class="importKajianType === 'pekanan' ? 'bg-white text-gov-navy shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-700'"
+                                    class="px-2.5 py-0.5 rounded-md transition-none cursor-pointer">
+                                KAJIAN
+                            </button>
+                            <button type="button" 
+                                    @click="importKajianType = 'jumat'; $wire.set('importKajianType', 'jumat', false)" 
+                                    :class="importKajianType === 'jumat' ? 'bg-white text-gov-navy shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-700'"
+                                    class="px-2.5 py-0.5 rounded-md transition-none cursor-pointer">
+                                SHALAT JUMAT
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <button type="button" @click="showImportKajianModal = false"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
@@ -719,15 +733,12 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    @if($importKajianType === 'pekanan')
-                        <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
-                            No → Jenis → Hari &amp; Tanggal → Waktu → Judul Kajian → Pembicara → No HP
-                        </p>
-                    @else
-                        <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
-                            No → Hari &amp; Tanggal → Waktu → Status Libur → Judul Khutbah → Khatib → MC → Muadzin → No HP
-                        </p>
-                    @endif
+                    <p x-show="importKajianType === 'pekanan'" wire:key="import-format-pekanan" class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                        No → Jenis → Hari &amp; Tanggal → Waktu → Judul Kajian → Pembicara → No HP
+                    </p>
+                    <p x-show="importKajianType === 'jumat'" x-cloak wire:key="import-format-jumat" class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                        No → Hari &amp; Tanggal → Waktu → Status Libur → Judul Khutbah → Khatib → MC → Muadzin → No HP
+                    </p>
                 </div>
 
                 <div>
@@ -776,7 +787,7 @@
                             <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
-                    <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
+                    <a :href="importKajianType === 'jumat' ? '{{ route('admin.template-import', 'kajian_jumat') }}' : '{{ route('admin.template-import', 'kajian_pekanan') }}'" 
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
