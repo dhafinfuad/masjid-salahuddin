@@ -827,6 +827,122 @@ class PrayerDutyTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_open_and_close_batch_replace_duty_modal(): void
+    {
+        $this->actingAs($this->admin);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('openBatchReplaceDutyModal')
+            ->assertSet('showBatchReplaceDutyModal', true)
+            ->assertDispatched('open-batch-replace-duty-modal')
+            ->call('closeBatchReplaceDutyModal')
+            ->assertSet('showBatchReplaceDutyModal', false)
+            ->assertDispatched('close-batch-replace-duty-modal');
+    }
+
+    public function test_batch_replace_duty_replaces_names_for_both_imam_and_muadzin(): void
+    {
+        $this->actingAs($this->admin);
+
+        $duty1 = PrayerDuty::create([
+            'day_name' => 'Senin',
+            'prayer_time' => 'dzuhur',
+            'week_pattern' => 'semua',
+            'tahun' => (int) Carbon::now('Asia/Jakarta')->year,
+            'imam_name' => 'Pak Budi Santoso',
+            'muadzin_name' => 'Ahmad',
+        ]);
+
+        $duty2 = PrayerDuty::create([
+            'day_name' => 'Selasa',
+            'prayer_time' => 'ashar',
+            'week_pattern' => 'pekan_1_3_5',
+            'tahun' => (int) Carbon::now('Asia/Jakarta')->year,
+            'imam_name' => 'Ust. Lain',
+            'muadzin_name' => 'Pak Budi Santoso',
+        ]);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('openBatchReplaceDutyModal')
+            ->set('replaceOldOfficerName', 'Pak Budi Santoso')
+            ->set('replaceNewOfficerName', 'Ust. Pengganti Baru')
+            ->set('replaceRoleScope', 'both')
+            ->set('replaceYearScope', 'all')
+            ->call('executeBatchReplaceDuty')
+            ->assertDispatched('close-batch-replace-duty-modal');
+
+        $this->assertDatabaseHas('prayer_duties', [
+            'id' => $duty1->id,
+            'imam_name' => 'Ust. Pengganti Baru',
+            'muadzin_name' => 'Ahmad',
+        ]);
+
+        $this->assertDatabaseHas('prayer_duties', [
+            'id' => $duty2->id,
+            'imam_name' => 'Ust. Lain',
+            'muadzin_name' => 'Ust. Pengganti Baru',
+        ]);
+
+        $this->assertDatabaseMissing('prayer_duties', [
+            'imam_name' => 'Pak Budi Santoso',
+        ]);
+
+        $this->assertDatabaseMissing('prayer_duties', [
+            'muadzin_name' => 'Pak Budi Santoso',
+        ]);
+    }
+
+    public function test_batch_replace_duty_filters_by_role_scope_and_year_scope(): void
+    {
+        $this->actingAs($this->admin);
+
+        $currentYear = (int) Carbon::now('Asia/Jakarta')->year;
+        $pastYear = $currentYear - 1;
+
+        // Current year duty with target as both imam & muadzin
+        $dutyCurrent = PrayerDuty::create([
+            'day_name' => 'Rabu',
+            'prayer_time' => 'dzuhur',
+            'week_pattern' => 'semua',
+            'tahun' => $currentYear,
+            'imam_name' => 'Pegawai Mutasi',
+            'muadzin_name' => 'Pegawai Mutasi',
+        ]);
+
+        // Past year duty with target as imam
+        $dutyPast = PrayerDuty::create([
+            'day_name' => 'Kamis',
+            'prayer_time' => 'ashar',
+            'week_pattern' => 'semua',
+            'tahun' => $pastYear,
+            'imam_name' => 'Pegawai Mutasi',
+            'muadzin_name' => 'Orang Lain',
+        ]);
+
+        // Replace only IMAM in CURRENT YEAR
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('openBatchReplaceDutyModal')
+            ->set('replaceOldOfficerName', 'Pegawai Mutasi')
+            ->set('replaceNewOfficerName', 'Pengganti Khusus Imam')
+            ->set('replaceRoleScope', 'imam')
+            ->set('replaceYearScope', 'current')
+            ->call('executeBatchReplaceDuty');
+
+        // Current year duty: imam changed, muadzin unchanged
+        $this->assertDatabaseHas('prayer_duties', [
+            'id' => $dutyCurrent->id,
+            'imam_name' => 'Pengganti Khusus Imam',
+            'muadzin_name' => 'Pegawai Mutasi',
+        ]);
+
+        // Past year duty: completely unchanged because year_scope was 'current'
+        $this->assertDatabaseHas('prayer_duties', [
+            'id' => $dutyPast->id,
+            'imam_name' => 'Pegawai Mutasi',
+            'muadzin_name' => 'Orang Lain',
+        ]);
+    }
+
     public function test_petugas_view_contains_redirection_handlers_for_friday_dzuhur(): void
     {
         $this->actingAs($this->admin);
@@ -837,6 +953,18 @@ class PrayerDutyTest extends TestCase
         $response->assertSee('redirectToFridayKajian', false);
         $response->assertSee('Buka Modal Edit Jadwal Kajian', false);
     }
+
+    public function test_views_contain_edit_petugas_shalat_button_and_modal(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/petugas');
+        $response->assertStatus(200);
+        $response->assertSee('Edit Petugas Shalat');
+        $response->assertSee('openBatchReplaceDutyModal');
+        $response->assertSee('showBatchReplaceDutyModal');
+    }
 }
+
 
 

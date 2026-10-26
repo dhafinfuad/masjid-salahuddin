@@ -438,6 +438,14 @@
                  if (window.createLucideIcons) window.createLucideIcons();
              });
          },
+         showBatchReplaceDutyModal: false,
+         openBatchReplaceDutyModal() {
+             this.showBatchReplaceDutyModal = true;
+             $wire.openBatchReplaceDutyModal();
+             this.$nextTick(() => {
+                 if (window.createLucideIcons) window.createLucideIcons();
+             });
+         },
         agendaSubTab: '{{ $agendaSubTab }}',
         agendaViewMode: 'grid',
         showAgendaModal: {{ $showAgendaModal ? 'true' : 'false' }},
@@ -1021,6 +1029,7 @@
     @close-youtube-modal.window="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
     @youtube-saved.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (youtubeForm && d && d.id == youtubeForm.id) { youtubeForm.youtube_url = d.youtube_url; }"
     @open-duty-modal.window="showPrayerDutyModal = true" @close-duty-modal.window="showPrayerDutyModal = false"
+    @open-batch-replace-duty-modal.window="showBatchReplaceDutyModal = true" @close-batch-replace-duty-modal.window="showBatchReplaceDutyModal = false"
     @open-import-duty-modal.window="showImportDutyModal = true"
     @close-import-duty-modal.window="showImportDutyModal = false" @open-agenda-modal.window="showAgendaModal = true"
     @close-agenda-modal.window="showAgendaModal = false" @open-import-agenda-modal.window="showImportAgendaModal = true"

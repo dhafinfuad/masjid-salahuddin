@@ -242,6 +242,14 @@ class AdminDashboard extends Component
     public string $importDutyPasteText = '';
     public mixed $importDutyFile = null;
 
+    // Batch Replace Prayer Duty Officer State ("Edit Petugas Shalat")
+    public bool $showBatchReplaceDutyModal = false;
+    public string $replaceOldOfficerName = '';
+    public string $replaceNewOfficerName = '';
+    public string $replaceRoleScope = 'both'; // 'imam' | 'muadzin' | 'both'
+    public string $replaceYearScope = 'current'; // 'current' | 'all'
+    public int $replaceTargetYear = 2026;
+
     // ==========================================
     // Agenda & ODOJ State (Milestone 3)
     // ==========================================
@@ -2996,6 +3004,212 @@ class AdminDashboard extends Component
 
         $duty->delete();
         $this->notify('Jadwal penugasan berhasil dihapus.');
+    }
+
+    public function openBatchReplaceDutyModal(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
+            return;
+        }
+
+        $nowYear = (int) Carbon::now('Asia/Jakarta')->year;
+        $this->replaceTargetYear = ($this->prayerDutyFilterYear !== 'all' && is_numeric($this->prayerDutyFilterYear)) 
+            ? (int) $this->prayerDutyFilterYear 
+            : $nowYear;
+        $this->replaceOldOfficerName = '';
+        $this->replaceNewOfficerName = '';
+        $this->replaceRoleScope = 'both';
+        $this->replaceYearScope = 'current';
+        $this->showBatchReplaceDutyModal = true;
+        $this->dispatch('open-batch-replace-duty-modal');
+    }
+
+    public function closeBatchReplaceDutyModal(): void
+    {
+        $this->showBatchReplaceDutyModal = false;
+        $this->dispatch('close-batch-replace-duty-modal');
+    }
+
+    public function getExistingOfficerNamesProperty(): array
+    {
+        if (! $this->showBatchReplaceDutyModal) {
+            return [];
+        }
+
+        $query = PrayerDuty::query();
+        if ($this->replaceYearScope === 'current') {
+            $query->where('tahun', $this->replaceTargetYear);
+        }
+
+        $imams = (clone $query)->whereNotNull('imam_name')
+            ->where('imam_name', '!=', '')
+            ->distinct()
+            ->pluck('imam_name')
+            ->toArray();
+
+        $muadzins = (clone $query)->whereNotNull('muadzin_name')
+            ->where('muadzin_name', '!=', '')
+            ->distinct()
+            ->pluck('muadzin_name')
+            ->toArray();
+
+        $names = array_values(array_unique(array_filter(array_merge($imams, $muadzins))));
+        sort($names, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $names;
+    }
+
+    public function getActiveEmployeesListProperty(): array
+    {
+        if (! $this->showBatchReplaceDutyModal) {
+            return [];
+        }
+
+        return Employee::where('status', 'AKTIF')
+            ->orderBy('name')
+            ->get(['id', 'name', 'nip_pendek', 'jabatan'])
+            ->map(function ($emp) {
+                return [
+                    'id' => $emp->id,
+                    'name' => $emp->name,
+                    'label' => $emp->name . ($emp->jabatan ? ' - ' . $emp->jabatan : ''),
+                ];
+            })
+            ->toArray();
+    }
+
+    public function getAffectedDutiesPreviewProperty(): array
+    {
+        $old = trim($this->replaceOldOfficerName);
+        if ($old === '') {
+            return [
+                'count' => 0,
+                'total' => 0,
+                'as_imam' => 0,
+                'as_muadzin' => 0,
+                'sample_duties' => [],
+                'items' => [],
+            ];
+        }
+
+        $query = PrayerDuty::query();
+        if ($this->replaceYearScope === 'current') {
+            $query->where('tahun', $this->replaceTargetYear);
+        }
+
+        $scope = $this->replaceRoleScope;
+        if ($scope === 'imam') {
+            $query->where('imam_name', $old);
+        } elseif ($scope === 'muadzin') {
+            $query->where('muadzin_name', $old);
+        } else {
+            $query->where(function ($q) use ($old) {
+                $q->where('imam_name', $old)
+                  ->orWhere('muadzin_name', $old);
+            });
+        }
+
+        $records = $query->orderBy('tahun')->orderBy('day_name')->orderBy('prayer_time')->get();
+
+        $asImam = 0;
+        $asMuadzin = 0;
+        $items = [];
+        $sampleDuties = [];
+
+        foreach ($records as $rec) {
+            $matchedRoles = [];
+            if ($rec->imam_name === $old && in_array($scope, ['imam', 'both'], true)) {
+                $asImam++;
+                $matchedRoles[] = 'Imam';
+            }
+            if ($rec->muadzin_name === $old && in_array($scope, ['muadzin', 'both'], true)) {
+                $asMuadzin++;
+                $matchedRoles[] = 'Muadzin';
+            }
+
+            $patternLabel = match ($rec->week_pattern) {
+                'semua' => 'Semua Pekan',
+                'pekan_1' => 'Pekan 1',
+                'pekan_2' => 'Pekan 2',
+                'pekan_3' => 'Pekan 3',
+                'pekan_4' => 'Pekan 4',
+                'pekan_5' => 'Pekan 5',
+                'pekan_1_3_5' => 'Pekan Ganjil (1, 3, 5)',
+                'pekan_2_4' => 'Pekan Genap (2, 4)',
+                default => $rec->week_pattern,
+            };
+
+            $sampleDuties[] = "{$rec->day_name} " . ucfirst($rec->prayer_time) . " ({$patternLabel})";
+
+            $items[] = [
+                'id' => $rec->id,
+                'day_name' => $rec->day_name,
+                'prayer_time' => ucfirst($rec->prayer_time),
+                'week_pattern' => $patternLabel,
+                'tahun' => $rec->tahun,
+                'roles' => implode(' & ', $matchedRoles),
+            ];
+        }
+
+        return [
+            'count' => count($records),
+            'total' => count($records),
+            'as_imam' => $asImam,
+            'as_muadzin' => $asMuadzin,
+            'sample_duties' => $sampleDuties,
+            'items' => $items,
+        ];
+    }
+
+    public function executeBatchReplaceDuty(): void
+    {
+        if (! Auth::user()->canManage()) {
+            $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
+            return;
+        }
+
+        $this->validate([
+            'replaceOldOfficerName' => 'required|string|min:2|max:255',
+            'replaceNewOfficerName' => 'required|string|min:2|max:255',
+            'replaceRoleScope' => 'required|in:both,imam,muadzin',
+            'replaceYearScope' => 'required|in:current,all',
+        ], [
+            'replaceOldOfficerName.required' => 'Pilih nama petugas lama yang akan digantikan.',
+            'replaceNewOfficerName.required' => 'Masukkan nama petugas baru pengganti.',
+        ]);
+
+        $oldName = trim($this->replaceOldOfficerName);
+        $newName = trim($this->replaceNewOfficerName);
+
+        if ($oldName === $newName) {
+            $this->addError('replaceNewOfficerName', 'Nama petugas baru tidak boleh sama persis dengan nama petugas lama.');
+            return;
+        }
+
+        $query = PrayerDuty::query();
+        if ($this->replaceYearScope === 'current') {
+            $query->where('tahun', $this->replaceTargetYear);
+        }
+
+        $scope = $this->replaceRoleScope;
+        $updatedCount = 0;
+
+        DB::transaction(function () use ($query, $oldName, $newName, $scope, &$updatedCount) {
+            if ($scope === 'imam' || $scope === 'both') {
+                $imamUpdated = (clone $query)->where('imam_name', $oldName)->update(['imam_name' => $newName]);
+                $updatedCount += $imamUpdated;
+            }
+
+            if ($scope === 'muadzin' || $scope === 'both') {
+                $muadzinUpdated = (clone $query)->where('muadzin_name', $oldName)->update(['muadzin_name' => $newName]);
+                $updatedCount += $muadzinUpdated;
+            }
+        });
+
+        $this->showBatchReplaceDutyModal = false;
+        $this->dispatch('close-batch-replace-duty-modal');
+        $this->notify("Berhasil mengganti nama petugas '{$oldName}' menjadi '{$newName}' pada {$updatedCount} jadwal penugasan.");
     }
 
     public function openImportDuty(): void

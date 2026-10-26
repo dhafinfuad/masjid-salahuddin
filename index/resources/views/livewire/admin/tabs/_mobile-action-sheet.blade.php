@@ -285,6 +285,14 @@
                         </svg>
                         <span>Tambah Petugas Shalat</span>
                     </button>
+
+                    <button type="button" @click="closeMobileActionSheet(); openBatchReplaceDutyModal()"
+                        class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                        <svg class="w-4 h-4 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 8 3 3-6 6h-3v-3l6-6Z"/>
+                        </svg>
+                        <span class="text-xs font-semibold text-slate-800">Edit Petugas Shalat</span>
+                    </button>
                 @endif
 
                 <div class="grid grid-cols-3 gap-2">

@@ -1227,7 +1227,195 @@
         </div>
     </div>
 
+        <!-- ======================================================== -->
+    <!-- MODAL: GANTI / PERBARUI NAMA PETUGAS SHALAT MASSAL -->
     <!-- ======================================================== -->
+    <div x-show="showBatchReplaceDutyModal" x-cloak wire:ignore.self
+        @keydown.escape.window="closeBatchReplaceDutyModal()"
+        @click="if (window.isBackdropClick($event, $el)) closeBatchReplaceDutyModal()"
+        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        style="display: none;">
+        <div
+            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 8 3 3-6 6h-3v-3l6-6Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gov-textMain leading-tight">Edit Petugas Shalat</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Perbarui nama petugas pada seluruh jadwal shalat sekaligus</p>
+                    </div>
+                </div>
+                <button type="button" @click="closeBatchReplaceDutyModal()"
+                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <form wire:submit.prevent="executeBatchReplaceDuty" class="space-y-4 text-xs">
+                <!-- Filter Scope 1: Cakupan Peran -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button"
+                            wire:click="$set('replaceRoleScope', 'both')"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'both' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            <span>Semua Peran</span>
+                        </button>
+                        <button type="button"
+                            wire:click="$set('replaceRoleScope', 'imam')"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'imam' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            <span>Imam Saja</span>
+                        </button>
+                        <button type="button"
+                            wire:click="$set('replaceRoleScope', 'muadzin')"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            <span>Muadzin Saja</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Scope 2: Cakupan Tahun -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Tahun *</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button"
+                            wire:click="$set('replaceYearScope', 'current')"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceYearScope === 'current' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            <span>Tahun Berjalan ({{ $replaceTargetYear }})</span>
+                        </button>
+                        <button type="button"
+                            wire:click="$set('replaceYearScope', 'all')"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceYearScope === 'all' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            <span>Semua Tahun</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Petugas Lama Yang Diganti -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">
+                        Petugas Lama Yang Diganti (Mutasi / Pindah Tugas) *
+                    </label>
+                    <div class="relative">
+                        <select wire:model.live="replaceOldOfficerName"
+                            class="w-full p-2.5 text-xs rounded-lg border border-gov-border bg-white text-slate-800 font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                            <option value="">-- Pilih Petugas Yang Diganti --</option>
+                            @foreach($this->existingOfficerNames as $name)
+                                <option value="{{ $name }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @error('replaceOldOfficerName')
+                        <span class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Petugas Baru Pengganti -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">
+                        Nama Petugas Pengganti *
+                    </label>
+                    <input type="text"
+                        wire:model.live.debounce.300ms="replaceNewOfficerName"
+                        list="activeEmployeesListReplace"
+                        placeholder="Ketik nama atau pilih pegawai aktif..."
+                        class="w-full p-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
+                    <datalist id="activeEmployeesListReplace">
+                        @foreach($this->activeEmployeesList as $emp)
+                            <option value="{{ $emp['name'] }}">{{ $emp['label'] }}</option>
+                        @endforeach
+                    </datalist>
+                    <p class="text-[11px] text-slate-500 mt-1">
+                        Dapat memilih dari daftar saran pegawai aktif KPP Madya Malang atau mengetik nama pengganti secara bebas.
+                    </p>
+                    @error('replaceNewOfficerName')
+                        <span class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <!-- Preview Box / Dampak Perubahan -->
+                @php
+                    $preview = $this->affectedDutiesPreview ?? ['count' => 0, 'as_imam' => 0, 'as_muadzin' => 0, 'sample_duties' => []];
+                    $previewCount = $preview['count'] ?? 0;
+                    $previewImam = $preview['as_imam'] ?? 0;
+                    $previewMuadzin = $preview['as_muadzin'] ?? 0;
+                    $previewSamples = $preview['sample_duties'] ?? [];
+                @endphp
+                @if(!empty($replaceOldOfficerName))
+                    <div class="p-3.5 rounded-xl border {{ $previewCount > 0 ? 'bg-amber-50/70 border-amber-200' : 'bg-slate-50 border-slate-200' }} transition">
+                        <div class="flex items-start justify-between">
+                            <div class="space-y-1">
+                                <span class="font-bold text-xs {{ $previewCount > 0 ? 'text-amber-900' : 'text-slate-700' }} flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 {{ $previewCount > 0 ? 'text-amber-600' : 'text-slate-400' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                    <span>Pratinjau Jadwal Terdampak</span>
+                                </span>
+                                @if($previewCount > 0)
+                                    <p class="text-xs text-amber-800">
+                                        Ditemukan <strong>{{ $previewCount }} jadwal</strong> penugasan yang cocok:
+                                        <span class="inline-block ml-1">({{ $previewImam }} sebagai Imam, {{ $previewMuadzin }} sebagai Muadzin)</span>
+                                    </p>
+                                    @if(count($previewSamples) > 0)
+                                        <div class="flex flex-wrap gap-1.5 pt-1.5">
+                                            @foreach($previewSamples as $sample)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-white border border-amber-300 text-[11px] font-medium text-amber-900 shadow-2xs">
+                                                    {{ $sample }}
+                                                </span>
+                                            @endforeach
+                                            @if($previewCount > count($previewSamples))
+                                                <span class="text-[11px] text-amber-700 font-semibold self-center">
+                                                    +{{ $previewCount - count($previewSamples) }} jadwal lainnya
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                @else
+                                    <p class="text-xs text-slate-500">
+                                        Tidak ada jadwal shalat yang ditemukan untuk <strong>"{{ $replaceOldOfficerName }}"</strong> dengan cakupan peran dan tahun yang dipilih.
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-slate-500 text-xs flex items-center gap-2">
+                        <svg class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span>Pilih nama petugas lama di atas untuk melihat pratinjau jadwal yang akan diperbarui secara otomatis.</span>
+                    </div>
+                @endif
+
+                <!-- Modal Actions -->
+                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                    <button type="button" @click="closeBatchReplaceDutyModal()"
+                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        @if(empty($replaceOldOfficerName) || empty($replaceNewOfficerName) || $previewCount === 0) disabled @endif
+                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2">
+                        <span wire:loading.remove wire:target="executeBatchReplaceDuty">
+                            Terapkan Perubahan ({{ $previewCount }})
+                        </span>
+                        <span wire:loading.inline-flex wire:target="executeBatchReplaceDuty"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Memperbarui Jadwal...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT PERENCANAAN KEGIATAN (MILESTONE 3) -->
     <!-- ======================================================== -->
     <div x-show="showAgendaModal" x-cloak wire:ignore.self
