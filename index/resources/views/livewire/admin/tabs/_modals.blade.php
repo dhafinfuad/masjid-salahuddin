@@ -104,13 +104,6 @@
                                 Tempelkan naskah catatan atau transkrip mentah YouTube, lalu ubah secara instan menjadi risalah dokumen formal siap cetak.
                             </p>
                         </div>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button type="button" 
-                                @click="if(!notulaForm.raw_text || confirm('Muat naskah contoh kajian tematik? (Akan menimpa teks saat ini)')) { notulaForm.raw_text = window.SAMPLE_NOTULA_TEMPLATE || ''; }"
-                                class="px-2.5 py-1.5 rounded-lg border border-gov-300 bg-white hover:bg-gov-100 text-gov-800 text-xs font-medium transition cursor-pointer">
-                                Contoh Format
-                            </button>
-                        </div>
                     </div>
 
                     <!-- Tombol Aksi Cerdas Ubah Menjadi Notula AI (Full Width) -->
