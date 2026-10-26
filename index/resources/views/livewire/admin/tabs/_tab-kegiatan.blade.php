@@ -101,7 +101,7 @@
                                             @click="openExport = false; window.downloadPdfDirect('{{ route('admin.agenda.download-pdf') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.pdf')"
                                             class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
                                             <i data-lucide="file-down" class="w-4 h-4 text-rose-600"></i>
-                                            <span>Unduh Format Rapi (PDF)</span>
+                                            <span>Unduh Format</span>
                                         </button>
                                     </div>
                                 </div>

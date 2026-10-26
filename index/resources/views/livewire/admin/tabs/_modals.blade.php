@@ -779,7 +779,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
@@ -1141,7 +1141,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'petugas_sholat') }}" 
@@ -1507,8 +1507,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format rekap agenda kegiatan akbar dan anggaran.</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'agenda_akbar') }}" 
@@ -3217,8 +3216,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format rekap transaksi arus kas (masuk & keluar).</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'kas') }}" 
@@ -3550,8 +3548,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format rekapitulasi potongan gaji pegawai (Zakat, Infaq, Qurban).</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'potongan_sosial') }}" 
@@ -4849,8 +4846,7 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format data pegawai SIKKA (NIP, Nama, Jabatan, Unit Kerja).</span>
+                            <span class="font-bold text-slate-800 block">Template Excel</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'pegawai') }}" 
