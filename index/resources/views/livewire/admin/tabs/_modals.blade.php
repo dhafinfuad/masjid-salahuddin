@@ -720,46 +720,12 @@
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
                     @if($importKajianType === 'pekanan')
-                        <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 rounded-lg border border-amber-200/80">
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">No</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Jenis</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Hari &amp; Tanggal</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Waktu</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Judul Kajian</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Pembicara</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">No HP</span>
-                        </div>
-                        <p class="text-xs text-amber-800 leading-relaxed">Cukup blok tabel di Excel/Google Sheets, tekan
-                            <strong>Ctrl+C</strong>, lalu paste (Ctrl+V) ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
+                        <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                            No → Jenis → Hari &amp; Tanggal → Waktu → Judul Kajian → Pembicara → No HP
                         </p>
                     @else
-                        <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 rounded-lg border border-amber-200/80">
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">No</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Hari &amp; Tanggal</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Waktu</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Status Libur</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Judul Khutbah</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Khatib</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">MC</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Muadzin</span>
-                            <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                            <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">No HP</span>
-                        </div>
-                        <p class="text-xs text-amber-800 leading-relaxed">Cukup blok tabel di Excel/Google Sheets, tekan
-                            <strong>Ctrl+C</strong>, lalu paste (Ctrl+V) ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
+                        <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                            No → Hari &amp; Tanggal → Waktu → Status Libur → Judul Khutbah → Khatib → MC → Muadzin → No HP
                         </p>
                     @endif
                 </div>
@@ -1118,19 +1084,9 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 rounded-lg border border-amber-200/80">
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Hari</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Waktu</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Nama Imam</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Nama Muadzin</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Pola Pekan</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Catatan</span>
-                    </div>
+                    <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                        Hari → Waktu → Nama Imam → Nama Muadzin → Pola Pekan → Catatan
+                    </p>
                     <p class="text-xs text-amber-800 leading-relaxed">Contoh Pola Pekan: <code>semua</code>, <code>pekan_1</code>,
                         <code>pekan_1_3_5</code>, <code>pekan_2_4</code>. (Kolom 'No' di awal otomatis disesuaikan).
                     </p>
@@ -1688,17 +1644,9 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 rounded-lg border border-amber-200/80">
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Nama Agenda</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Tanggal (YYYY-MM-DD)</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Anggaran</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Panitia</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Status</span>
-                    </div>
+                    <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                        Nama Agenda → Tanggal (YYYY-MM-DD) → Anggaran → Panitia → Status
+                    </p>
                     <p class="text-[11px] text-amber-800 leading-relaxed">Contoh data:
                         <code class="bg-white/80 px-1.5 py-0.5 rounded border border-amber-200 font-mono text-[10px]">Perayaan Iduladha | 2026-06-16 | 65000000 | Khudori; Junaedi | Direncanakan</code>
                     </p>
@@ -3405,17 +3353,9 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white/80 rounded-lg border border-amber-200/80">
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Tipe (Masuk/Keluar)</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Kategori</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Nominal</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Tanggal (YYYY-MM-DD)</span>
-                        <span class="text-amber-400 font-bold text-xs select-none">→</span>
-                        <span class="px-2 py-0.5 bg-amber-100/80 border border-amber-300/70 rounded-md font-semibold text-amber-900 text-[11px] shadow-2xs">Keterangan</span>
-                    </div>
+                    <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                        Tipe (Masuk/Keluar) → Kategori → Nominal → Tanggal (YYYY-MM-DD) → Keterangan
+                    </p>
                     <p class="text-[11px] text-amber-800 leading-relaxed">Contoh data:
                         <code class="bg-white/80 px-1.5 py-0.5 rounded border border-amber-200 font-mono text-[10px]">Pemasukan | Infaq Jumat | 4500000 | 2026-09-12 | Infaq Kotak Utama Sholat Jumat</code>
                     </p>
