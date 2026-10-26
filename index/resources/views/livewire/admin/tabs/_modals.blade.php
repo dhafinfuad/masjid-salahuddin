@@ -692,24 +692,10 @@
             class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <h3 class="text-base font-bold text-gov-textMain">Import Jadwal Kajian</h3>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <span class="text-xs text-slate-500">Target Impor:</span>
-                        <div class="inline-flex p-0.5 bg-slate-100 rounded-lg text-xs font-semibold">
-                            <button type="button" 
-                                    @click="importKajianType = 'pekanan'; $wire.set('importKajianType', 'pekanan', false)" 
-                                    :class="importKajianType === 'pekanan' ? 'bg-white text-gov-navy shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="px-2.5 py-0.5 rounded-md transition-none cursor-pointer">
-                                KAJIAN
-                            </button>
-                            <button type="button" 
-                                    @click="importKajianType = 'jumat'; $wire.set('importKajianType', 'jumat', false)" 
-                                    :class="importKajianType === 'jumat' ? 'bg-white text-gov-navy shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-700'"
-                                    class="px-2.5 py-0.5 rounded-md transition-none cursor-pointer">
-                                SHALAT JUMAT
-                            </button>
-                        </div>
-                    </div>
+                    <h3 class="text-base font-bold text-gov-textMain" x-text="importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian'">
+                        {{ ($importKajianType ?? 'pekanan') === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian' }}
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Impor perencanaan kegiatan dari Excel atau file CSV</p>
                 </div>
                 <button type="button" @click="showImportKajianModal = false"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i

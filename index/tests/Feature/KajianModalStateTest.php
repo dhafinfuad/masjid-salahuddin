@@ -103,12 +103,18 @@ class KajianModalStateTest extends TestCase
             ->assertSet('importKajianType', 'jumat')
             ->assertSet('importKajianTab', 'paste')
             ->assertDispatched('open-import-kajian-modal', type: 'jumat')
+            ->assertSeeHtml('Import Jadwal Khutbah Jumat')
+            ->assertSeeHtml('Impor perencanaan kegiatan dari Excel atau file CSV')
+            ->assertDontSeeHtml('Jenis Kegiatan :')
             ->call('closeImportKajianModal')
             ->assertSet('showImportKajianModal', false)
             ->assertDispatched('close-import-kajian-modal')
             ->call('openImportKajian', 'pekanan')
             ->assertSet('showImportKajianModal', true)
             ->assertSet('importKajianType', 'pekanan')
-            ->assertDispatched('open-import-kajian-modal', type: 'pekanan');
+            ->assertDispatched('open-import-kajian-modal', type: 'pekanan')
+            ->assertSeeHtml('Import Jadwal Kajian')
+            ->assertSeeHtml('Impor perencanaan kegiatan dari Excel atau file CSV')
+            ->assertDontSeeHtml('Jenis Kegiatan :');
     }
 }
