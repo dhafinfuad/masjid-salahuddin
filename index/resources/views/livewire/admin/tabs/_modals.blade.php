@@ -3560,6 +3560,33 @@
 
             <!-- Step 1: Upload Dropzone (When preview is not yet generated) -->
             @if(!$importPotonganPreview)
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format rekapitulasi potongan gaji pegawai (Zakat, Infaq, Qurban).</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', 'potongan_sosial') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <div class="space-y-3" x-data="{ isDragging: false }">
                     <div :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
                          class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
@@ -4831,6 +4858,33 @@
             </div>
 
             <form wire:submit.prevent="importEmployees" class="space-y-4 text-xs">
+                <!-- Unduh Template Excel Card -->
+                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="8" y1="13" x2="16" y2="13"/>
+                                <line x1="8" y1="17" x2="16" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format data pegawai SIKKA (NIP, Nama, Jabatan, Unit Kerja).</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.template-import', 'pegawai') }}" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Unduh Template</span>
+                    </a>
+                </div>
+
                 <!-- Dropzone Area -->
                 <div x-data="{ isDragging: false }"
                      @dragenter.prevent="isDragging = true"

@@ -76,6 +76,7 @@ class ImportTemplateController extends Controller
                 $colWidths = [38, 18, 16, 40, 16];
                 break;
 
+            case 'kas':
             case 'keuangan':
                 $filename = 'Template_Import_Transaksi_Keuangan.xlsx';
                 $sheetName = 'Transaksi Keuangan';
