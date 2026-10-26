@@ -1265,26 +1265,26 @@
                 <!-- Filter Scope 1: Cakupan Peran -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
-                    <div class="grid grid-cols-3 gap-2">
+                    <div wire:ignore class="grid grid-cols-3 gap-2">
                         <button type="button"
                             wire:key="btn-role-scope-both"
                             @click="replaceRoleScope = 'both'; $wire.set('replaceRoleScope', 'both')"
                             :class="replaceRoleScope === 'both' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Semua Peran</span>
                         </button>
                         <button type="button"
                             wire:key="btn-role-scope-imam"
                             @click="replaceRoleScope = 'imam'; $wire.set('replaceRoleScope', 'imam')"
                             :class="replaceRoleScope === 'imam' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Imam Saja</span>
                         </button>
                         <button type="button"
                             wire:key="btn-role-scope-muadzin"
                             @click="replaceRoleScope = 'muadzin'; $wire.set('replaceRoleScope', 'muadzin')"
                             :class="replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Muadzin Saja</span>
                         </button>
                     </div>
@@ -1293,19 +1293,19 @@
                 <!-- Filter Scope 2: Cakupan Tahun -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Tahun *</label>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div wire:ignore class="grid grid-cols-2 gap-2">
                         <button type="button"
                             wire:key="btn-year-scope-current"
                             @click="replaceYearScope = 'current'; $wire.set('replaceYearScope', 'current')"
                             :class="replaceYearScope === 'current' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Tahun Berjalan ({{ $replaceTargetYear }})</span>
                         </button>
                         <button type="button"
                             wire:key="btn-year-scope-all"
                             @click="replaceYearScope = 'all'; $wire.set('replaceYearScope', 'all')"
                             :class="replaceYearScope === 'all' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Semua Tahun</span>
                         </button>
                     </div>
@@ -1328,24 +1328,18 @@
                     @enderror
                 </div>
 
-                <!-- Petugas Baru Pengganti -->
+                <!-- Nama Petugas Pengganti -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">
                         Nama Petugas Pengganti *
                     </label>
-                    <input type="text"
-                        wire:model.live.debounce.300ms="replaceNewOfficerName"
-                        list="activeEmployeesListReplace"
-                        placeholder="Ketik nama atau pilih pegawai aktif..."
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
-                    <datalist id="activeEmployeesListReplace">
-                        @foreach($this->activeEmployeesList as $emp)
-                            <option value="{{ $emp['name'] }}">{{ $emp['label'] }}</option>
-                        @endforeach
-                    </datalist>
-                    <p class="text-[11px] text-slate-500 mt-1">
-                        Dapat memilih dari daftar saran pegawai aktif KPP Madya Malang atau mengetik nama pengganti secara bebas.
-                    </p>
+                    <x-custom-select
+                        wire:model.live="replaceNewOfficerName"
+                        :options="$this->activeEmployeesList"
+                        placeholder="Pilih Pegawai Pengganti..."
+                        class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
+                    />
                     @error('replaceNewOfficerName')
                         <span class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror

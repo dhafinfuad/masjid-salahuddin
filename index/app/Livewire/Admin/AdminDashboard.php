@@ -3101,11 +3101,10 @@ class AdminDashboard extends Component
 
         return Employee::where('status', 'AKTIF')
             ->orderBy('name')
-            ->get(['id', 'name', 'nip_pendek', 'jabatan'])
+            ->get(['name', 'jabatan'])
             ->map(function ($emp) {
                 return [
-                    'id' => $emp->id,
-                    'name' => $emp->name,
+                    'value' => $emp->name,
                     'label' => $emp->name . ($emp->jabatan ? ' - ' . $emp->jabatan : ''),
                 ];
             })
