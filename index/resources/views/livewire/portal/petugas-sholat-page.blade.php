@@ -49,7 +49,27 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
                 
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 min-w-0">
-                    <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
+                    <!-- Searchbar Cari Nama Petugas (Kiri di Desktop, Bagian Atas di Mobile) -->
+                    <div class="relative w-full sm:w-64">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input 
+                            type="text" 
+                            wire:model.live.debounce.300ms="search"
+                            id="search-petugas-input"
+                            placeholder="Cari nama petugas..." 
+                            class="h-[38px] w-full pl-8 pr-8 py-1.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs"
+                        >
+                        @if(!empty($search))
+                            <button wire:click="clearSearch" 
+                                    type="button" 
+                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded transition cursor-pointer"
+                                    title="Hapus pencarian">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        @endif
+                    </div>
+
+                    <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile, di kanan searchbar di Desktop -->
                     <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center">
                         <!-- Filter Bulan -->
                         <div class="w-full sm:w-44 shrink-0">
@@ -72,26 +92,6 @@
                                 icon="calendar-days"
                             />
                         </div>
-                    </div>
-
-                    <!-- Searchbar Cari Nama Petugas -->
-                    <div class="relative w-full sm:w-64">
-                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                        <input 
-                            type="text" 
-                            wire:model.live.debounce.300ms="search"
-                            id="search-petugas-input"
-                            placeholder="Cari nama petugas..." 
-                            class="h-[38px] w-full pl-8 pr-8 py-1.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs"
-                        >
-                        @if(!empty($search))
-                            <button wire:click="clearSearch" 
-                                    type="button" 
-                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded transition cursor-pointer"
-                                    title="Hapus pencarian">
-                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                            </button>
-                        @endif
                     </div>
                 </div>
 
