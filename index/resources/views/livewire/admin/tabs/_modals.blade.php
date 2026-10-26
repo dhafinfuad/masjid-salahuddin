@@ -1251,8 +1251,12 @@
                     </div>
                 </div>
                 <button type="button" @click="closeBatchReplaceDutyModal()"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
@@ -1263,18 +1267,24 @@
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
                     <div class="grid grid-cols-3 gap-2">
                         <button type="button"
-                            wire:click="$set('replaceRoleScope', 'both')"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'both' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            wire:key="btn-role-scope-both"
+                            @click="replaceRoleScope = 'both'; $wire.set('replaceRoleScope', 'both')"
+                            :class="replaceRoleScope === 'both' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
                             <span>Semua Peran</span>
                         </button>
                         <button type="button"
-                            wire:click="$set('replaceRoleScope', 'imam')"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'imam' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            wire:key="btn-role-scope-imam"
+                            @click="replaceRoleScope = 'imam'; $wire.set('replaceRoleScope', 'imam')"
+                            :class="replaceRoleScope === 'imam' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
                             <span>Imam Saja</span>
                         </button>
                         <button type="button"
-                            wire:click="$set('replaceRoleScope', 'muadzin')"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            wire:key="btn-role-scope-muadzin"
+                            @click="replaceRoleScope = 'muadzin'; $wire.set('replaceRoleScope', 'muadzin')"
+                            :class="replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
                             <span>Muadzin Saja</span>
                         </button>
                     </div>
@@ -1285,13 +1295,17 @@
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Tahun *</label>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button"
-                            wire:click="$set('replaceYearScope', 'current')"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceYearScope === 'current' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            wire:key="btn-year-scope-current"
+                            @click="replaceYearScope = 'current'; $wire.set('replaceYearScope', 'current')"
+                            :class="replaceYearScope === 'current' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
                             <span>Tahun Berjalan ({{ $replaceTargetYear }})</span>
                         </button>
                         <button type="button"
-                            wire:click="$set('replaceYearScope', 'all')"
-                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5 {{ $replaceYearScope === 'all' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50' }}">
+                            wire:key="btn-year-scope-all"
+                            @click="replaceYearScope = 'all'; $wire.set('replaceYearScope', 'all')"
+                            :class="replaceYearScope === 'all' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-colors flex items-center justify-center gap-1.5">
                             <span>Semua Tahun</span>
                         </button>
                     </div>
@@ -1302,15 +1316,13 @@
                     <label class="block font-semibold text-slate-700 mb-1">
                         Petugas Lama Yang Diganti (Mutasi / Pindah Tugas) *
                     </label>
-                    <div class="relative">
-                        <select wire:model.live="replaceOldOfficerName"
-                            class="w-full p-2.5 text-xs rounded-lg border border-gov-border bg-white text-slate-800 font-medium focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
-                            <option value="">-- Pilih Petugas Yang Diganti --</option>
-                            @foreach($this->existingOfficerNames as $name)
-                                <option value="{{ $name }}">{{ $name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-custom-select
+                        wire:model.live="replaceOldOfficerName"
+                        :options="$this->existingOfficerNames"
+                        placeholder="Pilih Petugas Yang Diganti..."
+                        class="w-full text-xs"
+                        buttonClass="p-2.5 bg-slate-50/50"
+                    />
                     @error('replaceOldOfficerName')
                         <span class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror

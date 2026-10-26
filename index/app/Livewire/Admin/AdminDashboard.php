@@ -3031,6 +3031,22 @@ class AdminDashboard extends Component
         $this->dispatch('close-batch-replace-duty-modal');
     }
 
+    public function updatedReplaceRoleScope(): void
+    {
+        $existing = $this->existingOfficerNames;
+        if ($this->replaceOldOfficerName && ! in_array($this->replaceOldOfficerName, $existing, true)) {
+            $this->replaceOldOfficerName = '';
+        }
+    }
+
+    public function updatedReplaceYearScope(): void
+    {
+        $existing = $this->existingOfficerNames;
+        if ($this->replaceOldOfficerName && ! in_array($this->replaceOldOfficerName, $existing, true)) {
+            $this->replaceOldOfficerName = '';
+        }
+    }
+
     public function getExistingOfficerNamesProperty(): array
     {
         if (! $this->showBatchReplaceDutyModal) {
@@ -3042,19 +3058,36 @@ class AdminDashboard extends Component
             $query->where('tahun', $this->replaceTargetYear);
         }
 
-        $imams = (clone $query)->whereNotNull('imam_name')
-            ->where('imam_name', '!=', '')
-            ->distinct()
-            ->pluck('imam_name')
-            ->toArray();
+        $scope = $this->replaceRoleScope;
+        if ($scope === 'imam') {
+            $names = (clone $query)->whereNotNull('imam_name')
+                ->where('imam_name', '!=', '')
+                ->distinct()
+                ->pluck('imam_name')
+                ->toArray();
+        } elseif ($scope === 'muadzin') {
+            $names = (clone $query)->whereNotNull('muadzin_name')
+                ->where('muadzin_name', '!=', '')
+                ->distinct()
+                ->pluck('muadzin_name')
+                ->toArray();
+        } else {
+            $imams = (clone $query)->whereNotNull('imam_name')
+                ->where('imam_name', '!=', '')
+                ->distinct()
+                ->pluck('imam_name')
+                ->toArray();
 
-        $muadzins = (clone $query)->whereNotNull('muadzin_name')
-            ->where('muadzin_name', '!=', '')
-            ->distinct()
-            ->pluck('muadzin_name')
-            ->toArray();
+            $muadzins = (clone $query)->whereNotNull('muadzin_name')
+                ->where('muadzin_name', '!=', '')
+                ->distinct()
+                ->pluck('muadzin_name')
+                ->toArray();
 
-        $names = array_values(array_unique(array_filter(array_merge($imams, $muadzins))));
+            $names = array_merge($imams, $muadzins);
+        }
+
+        $names = array_values(array_unique(array_filter($names)));
         sort($names, SORT_NATURAL | SORT_FLAG_CASE);
 
         return $names;
