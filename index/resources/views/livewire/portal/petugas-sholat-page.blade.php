@@ -46,35 +46,57 @@
             </div>
 
             <!-- Filters Toolbar -->
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 max-w-xl">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
                 
-                <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
-                <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center">
-                    <!-- Filter Bulan -->
-                    <div class="w-full sm:w-48 shrink-0">
-                        <x-custom-select 
-                            id="filter-duty-month"
-                            wire:model.live="selectedMonth"
-                            :options="$months"
-                            placeholder="Pilih Bulan"
-                            icon="calendar"
-                        />
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 min-w-0">
+                    <!-- Group Bulan & Tahun: 1 Baris 50% - 50% di Mobile -->
+                    <div class="grid grid-cols-2 gap-3 w-full sm:flex sm:w-auto sm:items-center">
+                        <!-- Filter Bulan -->
+                        <div class="w-full sm:w-44 shrink-0">
+                            <x-custom-select 
+                                id="filter-duty-month"
+                                wire:model.live="selectedMonth"
+                                :options="$months"
+                                placeholder="Pilih Bulan"
+                                icon="calendar"
+                            />
+                        </div>
+
+                        <!-- Filter Tahun -->
+                        <div class="w-full sm:w-32 shrink-0">
+                            <x-custom-select 
+                                id="filter-duty-year"
+                                wire:model.live="selectedYear"
+                                :options="$years"
+                                placeholder="Pilih Tahun"
+                                icon="calendar-days"
+                            />
+                        </div>
                     </div>
 
-                    <!-- Filter Tahun -->
-                    <div class="w-full sm:w-36 shrink-0">
-                        <x-custom-select 
-                            id="filter-duty-year"
-                            wire:model.live="selectedYear"
-                            :options="$years"
-                            placeholder="Pilih Tahun"
-                            icon="calendar-days"
-                        />
+                    <!-- Searchbar Cari Nama Petugas -->
+                    <div class="relative w-full sm:w-64">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input 
+                            type="text" 
+                            wire:model.live.debounce.300ms="search"
+                            id="search-petugas-input"
+                            placeholder="Cari nama petugas..." 
+                            class="h-[38px] w-full pl-8 pr-8 py-1.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs"
+                        >
+                        @if(!empty($search))
+                            <button wire:click="clearSearch" 
+                                    type="button" 
+                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded transition cursor-pointer"
+                                    title="Hapus pencarian">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Tombol Unduh PDF Langsung (Uji Coba Direct Download) -->
-                <div class="w-full sm:w-auto">
+                <div class="w-full sm:w-auto shrink-0">
                     <button type="button" 
                             @click="downloadMonthlyDirectPdf()" 
                             :disabled="isDownloadingPdf"
@@ -208,7 +230,7 @@
                                 colspan="5" 
                                 icon="calendar" 
                                 title="Tidak ada data petugas sholat" 
-                                subtitle="Belum ada data penugasan yang sesuai untuk bulan yang dipilih." 
+                                :subtitle="!empty($search) ? ('Tidak ditemukan jadwal penugasan yang cocok dengan nama petugas \'' . $search . '\'.') : 'Belum ada data penugasan yang sesuai untuk bulan yang dipilih.'" 
                             />
                         @endforelse
                     </tbody>
@@ -299,7 +321,7 @@
                     <x-empty-state 
                         icon="calendar" 
                         title="Tidak ada data petugas sholat" 
-                        subtitle="Belum ada data penugasan yang sesuai untuk bulan yang dipilih." 
+                        :subtitle="!empty($search) ? ('Tidak ditemukan jadwal penugasan yang cocok dengan nama petugas \'' . $search . '\'.') : 'Belum ada data penugasan yang sesuai untuk bulan yang dipilih.'" 
                     />
                 @endforelse
             </div>

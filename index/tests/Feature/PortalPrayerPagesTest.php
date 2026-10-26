@@ -411,6 +411,27 @@ class PortalPrayerPagesTest extends TestCase
         $content = $downloadResponse->streamedContent();
         $this->assertStringStartsWith('%PDF-', $content);
     }
+
+    public function test_petugas_sholat_searchbar_filters_by_petugas_name(): void
+    {
+        \App\Models\PrayerDuty::create([
+            'day_name' => 'Senin',
+            'week_number' => 'Semua Pekan',
+            'prayer_time' => 'dzuhur',
+            'imam_name' => 'Ustadz Khusus Uji Coba',
+            'muadzin_name' => 'Muadzin Khusus',
+        ]);
+
+        Livewire::test(PetugasSholatPage::class)
+            ->assertSeeHtml('id="search-petugas-input"')
+            ->assertSeeHtml('placeholder="Cari nama petugas..."')
+            ->set('search', 'Khusus Uji Coba')
+            ->assertSee('Ustadz Khusus Uji Coba')
+            ->set('search', 'Nama Tidak Pernah Ada Di Dunia Ini 999')
+            ->assertSee('Tidak ditemukan jadwal penugasan yang cocok dengan nama petugas')
+            ->call('clearSearch')
+            ->assertSet('search', '');
+    }
 }
 
 

@@ -16,6 +16,7 @@ class PetugasSholatPage extends Component
 {
     public int $selectedMonth;
     public int $selectedYear;
+    public string $search = '';
 
     public function mount(): void
     {
@@ -29,6 +30,12 @@ class PetugasSholatPage extends Component
         $now = Carbon::now('Asia/Jakarta');
         $this->selectedMonth = (int) $now->month;
         $this->selectedYear = (int) $now->year;
+        $this->search = '';
+    }
+
+    public function clearSearch(): void
+    {
+        $this->search = '';
     }
 
     public function render()
@@ -194,6 +201,25 @@ class PetugasSholatPage extends Component
                     'notes' => $dzuhurDuty?->notes ?: ($asharDuty?->notes ?: '-'),
                 ];
             }
+        }
+
+        if (!empty($this->search)) {
+            $searchTerm = strtolower(trim($this->search));
+            $roster = array_values(array_filter($roster, function ($row) use ($searchTerm) {
+                $searchable = strtolower(
+                    ($row['day_name'] ?? '') . ' ' .
+                    ($row['formatted_date'] ?? '') . ' ' .
+                    ($row['dzuhur_imam'] ?? '') . ' ' .
+                    ($row['dzuhur_muadzin'] ?? '') . ' ' .
+                    ($row['ashar_imam'] ?? '') . ' ' .
+                    ($row['ashar_muadzin'] ?? '') . ' ' .
+                    ($row['friday_khatib'] ?? '') . ' ' .
+                    ($row['friday_mc'] ?? '') . ' ' .
+                    ($row['friday_muadzin'] ?? '') . ' ' .
+                    ($row['ashar_kajian_title'] ?? '')
+                );
+                return str_contains($searchable, $searchTerm);
+            }));
         }
 
         $months = [
