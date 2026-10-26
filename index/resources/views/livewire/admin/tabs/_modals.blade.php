@@ -1271,21 +1271,21 @@
                             @click="replaceRoleScope = 'both'; $wire.set('replaceRoleScope', 'both')"
                             :class="replaceRoleScope === 'both' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
                             class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
-                            <span>Semua Peran</span>
+                            <span>Semua</span>
                         </button>
                         <button type="button"
                             wire:key="btn-role-scope-imam"
                             @click="replaceRoleScope = 'imam'; $wire.set('replaceRoleScope', 'imam')"
                             :class="replaceRoleScope === 'imam' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
                             class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
-                            <span>Imam Saja</span>
+                            <span>Imam</span>
                         </button>
                         <button type="button"
                             wire:key="btn-role-scope-muadzin"
                             @click="replaceRoleScope = 'muadzin'; $wire.set('replaceRoleScope', 'muadzin')"
                             :class="replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
                             class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
-                            <span>Muadzin Saja</span>
+                            <span>Muadzin</span>
                         </button>
                     </div>
                 </div>

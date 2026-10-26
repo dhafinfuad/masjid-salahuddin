@@ -53,9 +53,9 @@
                             @if(Auth::user()->canManage())
                                 <!-- Tombol Edit Petugas Shalat Massal -->
                                 <button type="button" @click="openBatchReplaceDutyModal()"
-                                    class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer"
+                                    class="justify-center h-9 px-3.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer"
                                     title="Ganti / Perbarui Nama Petugas Shalat Secara Massal">
-                                    <svg class="w-4 h-4 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="w-4 h-4 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 8 3 3-6 6h-3v-3l6-6Z"/>
                                     </svg>
                                     <span>Edit Petugas Shalat</span>
