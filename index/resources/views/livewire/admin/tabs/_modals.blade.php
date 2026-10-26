@@ -794,15 +794,6 @@
                     </a>
                 </div>
 
-                <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah File Excel:</span>
-                    </span>
-                    <p class="text-xs text-sky-800">Unggah file berformat <strong>.xlsx</strong>, <strong>.xls</strong>, atau <strong>.csv</strong> dengan ukuran maksimal 5 MB.
-                    </p>
-                </div>
-
                 <div class="space-y-1.5 pt-1">
                     <label class="block font-semibold text-slate-700">Pilih Berkas Excel *</label>
                     <div x-data="{ isDragging: false }"
@@ -1164,15 +1155,6 @@
                         </svg>
                         <span>Unduh Template</span>
                     </a>
-                </div>
-
-                <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah File Excel:</span>
-                    </span>
-                    <p class="text-xs text-sky-800">Unggah file berformat <strong>.xlsx</strong>, <strong>.xls</strong>, atau <strong>.csv</strong> dengan ukuran maksimal 5 MB.
-                    </p>
                 </div>
 
                 <div class="space-y-1.5 pt-1">
@@ -1540,14 +1522,6 @@
                         </svg>
                         <span>Unduh Template</span>
                     </a>
-                </div>
-
-                <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah Berkas:</span>
-                    </span>
-                    <p class="text-xs text-sky-800">Unggah berkas berformat <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, atau <strong>.txt</strong> dengan ukuran maksimal 5 MB.</p>
                 </div>
 
                 <div x-data="{ isDragging: false }"
@@ -3258,14 +3232,6 @@
                         </svg>
                         <span>Unduh Template</span>
                     </a>
-                </div>
-
-                <div class="p-3 bg-sky-50 rounded-lg border border-sky-200 text-sky-900 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-sky-600"></i>
-                        <span>Petunjuk Unggah Berkas:</span>
-                    </span>
-                    <p class="text-xs text-sky-800">Unggah berkas berformat <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, atau <strong>.txt</strong> dengan ukuran maksimal 5 MB.</p>
                 </div>
 
                 <div x-data="{ isDragging: false }"
