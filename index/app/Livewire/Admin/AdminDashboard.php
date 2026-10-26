@@ -718,7 +718,7 @@ class AdminDashboard extends Component
             default => 'Admin Dashboard',
         };
 
-        return "{$tabTitle} - Masjid Salahuddin";
+        return "{$tabTitle} — Masjid Salahuddin";
     }
 
     public function switchKegiatanSubTab(string $subTab): void
@@ -2825,6 +2825,11 @@ class AdminDashboard extends Component
             return;
         }
 
+        if (($day === 'Jumat' || $this->dutyDayName === 'Jumat') && ($prayerTime === 'dzuhur' || $this->dutyPrayerTime === 'dzuhur')) {
+            $this->openFridayKajianFromPetugas();
+            return;
+        }
+
         $this->isEditingPrayerDuty = false;
         $this->editingPrayerDutyId = null;
         $this->dutyDayName = $day ?: 'Senin';
@@ -2845,6 +2850,7 @@ class AdminDashboard extends Component
             return;
         }
 
+        $this->showPrayerDutyModal = false;
         $this->currentTab = 'kegiatan';
         $this->kegiatanSubTab = 'jumat';
         $this->kajianSubTab = 'jumat';
@@ -2927,6 +2933,12 @@ class AdminDashboard extends Component
             $this->dutyTahun = !empty($data['tahun']) ? (int) $data['tahun'] : (int) Carbon::now('Asia/Jakarta')->year;
             $this->dutyImamName = trim($data['imam_name'] ?? '');
             $this->dutyMuadzinName = trim($data['muadzin_name'] ?? '');
+        }
+
+        if ($this->dutyDayName === 'Jumat' && $this->dutyPrayerTime === 'dzuhur') {
+            $this->showPrayerDutyModal = false;
+            $this->openFridayKajianFromPetugas();
+            return;
         }
 
         $this->validate([

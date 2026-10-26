@@ -786,6 +786,57 @@ class PrayerDutyTest extends TestCase
         $response->assertSee('window.print()');
         $response->assertSee('Kembali');
     }
+
+    public function test_selecting_tambah_penugasan_petugas_jumat_dzuhur_redirects_to_kegiatan_modal(): void
+    {
+        $this->actingAs($this->admin);
+
+        $fridayKajian = Kajian::create([
+            'type' => 'jumat',
+            'title' => 'Khutbah Jumat Test Redirect',
+            'date' => Carbon::now('Asia/Jakarta')->next(Carbon::FRIDAY)->format('Y-m-d'),
+            'khatib_name' => 'Ust. Redirect Khatib',
+            'muadzin_name' => 'Muadzin Jumat Redirect',
+            'mc_name' => 'MC Jumat Redirect',
+        ]);
+
+        // Calling openCreatePrayerDuty with Jumat and dzuhur must redirect directly to activities page Kajian Jumat modal
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('openCreatePrayerDuty', 'Jumat', 'dzuhur')
+            ->assertSet('currentTab', 'kegiatan')
+            ->assertSet('kegiatanSubTab', 'jumat')
+            ->assertDispatched('open-edit-kajian-modal');
+
+        // Verify savePrayerDuty for Friday Dzuhur also redirects without saving duplicate prayer duty
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('savePrayerDuty', [
+                'day_name' => 'Jumat',
+                'prayer_time' => 'dzuhur',
+                'week_pattern' => 'semua',
+                'tahun' => 2026,
+                'imam_name' => 'Test Imam Jumat',
+                'muadzin_name' => 'Test Muadzin Jumat',
+            ])
+            ->assertSet('currentTab', 'kegiatan')
+            ->assertSet('kegiatanSubTab', 'jumat')
+            ->assertDispatched('open-edit-kajian-modal');
+
+        $this->assertDatabaseMissing('prayer_duties', [
+            'day_name' => 'Jumat',
+            'prayer_time' => 'dzuhur',
+        ]);
+    }
+
+    public function test_petugas_view_contains_redirection_handlers_for_friday_dzuhur(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/petugas');
+        $response->assertStatus(200);
+        $response->assertSee('isDutyFridayDzuhur', false);
+        $response->assertSee('redirectToFridayKajian', false);
+        $response->assertSee('Buka Modal Edit Jadwal Kajian', false);
+    }
 }
 
 

@@ -692,16 +692,12 @@
             class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
-                    <h3 class="text-base font-bold text-gov-textMain"
-                        x-text="importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian'">
-                        {{ $importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian' }}
-                    </h3>
+                    <h3 class="text-base font-bold text-gov-textMain">Import Jadwal Kajian</h3>
                     <p class="text-xs text-slate-500">Target Impor: <strong
-                            class="text-gov-navy uppercase"
-                            x-text="importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian'">{{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian' }}</strong>
+                            class="text-gov-navy uppercase">{{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian' }}</strong>
                     </p>
                 </div>
-                <button type="button" @click="showImportKajianModal = false; $wire.closeImportKajianModal()"
+                <button type="button" @click="showImportKajianModal = false"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
                         data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -723,28 +719,26 @@
                         <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
                         <span>Format Kolom Excel yang Diharapkan:</span>
                     </span>
-                    <div x-show="importKajianType === 'pekanan'">
+                    @if($importKajianType === 'pekanan')
                         <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
                             [No] \t [Jenis] \t [Hari & Tanggal] \t [Waktu] \t [Judul Kajian] \t [Pembicara] \t [No HP]
                         </p>
-                        <p class="text-xs text-amber-800 mt-1">Cukup blok tabel di Excel/Google Sheets, tekan
+                        <p class="text-xs text-amber-800">Cukup blok tabel di Excel/Google Sheets, tekan
                             <strong>Ctrl+C</strong>, lalu paste ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
                         </p>
-                    </div>
-                    <div x-show="importKajianType === 'jumat'" x-cloak>
+                    @else
                         <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
                             [No] \t [Hari & Tanggal] \t [Waktu] \t [Status Libur] \t [Judul Khutbah] \t [Khatib] \t [MC] \t [Muadzin] \t [No HP]
                         </p>
-                        <p class="text-xs text-amber-800 mt-1">Cukup blok tabel di Excel/Google Sheets, tekan
+                        <p class="text-xs text-amber-800">Cukup blok tabel di Excel/Google Sheets, tekan
                             <strong>Ctrl+C</strong>, lalu paste ke kotak di bawah. File Excel hasil download juga dapat langsung dicopy/paste atau diupload.
                         </p>
-                    </div>
+                    @endif
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Tempelkan Teks Excel di Sini *</label>
                     <textarea wire:model="importKajianPasteText" rows="6"
-                        :placeholder="importKajianType === 'jumat' ? '2026-09-18&#9;11:30 - 12:30&#9;Normal&#9;Taqwa dan Integritas&#9;Ust. Firdaus&#9;Bpk. Ahmad&#9;Mas Bilal&#9;08123456789' : '2026-09-17&#9;09:00 - 11:30&#9;Tafsir Al-Kahfi&#9;Ust. Firdaus&#9;08123456789'"
                         placeholder="2026-09-17&#9;09:00 - 11:30&#9;Tafsir Al-Kahfi&#9;Ust. Firdaus&#9;08123456789"
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-mono text-xs transition"></textarea>
                 </div>
@@ -786,14 +780,10 @@
                         </div>
                         <div>
                             <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block"
-                                  x-text="importKajianType === 'jumat' ? 'Unduh format baku Shalat Jumat siap isi.' : 'Unduh format baku Kajian Pekanan siap isi.'">
-                                Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.
-                            </span>
+                            <span class="text-[11px] text-slate-500 block">Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.</span>
                         </div>
                     </div>
-                    <a :href="importKajianType === 'jumat' ? '{{ route('admin.template-import', 'kajian_jumat') }}' : '{{ route('admin.template-import', 'kajian_pekanan') }}'"
-                       href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
+                    <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -924,12 +914,13 @@
                     class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Hari & Tahun Grid (sembunyikan jika Jumat Dzuhur) -->
-                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Hari & Tahun Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari *</label>
                         <x-custom-select
                             x-model="dutyForm.day_name"
+                            @change="handleDutyDayChange($event.detail)"
                             :options="[
                                 ['value' => 'Senin', 'label' => 'Senin'],
                                 ['value' => 'Selasa', 'label' => 'Selasa'],
@@ -955,7 +946,7 @@
                 </div>
 
                 <!-- Pola Pekan Penugasan (sembunyikan jika Jumat Dzuhur) -->
-                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')">
+                <div x-show="!isDutyFridayDzuhur()">
                     <label class="block font-semibold text-slate-700 mb-1">Pola Pekan Penugasan *</label>
                     <x-custom-select
                         x-model="dutyForm.week_pattern"
@@ -986,7 +977,7 @@
                 </div>
 
                 <!-- Petugas Imam & Muadzin (sembunyikan jika Jumat Dzuhur) -->
-                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div x-show="!isDutyFridayDzuhur()" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Petugas Imam</label>
                         <input x-model="dutyForm.imam_name" type="text" placeholder="Contoh: Ust. Pujo Santoso"
@@ -1004,27 +995,29 @@
                     </div>
                 </div>
 
-                <!-- Info box: Jumat Dzuhur dikelola di modal Kajian Jumat -->
-                <template x-if="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur'">
-                    <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs space-y-2">
-                        <div class="flex items-start gap-2">
-                            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
-                            <span><strong>Shalat Dzuhur hari Jumat = Shalat Jumat.</strong> Pengaturan petugas Imam (Khatib), Muadzin, dan MC Shalat Jumat dikelola terpusat di modal <em>Edit Jadwal Kajian</em> kategori Shalat Jumat &amp; Khutbah.</span>
+                <!-- Info box & Aksi: Jumat Dzuhur diarahkan ke modal Kajian Jumat -->
+                <div x-show="isDutyFridayDzuhur()" class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-950 text-xs space-y-2.5 shadow-2xs">
+                    <div class="flex items-start gap-2.5">
+                        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                        <div class="space-y-1">
+                            <span class="font-bold text-amber-900">Shalat Dzuhur hari Jumat adalah Shalat Jumat.</span>
+                            <p class="text-amber-800 leading-relaxed">
+                                Pengaturan petugas Imam (Khatib), Muadzin, dan MC Shalat Jumat dikelola secara terpusat pada modal <strong>Edit Jadwal Kajian (Shalat Jumat &amp; Khutbah)</strong> di halaman <strong>/admin/kegiatan</strong>.
+                            </p>
                         </div>
-                        <template x-if="dutyRowData.friday_kajian_id">
-                            <div class="flex justify-end">
-                                <button type="button"
-                                    @click="showPrayerDutyModal = false; $wire.openFridayKajianFromPetugas(dutyRowData.friday_kajian_id)"
-                                    class="font-bold text-amber-800 hover:text-amber-950 underline cursor-pointer text-xs">
-                                    Buka Modal Kajian Jumat &rarr;
-                                </button>
-                            </div>
-                        </template>
                     </div>
-                </template>
+                    <div class="flex justify-end pt-1">
+                        <button type="button"
+                            @click="redirectToFridayKajian(dutyRowData ? dutyRowData.friday_kajian_id : null); $wire.openFridayKajianFromPetugas(dutyRowData ? dutyRowData.friday_kajian_id : null)"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold transition cursor-pointer text-xs shadow-2xs">
+                            <span>Buka Modal Edit Jadwal Kajian</span>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Info Sinkronisasi: tampil hanya jika BUKAN Jumat Dzuhur -->
-                <div x-show="!(dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur')" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs">
+                <div x-show="!isDutyFridayDzuhur()" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 text-xs">
                     <strong>Informasi Sinkronisasi:</strong> Pada hari Jumat siang (Shalat Dzuhur / Shalat Jumat), data
                     nama Imam dan Muadzin akan otomatis disinkronkan dengan nama Khatib dan Muadzin Shalat Jumat pada
                     modul Kajian Jumat.
@@ -1033,8 +1026,17 @@
                 <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
                     <button type="button" @click="showPrayerDutyModal = false"
                         class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="submit" wire:loading.attr="disabled"
-                        :disabled="dutyRowData && dutyRowData.is_friday && dutyForm.prayer_time === 'dzuhur'"
+                    
+                    <!-- Tombol Arahkan jika Jumat Dzuhur -->
+                    <button type="button" x-show="isDutyFridayDzuhur()"
+                        @click="redirectToFridayKajian(dutyRowData ? dutyRowData.friday_kajian_id : null); $wire.openFridayKajianFromPetugas(dutyRowData ? dutyRowData.friday_kajian_id : null)"
+                        class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
+                        <span>Arahkan ke Modal Jadwal Kajian</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+
+                    <!-- Tombol Simpan reguler jika bukan Jumat Dzuhur -->
+                    <button type="submit" x-show="!isDutyFridayDzuhur()" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="savePrayerDuty"
                             x-text="isEditingPrayerDuty ? 'Simpan Perubahan' : 'Tambah Penugasan'"></span>

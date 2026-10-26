@@ -23,6 +23,16 @@
              this.$watch('socialSubTab', () => this.updateDocumentTitle());
              this.$watch('userSubTab', () => this.updateDocumentTitle());
              this.$watch('settingsSubTab', () => this.updateDocumentTitle());
+             this.$watch('dutyForm.day_name', (val) => {
+                 if (this.showPrayerDutyModal && val === 'Jumat' && this.dutyForm.prayer_time === 'dzuhur') {
+                     this.redirectToFridayKajian();
+                 }
+             });
+             this.$watch('dutyForm.prayer_time', (val) => {
+                 if (this.showPrayerDutyModal && (this.dutyForm.day_name === 'Jumat' || (this.dutyRowData && this.dutyRowData.is_friday)) && val === 'dzuhur') {
+                     this.redirectToFridayKajian();
+                 }
+             });
          },
          updateDocumentTitle() {
              let tabTitle = 'Dashboard';
@@ -315,7 +325,32 @@
               imam_name: '',
               muadzin_name: ''
           },
+          isDutyFridayDzuhur() {
+              return (this.dutyForm.day_name === 'Jumat' || (this.dutyRowData && this.dutyRowData.is_friday)) && this.dutyForm.prayer_time === 'dzuhur';
+          },
+          redirectToFridayKajian(kajianId = null) {
+              this.showPrayerDutyModal = false;
+              const targetKajianId = kajianId || (this.dutyRowData ? this.dutyRowData.friday_kajian_id : null);
+              this.activeTab = 'kegiatan';
+              this.kegiatanSubTab = 'jumat';
+              this.kajianSubTab = 'jumat';
+              this.updateDocumentTitle();
+              if (window.history && window.history.replaceState) {
+                  window.history.replaceState({}, '', '/admin/kegiatan');
+              }
+              $wire.openFridayKajianFromPetugas(targetKajianId);
+          },
+          handleDutyDayChange(day) {
+              this.dutyForm.day_name = day;
+              if (this.showPrayerDutyModal && day === 'Jumat' && this.dutyForm.prayer_time === 'dzuhur') {
+                  this.redirectToFridayKajian();
+              }
+          },
           openCreatePrayerDuty(day = 'Senin', time = 'dzuhur') {
+              if (day === 'Jumat' && time === 'dzuhur') {
+                  this.redirectToFridayKajian();
+                  return;
+              }
               this.dutyRowData = null;
               this.isEditingPrayerDuty = false;
               this.dutyForm = {
@@ -350,6 +385,11 @@
                   initialTime = data.dzuhur ? 'dzuhur' : (data.ashar ? 'ashar' : 'dzuhur');
               }
 
+              if (data.is_friday && initialTime === 'dzuhur') {
+                  this.redirectToFridayKajian(data.friday_kajian_id || null);
+                  return;
+              }
+
               this.switchDutyTime(initialTime);
               this.showPrayerDutyModal = true;
               this.$nextTick(() => {
@@ -358,6 +398,10 @@
           },
           switchDutyTime(time) {
               this.dutyForm.prayer_time = time;
+              if (this.showPrayerDutyModal && (this.dutyForm.day_name === 'Jumat' || (this.dutyRowData && this.dutyRowData.is_friday)) && time === 'dzuhur') {
+                  this.redirectToFridayKajian(this.dutyRowData ? this.dutyRowData.friday_kajian_id : null);
+                  return;
+              }
               if (this.dutyRowData) {
                   this.dutyForm.day_name = this.dutyRowData.day_name || this.dutyForm.day_name || 'Senin';
                   this.dutyForm.tahun = this.dutyRowData.tahun || this.dutyForm.tahun || {{ Carbon\Carbon::now('Asia/Jakarta')->year }};

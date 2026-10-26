@@ -382,10 +382,10 @@
                                                                 @else
                                                                     <!-- Tambah Petugas (jadwal masih kosong) -->
                                                                     <button type="button"
-                                                                        @click="openMenu = false; openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
+                                                                        @click="openMenu = false; @if($isFriday) redirectToFridayKajian({{ $row['friday_kajian']?->id ? $row['friday_kajian']->id : 'null' }}) @else openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur') @endif"
                                                                         class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
                                                                         <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Tambah Petugas</div>
+                                                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">{{ $isFriday ? 'Kelola Shalat Jumat' : 'Tambah Petugas' }}</div>
                                                                     </button>
                                                                 @endif
                                                             </div>
@@ -533,10 +533,10 @@
                                                                 @endif
                                                             @else
                                                                 <button type="button"
-                                                                    @click="openMenu = false; openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur')"
+                                                                    @click="openMenu = false; @if($isFriday) redirectToFridayKajian({{ $row['friday_kajian']?->id ? $row['friday_kajian']->id : 'null' }}) @else openCreatePrayerDuty('{{ $row['day_name'] }}', 'dzuhur') @endif"
                                                                     class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-sky-50 hover:text-sky-800 transition font-medium text-xs cursor-pointer">
                                                                     <svg class="w-4 h-4 text-sky-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Tambah Petugas</div>
+                                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">{{ $isFriday ? 'Kelola Shalat Jumat' : 'Tambah Petugas' }}</div>
                                                                 </button>
                                                             @endif
                                                         </div>
