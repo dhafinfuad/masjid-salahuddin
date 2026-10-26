@@ -6021,6 +6021,8 @@ class AdminDashboard extends Component
 
     public function processScanPernyataan(): void
     {
+        @set_time_limit(300);
+
         if (! Auth::user()?->canManage()) {
             $this->scanError = 'Akses ditolak: Anda tidak memiliki wewenang mengimpor data komitmen.';
             return;

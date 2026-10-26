@@ -856,6 +856,7 @@ class PernyataanScanOcrService
     /**
      * Ekstraksi formulir scan PDF multi-halaman langsung menggunakan Google Gemini Vision AI.
      * Mampu membaca teks cetak komputer dan angka tulisan tangan bolpoin secara akurat.
+     * Mendukung dokumen multi-halaman besar (seperti 45 halaman) dengan pemrosesan chunk 10 halaman per batch.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -871,106 +872,165 @@ class PernyataanScanOcrService
             return [];
         }
 
+        $pageCount = $this->getPdfPageCount($pdfPath);
         $model = config('services.gemini.model', env('GEMINI_MODEL', 'gemini-3.5-flash'));
 
-        // 1. Upload berkas PDF ke Google Gemini Files API (mendukung file hingga 2 GB)
+        // 1. Upload berkas PDF sekali ke Google Gemini Files API (mendukung file hingga 2 GB)
         $fileUri = $this->uploadPdfToGeminiFiles($pdfPath, $apiKey);
+        $useInline = empty($fileUri);
 
-        $prompt = 'Berikut adalah dokumen pindaian scan multi-halaman "Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja".
-Tugas Anda adalah membaca setiap lembar halaman pindaian (baik teks cetak komputer maupun angka tulisan tangan bolpoin), lalu mengekstrak data setiap halaman ke dalam struktur JSON array berikut:
+        if ($useInline && $fileSize > 15 * 1024 * 1024) {
+            Log::error('Berkas PDF melebihi 15MB dan upload Gemini Files API gagal.');
+            return [];
+        }
+
+        $inlineData = $useInline ? base64_encode(File::get($pdfPath)) : null;
+
+        // 2. Bagi menjadi batch halaman (maksimal 10 halaman per batch agar tidak kena limit output token & timeout)
+        $chunkSize = 10;
+        $chunks = [];
+        for ($start = 1; $start <= $pageCount; $start += $chunkSize) {
+            $end = min($start + $chunkSize - 1, $pageCount);
+            $chunks[] = ['start' => $start, 'end' => $end];
+        }
+
+        $allRawItems = [];
+
+        foreach ($chunks as $chunk) {
+            $start = $chunk['start'];
+            $end = $chunk['end'];
+            $count = $end - $start + 1;
+
+            $prompt = "Berikut adalah berkas pindaian scan \"Surat Pernyataan Kesediaan Pemotongan Tunjangan Kinerja\" (total {$pageCount} halaman).
+Tugas Anda adalah membaca dan mengekstrak KHUSUS lembar halaman {$start} sampai halaman {$end} (total {$count} lembar halaman fisik).
+Ekstrak teks cetak komputer dan angka tulisan tangan bolpoin pada tabel setiap halaman ke dalam struktur JSON array berikut:
 [
   {
-    "page_number": 1,
-    "nama": "Nama Lengkap Pegawai",
-    "nip": "18 digit NIP",
-    "jabatan": "Jabatan",
-    "seksi_kelompok": "Seksi atau Unit Kerja",
-    "phone": "Nomor WhatsApp",
-    "effective_period": "Bulan dan Tahun Mulai Berlaku",
-    "commitments": {
-      "zakat": 0,
-      "infaq": 0,
-      "qurban": 0,
-      "yatim": 0,
-      "dhuafa": 0
+    \"page_number\": {$start},
+    \"nama\": \"Nama Lengkap Pegawai\",
+    \"nip\": \"18 digit NIP\",
+    \"jabatan\": \"Jabatan\",
+    \"seksi_kelompok\": \"Seksi atau Unit Kerja\",
+    \"phone\": \"Nomor WhatsApp\",
+    \"effective_period\": \"Bulan dan Tahun Mulai Berlaku\",
+    \"commitments\": {
+      \"zakat\": 0,
+      \"infaq\": 0,
+      \"qurban\": 0,
+      \"yatim\": 0,
+      \"dhuafa\": 0
     }
   }
 ]
 
-Petunjuk pembacaan:
-1. Pastikan setiap halaman fisik memiliki 1 objek dalam array JSON, dengan "page_number" urut mulai dari 1 sampai halaman terakhir.
-2. "nama": Nama pegawai yang tercantum di formulir.
-3. "nip": 18 digit NIP pegawai (format angka murni tanpa spasi).
-4. Di bagian tabel "Nominal per Bulan", bacalah angka tulisan tangan bolpoin pada setiap baris:
+Petunjuk penting:
+1. Pastikan setiap lembar dari halaman {$start} sampai {$end} memiliki tepat 1 objek di dalam array JSON, dengan \"page_number\" urut dari {$start} sampai {$end}.
+2. \"nama\": Nama pegawai pada lembar tersebut.
+3. \"nip\": 18 digit NIP pegawai (angka murni tanpa spasi).
+4. Di bagian tabel \"Nominal per Bulan\", bacalah angka tulisan tangan bolpoin pada setiap baris:
    - Baris 1: Zakat (angka bulat tanpa titik, contoh 50000)
    - Baris 2: Infaq & Sedekah
    - Baris 3: Tabungan Qurban
    - Baris 4: Santunan Anak Yatim
    - Baris 5: Santunan Dhuafa
    Jika baris kosong, strip (-), atau tidak dicentang, isi nominal 0.
-Kembalikan HANYA format JSON murni berstruktur array tanpa teks pengantar maupun markdown tambahan.';
+Kembalikan HANYA format JSON murni berstruktur array tanpa teks pengantar maupun markdown.";
 
-        $parts = [];
-        if (!empty($fileUri)) {
-            $parts[] = [
-                'fileData' => [
-                    'mimeType' => 'application/pdf',
-                    'fileUri' => $fileUri,
-                ]
-            ];
-        } else {
-            // Fallback inline data jika Files API gagal dan ukuran file <= 15MB
-            if ($fileSize <= 15 * 1024 * 1024) {
+            $parts = [];
+            if (!empty($fileUri)) {
                 $parts[] = [
-                    'inlineData' => [
+                    'fileData' => [
                         'mimeType' => 'application/pdf',
-                        'data' => base64_encode(File::get($pdfPath)),
+                        'fileUri' => $fileUri,
                     ]
                 ];
             } else {
-                Log::error('Berkas PDF melebihi 15MB dan upload Gemini Files API gagal.');
-                return [];
+                $parts[] = [
+                    'inlineData' => [
+                        'mimeType' => 'application/pdf',
+                        'data' => $inlineData,
+                    ]
+                ];
             }
-        }
-        $parts[] = ['text' => $prompt];
+            $parts[] = ['text' => $prompt];
 
-        $payload = [
-            'contents' => [
-                ['parts' => $parts]
-            ],
-            'generationConfig' => [
-                'responseMimeType' => 'application/json',
-                'maxOutputTokens' => 8192,
-                'temperature' => 0.1,
-            ]
-        ];
+            $payload = [
+                'contents' => [
+                    ['parts' => $parts]
+                ],
+                'generationConfig' => [
+                    'responseMimeType' => 'application/json',
+                    'maxOutputTokens' => 8192,
+                    'temperature' => 0.1,
+                    'thinkingConfig' => [
+                        'thinkingBudget' => 0,
+                    ],
+                ]
+            ];
 
-        // Daftar model yang dicoba secara bergantian jika terjadi lonjakan beban (503)
-        $modelsToTry = array_unique([$model, 'gemini-3.5-flash-lite', 'gemini-3-flash-preview', 'gemini-flash-latest']);
-        $rawJson = null;
+            // Daftar model yang dicoba secara bergantian jika terjadi lonjakan beban (503)
+            $modelsToTry = array_unique([$model, 'gemini-3.5-flash-lite', 'gemini-3-flash-preview', 'gemini-flash-latest']);
+            $chunkJson = null;
 
-        foreach ($modelsToTry as $mName) {
-            $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$mName}:generateContent?key={$apiKey}";
-            $response = $this->callGeminiApi($apiUrl, $payload, 120);
+            foreach ($modelsToTry as $mName) {
+                $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$mName}:generateContent?key={$apiKey}";
+                $response = $this->callGeminiApi($apiUrl, $payload, 90);
 
-            if ($response['code'] === 200 && !empty($response['body'])) {
-                $resData = json_decode($response['body'], true);
-                $rawJson = $resData['candidates'][0]['content']['parts'][0]['text'] ?? null;
-                if (!empty($rawJson)) {
-                    Log::info("Gemini Vision OCR berhasil menggunakan model: {$mName}");
-                    break;
+                if ($response['code'] === 200 && !empty($response['body'])) {
+                    $resData = json_decode($response['body'], true);
+                    $chunkJson = $resData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                    if (!empty($chunkJson)) {
+                        break;
+                    }
+                } else {
+                    Log::warning("Gemini chunk {$start}-{$end} model {$mName} gagal (HTTP {$response['code']}): " . substr((string)($response['body'] ?? ''), 0, 150));
+                }
+            }
+
+            if (!empty($chunkJson)) {
+                $parsedItems = $this->parseChunkJson($chunkJson);
+                foreach ($parsedItems as $item) {
+                    $allRawItems[] = $item;
                 }
             } else {
-                Log::warning("Gemini model {$mName} gagal (HTTP {$response['code']}): " . substr((string)($response['body'] ?? ''), 0, 200));
+                Log::error("Gagal mengekstrak chunk halaman {$start} sampai {$end}.");
             }
         }
 
-        if (empty($rawJson)) {
-            Log::error('Semua model Gemini gagal mengekstrak berkas PDF scan.');
+        if (empty($allRawItems)) {
+            Log::error('Semua chunk Gemini gagal mengekstrak berkas PDF scan.');
             return [];
         }
 
-        return $this->formatGeminiExtractedPages($rawJson, $pdfPath);
+        return $this->formatGeminiExtractedPages($allRawItems, $pdfPath);
+    }
+
+    /**
+     * Parse potongan respons JSON dari Gemini menjadi array item lembar.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function parseChunkJson(string $rawJson): array
+    {
+        $cleanJson = trim($rawJson);
+        if (str_starts_with($cleanJson, '```')) {
+            $cleanJson = preg_replace('/^```(?:json)?\s*/i', '', $cleanJson);
+            $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
+            $cleanJson = trim($cleanJson);
+        }
+
+        $decoded = json_decode($cleanJson, true);
+        if (!is_array($decoded)) {
+            return [];
+        }
+
+        if (isset($decoded['pages']) && is_array($decoded['pages'])) {
+            return $decoded['pages'];
+        } elseif (isset($decoded['data']) && is_array($decoded['data'])) {
+            return $decoded['data'];
+        }
+
+        return $decoded;
     }
 
     /**
@@ -1038,29 +1098,34 @@ Kembalikan HANYA format JSON murni berstruktur array tanpa teks pengantar maupun
     /**
      * Format respon JSON hasil pembacaan Gemini menjadi struktur data scanPages standar.
      *
+     * @param string|array<int, mixed> $rawJsonOrItems
      * @return array<int, array<string, mixed>>
      */
-    protected function formatGeminiExtractedPages(string $rawJson, string $pdfPath): array
+    protected function formatGeminiExtractedPages(string|array $rawJsonOrItems, string $pdfPath): array
     {
-        $cleanJson = trim($rawJson);
-        if (str_starts_with($cleanJson, '```')) {
-            $cleanJson = preg_replace('/^```(?:json)?\s*/i', '', $cleanJson);
-            $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
-            $cleanJson = trim($cleanJson);
-        }
-
-        $decoded = json_decode($cleanJson, true);
-        if (!is_array($decoded)) {
-            Log::error('Respon Gemini bukan JSON valid: ' . substr($cleanJson, 0, 300));
-            return [];
-        }
-
-        if (isset($decoded['pages']) && is_array($decoded['pages'])) {
-            $items = $decoded['pages'];
-        } elseif (isset($decoded['data']) && is_array($decoded['data'])) {
-            $items = $decoded['data'];
+        if (is_array($rawJsonOrItems)) {
+            $items = $rawJsonOrItems;
         } else {
-            $items = $decoded;
+            $cleanJson = trim($rawJsonOrItems);
+            if (str_starts_with($cleanJson, '```')) {
+                $cleanJson = preg_replace('/^```(?:json)?\s*/i', '', $cleanJson);
+                $cleanJson = preg_replace('/\s*```$/', '', $cleanJson);
+                $cleanJson = trim($cleanJson);
+            }
+
+            $decoded = json_decode($cleanJson, true);
+            if (!is_array($decoded)) {
+                Log::error('Respon Gemini bukan JSON valid: ' . substr($cleanJson, 0, 300));
+                return [];
+            }
+
+            if (isset($decoded['pages']) && is_array($decoded['pages'])) {
+                $items = $decoded['pages'];
+            } elseif (isset($decoded['data']) && is_array($decoded['data'])) {
+                $items = $decoded['data'];
+            } else {
+                $items = $decoded;
+            }
         }
 
         $pageCount = $this->getPdfPageCount($pdfPath);
