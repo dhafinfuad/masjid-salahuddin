@@ -780,7 +780,6 @@
                         </div>
                         <div>
                             <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format baku {{ $importKajianType === 'jumat' ? 'Shalat Jumat' : 'Kajian Pekanan' }} siap isi.</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', $importKajianType === 'jumat' ? 'kajian_jumat' : 'kajian_pekanan') }}" 
@@ -1143,7 +1142,6 @@
                         </div>
                         <div>
                             <span class="font-bold text-slate-800 block">Template Excel (.xlsx)</span>
-                            <span class="text-[11px] text-slate-500 block">Unduh format jadwal petugas shalat rawatib (Dzuhur & Ashar).</span>
                         </div>
                     </div>
                     <a href="{{ route('admin.template-import', 'petugas_sholat') }}" 
