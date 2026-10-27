@@ -2418,12 +2418,12 @@
                 </div>
             </template>
 
-            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
-                <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
+            <div wire:ignore wire:key="global-confirm-delete-modal-footer" class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <button type="button" wire:key="global-confirm-delete-modal-cancel-btn" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
                     class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer disabled:opacity-40">
                     Batal
                 </button>
-                <button type="button" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
+                <button type="button" wire:key="global-confirm-delete-modal-submit-btn" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
                     :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'))"
                     class="min-w-[130px] h-9 px-4 rounded-lg text-xs font-bold shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-wait">
                     <template x-if="confirmDeleteModal.loading">

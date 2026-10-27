@@ -19,8 +19,11 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"', $content, 'confirmDeleteModal harus menggunakan wire:ignore penuh dan memiliki wire:key');
         $this->assertStringNotContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal dilarang menggunakan wire:ignore.self karena menyebabkan duplikasi tombol saat morphing');
 
-        // 2. Pastikan footer menggunakan flex gap-2.5 (bukan space-x yang menyebabkan margin jitter di WebKit)
+        // 2. Pastikan footer menggunakan flex gap-2.5, wire:ignore, dan wire:key untuk proteksi mutlak
         $this->assertMatchesRegularExpression('/flex items-center justify-end gap-2\.5 border-t/i', $content, 'Footer modal konfirmasi hapus harus menggunakan gap-2.5');
+        $this->assertStringContainsString('wire:ignore wire:key="global-confirm-delete-modal-footer"', $content, 'Footer modal harus memiliki isolasi wire:ignore dan wire:key tersendiri');
+        $this->assertStringContainsString('wire:key="global-confirm-delete-modal-submit-btn"', $content, 'Tombol submit harus memiliki wire:key stabil');
+        $this->assertStringContainsString('wire:key="global-confirm-delete-modal-cancel-btn"', $content, 'Tombol cancel harus memiliki wire:key stabil');
 
         // 3. Pastikan tombol konfirmasi memiliki dimensi stabil, tidak menggunakan disabled:opacity-50 (mencegah ghosting pink)
         $this->assertMatchesRegularExpression('/min-w-\[130px\]\s+h-9\s+px-4/i', $content, 'Tombol konfirmasi harus memiliki min-w-[130px] h-9 untuk menjaga stabilitas layout');
@@ -39,14 +42,17 @@ class GlobalConfirmDeleteModalTest extends TestCase
     {
         $viewsPath = resource_path('views/livewire/admin/tabs');
         $files = glob($viewsPath . '/_tab-*.blade.php');
+        $files[] = resource_path('views/livewire/admin/tabs/_modals.blade.php');
         $this->assertNotEmpty($files);
 
         $actionsFound = [];
+        $totalOpenDeleteCalls = 0;
         foreach ($files as $file) {
             $content = file_get_contents($file);
             preg_match_all('/openDeleteModal\s*\(\s*\{\{\s*Js::from\(\[\s*([^\}]+?)\s*\]\)\s*\}\}\s*\)/s', $content, $matches);
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $match) {
+                    $totalOpenDeleteCalls++;
                     if (preg_match('/\'action\'\s*=>\s*\'([^\']+)\'/', $match, $actionMatch)) {
                         $actionsFound[] = $actionMatch[1];
                     }
@@ -54,7 +60,10 @@ class GlobalConfirmDeleteModalTest extends TestCase
             }
         }
 
-        // Pastikan aksi-aksi hapus utama terpetakan dengan benar
+        // Pastikan total panggilan openDeleteModal mencakup seluruh tab (25 lokasi pemanggilan)
+        $this->assertGreaterThanOrEqual(25, $totalOpenDeleteCalls, "Harus ada minimal 25 lokasi pemanggilan openDeleteModal di seluruh antarmuka admin");
+
+        // Pastikan seluruh 13 aksi hapus utama terpetakan dengan benar
         $expectedActions = [
             'deleteFinance',
             'deleteFinanceCategory',
@@ -85,6 +94,6 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($swPath);
         $content = file_get_contents($swPath);
 
-        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.4'", $content);
+        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.5'", $content);
     }
 }
