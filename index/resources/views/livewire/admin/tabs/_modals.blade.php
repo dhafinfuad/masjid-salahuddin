@@ -296,9 +296,6 @@
                 <div>
                     <h3 class="text-base font-bold text-gov-textMain"
                         x-text="isEditingKajian ? 'Edit Jadwal Kajian' : 'Tambah Jadwal Kajian Baru'"></h3>
-                    <p class="text-xs text-slate-500">Kategori: <strong class="text-gov-navy uppercase"
-                            x-text="kajianForm.type === 'jumat' ? 'Shalat Jumat & Khutbah' : (kajianForm.type === 'tematik' ? 'Kajian Tematik' : 'Kajian Pekanan Rutin')"></strong>
-                    </p>
                 </div>
                 <button type="button" @click="closeKajianModal()"
                     class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
@@ -438,10 +435,10 @@
                     </div>
                 </div>
 
-                <!-- Foto Pembicara / Ustadz untuk Poster -->
+                <!-- Foto Pembicara untuk Poster -->
                 <div x-show="kajianForm.type === 'pekanan' || kajianForm.type === 'tematik'" class="space-y-1.5">
                     <div class="flex items-center justify-between">
-                        <label class="block font-semibold text-slate-700">Foto Pembicara / Ustadz (Untuk Poster HD)</label>
+                        <label class="block font-semibold text-slate-700">Foto Pembicara</label>
                         <button type="button" @click="$wire.openUstadzModal()" class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer inline-flex items-center gap-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             <span>Database Ustadz</span>
@@ -647,7 +644,7 @@
                 <!-- Link YouTube (Opsional) -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">
-                        <span>Link YouTube Video / Live Streaming</span>
+                        <span>Link YouTube</span>
                         <span class="text-[10px] text-slate-400 font-normal ml-1">(Opsional)</span>
                     </label>
                     <div class="relative">
