@@ -958,7 +958,7 @@
             const isWarning = options.type === 'warning';
             const isPrimary = options.type === 'primary';
 
-            this.confirmDeleteModal = {
+            Object.assign(this.confirmDeleteModal, {
                 show: true,
                 title: options.title || (isPrimary ? 'Konfirmasi Tindakan' : 'Konfirmasi Hapus Data'),
                 message: options.message || (isPrimary ? 'Apakah Anda yakin ingin memproses tindakan ini?' : 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.'),
@@ -972,7 +972,7 @@
                 loadingText: options.loadingText || (isPrimary ? 'Memproses...' : 'Menghapus...'),
                 type: options.type || 'danger',
                 noticeText: options.noticeText !== undefined ? options.noticeText : (isPrimary ? 'Pastikan data yang dipilih sudah sesuai sebelum melanjutkan proses.' : 'Tindakan ini tidak dapat dibatalkan. Pastikan Anda telah memeriksa kembali data yang akan diproses.')
-            };
+            });
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
             });

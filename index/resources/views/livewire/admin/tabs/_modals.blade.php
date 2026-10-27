@@ -575,7 +575,7 @@
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="saveKajian"
                             x-text="isEditingKajian ? 'Simpan Perubahan' : 'Simpan Jadwal'"></span>
-                        <span wire:loading.inline-flex wire:target="saveKajian"
+                        <span wire:loading.inline-flex wire:target="saveKajian" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -933,7 +933,7 @@
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="savePrayerDuty"
                             x-text="isEditingPrayerDuty ? 'Simpan Perubahan' : 'Tambah Penugasan'"></span>
-                        <span wire:loading.inline-flex wire:target="savePrayerDuty"
+                        <span wire:loading.inline-flex wire:target="savePrayerDuty" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1014,7 +1014,7 @@
                     <button type="button" wire:click="processImportDutyPaste" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="processImportDutyPaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportDutyPaste"
+                        <span wire:loading.inline-flex wire:target="processImportDutyPaste" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1112,7 +1112,7 @@
                     <button type="button" wire:click="processImportDutyFile" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="processImportDutyFile">Upload & Impor File Excel</span>
-                        <span wire:loading.inline-flex wire:target="processImportDutyFile"
+                        <span wire:loading.inline-flex wire:target="processImportDutyFile" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1310,7 +1310,7 @@
                         <span wire:loading.remove wire:target="executeBatchReplaceDuty">
                             Terapkan Perubahan ({{ $previewCount }})
                         </span>
-                        <span wire:loading.inline-flex wire:target="executeBatchReplaceDuty"
+                        <span wire:loading.inline-flex wire:target="executeBatchReplaceDuty" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -1492,7 +1492,7 @@
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="saveAgenda"
                             x-text="isEditingAgenda ? 'Perbarui Kegiatan' : 'Simpan Kegiatan'"></span>
-                        <span wire:loading.inline-flex wire:target="saveAgenda"
+                        <span wire:loading.inline-flex wire:target="saveAgenda" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1574,7 +1574,7 @@
                     <button type="button" wire:click="processImportAgendaPaste" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="processImportAgendaPaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportAgendaPaste"
+                        <span wire:loading.inline-flex wire:target="processImportAgendaPaste" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1668,7 +1668,7 @@
                     <button type="button" wire:click="processImportAgendaFile" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="processImportAgendaFile">Upload & Impor File</span>
-                        <span wire:loading.inline-flex wire:target="processImportAgendaFile"
+                        <span wire:loading.inline-flex wire:target="processImportAgendaFile" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1754,7 +1754,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="saveOdojAssignment">Simpan Penugasan</span>
-                        <span wire:loading.inline-flex wire:target="saveOdojAssignment"
+                        <span wire:loading.inline-flex wire:target="saveOdojAssignment" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -1867,7 +1867,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
                         <span wire:loading.remove wire:target="saveUser">Simpan Pengguna</span>
-                        <span wire:loading.inline-flex wire:target="saveUser"
+                        <span wire:loading.inline-flex wire:target="saveUser" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -2318,13 +2318,13 @@
                     Batal
                 </button>
                 <button type="button" wire:click="saveTemplateKep(true)" wire:loading.attr="disabled" wire:target="saveTemplateKep"
-                    class="w-full sm:w-auto sm:min-w-[195px] h-10 sm:h-9 px-5 rounded-xl sm:rounded-lg bg-gov-navy hover:bg-gov-navyHover active:bg-gov-navy text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-75 disabled:cursor-wait inline-grid place-items-center">
-                    <span wire:loading.remove wire:target="saveTemplateKep" class="col-start-1 row-start-1 inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
+                    class="w-full sm:w-auto sm:min-w-[195px] h-10 sm:h-9 px-5 rounded-xl sm:rounded-lg bg-gov-navy hover:bg-gov-navyHover active:bg-gov-navy text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-75 disabled:cursor-wait inline-flex items-center justify-center gap-1.5">
+                    <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
                         <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
                         <span>Simpan & Unduh PDF</span>
                     </span>
-                    <span wire:loading.flex wire:target="saveTemplateKep" style="display: none;"
-                        class="col-start-1 row-start-1 items-center justify-center gap-2 text-white font-bold text-xs whitespace-nowrap bg-gov-navy w-full h-full">
+                    <span wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none;"
+                        class="items-center justify-center gap-2 text-white font-bold text-xs whitespace-nowrap">
                         <svg class="w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -2425,27 +2425,14 @@
                 </button>
                 <button type="button" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
                     :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 active:bg-slate-900 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white' : 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white'))"
-                    class="px-4 py-2.5 rounded-lg text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50">
-                    <span x-show="!confirmDeleteModal.loading" class="inline-flex items-center gap-1.5">
-                        <template x-if="confirmDeleteModal.type === 'primary'">
-                            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                        </template>
-                        <template x-if="confirmDeleteModal.type !== 'primary'">
-                            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </template>
-                        <span x-text="confirmDeleteModal.confirmButtonText || 'Ya, Hapus'"></span>
-                    </span>
-                    <span x-show="confirmDeleteModal.loading" x-cloak class="inline-flex items-center justify-center gap-2">
-                        <svg class="w-3.5 h-3.5 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                            fill="none">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        <span class="whitespace-nowrap" x-text="confirmDeleteModal.loadingText || (confirmDeleteModal.type === 'primary' ? 'Memproses...' : 'Menghapus...')"></span>
-                    </span>
+                    class="px-4 py-2.5 rounded-lg text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
+                    <svg x-show="confirmDeleteModal.loading" x-cloak class="w-3.5 h-3.5 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type === 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type !== 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <span class="whitespace-nowrap" x-text="confirmDeleteModal.loading ? (confirmDeleteModal.loadingText || (confirmDeleteModal.type === 'primary' ? 'Memproses...' : 'Menghapus...')) : (confirmDeleteModal.confirmButtonText || 'Ya, Hapus')"></span>
                 </button>
             </div>
         </div>
@@ -2946,7 +2933,7 @@
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="saveFinance"
                             x-text="isEditingFinance ? 'Perbarui Transaksi' : 'Simpan Transaksi'"></span>
-                        <span wire:loading.inline-flex wire:target="saveFinance"
+                        <span wire:loading.inline-flex wire:target="saveFinance" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -3028,7 +3015,7 @@
                         <span wire:loading.remove wire:target="saveFinanceCategory"
                             x-text="isEditingFinanceCategory ? 'Perbarui Pos Anggaran' : 'Simpan Pos Anggaran'">Simpan
                             Pos Anggaran</span>
-                        <span wire:loading.inline-flex wire:target="saveFinanceCategory"
+                        <span wire:loading.inline-flex wire:target="saveFinanceCategory" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -3328,7 +3315,7 @@
                     <button type="button" wire:click="processImportFinancePaste" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="processImportFinancePaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportFinancePaste"
+                        <span wire:loading.inline-flex wire:target="processImportFinancePaste" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -3424,7 +3411,7 @@
                     <button type="button" wire:click="processImportFinanceFile" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="processImportFinanceFile">Upload & Impor File</span>
-                        <span wire:loading.inline-flex wire:target="processImportFinanceFile"
+                        <span wire:loading.inline-flex wire:target="processImportFinanceFile" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -3513,7 +3500,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="processLumpSumDeposit">Simpan Setoran Glondongan</span>
-                        <span wire:loading.inline-flex wire:target="processLumpSumDeposit"
+                        <span wire:loading.inline-flex wire:target="processLumpSumDeposit" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -3617,7 +3604,7 @@
                     <button type="submit" wire:loading.attr="disabled"
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="saveParticipant" x-text="isEditingParticipant ? 'Perbarui Peserta' : 'Tambah Peserta'">Perbarui Peserta</span>
-                        <span wire:loading.inline-flex wire:target="saveParticipant"
+                        <span wire:loading.inline-flex wire:target="saveParticipant" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
                                 fill="none">
@@ -3720,7 +3707,7 @@
                                @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
 
                         <!-- Loading Overlay during file upload & parsing -->
-                        <div wire:loading.flex wire:target="potonganFile" class="absolute inset-0 bg-white/90 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-20">
+                        <div wire:loading.flex wire:target="potonganFile" style="display: none;" class="absolute inset-0 bg-white/90 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-20">
                             <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -3853,7 +3840,7 @@
                             <i data-lucide="check" class="w-4 h-4 inline-block mr-1"></i>
                             Konfirmasi & Sinkronkan ke Database
                         </span>
-                        <span wire:loading.inline-flex wire:target="processConfirmImportPotongan" class="inline-flex items-center justify-center gap-2">
+                        <span wire:loading.inline-flex wire:target="processConfirmImportPotongan" style="display: none;" class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -4112,7 +4099,7 @@
                         class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="saveSocialProgram"
                             x-text="isEditingSocialProgram ? 'Perbarui Program' : 'Simpan Program'"></span>
-                        <span wire:loading.inline-flex wire:target="saveSocialProgram"
+                        <span wire:loading.inline-flex wire:target="saveSocialProgram" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
