@@ -128,8 +128,8 @@ class NotulaAiService
             ]
         ];
 
-        $primaryModel = config('services.gemini.model') ?: 'gemini-2.5-flash';
-        $modelsToTry = array_unique([$primaryModel, 'gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-flash-latest']);
+        $primaryModel = config('services.gemini.model') ?: 'gemini-3-flash-preview';
+        $modelsToTry = array_unique([$primaryModel, 'gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-2.0-flash', 'gemini-1.5-flash']);
 
         $generatedText = null;
         $lastError = 'Tidak ada respon dari server Gemini.';
@@ -148,6 +148,10 @@ class NotulaAiService
             } else {
                 $lastError = "Model {$modelName} gagal (HTTP {$response['code']}): " . substr((string) ($response['body'] ?? ''), 0, 200);
                 Log::warning("Gemini Notula AI: " . $lastError);
+                if (in_array($response['code'], [429, 503], true)) {
+                    // Jeda sejenak jika terjadi spike/rate limit sebelum mencoba model berikutnya
+                    sleep(2);
+                }
             }
         }
 

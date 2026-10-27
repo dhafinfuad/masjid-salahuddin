@@ -96,6 +96,11 @@ class ReformatNotulasCommand extends Command
                 $this->error("✗ Gagal memproses Kajian ID #{$k->id}: " . $e->getMessage());
                 $failCount++;
             }
+
+            // Jeda 2 detik antar panggilan API untuk mencegah rate limit / spike 503
+            if ($nomor < $kajians->count()) {
+                sleep(2);
+            }
         }
 
         $this->line('');
