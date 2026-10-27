@@ -2420,6 +2420,7 @@
 
             <div wire:ignore wire:key="global-confirm-delete-modal-footer" class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
                 <button type="button" wire:key="global-confirm-delete-modal-cancel-btn" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
+                    x-show="!confirmDeleteModal.loading"
                     class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer disabled:opacity-40">
                     Batal
                 </button>

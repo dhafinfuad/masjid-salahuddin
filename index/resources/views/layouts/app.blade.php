@@ -387,6 +387,30 @@
 
         <!-- PWA Service Worker Registration & Instant Auto-Update Engine -->
         <script>
+            // Force Purge Stale Caches on Client Devices (Mobile PWA Auto-Sync)
+            const CURRENT_APP_VERSION = '1.0.6';
+            if (localStorage.getItem('app_installed_version') !== CURRENT_APP_VERSION) {
+                if ('caches' in window) {
+                    caches.keys().then((keys) => {
+                        return Promise.all(keys.map(k => caches.delete(k)));
+                    }).then(() => {
+                        localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
+                        if ('serviceWorker' in navigator) {
+                            navigator.serviceWorker.getRegistrations().then(registrations => {
+                                for (let reg of registrations) {
+                                    reg.unregister();
+                                }
+                                window.location.reload();
+                            });
+                        } else {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
+                }
+            }
+
             if ('serviceWorker' in navigator) {
                 let refreshing = false;
                 navigator.serviceWorker.addEventListener('controllerchange', () => {
