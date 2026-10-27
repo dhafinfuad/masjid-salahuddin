@@ -2340,12 +2340,12 @@
     <!-- ======================================================== -->
     <!-- MODAL: KONFIRMASI HAPUS & TINDAKAN SISTEM (GLOBAL POP-UP) -->
     <!-- ======================================================== -->
-    <div x-show="confirmDeleteModal.show" x-cloak wire:ignore.self
+    <div x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"
         @click="if (window.isBackdropClick($event, $el) && !confirmDeleteModal.loading) confirmDeleteModal.show = false"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;"
         @keydown.escape.window="if (!confirmDeleteModal.loading) confirmDeleteModal.show = false">
-        <div
+        <div wire:key="global-confirm-delete-modal-dialog"
             class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div class="flex items-start gap-4">
                 <div
@@ -2418,20 +2418,26 @@
                 </div>
             </template>
 
-            <div class="pt-3 flex items-center justify-end space-x-2.5 border-t border-slate-100">
+            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
                 <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
                     class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer disabled:opacity-40">
                     Batal
                 </button>
                 <button type="button" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
-                    :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 active:bg-slate-900 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white' : 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white'))"
-                    class="min-w-[110px] px-4 py-2.5 rounded-lg text-xs font-bold shadow-2xs transition-colors duration-150 inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
-                    <svg x-show="confirmDeleteModal.loading" x-cloak class="w-3.5 h-3.5 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type === 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type !== 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'))"
+                    class="min-w-[130px] h-9 px-4 rounded-lg text-xs font-bold shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-wait">
+                    <template x-if="confirmDeleteModal.loading">
+                        <svg class="w-3.5 h-3.5 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </template>
+                    <template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type === 'primary'">
+                        <svg class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </template>
+                    <template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type !== 'primary'">
+                        <svg class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </template>
                     <span class="whitespace-nowrap" x-text="confirmDeleteModal.loading ? (confirmDeleteModal.loadingText || (confirmDeleteModal.type === 'primary' ? 'Memproses...' : 'Menghapus...')) : (confirmDeleteModal.confirmButtonText || 'Ya, Hapus')"></span>
                 </button>
             </div>
