@@ -1,10 +1,10 @@
 /**
  * Service Worker: Masjid Salahuddin Progressive Web App (PWA)
- * Version: 1.0.2
+ * Version: 1.0.3
  * Architecture: Optimized for Laravel 11 & Livewire 3
  */
 
-const CACHE_NAME = 'masjid-salahuddin-v1.0.2';
+const CACHE_NAME = 'masjid-salahuddin-v1.0.3';
 
 // Assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -137,5 +137,12 @@ self.addEventListener('fetch', (event) => {
             })
         );
         return;
+    }
+});
+
+// Instant Skip Waiting upon message
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
     }
 });

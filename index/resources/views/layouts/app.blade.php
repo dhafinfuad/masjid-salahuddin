@@ -382,17 +382,43 @@
             @include('components.pwa-install-banner')
         </div>
 
-        <!-- PWA Service Worker Registration -->
+        <!-- PWA Service Worker Registration & Instant Auto-Update Engine -->
         <script>
             if ('serviceWorker' in navigator) {
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!refreshing) {
+                        refreshing = true;
+                        window.location.reload();
+                    }
+                });
+
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/sw.js')
                         .then(function(registration) {
-                            // Service worker registered successfully
+                            registration.update();
+                            registration.addEventListener('updatefound', () => {
+                                const newWorker = registration.installing;
+                                if (newWorker) {
+                                    newWorker.addEventListener('statechange', () => {
+                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        }
+                                    });
+                                }
+                            });
                         })
                         .catch(function(error) {
                             console.warn('[PWA] Service Worker registration failed:', error);
                         });
+                });
+
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible') {
+                        navigator.serviceWorker.getRegistration().then(reg => {
+                            if (reg) reg.update();
+                        });
+                    }
                 });
             }
         </script>
