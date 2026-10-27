@@ -117,4 +117,41 @@ class KajianModalStateTest extends TestCase
             ->assertSeeHtml('Impor perencanaan kegiatan dari Excel atau file CSV')
             ->assertDontSeeHtml('Jenis Kegiatan :');
     }
+
+    /** @test */
+    public function test_opening_and_closing_ustadz_modal_preserves_editing_kajian_state(): void
+    {
+        $kajian = Kajian::create([
+            'type' => 'pekanan',
+            'date' => Carbon::now()->addDays(2)->format('Y-m-d'),
+            'time_display' => '16:00 WIB',
+            'title' => 'Tafsir Jalalain',
+            'speaker_name' => 'Ustadz Abdullah',
+        ]);
+
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'kegiatan'])
+            // Simulate editing a kajian
+            ->set('showKajianModal', true)
+            ->set('isEditingKajian', true)
+            ->set('editingKajianId', $kajian->id)
+            ->assertSet('isEditingKajian', true)
+            ->assertSet('editingKajianId', $kajian->id)
+            // Open ustadz modal from inside edit kajian
+            ->call('openUstadzModal')
+            ->assertSet('showUstadzModal', true)
+            ->assertDispatched('open-ustadz-modal')
+            // Crucial: showKajianModal and isEditingKajian must remain true and intact
+            ->assertSet('showKajianModal', true)
+            ->assertSet('isEditingKajian', true)
+            ->assertSet('editingKajianId', $kajian->id)
+            // Close ustadz modal
+            ->call('closeUstadzModal')
+            ->assertSet('showUstadzModal', false)
+            ->assertDispatched('close-ustadz-modal')
+            // Kajian modal remains in edit mode
+            ->assertSet('showKajianModal', true)
+            ->assertSet('isEditingKajian', true)
+            ->assertSet('editingKajianId', $kajian->id);
+    }
 }

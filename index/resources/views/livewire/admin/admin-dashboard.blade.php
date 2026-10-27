@@ -129,12 +129,22 @@
          showTemplateKepModal: false,
          showKajianModal: {{ $showKajianModal ? 'true' : 'false' }},
          showImportKajianModal: false,
-         showUstadzModal: {{ $showUstadzModal ? 'true' : 'false' }},
-         ustadzPhotoMap: {{ Js::from($ustadzPhotoMap) }},
-         ustadzDirectory: {{ Js::from($ustadzListForDatalist ?? []) }},
+         showUstadzModal: false,
+         get ustadzPhotoMap() {
+             const el = document.getElementById('ustadzDataContainer');
+             if (!el) return {};
+             try { return JSON.parse(el.dataset.photomap || '{}'); }
+             catch(e) { return {}; }
+         },
+         get ustadzDirectory() {
+             const el = document.getElementById('ustadzDataContainer');
+             if (!el) return [];
+             try { return JSON.parse(el.dataset.directory || '[]'); }
+             catch(e) { return []; }
+         },
          importKajianTab: 'paste',
-         importKajianType: '{{ $importKajianType ?? 'pekanan' }}',
-         showPrayerDutyModal: {{ $showPrayerDutyModal ? 'true' : 'false' }},
+         importKajianType: 'pekanan',
+         showPrayerDutyModal: false,
          showImportDutyModal: false,
          importDutyTab: 'paste',
          isEditingKajian: false,

@@ -287,11 +287,12 @@
     <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (MILESTONE 1) -->
     <!-- ======================================================== -->
     <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
-        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) closeKajianModal()"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { if (!showUstadzModal) closeKajianModal(); }"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style="display: none; z-index: 50; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div @click.stop
+            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto relative"
+            style="z-index: 51;">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
                     <h3 class="text-base font-bold text-gov-textMain"
@@ -4174,11 +4175,12 @@
     <!-- MODAL: DIREKTORI & DATABASE FOTO USTADZ (MILESTONE 1+) -->
     <!-- ======================================================== -->
     <div x-show="showUstadzModal" x-cloak wire:ignore.self @keydown.escape.window="showUstadzModal = false; $wire.closeUstadzModal()"
-        @click="if (window.isBackdropClick($event, $el)) { showUstadzModal = false; $wire.closeUstadzModal(); }"
-        class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[92vh] flex flex-col">
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showUstadzModal = false; $wire.closeUstadzModal(); }"
+        class="fixed inset-0 z-70 flex items-center justify-center p-4"
+        style="display: none; z-index: 70; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div @click.stop
+            class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[92vh] flex flex-col relative"
+            style="z-index: 71;">
             <!-- Modal Header -->
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 shrink-0">
                 <div class="flex items-center gap-3">
