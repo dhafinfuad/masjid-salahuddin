@@ -1075,8 +1075,8 @@
             <div class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable">
                 <div class="w-full max-w-3xl sm:max-w-4xl bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200/80 overflow-hidden flex flex-col h-fit">
                     <main 
-                        class="p-5 sm:p-8 md:p-11 space-y-6 sm:space-y-7 leading-relaxed text-slate-700"
-                        :class="['text-sm', 'text-base', 'text-lg', 'text-xl'][portalNotulaFontSizeIndex]"
+                        class="p-4 sm:p-6 md:p-8 space-y-2.5 sm:space-y-3 leading-relaxed text-slate-700"
+                        :class="['text-xs sm:text-sm', 'text-sm sm:text-base', 'text-base sm:text-lg', 'text-lg sm:text-xl'][portalNotulaFontSizeIndex]"
                         x-html="window.parseNotulaToHtml ? window.parseNotulaToHtml(portalNotulaData.notula, portalNotulaData) : portalNotulaData.notula">
                     </main>
                 </div>

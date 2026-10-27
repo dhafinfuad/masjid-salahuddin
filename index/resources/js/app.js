@@ -873,267 +873,412 @@ window.parseNotulaToHtml = (rawText, meta = {}) => {
         return out;
     };
 
-    // 2. Extract Document Header / Metadata
-    let docType = meta.type === 'tematik' ? 'Dokumen Kajian Tafsir Tematik Al-Qur\'an' : (meta.type === 'jumat' ? 'Dokumen Risalah Shalat Jumat' : 'Dokumen Kajian Pekanan Rutin');
-    let docTitle = meta.title || 'Notula Kajian';
-    let docFocus = '';
-    let docSpeaker = meta.speaker_name || '';
-    let docDate = meta.date || '';
+    // 2. Check if new concise standard format (starts with KAJIAN or has RINGKASAN EKSEKUTIF / DAFTAR ISI)
+    const isNewStandardFormat = filteredLines.some(l => {
+        const t = l.trim();
+        return t.startsWith('KAJIAN ') || t.includes('RINGKASAN EKSEKUTIF') || t.includes('DAFTAR ISI PEMBAHASAN') || t.includes('PEMBAHASAN LENGKAP');
+    });
 
-    let contentStartIndex = 0;
+    let html = '';
 
-    for (let i = 0; i < Math.min(filteredLines.length, 12); i++) {
-        const line = filteredLines[i].trim();
-        if (line.startsWith('# ')) {
-            const h1 = line.replace(/^#\s+/, '').trim();
-            if (h1.toLowerCase().includes('tematik')) {
-                docType = 'Dokumen Kajian Tafsir Tematik Al-Qur\'an';
-            } else if (h1.toLowerCase().includes('pekanan')) {
-                docType = 'Dokumen Risalah Kajian Pekanan Rutin';
+    if (isNewStandardFormat) {
+        // --- NEW CONCISE NOTULA PARSER ---
+        let docTitle = '';
+        let metaList = [];
+        let contentStartIndex = 0;
+
+        for (let i = 0; i < Math.min(filteredLines.length, 15); i++) {
+            const line = filteredLines[i].trim();
+            if (!line) {
+                continue;
             }
-            contentStartIndex = Math.max(contentStartIndex, i + 1);
-        } else if (line.match(/^\*\*Tema:\*\*\s*(.*)/i)) {
-            const match = line.match(/^\*\*Tema:\*\*\s*(.*)/i);
-            docTitle = match[1].trim();
-            contentStartIndex = Math.max(contentStartIndex, i + 1);
-        } else if (line.match(/^\*\*Fokus Bahasan:\*\*\s*(.*)/i)) {
-            const match = line.match(/^\*\*Fokus Bahasan:\*\*\s*(.*)/i);
-            docFocus = match[1].trim();
-            contentStartIndex = Math.max(contentStartIndex, i + 1);
-        } else if (line.match(/^\*\*Pemateri:\*\*\s*(.*)/i)) {
-            const match = line.match(/^\*\*Pemateri:\*\*\s*(.*)/i);
-            docSpeaker = match[1].trim();
-            contentStartIndex = Math.max(contentStartIndex, i + 1);
-        } else if (line === '---') {
-            contentStartIndex = Math.max(contentStartIndex, i + 1);
-            break;
-        }
-    }
-
-    // Build Kop / Document Header HTML
-    let html = `
-      <!-- Dokumen Header / Kop Identitas Bersih & Formal -->
-      <div class="border-b border-slate-200 pb-5 mb-2">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-50 border border-gov-200 text-gov-800 text-xs font-semibold uppercase tracking-wider mb-2.5">
-          <svg class="w-3.5 h-3.5 text-gov-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><path d="M19 4h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/><path d="M15 2v4"/><path d="M15 8v2"/><path d="M15 14v4"/><path d="M15 20v2"/></svg>
-          <span>${formatInline(docType)}</span>
-        </div>
-        <h1 class="text-xl sm:text-3xl font-extrabold text-gov-950 tracking-tight leading-snug">
-          ${formatInline(docTitle)}
-        </h1>
-        <div class="text-xs sm:text-sm text-slate-500 font-medium mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5">
-          ${docFocus ? `
-            <span class="flex items-center gap-1.5 text-gov-800 bg-gov-50/80 px-2.5 py-1 rounded-lg border border-gov-100">
-              <svg class="w-3.5 h-3.5 text-gov-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-              <span><strong>Fokus:</strong> ${formatInline(docFocus)}</span>
-            </span>
-          ` : ''}
-          ${docSpeaker ? `
-            <span class="flex items-center gap-1.5 text-slate-600">
-              <svg class="w-3.5 h-3.5 text-gov-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <span>Narasumber: <strong>${docSpeaker}</strong></span>
-            </span>
-          ` : ''}
-          ${docDate ? `
-            <span class="flex items-center gap-1.5 text-slate-600">
-              <svg class="w-3.5 h-3.5 text-gov-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-              <span>${docDate}</span>
-            </span>
-          ` : ''}
-        </div>
-      </div>
-    `;
-
-    // 3. Process content lines
-    const bodyLines = filteredLines.slice(contentStartIndex);
-    let inSection = false;
-    let inOrderedList = false;
-    let inBlockquote = false;
-    let blockquoteArabic = [];
-    let blockquoteTranslation = [];
-
-    const flushBlockquote = () => {
-        if (!inBlockquote) return '';
-        inBlockquote = false;
-        const arText = blockquoteArabic.join(' ');
-        const trText = blockquoteTranslation.join(' ');
-        blockquoteArabic = [];
-        blockquoteTranslation = [];
-
-        let out = `<div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 text-right space-y-2.5 my-3 shadow-2xs">`;
-        if (arText) {
-            out += `<p class="font-arabic text-xl sm:text-2xl leading-loose text-slate-900 font-medium" dir="rtl">${arText}</p>`;
-        }
-        if (trText) {
-            out += `<p class="text-xs sm:text-sm text-slate-600 italic text-justify pt-2 border-t border-slate-100 font-sans leading-relaxed">${formatInline(trText)}</p>`;
-        }
-        out += `</div>`;
-        return out;
-    };
-
-    const flushOrderedList = () => {
-        if (!inOrderedList) return '';
-        inOrderedList = false;
-        return `</ol>`;
-    };
-
-    const closeSection = () => {
-        let out = '';
-        out += flushBlockquote();
-        out += flushOrderedList();
-        if (inSection) {
-            out += `</section>`;
-            inSection = false;
-        }
-        return out;
-    };
-
-    for (let i = 0; i < bodyLines.length; i++) {
-        let line = bodyLines[i].trim();
-
-        if (!line) {
-            html += flushBlockquote();
-            continue;
+            if (line.match(/^(?:📌|📑|📖|💡|##)/i)) {
+                contentStartIndex = i;
+                break;
+            }
+            if (line.startsWith('KAJIAN ')) {
+                docTitle = line;
+                contentStartIndex = i + 1;
+            } else if (line.match(/^Hari,\s*Tanggal\s*:\s*(.*)/i)) {
+                metaList.push({ label: 'Hari, Tanggal', value: line.replace(/^Hari,\s*Tanggal\s*:\s*/i, '').trim() });
+                contentStartIndex = i + 1;
+            } else if (line.match(/^Tempat\s*:\s*(.*)/i)) {
+                metaList.push({ label: 'Tempat', value: line.replace(/^Tempat\s*:\s*/i, '').trim() });
+                contentStartIndex = i + 1;
+            } else if (line.match(/^Pemateri\s*:\s*(.*)/i)) {
+                metaList.push({ label: 'Pemateri', value: line.replace(/^Pemateri\s*:\s*/i, '').trim() });
+                contentStartIndex = i + 1;
+            } else if (line.match(/^Tema\s*(?:\/|\b)\s*Kitab\s*:\s*(.*)/i)) {
+                metaList.push({ label: 'Tema / Kitab', value: line.replace(/^Tema\s*(?:\/|\b)\s*Kitab\s*:\s*/i, '').trim() });
+                contentStartIndex = i + 1;
+            } else if (line.match(/^Notulis\s*:\s*(.*)/i)) {
+                metaList.push({ label: 'Notulis', value: line.replace(/^Notulis\s*:\s*/i, '').trim() });
+                contentStartIndex = i + 1;
+            }
         }
 
-        if (line === '---' || line.startsWith('---')) {
-            html += flushBlockquote();
-            html += flushOrderedList();
-            continue;
+        if (!docTitle && meta.title) {
+            docTitle = `KAJIAN ${meta.title.toUpperCase()}`;
         }
 
-        // Section Heading: ## 1. Title or ## Title
-        const sectionMatch = line.match(/^##\s+(\d+[\.\)]?)?\s*(.*)/);
-        if (sectionMatch) {
-            html += closeSection();
-            inSection = true;
-            const secNum = sectionMatch[1] ? sectionMatch[1].replace(/[\.\)]/, '') : '';
-            const secTitle = sectionMatch[2] ? sectionMatch[2].trim() : '';
-
+        // Render Clean Title
+        if (docTitle) {
             html += `
-              <section class="space-y-4 page-break-avoid pt-2">
-                <div class="flex items-center gap-2.5 text-gov-900 border-b border-slate-200/80 pb-2">
-                  ${secNum ? `<span class="flex items-center justify-center w-7 h-7 rounded-lg bg-gov-800 text-white font-bold text-xs shadow-xs shrink-0">${secNum}</span>` : ''}
-                  <h2 class="text-lg sm:text-xl font-bold tracking-tight text-gov-950">
-                    ${formatInline(secTitle)}
-                  </h2>
-                </div>
-            `;
-            continue;
-        }
-
-        // Subsections: ### Ayat I: ... or ### Title
-        const subSecMatch = line.match(/^###\s*(.*)/);
-        if (subSecMatch) {
-            html += flushBlockquote();
-            html += flushOrderedList();
-
-            let titleStr = subSecMatch[1].trim();
-
-            html += `
-              <div class="flex items-center justify-between flex-wrap gap-2 pt-3 pb-1">
-                <h3 class="font-bold text-gov-900 text-sm sm:text-base flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-gov-700 shrink-0"></span>
-                  <span>${formatInline(titleStr)}</span>
-                </h3>
+              <div class="border-b border-slate-200/90 pb-2 mb-1">
+                <h1 class="text-base sm:text-xl font-bold text-gov-950 tracking-tight leading-snug">
+                  ${formatInline(docTitle)}
+                </h1>
               </div>
             `;
-            continue;
         }
 
-        // Blockquote (Ayat / Quote)
-        if (line.startsWith('>')) {
-            inBlockquote = true;
-            const quoteContent = line.replace(/^>\s*/, '').trim();
-            if (isArabic(quoteContent)) {
-                blockquoteArabic.push(quoteContent);
-            } else {
-                blockquoteTranslation.push(quoteContent);
-            }
-            continue;
-        } else {
-            if (inBlockquote) {
-                html += flushBlockquote();
-            }
-        }
-
-        // Ordered List: 1. **Title:** text
-        const olMatch = line.match(/^(\d+)\.\s+(.*)/);
-        if (olMatch) {
-            if (!inOrderedList) {
-                inOrderedList = true;
-                html += `<ol class="space-y-3 pt-1 list-none pl-0">`;
-            }
-            const itemNum = olMatch[1];
-            const itemText = olMatch[2];
+        // Render Compact Metadata (2-col grid with tight gap-y-1)
+        if (metaList.length > 0) {
             html += `
-              <li class="flex items-start gap-3.5 bg-slate-50/70 hover:bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
-                <span class="flex-shrink-0 w-7 h-7 rounded-lg bg-gov-800 text-white font-bold text-xs flex items-center justify-center shadow-xs">${itemNum}</span>
-                <div class="text-sm sm:text-base leading-relaxed text-slate-700">
-                  ${formatInline(itemText)}
+              <div class="bg-slate-50/80 border border-slate-200/80 rounded-xl p-3 sm:p-3.5 my-1 text-xs sm:text-sm text-slate-700">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
+                  ${metaList.map(m => `<div><strong class="text-slate-900">${m.label}:</strong> <span class="text-slate-700">${formatInline(m.value)}</span></div>`).join('')}
                 </div>
-              </li>
+              </div>
             `;
-            continue;
-        } else {
-            if (inOrderedList) {
+        }
+
+        // Process remaining body lines
+        const bodyLines = filteredLines.slice(contentStartIndex);
+        let inOrderedList = false;
+
+        const flushOrderedList = () => {
+            if (!inOrderedList) return '';
+            inOrderedList = false;
+            return `</ol>`;
+        };
+
+        for (let i = 0; i < bodyLines.length; i++) {
+            let line = bodyLines[i].trim();
+            if (!line || line === '---' || line.startsWith('---')) {
                 html += flushOrderedList();
+                continue;
             }
-        }
 
-        // Bullet point cards with bold header: * **Title:** text
-        const bpHeaderMatch = line.match(/^[\*\-]\s+\*\*(.*?)\*\*:?\s*(.*)/);
-        if (bpHeaderMatch) {
-            let itemHeader = bpHeaderMatch[1];
-            let restOfText = bpHeaderMatch[2];
+            // Section: 📌 RINGKASAN EKSEKUTIF
+            if (line.match(/^📌\s*RINGKASAN EKSEKUTIF/i) || line.match(/RINGKASAN EKSEKUTIF/i) && line.startsWith('📌')) {
+                html += flushOrderedList();
+                html += `
+                  <div class="pt-2 pb-0.5 flex items-center gap-2 border-b border-slate-200/80 my-1">
+                    <span class="text-base">📌</span>
+                    <h2 class="font-bold text-xs sm:text-sm text-gov-950 uppercase tracking-wide">RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)</h2>
+                  </div>
+                `;
+                continue;
+            }
 
-            let bodyParas = [];
-            if (restOfText) bodyParas.push(restOfText);
-
-            while (i + 1 < bodyLines.length) {
-                const nextLine = bodyLines[i + 1].trim();
-                if (!nextLine) {
+            // Section: 📑 DAFTAR ISI PEMBAHASAN (Group all TOC items tightly)
+            if (line.match(/^📑\s*DAFTAR ISI PEMBAHASAN/i) || line.match(/DAFTAR ISI PEMBAHASAN/i)) {
+                html += flushOrderedList();
+                let tocItems = [];
+                while (i + 1 < bodyLines.length) {
+                    let nextL = bodyLines[i + 1].trim();
+                    if (!nextL) {
+                        i++;
+                        continue;
+                    }
+                    if (nextL.match(/^(?:📖|💡|📌|##|\d+\.)/i)) {
+                        break;
+                    }
+                    tocItems.push(nextL.replace(/^[\*\-]\s*/, ''));
                     i++;
-                    continue;
                 }
-                if (nextLine.startsWith('##') || nextLine.startsWith('###') || nextLine.startsWith('>') || nextLine.match(/^\d+\./) || nextLine.match(/^[\*\-]\s+\*\*/) || nextLine.startsWith('---')) {
-                    break;
-                }
-                const cleanNext = nextLine.replace(/^[\*\-]\s*/, '').trim();
-                if (cleanNext && cleanNext !== '---') {
-                    bodyParas.push(cleanNext);
-                }
-                i++;
+
+                html += `
+                  <div class="bg-gov-50/50 border border-slate-200/80 rounded-xl p-3 sm:p-3.5 my-1.5">
+                    <div class="font-bold text-xs sm:text-sm text-gov-950 flex items-center gap-1.5 mb-1.5">
+                      <span>📑 DAFTAR ISI PEMBAHASAN</span>
+                    </div>
+                    <ul class="space-y-1 pl-1 text-xs sm:text-sm text-slate-700">
+                      ${tocItems.map(item => `
+                        <li class="flex items-center gap-2">
+                          <span class="w-1.5 h-1.5 rounded-full bg-gov-700 shrink-0"></span>
+                          <span>${formatInline(item)}</span>
+                        </li>
+                      `).join('')}
+                    </ul>
+                  </div>
+                `;
+                continue;
             }
 
-            html += `
-              <div class="p-4 sm:p-5 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2.5 my-2">
-                <div class="border-b border-slate-200/80 pb-2">
-                  <span class="font-bold text-gov-950 text-sm sm:text-base">${formatInline(itemHeader)}</span>
-                </div>
-                ${bodyParas.map(p => `<p class="text-sm text-justify leading-relaxed text-slate-700">${formatInline(p)}</p>`).join('')}
-              </div>
-            `;
-            continue;
+            // Section: 📖 PEMBAHASAN LENGKAP
+            if (line.match(/^📖\s*PEMBAHASAN LENGKAP/i) || line.match(/PEMBAHASAN LENGKAP/i) && line.startsWith('📖')) {
+                html += flushOrderedList();
+                html += `
+                  <div class="pt-2 pb-0.5 flex items-center gap-2 border-b border-slate-200/80 my-1">
+                    <span class="text-base">📖</span>
+                    <h2 class="font-bold text-xs sm:text-sm text-gov-950 uppercase tracking-wide">PEMBAHASAN LENGKAP</h2>
+                  </div>
+                `;
+                continue;
+            }
+
+            // Section: 💡 KESIMPULAN & PESAN AKSI
+            if (line.match(/^💡\s*KESIMPULAN/i) || line.match(/KESIMPULAN & PESAN AKSI/i)) {
+                html += flushOrderedList();
+                html += `
+                  <div class="pt-2 pb-0.5 flex items-center gap-2 border-b border-slate-200/80 my-1">
+                    <span class="text-base">💡</span>
+                    <h2 class="font-bold text-xs sm:text-sm text-gov-950 uppercase tracking-wide">KESIMPULAN & PESAN AKSI</h2>
+                  </div>
+                `;
+                continue;
+            }
+
+            // Blockquote (> Ayat / Hadits)
+            if (line.startsWith('>')) {
+                html += flushOrderedList();
+                let bqArabic = [];
+                let bqTrans = [];
+                while (i < bodyLines.length && bodyLines[i].trim().startsWith('>')) {
+                    const qText = bodyLines[i].trim().replace(/^>\s*/, '');
+                    if (isArabic(qText)) {
+                        bqArabic.push(qText);
+                    } else {
+                        bqTrans.push(qText);
+                    }
+                    i++;
+                }
+                i--;
+
+                html += `
+                  <div class="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200 text-right space-y-1.5 my-1.5 shadow-2xs">
+                    ${bqArabic.length ? `<p class="font-arabic text-lg sm:text-xl leading-loose text-slate-900 font-medium" dir="rtl">${bqArabic.join(' ')}</p>` : ''}
+                    ${bqTrans.length ? `<p class="text-xs sm:text-sm text-slate-600 italic text-justify pt-1.5 border-t border-slate-100 font-sans leading-relaxed">${formatInline(bqTrans.join(' '))}</p>` : ''}
+                  </div>
+                `;
+                continue;
+            }
+
+            // Numbered heading (1. Title / 1) Title)
+            const numMatch = line.match(/^(\d+)[\.\)]\s+(.*)/);
+            if (numMatch) {
+                html += flushOrderedList();
+                const itemNum = numMatch[1];
+                const itemText = numMatch[2];
+                html += `
+                  <div class="pt-1.5 pb-0.5 my-1">
+                    <h3 class="font-bold text-xs sm:text-sm text-gov-950 flex items-center gap-2">
+                      <span class="flex items-center justify-center w-5 h-5 rounded-md bg-gov-800 text-white font-bold text-[11px] shrink-0">${itemNum}</span>
+                      <span>${formatInline(itemText)}</span>
+                    </h3>
+                  </div>
+                `;
+                continue;
+            }
+
+            // Conclusion Point or Bold Point Card (* **Title:** text or **Title:** text)
+            const bpMatch = line.match(/^[\*\-]?\s*\*\*(.*?)\*\*:?\s*(.*)/) || line.match(/^[\*\-]\s+(.*)/);
+            if (bpMatch && (line.includes(':') || line.startsWith('*') || line.startsWith('-'))) {
+                html += flushOrderedList();
+                const content = line.replace(/^[\*\-]\s*/, '');
+                html += `
+                  <div class="flex items-start gap-2 text-xs sm:text-sm text-slate-700 my-1 bg-slate-50/70 p-2.5 rounded-lg border border-slate-200/70">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+                    <div class="text-justify">${formatInline(content)}</div>
+                  </div>
+                `;
+                continue;
+            }
+
+            // Regular Paragraph
+            html += flushOrderedList();
+            html += `<p class="text-justify leading-relaxed text-slate-700 text-xs sm:text-sm my-1">${formatInline(line)}</p>`;
         }
 
-        // Normal bullet points (* text)
-        if (line.match(/^[\*\-]\s+(.*)/)) {
-            const bpMatch = line.match(/^[\*\-]\s+(.*)/);
-            html += `
-              <div class="flex items-start gap-2.5 text-sm leading-relaxed text-slate-700 pl-2 my-1.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-gov-700 mt-2 shrink-0"></span>
-                <div class="text-justify">${formatInline(bpMatch[1])}</div>
-              </div>
-            `;
-            continue;
+        html += flushOrderedList();
+
+    } else {
+        // --- LEGACY NOTULA PARSER (Preserved for backwards compatibility) ---
+        let docType = meta.type === 'tematik' ? 'Dokumen Kajian Tafsir Tematik Al-Qur\'an' : (meta.type === 'jumat' ? 'Dokumen Risalah Shalat Jumat' : 'Dokumen Kajian Pekanan Rutin');
+        let docTitle = meta.title || 'Notula Kajian';
+        let docFocus = '';
+        let docSpeaker = meta.speaker_name || '';
+        let docDate = meta.date || '';
+        let contentStartIndex = 0;
+
+        for (let i = 0; i < Math.min(filteredLines.length, 12); i++) {
+            const line = filteredLines[i].trim();
+            if (line.startsWith('# ')) {
+                const h1 = line.replace(/^#\s+/, '').trim();
+                if (h1.toLowerCase().includes('tematik')) {
+                    docType = 'Dokumen Kajian Tafsir Tematik Al-Qur\'an';
+                } else if (h1.toLowerCase().includes('pekanan')) {
+                    docType = 'Dokumen Risalah Kajian Pekanan Rutin';
+                }
+                contentStartIndex = Math.max(contentStartIndex, i + 1);
+            } else if (line.match(/^\*\*Tema:\*\*\s*(.*)/i)) {
+                const match = line.match(/^\*\*Tema:\*\*\s*(.*)/i);
+                docTitle = match[1].trim();
+                contentStartIndex = Math.max(contentStartIndex, i + 1);
+            } else if (line.match(/^\*\*Fokus Bahasan:\*\*\s*(.*)/i)) {
+                const match = line.match(/^\*\*Fokus Bahasan:\*\*\s*(.*)/i);
+                docFocus = match[1].trim();
+                contentStartIndex = Math.max(contentStartIndex, i + 1);
+            } else if (line.match(/^\*\*Pemateri:\*\*\s*(.*)/i)) {
+                const match = line.match(/^\*\*Pemateri:\*\*\s*(.*)/i);
+                docSpeaker = match[1].trim();
+                contentStartIndex = Math.max(contentStartIndex, i + 1);
+            } else if (line === '---') {
+                contentStartIndex = Math.max(contentStartIndex, i + 1);
+                break;
+            }
         }
 
-        // Regular paragraph
-        html += `<p class="text-justify leading-relaxed text-slate-700 text-sm sm:text-base">${formatInline(line)}</p>`;
+        html += `
+          <div class="border-b border-slate-200 pb-3 mb-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gov-50 border border-gov-200 text-gov-800 text-xs font-semibold uppercase tracking-wider mb-2">
+              <svg class="w-3.5 h-3.5 text-gov-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><path d="M19 4h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/><path d="M15 2v4"/><path d="M15 8v2"/><path d="M15 14v4"/><path d="M15 20v2"/></svg>
+              <span>${formatInline(docType)}</span>
+            </div>
+            <h1 class="text-base sm:text-xl font-extrabold text-gov-950 tracking-tight leading-snug">
+              ${formatInline(docTitle)}
+            </h1>
+            <div class="text-xs sm:text-sm text-slate-500 font-medium mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
+              ${docFocus ? `<span class="flex items-center gap-1.5 text-gov-800 bg-gov-50/80 px-2 py-0.5 rounded-lg border border-gov-100"><span><strong>Fokus:</strong> ${formatInline(docFocus)}</span></span>` : ''}
+              ${docSpeaker ? `<span class="flex items-center gap-1.5 text-slate-600"><span>Narasumber: <strong>${docSpeaker}</strong></span></span>` : ''}
+              ${docDate ? `<span class="flex items-center gap-1.5 text-slate-600"><span>${docDate}</span></span>` : ''}
+            </div>
+          </div>
+        `;
+
+        const bodyLines = filteredLines.slice(contentStartIndex);
+        let inSection = false;
+        let inOrderedList = false;
+        let inBlockquote = false;
+        let blockquoteArabic = [];
+        let blockquoteTranslation = [];
+
+        const flushBlockquote = () => {
+            if (!inBlockquote) return '';
+            inBlockquote = false;
+            const arText = blockquoteArabic.join(' ');
+            const trText = blockquoteTranslation.join(' ');
+            blockquoteArabic = [];
+            blockquoteTranslation = [];
+
+            let out = `<div class="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 text-right space-y-1.5 my-2 shadow-2xs">`;
+            if (arText) {
+                out += `<p class="font-arabic text-lg sm:text-xl leading-loose text-slate-900 font-medium" dir="rtl">${arText}</p>`;
+            }
+            if (trText) {
+                out += `<p class="text-xs sm:text-sm text-slate-600 italic text-justify pt-1.5 border-t border-slate-100 font-sans leading-relaxed">${formatInline(trText)}</p>`;
+            }
+            out += `</div>`;
+            return out;
+        };
+
+        const flushOrderedList = () => {
+            if (!inOrderedList) return '';
+            inOrderedList = false;
+            return `</ol>`;
+        };
+
+        const closeSection = () => {
+            let out = '';
+            out += flushBlockquote();
+            out += flushOrderedList();
+            if (inSection) {
+                out += `</section>`;
+                inSection = false;
+            }
+            return out;
+        };
+
+        for (let i = 0; i < bodyLines.length; i++) {
+            let line = bodyLines[i].trim();
+            if (!line) {
+                html += flushBlockquote();
+                continue;
+            }
+            if (line === '---' || line.startsWith('---')) {
+                html += flushBlockquote();
+                html += flushOrderedList();
+                continue;
+            }
+
+            const sectionMatch = line.match(/^##\s+(\d+[\.\)]?)?\s*(.*)/);
+            if (sectionMatch) {
+                html += closeSection();
+                inSection = true;
+                const secNum = sectionMatch[1] ? sectionMatch[1].replace(/[\.\)]/, '') : '';
+                const secTitle = sectionMatch[2] ? sectionMatch[2].trim() : '';
+                html += `
+                  <section class="space-y-2.5 page-break-avoid pt-1.5">
+                    <div class="flex items-center gap-2 text-gov-900 border-b border-slate-200/80 pb-1.5">
+                      ${secNum ? `<span class="flex items-center justify-center w-6 h-6 rounded-md bg-gov-800 text-white font-bold text-xs shrink-0">${secNum}</span>` : ''}
+                      <h2 class="text-base sm:text-lg font-bold tracking-tight text-gov-950">${formatInline(secTitle)}</h2>
+                    </div>
+                `;
+                continue;
+            }
+
+            const subSecMatch = line.match(/^###\s*(.*)/);
+            if (subSecMatch) {
+                html += flushBlockquote();
+                html += flushOrderedList();
+                html += `
+                  <div class="pt-2 pb-0.5">
+                    <h3 class="font-bold text-gov-900 text-xs sm:text-sm flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-gov-700 shrink-0"></span>
+                      <span>${formatInline(subSecMatch[1].trim())}</span>
+                    </h3>
+                  </div>
+                `;
+                continue;
+            }
+
+            if (line.startsWith('>')) {
+                inBlockquote = true;
+                const quoteContent = line.replace(/^>\s*/, '').trim();
+                if (isArabic(quoteContent)) {
+                    blockquoteArabic.push(quoteContent);
+                } else {
+                    blockquoteTranslation.push(quoteContent);
+                }
+                continue;
+            } else {
+                if (inBlockquote) html += flushBlockquote();
+            }
+
+            const olMatch = line.match(/^(\d+)\.\s+(.*)/);
+            if (olMatch) {
+                if (!inOrderedList) {
+                    inOrderedList = true;
+                    html += `<ol class="space-y-2 pt-1 list-none pl-0">`;
+                }
+                html += `
+                  <li class="flex items-start gap-2.5 bg-slate-50/70 p-3 rounded-xl border border-slate-200">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-md bg-gov-800 text-white font-bold text-xs flex items-center justify-center">${olMatch[1]}</span>
+                    <div class="text-xs sm:text-sm leading-relaxed text-slate-700">${formatInline(olMatch[2])}</div>
+                  </li>
+                `;
+                continue;
+            } else {
+                if (inOrderedList) html += flushOrderedList();
+            }
+
+            if (line.match(/^[\*\-]\s+(.*)/)) {
+                html += `
+                  <div class="flex items-start gap-2 text-xs sm:text-sm leading-relaxed text-slate-700 pl-2 my-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gov-700 mt-1.5 shrink-0"></span>
+                    <div class="text-justify">${formatInline(line.replace(/^[\*\-]\s*/, ''))}</div>
+                  </div>
+                `;
+                continue;
+            }
+
+            html += `<p class="text-justify leading-relaxed text-slate-700 text-xs sm:text-sm my-1">${formatInline(line)}</p>`;
+        }
+
+        html += closeSection();
     }
-
-    html += closeSection();
 
     // 4. Render Footnotes Section if any
     if (footnotes.length > 0) {
@@ -1236,7 +1381,7 @@ window.printNotulaDocument = (renderedHtml, title = 'Notula Kajian') => {
   </style>
 </head>
 <body class="bg-slate-100/90 text-slate-800 font-sans antialiased min-h-screen flex flex-col items-center p-4 sm:p-8">
-  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-slate-200 p-6 sm:p-10 space-y-7 text-slate-700 leading-relaxed text-base print-shadow-none">
+  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-slate-200 p-5 sm:p-8 space-y-3 sm:space-y-3.5 text-slate-700 leading-relaxed text-base print-shadow-none">
     ${renderedHtml}
   </div>
   <script>
