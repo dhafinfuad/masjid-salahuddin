@@ -100,7 +100,7 @@
                                 <line x1="12" y1="16" x2="12.01" y2="16"/>
                             </svg>
                             <div>
-                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Generator Otomatis Dokumen Eksekutif Notula</h4>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Generator Notula Otomatis</h4>
                                 <p class="text-xs text-slate-500 sm:text-slate-600 mt-0.5 leading-relaxed">Tempelkan notula atau transkrip mentah YouTube, lalu klik tombol di samping.</p>
                             </div>
                         </div>
@@ -129,7 +129,7 @@
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                     <polyline points="14 2 14 8 20 8"/>
                                 </svg>
-                                Editor Naskah Notula
+                                Editor Naskah
                             </span>
                             <div class="flex items-center gap-4 text-slate-500">
                                 <span>Karakter: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').length">0</strong></span>
