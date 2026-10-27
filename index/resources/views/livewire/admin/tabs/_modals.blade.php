@@ -479,7 +479,7 @@
                                     <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
-                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : 'Pilih / Seret Foto'">Pilih Foto</span>
+                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : 'Pilih Foto'">Pilih Foto</span>
                                     <input type="file"
                                            wire:model="kajianSpeakerPhoto"
                                            accept="image/png,image/jpeg,image/webp"
@@ -491,7 +491,7 @@
                                 </label>
                                 @if ($kajianSpeakerPhoto || $kajianExistingPhoto)
                                     <button type="button" wire:click="removeKajianPhoto" class="px-2 py-1 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition font-medium cursor-pointer">
-                                        Hapus Foto
+                                        Hapus
                                     </button>
                                 @endif
                             </div>
@@ -4191,7 +4191,7 @@
                         <h3 class="text-base font-bold text-gov-textMain">
                             <span>Database Ustadz</span>
                         </h3>
-                        <p class="text-xs text-slate-500">Cukup upload 1 foto untuk setiap ustadz. Foto otomatis tersinkronisasi ke seluruh jadwal kajian dan poster.</p>
+                        <p class="text-xs text-slate-500">Foto otomatis tersinkronisasi ke seluruh jadwal kajian dan poster.</p>
                     </div>
                 </div>
                 <button type="button" @click="showUstadzModal = false; $wire.closeUstadzModal()"
