@@ -6,7 +6,7 @@
         @click="if (window.isBackdropClick($event, $el)) { showNotulaModal = false; $wire.set('showNotulaModal', false, false); }"
         class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6"
         style="display: none;">
-        <div class="w-full max-w-5xl bg-gov-950 rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
+        <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
             
             <!-- Top Action Bar (Header) - Clean Navy Gov -->
             <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-between gap-3 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
@@ -44,10 +44,10 @@
             </header>
 
             <!-- Main Body: Tab 1 Preview Eksekutif -->
-            <div x-show="notulaActiveTab === 'preview'" class="min-h-0 flex-1 overflow-y-auto bg-slate-50/60 p-4 sm:p-6 md:p-8 flex justify-center notula-scrollable">
+            <div x-show="notulaActiveTab === 'preview'" class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-4 sm:p-6 md:p-8 flex justify-center notula-scrollable">
                 <div class="w-full max-w-4xl space-y-4">
                     <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit -->
-                    <div class="no-print flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
+                    <div class="no-print flex items-center p-1 bg-slate-200/80 rounded-xl border border-slate-300">
                         <button type="button" @click="notulaActiveTab = 'preview'"
                             class="flex-1 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
                             :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-950 shadow-xs border border-slate-200/60' : 'text-slate-600 hover:text-gov-950'">
@@ -73,18 +73,18 @@
             </div>
 
             <!-- Main Body: Tab 2 Editor / Tulis Notula -->
-            <div x-show="notulaActiveTab === 'editor'" class="min-h-0 flex-1 overflow-y-auto bg-slate-50/60 p-4 sm:p-6 space-y-4 notula-scrollable">
-                <div class="max-w-4xl mx-auto space-y-4">
+            <div x-show="notulaActiveTab === 'editor'" class="flex-1 min-h-0 flex flex-col p-4 sm:p-6 bg-white overflow-hidden">
+                <div class="w-full max-w-4xl mx-auto flex-1 min-h-0 flex flex-col gap-3.5">
                     <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit -->
-                    <div class="no-print flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
+                    <div class="shrink-0 no-print flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
                         <button type="button" @click="notulaActiveTab = 'preview'"
-                            class="flex-1 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
+                            class="flex-1 py-2 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
                             :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-950 shadow-xs border border-slate-200/60' : 'text-slate-600 hover:text-gov-950'">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             <span>Pratinjau</span>
                         </button>
                         <button type="button" @click="notulaActiveTab = 'editor'"
-                            class="flex-1 py-2 sm:py-2.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
+                            class="flex-1 py-2 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
                             :class="notulaActiveTab === 'editor' ? 'bg-white text-gov-950 shadow-xs border border-slate-200/60' : 'text-slate-600 hover:text-gov-950'">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                             <span>Tulis / Edit</span>
@@ -92,7 +92,7 @@
                     </div>
 
                     <!-- Petunjuk / Helper Banner dengan Tombol Aksi AI di Samping -->
-                    <div class="bg-gov-50/40 border border-slate-200/90 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+                    <div class="shrink-0 bg-gov-50/50 border border-slate-200/90 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                         <div class="flex items-start sm:items-center gap-3 min-w-0">
                             <svg class="w-5 h-5 text-slate-700 shrink-0 mt-0.5 sm:mt-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
@@ -121,9 +121,9 @@
                         </button>
                     </div>
 
-                    <!-- Textarea Editor -->
-                    <div class="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden focus-within:ring-2 focus-within:ring-gov-navy/20 focus-within:border-gov-navy transition">
-                        <div class="bg-white px-4 py-2.5 border-b border-slate-200/80 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
+                    <!-- Textarea Editor (Mengisi Sisa Tinggi Modal Secara Proporsional) -->
+                    <div class="flex-1 min-h-0 flex flex-col bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden focus-within:ring-2 focus-within:ring-gov-navy/20 focus-within:border-gov-navy transition">
+                        <div class="shrink-0 bg-white px-4 py-2 border-b border-slate-200/80 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
                             <span class="font-medium flex items-center gap-1.5 text-slate-700">
                                 <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -140,22 +140,21 @@
                             wire:ignore
                             x-ref="notulaTextarea"
                             x-model="notulaForm.raw_text"
-                            rows="18"
-                            class="w-full p-4 font-mono text-xs sm:text-sm text-slate-800 bg-white focus:outline-none resize-y leading-relaxed placeholder:text-slate-400 min-h-[380px]"
+                            class="flex-1 min-h-0 w-full p-4 font-mono text-xs sm:text-sm text-slate-800 bg-white focus:outline-none resize-none leading-relaxed placeholder:text-slate-400 overflow-y-auto"
                             placeholder="Salin atau ketik notula kajian di sini... (Mendukung Markdown, judul #, ayat Arab, dalil, dan catatan kaki [^1])"></textarea>
                     </div>
 
-                    <!-- Bottom Action Buttons in Editor (Right Aligned) -->
-                    <div class="flex items-center justify-end gap-3 pt-1">
+                    <!-- Bottom Action Buttons in Editor (Right Aligned, Always Visible) -->
+                    <div class="shrink-0 flex items-center justify-end gap-3 pt-0.5">
                         <button type="button" @click="notulaForm.raw_text = ''; if($refs.notulaTextarea) $refs.notulaTextarea.value = '';"
-                            class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:bg-slate-100 text-xs font-semibold transition cursor-pointer shadow-2xs">
+                            class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:bg-slate-100 text-xs font-semibold transition cursor-pointer shadow-2xs">
                             Bersihkan Naskah
                         </button>
                         <button type="button"
                             @click="$wire.saveNotula(notulaForm.id, notulaForm.raw_text)"
                             wire:loading.attr="disabled"
                             wire:target="saveNotula"
-                            class="inline-flex items-center gap-2 bg-gov-950 hover:bg-gov-900 active:bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition border border-gov-950 shadow-xs cursor-pointer disabled:opacity-50">
+                            class="inline-flex items-center gap-2 bg-gov-950 hover:bg-gov-900 active:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition border border-gov-950 shadow-xs cursor-pointer disabled:opacity-50">
                             <svg wire:loading.remove wire:target="saveNotula" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                                 <polyline points="17 21 17 13 7 13 7 21"/>
