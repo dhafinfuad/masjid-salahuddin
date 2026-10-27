@@ -14,6 +14,9 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <meta name="apple-mobile-web-app-title" content="Salahuddin">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
         <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png">
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
@@ -394,7 +397,7 @@
                 });
 
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js')
+                    navigator.serviceWorker.register('/sw.js?v=1.0.6')
                         .then(function(registration) {
                             registration.update();
                             registration.addEventListener('updatefound', () => {
