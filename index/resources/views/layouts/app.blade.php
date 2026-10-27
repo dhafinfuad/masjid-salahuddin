@@ -421,7 +421,7 @@
                 });
 
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js?v=1.0.6')
+                    navigator.serviceWorker.register('/sw.js')
                         .then(function(registration) {
                             registration.update();
                             registration.addEventListener('updatefound', () => {

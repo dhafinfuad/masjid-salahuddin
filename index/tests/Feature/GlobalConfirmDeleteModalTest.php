@@ -15,7 +15,8 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($modalsPath);
         $content = file_get_contents($modalsPath);
 
-        // 1. Pastikan modal memiliki wire:ignore (BUKAN wire:ignore.self) untuk mencegah Livewire morphdom merusak tombol saat response server tiba
+        // 1. Pastikan modal dibungkus dalam <template x-teleport="body"> dan memiliki wire:ignore penuh
+        $this->assertStringContainsString('<template x-teleport="body">', $content, 'confirmDeleteModal harus dibungkus template x-teleport="body" agar terisolasi di luar pohon Livewire DOM');
         $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"', $content, 'confirmDeleteModal harus menggunakan wire:ignore penuh dan memiliki wire:key');
         $this->assertStringNotContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal dilarang menggunakan wire:ignore.self karena menyebabkan duplikasi tombol saat morphing');
 
@@ -24,6 +25,10 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertStringContainsString('wire:ignore wire:key="global-confirm-delete-modal-footer"', $content, 'Footer modal harus memiliki isolasi wire:ignore dan wire:key tersendiri');
         $this->assertStringContainsString('wire:key="global-confirm-delete-modal-submit-btn"', $content, 'Tombol submit harus memiliki wire:key stabil');
         $this->assertStringContainsString('wire:key="global-confirm-delete-modal-cancel-btn"', $content, 'Tombol cancel harus memiliki wire:key stabil');
+
+        // Alternatif A: Tombol Batal tetap tampil (tidak di-hide dengan x-show) tapi dinonaktifkan dengan disabled dan pointer-events-none
+        $this->assertStringNotContainsString('x-show="!confirmDeleteModal.loading"', substr($content, strpos($content, 'global-confirm-delete-modal-cancel-btn'), 250), 'Tombol Batal tetap harus tampil saat loading pada Alternatif A');
+        $this->assertStringContainsString('disabled:pointer-events-none', substr($content, strpos($content, 'global-confirm-delete-modal-cancel-btn'), 450), 'Tombol Batal harus memiliki disabled:pointer-events-none saat status loading aktif');
 
         // 3. Pastikan tombol konfirmasi memiliki dimensi stabil, tidak menggunakan disabled:opacity-50 (mencegah ghosting pink)
         $this->assertMatchesRegularExpression('/min-w-\[130px\]\s+h-9\s+px-4/i', $content, 'Tombol konfirmasi harus memiliki min-w-[130px] h-9 untuk menjaga stabilitas layout');
