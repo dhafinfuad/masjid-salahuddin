@@ -277,23 +277,39 @@
                                                 @else
                                                     <span class="inline-flex text-[11px] text-slate-500">Pekanan</span>
                                                 @endif
-                                                @if(!empty($k->notula))
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400" title="Notula kajian tersimpan">
-                                                        <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                        Notula Ada
-                                                    </span>
-                                                @endif
-                                                @if(!empty($k->youtube_url))
-                                                    <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition" title="Buka siaran YouTube">
-                                                        <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                                        </svg>
-                                                        YouTube Ada
-                                                    </a>
-                                                @endif
                                             </div>
                                             <div class="line-clamp-2 leading-relaxed">{{ $k->title }}</div>
+                                            @if(!empty($k->notula) || !empty($k->youtube_url))
+                                                <div class="flex items-center gap-1.5 flex-wrap mt-1">
+                                                    @if(!empty($k->notula))
+                                                        <button type="button"
+                                                            @click="openNotulaModal({{ Js::from([
+                                                                'id' => $k->id,
+                                                                'title' => $k->title,
+                                                                'type' => $k->type,
+                                                                'speaker_name' => $k->speaker_name ?: ($k->khatib_name ?: 'Asatidz'),
+                                                                'date' => $k->date ? Carbon\Carbon::parse($k->date)->translatedFormat('l, d F Y') : '',
+                                                                'time_display' => $k->time_display ?: '',
+                                                                'notula' => $k->notula ?? ''
+                                                            ]) }}); $wire.openNotulaModal({{ $k->id }})"
+                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition border border-emerald-400 cursor-pointer"
+                                                            title="Buka notula kajian">
+                                                            <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                                            <span>Notula</span>
+                                                        </button>
+                                                    @endif
+                                                    @if(!empty($k->youtube_url))
+                                                        <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
+                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300"
+                                                            title="Buka siaran YouTube">
+                                                            <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+                                                            </svg>
+                                                            <span>YouTube</span>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </td>
                                         <td
                                             class="p-3.5 font-normal min-w-37.5 whitespace-normal wrap-break-word">
@@ -485,21 +501,6 @@
                                         @else
                                             <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none bg-blue-50 text-blue-700 border-blue-300">Pekanan</span>
                                         @endif
-                                        @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none" title="Notula kajian tersimpan">
-                                                <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                Notula Ada
-                                            </span>
-                                        @endif
-                                        @if(!empty($k->youtube_url))
-                                            <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
-                                                <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                                </svg>
-                                                YouTube Ada
-                                            </a>
-                                        @endif
                                     </div>
 
                                     <!-- Tombol Titik Tiga Vertikal Mobile -->
@@ -647,8 +648,41 @@
                                 </div>
                                 
                                 <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col items-start justify-between gap-2">
-                                    <div class="font-semibold text-gov-navy text-xs leading-snug">
-                                        {{ $k->title }}
+                                    <div class="w-full">
+                                        <div class="font-semibold text-gov-navy text-xs leading-snug">
+                                            {{ $k->title }}
+                                        </div>
+                                        @if(!empty($k->notula) || !empty($k->youtube_url))
+                                            <div class="flex items-center gap-1.5 flex-wrap mt-1.5">
+                                                @if(!empty($k->notula))
+                                                    <button type="button"
+                                                        @click="openNotulaModal({{ Js::from([
+                                                            'id' => $k->id,
+                                                            'title' => $k->title,
+                                                            'type' => $k->type,
+                                                            'speaker_name' => $k->speaker_name ?: ($k->khatib_name ?: 'Asatidz'),
+                                                            'date' => $k->date ? Carbon\Carbon::parse($k->date)->translatedFormat('l, d F Y') : '',
+                                                            'time_display' => $k->time_display ?: '',
+                                                            'notula' => $k->notula ?? ''
+                                                        ]) }}); $wire.openNotulaModal({{ $k->id }})"
+                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition border border-emerald-400 cursor-pointer"
+                                                        title="Buka notula kajian">
+                                                        <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                                        <span>Notula</span>
+                                                    </button>
+                                                @endif
+                                                @if(!empty($k->youtube_url))
+                                                    <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
+                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300"
+                                                        title="Buka siaran YouTube">
+                                                        <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
+                                                        </svg>
+                                                        <span>YouTube</span>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="flex items-center gap-1.5 text-xs text-slate-800 font-normal truncate">
                                         @if($k->valid_speaker_photo_url)
@@ -742,18 +776,30 @@
                                                     @endif
 
                                                     @if(!empty($k->notula))
-                                                        <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none shrink-0" title="Notula khutbah tersimpan">
-                                                            <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                            Notula Ada
-                                                        </span>
+                                                        <button type="button"
+                                                            @click="openNotulaModal({{ Js::from([
+                                                                'id' => $k->id,
+                                                                'title' => 'Khutbah Shalat Jumat',
+                                                                'type' => 'jumat',
+                                                                'speaker_name' => $k->khatib_name ?: 'Khatib',
+                                                                'date' => $k->date ? Carbon\Carbon::parse($k->date)->translatedFormat('l, d F Y') : '',
+                                                                'time_display' => '11:30 WIB',
+                                                                'notula' => $k->notula ?? ''
+                                                            ]) }}); $wire.openNotulaModal({{ $k->id }})"
+                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition border border-emerald-400 cursor-pointer"
+                                                            title="Buka notula khutbah">
+                                                            <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                                            <span>Notula</span>
+                                                        </button>
                                                     @endif
                                                     @if(!empty($k->youtube_url))
                                                         <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                            class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none shrink-0 transition" title="Buka siaran YouTube">
-                                                            <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300"
+                                                            title="Buka siaran YouTube">
+                                                            <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
                                                             </svg>
-                                                            YouTube Ada
+                                                            <span>YouTube</span>
                                                         </a>
                                                     @endif
                                                 </div>
@@ -953,18 +999,30 @@
                                                 class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700 border border-rose-200 leading-none">Diliburkan</span>
                                         @endif
                                         @if(!empty($k->notula))
-                                            <span class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400 leading-none" title="Notula khutbah tersimpan">
-                                                <svg class="w-2.5 h-2.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                Notula Ada
-                                            </span>
+                                            <button type="button"
+                                                @click="openNotulaModal({{ Js::from([
+                                                    'id' => $k->id,
+                                                    'title' => 'Khutbah Shalat Jumat',
+                                                    'type' => 'jumat',
+                                                    'speaker_name' => $k->khatib_name ?: 'Khatib',
+                                                    'date' => $k->date ? Carbon\Carbon::parse($k->date)->translatedFormat('l, d F Y') : '',
+                                                    'time_display' => '11:30 WIB',
+                                                    'notula' => $k->notula ?? ''
+                                                ]) }}); $wire.openNotulaModal({{ $k->id }})"
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition border border-emerald-400 cursor-pointer"
+                                                title="Buka notula khutbah">
+                                                <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                                <span>Notula</span>
+                                            </button>
                                         @endif
                                         @if(!empty($k->youtube_url))
                                             <a href="{{ $k->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
-                                                <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300"
+                                                title="Buka siaran YouTube">
+                                                <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path>
                                                 </svg>
-                                                YouTube Ada
+                                                <span>YouTube</span>
                                             </a>
                                         @endif
 
@@ -1219,11 +1277,11 @@
                                                 <span class="font-bold text-gov-textMain">{{ $agenda->title }}</span>
                                                 @if(!empty($agenda->youtube_url))
                                                     <a href="{{ $agenda->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition" title="Buka siaran YouTube">
+                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300" title="Buka siaran YouTube">
                                                         <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                         </svg>
-                                                        YouTube Ada
+                                                        <span>YouTube</span>
                                                     </a>
                                                 @endif
                                             </div>
@@ -1380,11 +1438,11 @@
                                         </span>
                                         @if(!empty($agenda->youtube_url))
                                             <a href="{{ $agenda->youtube_url }}" target="_blank" rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 leading-none transition" title="Buka siaran YouTube">
-                                                <svg class="w-2.5 h-2.5 text-rose-600" viewBox="0 0 24 24" fill="currentColor">
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 transition border border-rose-300" title="Buka siaran YouTube">
+                                                <svg class="w-3 h-3 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                                                 </svg>
-                                                YouTube Ada
+                                                <span>YouTube</span>
                                             </a>
                                         @endif
 
