@@ -4189,7 +4189,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-gov-textMain">
-                            <span>Direktori & Database Foto Ustadz</span>
+                            <span>Database Ustadz</span>
                         </h3>
                         <p class="text-xs text-slate-500">Cukup upload 1 foto untuk setiap ustadz. Foto otomatis tersinkronisasi ke seluruh jadwal kajian dan poster.</p>
                     </div>
@@ -4204,22 +4204,22 @@
             <div class="overflow-y-auto space-y-4 pr-1 flex-1">
                 <!-- Form Box: Tambah / Edit Ustadz -->
                 <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                            <span>{{ $editingUstadzId ? 'Edit Profil & Foto Ustadz' : 'Tambah Data Ustadz' }}</span>
-                        </h4>
-                        @if($editingUstadzId)
+                    @if($editingUstadzId)
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                                <span>Edit Profil & Foto Ustadz</span>
+                            </h4>
                             <button type="button" wire:click="resetUstadzForm" class="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer">
                                 Batal Edit
                             </button>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
                     <form wire:submit="saveUstadz" class="space-y-3 text-xs">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-1">
-                                <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar *</label>
+                                <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
                                 <input type="text" wire:model="ustadzName" placeholder="Contoh: Ust Hasyim Azhari SPdI"
                                     class="w-full p-2.5 rounded-lg border border-gov-border bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain">
                                 @error('ustadzName') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
@@ -4352,32 +4352,15 @@
                                                 <p class="text-[11px] text-slate-500 truncate">{{ $u->title }}</p>
                                             @endif
 
-                                            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                                                @if($u->photo)
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-400">
-                                                        <svg class="w-2.5 h-2.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                        </svg>
-                                                        Ada Foto
-                                                    </span>
-                                                @else
-                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200">
-                                                        Belum Ada Foto
-                                                    </span>
-                                                @endif
-
-                                                <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                                                    {{ $u->kajians_count }} Jadwal
-                                                </span>
-
-                                                @if($u->phone)
+                                            @if($u->phone)
+                                                <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
                                                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $u->phone) }}" target="_blank"
                                                         class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 border border-slate-200 transition">
                                                         <i data-lucide="phone" class="w-2.5 h-2.5 text-emerald-600"></i>
                                                         <span>{{ $u->phone }}</span>
                                                     </a>
-                                                @endif
-                                            </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
 
