@@ -189,6 +189,7 @@
              };
              this.updateKajianDefaultTime();
              if (typeof $wire !== 'undefined') {
+                 $wire.set('isEditingKajian', false, false);
                  $wire.set('editingKajianId', null, false);
                  $wire.set('kajianSpeakerPhoto', null, false);
                  $wire.set('kajianExistingPhoto', null, false);
@@ -223,6 +224,7 @@
                  this.updateKajianDefaultTime();
              }
              if (typeof $wire !== 'undefined') {
+                 $wire.set('isEditingKajian', true, false);
                  $wire.set('editingKajianId', data.id, false);
                  $wire.set('kajianSpeakerPhoto', null, false);
                  $wire.set('kajianExistingPhoto', data.speaker_photo || null, false);
@@ -236,8 +238,11 @@
          },
          closeKajianModal() {
              this.showKajianModal = false;
+             this.isEditingKajian = false;
              if (typeof $wire !== 'undefined') {
                  $wire.set('showKajianModal', false, false);
+                 $wire.set('isEditingKajian', false, false);
+                 $wire.set('editingKajianId', null, false);
                  $wire.set('kajianSpeakerPhoto', null, false);
              }
          },
@@ -1546,6 +1551,11 @@
 
     <!-- Mobile Floating Action Button (FAB) & Bottom Action Sheet -->
     @include('livewire.admin.tabs._mobile-action-sheet')
+
+    <!-- Ustadz Data Container (Decoupled from x-data attribute to prevent Alpine re-initialization) -->
+    <div id="ustadzDataContainer" class="hidden"
+        data-photomap="{{ json_encode($ustadzPhotoMap ?? []) }}"
+        data-directory="{{ json_encode($ustadzListForDatalist ?? []) }}"></div>
 
     <!-- All Modal Dialogs -->
     @include('livewire.admin.tabs._modals')

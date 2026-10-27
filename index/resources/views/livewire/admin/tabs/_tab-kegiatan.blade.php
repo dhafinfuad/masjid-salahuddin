@@ -292,7 +292,7 @@
                                                                 'time_display' => $k->time_display ?: '',
                                                                 'notula' => $k->notula ?? ''
                                                             ]) }}); $wire.openNotulaModal({{ $k->id }})"
-                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200/90 cursor-pointer"
+                                                            class="inline-flex items-center gap-1 px-1.5 py-1 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200 cursor-pointer"
                                                             title="Buka notula kajian">
                                                             <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                                             <span>Notula</span>
@@ -674,7 +674,7 @@
                                                     'time_display' => $k->time_display ?: '',
                                                     'notula' => $k->notula ?? ''
                                                 ]) }}); $wire.openNotulaModal({{ $k->id }})"
-                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200/90 cursor-pointer"
+                                                class="inline-flex items-center gap-1 px-1.5 py-1 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200 cursor-pointer"
                                                 title="Buka notula kajian">
                                                 <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                                 <span>Notula</span>
@@ -785,7 +785,7 @@
                                                                 'time_display' => '11:30 WIB',
                                                                 'notula' => $k->notula ?? ''
                                                             ]) }}); $wire.openNotulaModal({{ $k->id }})"
-                                                            class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200/90 cursor-pointer"
+                                                            class="inline-flex items-center gap-1 px-1.5 py-1 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200 cursor-pointer"
                                                             title="Buka notula khutbah">
                                                             <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                                             <span>Notula</span>
@@ -1154,7 +1154,7 @@
                                                     'time_display' => '11:30 WIB',
                                                     'notula' => $k->notula ?? ''
                                                 ]) }}); $wire.openNotulaModal({{ $k->id }})"
-                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200/90 cursor-pointer"
+                                                class="inline-flex items-center gap-1 px-1.5 py-1 rounded text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200 cursor-pointer"
                                                 title="Buka notula khutbah">
                                                 <svg class="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                                 <span>Notula</span>

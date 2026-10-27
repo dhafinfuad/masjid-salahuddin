@@ -286,7 +286,7 @@
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (MILESTONE 1) -->
     <!-- ======================================================== -->
-    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="closeKajianModal()"
+    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) closeKajianModal()"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;">
@@ -439,7 +439,7 @@
                 <div x-show="kajianForm.type === 'pekanan' || kajianForm.type === 'tematik'" class="space-y-1.5">
                     <div class="flex items-center justify-between">
                         <label class="block font-semibold text-slate-700">Foto Pembicara</label>
-                        <button type="button" @click="$wire.openUstadzModal()" class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer inline-flex items-center gap-1">
+                        <button type="button" @click="showUstadzModal = true; $wire.openUstadzModal()" class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer inline-flex items-center gap-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             <span>Database Ustadz</span>
                         </button>
@@ -4175,7 +4175,7 @@
     <!-- ======================================================== -->
     <div x-show="showUstadzModal" x-cloak wire:ignore.self @keydown.escape.window="showUstadzModal = false; $wire.closeUstadzModal()"
         @click="if (window.isBackdropClick($event, $el)) { showUstadzModal = false; $wire.closeUstadzModal(); }"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;">
         <div
             class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[92vh] flex flex-col">
