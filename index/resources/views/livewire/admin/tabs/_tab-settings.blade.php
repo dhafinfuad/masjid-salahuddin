@@ -421,7 +421,17 @@
 
                                         <!-- Hapus Foto Button -->
                                         @if($u->photo)
-                                            <button type="button" wire:click="removeUstadzPhoto({{ $u->id }})" wire:confirm="Hapus foto profil ustadz ini? Foto akan dilepas dari seluruh jadwal kajian."
+                                            <button type="button"
+                                                @click="openDeleteModal({{ Js::from([
+                                                    'id' => $u->id,
+                                                    'action' => 'removeUstadzPhoto',
+                                                    'title' => 'Hapus Foto Profil Ustadz',
+                                                    'itemName' => $u->name,
+                                                    'message' => 'Hapus foto profil ustadz ini? Foto akan dilepas dari seluruh jadwal kajian.',
+                                                    'type' => 'warning',
+                                                    'confirmButtonText' => 'Ya, Hapus Foto',
+                                                    'noticeText' => 'Foto profil ustadz ini akan dihapus dari server dan tidak akan tampil lagi di poster atau jadwal.',
+                                                ]) }})"
                                                 title="Hapus Foto Profil"
                                                 class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer">
                                                 <i data-lucide="image-minus" class="w-3.5 h-3.5"></i>
@@ -429,7 +439,14 @@
                                         @endif
 
                                         <!-- Hapus Ustadz Button -->
-                                        <button type="button" wire:click="deleteUstadz({{ $u->id }})" wire:confirm="Hapus data ustadz ini dari direktori?"
+                                        <button type="button"
+                                            @click="openDeleteModal({{ Js::from([
+                                                'id' => $u->id,
+                                                'action' => 'deleteUstadz',
+                                                'title' => 'Hapus Data Ustadz',
+                                                'itemName' => $u->name,
+                                                'message' => 'Hapus data ustadz ini dari direktori? Data profil narasumber akan dihapus dari sistem.',
+                                            ]) }})"
                                             title="Hapus Ustadz"
                                             class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer">
                                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>

@@ -215,9 +215,13 @@
                                         @if(Auth::check() && Auth::user()->canManage())
                                             <div class="my-1 border-t border-slate-100"></div>
                                             <button type="button" 
-                                                @click="openMenu = false"
-                                                wire:click="deleteSaran({{ $item->id }})" 
-                                                wire:confirm="Yakin ingin menghapus catatan saran ini?"
+                                                @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                    'id' => $item->id,
+                                                    'action' => 'deleteSaran',
+                                                    'title' => 'Hapus Catatan Saran & Kritik',
+                                                    'itemName' => ($item->name ? $item->name . ' - ' : '') . Str::limit($item->message, 80),
+                                                    'message' => 'Apakah Anda yakin ingin menghapus catatan saran ini dari sistem?',
+                                                ]) }})" 
                                                 class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
                                                 <svg class="w-3.5 h-3.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                                 <span>Hapus Saran</span>
@@ -393,9 +397,13 @@
                         @if(Auth::check() && Auth::user()->canManage())
                             <div class="my-1 border-t border-slate-100"></div>
                             <button type="button" 
-                                @click="openMenu = false"
-                                wire:click="deleteSaran({{ $item->id }})" 
-                                wire:confirm="Yakin ingin menghapus catatan saran ini?"
+                                @click="openMenu = false; openDeleteModal({{ Js::from([
+                                    'id' => $item->id,
+                                    'action' => 'deleteSaran',
+                                    'title' => 'Hapus Catatan Saran & Kritik',
+                                    'itemName' => ($item->name ? $item->name . ' - ' : '') . Str::limit($item->message, 80),
+                                    'message' => 'Apakah Anda yakin ingin menghapus catatan saran ini dari sistem?',
+                                ]) }})" 
                                 class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                 <span>Hapus Saran</span>

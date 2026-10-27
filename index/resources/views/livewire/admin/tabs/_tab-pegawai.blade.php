@@ -162,8 +162,16 @@
                                         <span class="text-[11px] text-slate-400 font-medium">Belum Terdaftar</span>
                                         @if(Auth::user()->canManage())
                                             <button type="button"
-                                                wire:click="createUserFromEmployee({{ $emp->id }})"
-                                                wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
+                                                @click="openConfirmModal({{ Js::from([
+                                                    'id' => $emp->id,
+                                                    'action' => 'createUserFromEmployee',
+                                                    'title' => 'Tautkan / Buat Akun Pengguna',
+                                                    'itemName' => $emp->name . ($emp->nip_pendek ? ' (NIP: ' . $emp->nip_pendek . ')' : ''),
+                                                    'message' => 'Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk ' . $emp->name . '?',
+                                                    'type' => 'primary',
+                                                    'confirmButtonText' => 'Ya, Proses Akun',
+                                                    'noticeText' => 'Sistem akan memeriksa apakah akun pengguna sudah ada untuk ditautkan, atau membuatkan akun baru dengan peran Jamaah.',
+                                                ]) }})"
                                                 class="px-2 py-0.5 rounded text-[10px] font-bold bg-gov-navy/10 hover:bg-gov-navy hover:text-white text-gov-navy border border-gov-navy/20 transition cursor-pointer"
                                                 title="Tautkan otomatis jika akun sudah ada, atau buatkan akun baru">
                                                 Buat Akun
@@ -230,9 +238,13 @@
 
                                                 <!-- Hapus Pegawai -->
                                                 <button type="button" 
-                                                    @click="openMenu = false"
-                                                    wire:click="deleteEmployee({{ $emp->id }})"
-                                                    wire:confirm="Yakin ingin menghapus data pegawai {{ $emp->name }} dari database?"
+                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                        'id' => $emp->id,
+                                                        'action' => 'deleteEmployee',
+                                                        'title' => 'Hapus Data Pegawai',
+                                                        'itemName' => $emp->name . ($emp->nip_pendek ? ' (NIP: ' . $emp->nip_pendek . ')' : ''),
+                                                        'message' => 'Apakah Anda yakin ingin menghapus data pegawai ' . $emp->name . ' dari database?',
+                                                    ]) }})"
                                                     class="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition font-medium text-xs cursor-pointer">
                                                     <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                                     <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Pegawai</div>
@@ -299,8 +311,17 @@
                                 <span>{{ $role }}</span>
                             </span>
                         @else
-                            <button type="button" wire:click="createUserFromEmployee({{ $emp->id }})"
-                                wire:confirm="Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk {{ $emp->name }}?"
+                            <button type="button" 
+                                @click="openConfirmModal({{ Js::from([
+                                    'id' => $emp->id,
+                                    'action' => 'createUserFromEmployee',
+                                    'title' => 'Tautkan / Buat Akun Pengguna',
+                                    'itemName' => $emp->name . ($emp->nip_pendek ? ' (NIP: ' . $emp->nip_pendek . ')' : ''),
+                                    'message' => 'Tautkan ke akun pengguna yang cocok atau buatkan akun baru untuk ' . $emp->name . '?',
+                                    'type' => 'primary',
+                                    'confirmButtonText' => 'Ya, Proses Akun',
+                                    'noticeText' => 'Sistem akan memeriksa apakah akun pengguna sudah ada untuk ditautkan, atau membuatkan akun baru dengan peran Jamaah.',
+                                ]) }})"
                                 class="text-[10px] font-bold text-gov-navy hover:underline">
                                 Buat Akun
                             </button>
@@ -337,9 +358,13 @@
                                         <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Ubah Data Pegawai</div>
                                     </button>
                                     <button type="button" 
-                                        @click="openMenu = false"
-                                        wire:click="deleteEmployee({{ $emp->id }})"
-                                        wire:confirm="Hapus {{ $emp->name }}?"
+                                        @click="openMenu = false; openDeleteModal({{ Js::from([
+                                            'id' => $emp->id,
+                                            'action' => 'deleteEmployee',
+                                            'title' => 'Hapus Data Pegawai',
+                                            'itemName' => $emp->name . ($emp->nip_pendek ? ' (NIP: ' . $emp->nip_pendek . ')' : ''),
+                                            'message' => 'Apakah Anda yakin ingin menghapus data pegawai ' . $emp->name . ' dari database?',
+                                        ]) }})"
                                         class="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition font-medium text-xs cursor-pointer">
                                         <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                         <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Pegawai</div>

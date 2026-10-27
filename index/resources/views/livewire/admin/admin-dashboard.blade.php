@@ -945,30 +945,52 @@
             itemName: '',
             targetAction: '',
             targetId: null,
-            loading: false
+            targetParams: null,
+            loading: false,
+            confirmButtonText: 'Ya, Hapus',
+            confirmButtonClass: '',
+            loadingText: 'Menghapus...',
+            type: 'danger',
+            noticeText: ''
         },
         openDeleteModal(options) {
+            const isDanger = !options.type || options.type === 'danger';
+            const isWarning = options.type === 'warning';
+            const isPrimary = options.type === 'primary';
+
             this.confirmDeleteModal = {
                 show: true,
-                title: options.title || 'Konfirmasi Hapus Data',
-                message: options.message || 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
+                title: options.title || (isPrimary ? 'Konfirmasi Tindakan' : 'Konfirmasi Hapus Data'),
+                message: options.message || (isPrimary ? 'Apakah Anda yakin ingin memproses tindakan ini?' : 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.'),
                 itemName: options.itemName || '',
                 targetAction: options.action,
-                targetId: options.id,
-                loading: false
+                targetId: options.id !== undefined ? options.id : null,
+                targetParams: options.params || null,
+                loading: false,
+                confirmButtonText: options.confirmButtonText || (isPrimary ? 'Ya, Lanjutkan' : (isWarning ? 'Ya, Hapus' : 'Ya, Hapus')),
+                confirmButtonClass: options.confirmButtonClass || '',
+                loadingText: options.loadingText || (isPrimary ? 'Memproses...' : 'Menghapus...'),
+                type: options.type || 'danger',
+                noticeText: options.noticeText !== undefined ? options.noticeText : (isPrimary ? 'Pastikan data yang dipilih sudah sesuai sebelum melanjutkan proses.' : 'Tindakan ini tidak dapat dibatalkan. Pastikan Anda telah memeriksa kembali data yang akan diproses.')
             };
             this.$nextTick(() => {
                 if (window.createLucideIcons) window.createLucideIcons();
             });
         },
+        openConfirmModal(options) {
+            this.openDeleteModal(options);
+        },
         async executeConfirmDelete() {
-            if (!this.confirmDeleteModal.targetAction || !this.confirmDeleteModal.targetId) return;
+            if (!this.confirmDeleteModal.targetAction) return;
             if (this.confirmDeleteModal.loading) return;
             this.confirmDeleteModal.loading = true;
             try {
-                await $wire.call(this.confirmDeleteModal.targetAction, this.confirmDeleteModal.targetId);
+                const params = Array.isArray(this.confirmDeleteModal.targetParams)
+                    ? this.confirmDeleteModal.targetParams
+                    : (this.confirmDeleteModal.targetId !== null ? [this.confirmDeleteModal.targetId] : []);
+                await $wire.call(this.confirmDeleteModal.targetAction, ...params);
             } catch (err) {
-                console.error('Confirm delete error:', err);
+                console.error('Confirm modal action error:', err);
             } finally {
                 this.confirmDeleteModal.show = false;
                 this.confirmDeleteModal.loading = false;
@@ -1101,7 +1123,9 @@
     @open-print-pernyataan-tab.window="openPrintPernyataanModal($event.detail?.tab || 'cetak')"
     @close-print-pernyataan-modal.window="showPrintPernyataanModal = false"
     @open-delete-modal.window="openDeleteModal($event.detail)"
+    @open-confirm-modal.window="openConfirmModal($event.detail)"
     @close-delete-modal.window="confirmDeleteModal.show = false"
+    @close-confirm-modal.window="confirmDeleteModal.show = false"
     @open-receipt-modal.window="openReceiptModal($event.detail)"
     @close-receipt-modal.window="closeReceiptModal()"
     @open-gallery-lightbox.window="openGalleryLightbox($event.detail.data || $event.detail, $event.detail.index || 0)"
