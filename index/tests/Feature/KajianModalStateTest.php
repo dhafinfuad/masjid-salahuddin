@@ -154,4 +154,56 @@ class KajianModalStateTest extends TestCase
             ->assertSet('isEditingKajian', true)
             ->assertSet('editingKajianId', $kajian->id);
     }
+
+    /** @test */
+    public function test_settings_database_ustadz_subtab_crud_operations(): void
+    {
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'settings'])
+            ->call('switchSettingsSubTab', 'ustadz')
+            ->assertSet('settingsSubTab', 'ustadz')
+            ->assertSeeHtml('Database Ustadz')
+            ->assertSeeHtml('Direktori Ustadz')
+            // Tambah Ustadz Baru
+            ->set('ustadzName', 'Ust. Budi Hartono, M.Pd.')
+            ->set('ustadzTitle', 'Kajian Fiqih Kontemporer')
+            ->set('ustadzPhone', '081234567899')
+            ->call('saveUstadz')
+            ->assertSee('Ust. Budi Hartono, M.Pd.')
+            ->assertSee('Kajian Fiqih Kontemporer');
+
+        $this->assertDatabaseHas('ustadzs', [
+            'name' => 'Ust. Budi Hartono, M.Pd.',
+            'title' => 'Kajian Fiqih Kontemporer',
+        ]);
+
+        $ustadz = \App\Models\Ustadz::where('name', 'Ust. Budi Hartono, M.Pd.')->first();
+        $this->assertNotNull($ustadz);
+
+        // Edit Ustadz
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'settings'])
+            ->call('switchSettingsSubTab', 'ustadz')
+            ->call('editUstadz', $ustadz->id)
+            ->assertSet('editingUstadzId', $ustadz->id)
+            ->assertSet('ustadzName', 'Ust. Budi Hartono, M.Pd.')
+            ->set('ustadzTitle', 'Tafsir Ayat Ahkam')
+            ->call('saveUstadz')
+            ->assertSee('Tafsir Ayat Ahkam');
+
+        $this->assertDatabaseHas('ustadzs', [
+            'id' => $ustadz->id,
+            'title' => 'Tafsir Ayat Ahkam',
+        ]);
+
+        // Hapus Ustadz
+        Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'settings'])
+            ->call('switchSettingsSubTab', 'ustadz')
+            ->call('deleteUstadz', $ustadz->id);
+
+        $this->assertDatabaseMissing('ustadzs', [
+            'id' => $ustadz->id,
+        ]);
+    }
 }

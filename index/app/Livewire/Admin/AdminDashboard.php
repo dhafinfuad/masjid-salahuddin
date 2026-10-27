@@ -53,7 +53,7 @@ class AdminDashboard extends Component
     public string $currentTab = 'dashboard';
     public string $kegiatanSubTab = 'pekanan';
     public string $kajianSubTab = 'pekanan';
-    public string $settingsSubTab = 'masjid'; // 'masjid' | 'poster'
+    public string $settingsSubTab = 'masjid'; // 'masjid' | 'poster' | 'ustadz'
 
     public string $search = '';
     public string $pekananSearch = '';

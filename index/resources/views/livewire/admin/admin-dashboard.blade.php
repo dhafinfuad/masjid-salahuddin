@@ -60,7 +60,9 @@
              } else if (this.activeTab === 'users') {
                  tabTitle = (this.userSubTab === 'kepengurusan') ? 'Takmir & Kepengurusan' : 'Manajemen Pengguna';
              } else if (this.activeTab === 'settings') {
-                 tabTitle = (this.settingsSubTab === 'poster') ? 'Template & Studio Poster Kajian' : 'Pengaturan Masjid & Layar TV';
+                 if (this.settingsSubTab === 'poster') tabTitle = 'Template & Studio Poster Kajian';
+                  else if (this.settingsSubTab === 'ustadz') tabTitle = 'Database Ustadz';
+                  else tabTitle = 'Pengaturan Masjid & Layar TV';
              } else if (this.activeTab === 'statistics' || this.activeTab === 'statistik') {
                  tabTitle = 'Statistik Pengunjung';
              } else if (this.activeTab === 'galeri' || this.activeTab === 'gallery') {
@@ -1451,6 +1453,16 @@
                             <i data-lucide="palette" class="w-3 h-3"></i>
                             <span>Template & Studio Poster</span>
                         </button>
+
+                        <!-- Tab 3: Database Ustadz -->
+                        <button type="button"
+                            @click="switchSettingsSubTab('ustadz')"
+                            class="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] whitespace-nowrap shrink-0 cursor-pointer transition border-b-2"
+                            :class="settingsSubTab === 'ustadz' ? 'font-bold text-[#0e2547] border-[#0e2547] bg-slate-50/60' : 'font-medium text-slate-500 border-transparent hover:text-slate-800'">
+                            <i data-lucide="users" class="w-3 h-3"></i>
+                            <span>Database Ustadz</span>
+                        </button>
+
                     </div>
                 </div>
             @endif
