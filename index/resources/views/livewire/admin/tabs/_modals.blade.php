@@ -6,7 +6,7 @@
         @click="if (window.isBackdropClick($event, $el)) { showNotulaModal = false; $wire.set('showNotulaModal', false, false); }"
         class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6"
         style="display: none;">
-        <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
+        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
             
             <!-- Top Action Bar (Header) - Clean Navy Gov -->
             <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-between gap-3 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
