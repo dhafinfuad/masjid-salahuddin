@@ -107,34 +107,34 @@ Transkrip
 TEXT;
 
         $mockOutput = <<<MARKDOWN
-# Dokumen Kajian Tafsir Tematik Al-Qur'an
-**Tema:** Memahami Makna Keselamatan dan Zikir
-**Fokus Bahasan:** Hakikat Keselamatan dan Zikir
-**Pemateri:** Ustadz Pemateri
----
+KAJIAN MEMAHAMI MAKNA KESELAMATAN DAN ZIKIR
+Hari, Tanggal : Senin, 27 Oktober 2026
+Tempat : Masjid Salahuddin KPP Madya Malang
+Pemateri : Ustadz Pemateri
+Tema / Kitab : Memahami Makna Keselamatan dan Zikir
+Notulis : Tim Media & Notula Masjid Salahuddin
 
-## 1. Intisari dan Latar Belakang Urgensi
-Keselamatan adalah dambaan setiap hamba.
+📌 RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
+Kajian ini membahas hakikat keselamatan dalam perspektif syariat serta urgensi zikir dalam kehidupan seorang muslim.
 
-## 2. Analisis Dalil Al-Qur'an dan Sunnah
-### Zikir dan Ingat kepada Allah (QS. Al-Baqarah: 152)
+Zikir dan doa keselamatan menjadi sarana mendekatkan diri kepada Allah secara istiqamah dan berkesinambungan.
+
+📑 DAFTAR ISI PEMBAHASAN
+Urgensi Zikir Pasca Salat
+Makna Doa Keselamatan (As-Salam)
+
+📖 PEMBAHASAN LENGKAP
+1. Urgensi Zikir Pasca Salat
+Zikir merupakan perintah langsung dari Allah SWT untuk senantiasa mengingat-Nya dalam segala situasi.
 > فَاذْكُرُونِي أَذْكُرْكُمْ
-> *"Ingatlah kalian kepada-Ku, niscaya Aku akan mengingat kalian."*
+> *"Ingatlah kalian kepada-Ku, niscaya Aku akan mengingat kalian."* (QS. Al-Baqarah: 152)
 
-## 3. Hikmah, Konteks Sosial, dan Budaya
-Tradisi selamatan di Indonesia mencerminkan doa keselamatan.
+2. Makna Doa Keselamatan (As-Salam)
+Keselamatan sejati bermula dari ketundukan hati dan ketakwaan kepada Allah SWT.
 
-## 4. Sesi Diskusi / Tanya Jawab Interaktif
-Adab zikir dan ketundukan hati setelah salat.
-
-## 5. Ringkasan Poin Aksi dan Karakter Pribadi Muslim
-1. **Memperbanyak Zikir:** Membiasakan zikir setelah shalat.
-
----
-
-### Catatan Kaki (Footnotes): Informasi Tambahan di Luar Transkrip
-
-[^1]: **Takhrij Hadits:** Doa Allahumma Antas Salam diriwayatkan oleh Imam Muslim no. 591.
+💡 KESIMPULAN & PESAN AKSI
+Membiasakan Zikir: Mengamalkan wirid dan zikir secara teratur setelah shalat fardhu.
+Ketulusan Doa: Menyelaraskan ucapan lisan dengan komitmen perbuatan sehari-hari.
 MARKDOWN;
 
         $mockAiService = $this->createMock(NotulaAiService::class);
@@ -171,5 +171,62 @@ MARKDOWN;
         Livewire::test(AdminDashboard::class)
             ->call('transformTranscriptToNotula', $this->sampleKajian->id, '   ')
             ->assertDispatched('toast', fn ($event, $params) => str_contains($params['message'] ?? '', 'tidak boleh kosong'));
+    }
+
+    /** @test */
+    public function test_notula_ai_service_rejects_too_short_notula_for_reformat()
+    {
+        $service = new NotulaAiService();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $service->reformatExistingNotula('Teks pendek');
+    }
+
+    /** @test */
+    public function test_reformat_notulas_artisan_command_updates_database()
+    {
+        $oldNotula = str_repeat("Ini adalah baris naskah notula lama yang panjang sekali.\n", 5);
+        $kajian = Kajian::create([
+            'type' => 'tematik',
+            'date' => '2026-10-31',
+            'title' => 'Kajian Lama',
+            'notula' => $oldNotula,
+        ]);
+
+        $reformattedText = <<<MARKDOWN
+KAJIAN LAMA
+Hari, Tanggal : Sabtu, 31 Oktober 2026
+Tempat : Masjid Salahuddin KPP Madya Malang
+Pemateri : Asatidz
+Tema / Kitab : Kajian Lama
+Notulis : Tim Media & Notula Masjid Salahuddin
+
+📌 RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
+Ringkasan eksekutif notula yang baru direformat.
+
+📑 DAFTAR ISI PEMBAHASAN
+Poin Pembahasan
+
+📖 PEMBAHASAN LENGKAP
+1. Poin Pembahasan
+Uraian pembahasan materi kajian.
+
+💡 KESIMPULAN & PESAN AKSI
+Poin Aksi: Uraian pesan aksi nyata.
+MARKDOWN;
+
+        $mockAiService = $this->createMock(NotulaAiService::class);
+        $mockAiService->method('isAvailable')->willReturn(true);
+        $mockAiService->method('reformatExistingNotula')->willReturn($reformattedText);
+
+        $this->app->instance(NotulaAiService::class, $mockAiService);
+
+        $this->artisan('notula:reformat-all', ['--id' => $kajian->id])
+            ->assertExitCode(0);
+
+        $this->assertDatabaseHas('kajians', [
+            'id' => $kajian->id,
+            'notula' => $reformattedText,
+        ]);
     }
 }

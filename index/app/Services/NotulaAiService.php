@@ -69,21 +69,47 @@ class NotulaAiService
 
         $title = !empty($meta['title']) ? trim((string) $meta['title']) : 'Kajian Islam Tematik';
         $speaker = !empty($meta['speaker_name']) ? trim((string) $meta['speaker_name']) : 'Asatidz';
-        $type = !empty($meta['type']) ? strtolower(trim((string) $meta['type'])) : 'tematik';
         $date = !empty($meta['date']) ? trim((string) $meta['date']) : Carbon::now()->translatedFormat('l, d F Y');
-
-        $docTypeHeader = match ($type) {
-            'jumat' => 'Dokumen Risalah Shalat Jumat',
-            'pekanan' => 'Dokumen Risalah Kajian Pekanan Rutin',
-            default => 'Dokumen Kajian Tafsir Tematik Al-Qur\'an',
-        };
+        $place = !empty($meta['place']) ? trim((string) $meta['place']) : 'Masjid Salahuddin KPP Madya Malang';
 
         $prompt = $this->buildPrompt($cleanedTranscript, [
-            'doc_type' => $docTypeHeader,
             'title' => $title,
             'speaker' => $speaker,
             'date' => $date,
+            'place' => $place,
         ]);
+
+        return $this->executeGeminiPrompt($prompt);
+    }
+
+    /**
+     * Mengonversi naskah notula lama menjadi format baru yang ringkas, terstruktur, dan padat.
+     *
+     * @param string $oldNotulaText Naskah notula lama yang ada di database
+     * @param array<string, mixed> $fallbackMeta Informasi kajian cadangan jika di teks tidak tercantum
+     * @return string Naskah notula baru berformat ringkas
+     */
+    public function reformatExistingNotula(string $oldNotulaText, array $fallbackMeta = []): string
+    {
+        $oldText = trim($oldNotulaText);
+        if (mb_strlen($oldText) < 50) {
+            throw new \InvalidArgumentException('Teks notula terlalu pendek untuk diproses reformat.');
+        }
+
+        $prompt = $this->buildReformatPrompt($oldText, $fallbackMeta);
+
+        return $this->executeGeminiPrompt($prompt);
+    }
+
+    /**
+     * Mengeksekusi prompt ke Google Gemini API dengan fallback beberapa model.
+     */
+    protected function executeGeminiPrompt(string $prompt, int $timeoutSeconds = 90): string
+    {
+        $apiKey = $this->getApiKey();
+        if (empty($apiKey)) {
+            throw new \RuntimeException('Google Gemini API Key belum terkonfigurasi pada file .env.');
+        }
 
         $payload = [
             'contents' => [
@@ -102,15 +128,15 @@ class NotulaAiService
             ]
         ];
 
-        $primaryModel = config('services.gemini.model') ?: 'gemini-3-flash-preview';
-        $modelsToTry = array_unique([$primaryModel, 'gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-flash-latest']);
+        $primaryModel = config('services.gemini.model') ?: 'gemini-2.5-flash';
+        $modelsToTry = array_unique([$primaryModel, 'gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-flash-latest']);
 
         $generatedText = null;
         $lastError = 'Tidak ada respon dari server Gemini.';
 
         foreach ($modelsToTry as $modelName) {
             $apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent?key={$apiKey}";
-            $response = $this->callGeminiApi($apiUrl, $payload, 90);
+            $response = $this->callGeminiApi($apiUrl, $payload, $timeoutSeconds);
 
             if ($response['code'] === 200 && !empty($response['body'])) {
                 $resData = json_decode($response['body'], true);
@@ -126,94 +152,154 @@ class NotulaAiService
         }
 
         if (empty($generatedText)) {
-            Log::error("Gagal mentransformasi transkrip YouTube menjadi notula: {$lastError}");
-            throw new \RuntimeException("Gagal memproses transkrip dengan Google Gemini AI: {$lastError}");
+            Log::error("Gagal memproses notula dengan Gemini: {$lastError}");
+            throw new \RuntimeException("Gagal memproses notula dengan Google Gemini AI: {$lastError}");
         }
 
         return $this->sanitizeGeneratedMarkdown($generatedText);
     }
 
     /**
-     * Membangun prompt sistem komprehensif untuk notulensi eksekutif kajian Masjid Salahuddin.
+     * Membangun prompt komprehensif untuk notula baru dari transkrip YouTube dengan format ringkas.
      */
     protected function buildPrompt(string $transcript, array $meta): string
     {
+        $judulUpper = mb_strtoupper($meta['title'] ?? 'KAJIAN ISLAM');
         return <<<PROMPT
-Anda adalah Sekretaris Keilmuan dan Ahli Notulensi Eksekutif Kajian Islam resmi Masjid Salahuddin yang sangat teliti, berwawasan luas dalam Al-Qur'an dan Sunnah, serta mahir merangkum ceramah lisan menjadi risalah formal berbobot tinggi.
+Anda adalah Sekretaris Keilmuan dan Ahli Notulensi Eksekutif Kajian Islam resmi Masjid Salahuddin yang sangat teliti, berwawasan luas dalam Al-Qur'an dan Sunnah, serta mahir merangkum ceramah lisan menjadi risalah formal berbobot tinggi, ringkas, dan padat.
 
 TUGAS ANDA:
-Ubahlah naskah transkrip mentah rekaman YouTube di bawah ini (yang memuat timestamp waktu seperti "0.000 detik...", dialek lisan sehari-hari, bahasa daerah/Jawa santai, kata pengisi lisan, dan kutipan ayat lisan yang belum terstruktur) menjadi sebuah "Dokumen Risalah / Notula Eksekutif Kajian" yang sangat rapi, mendalam, berwibawa, dan siap cetak.
+Ubahlah naskah transkrip mentah rekaman YouTube di bawah ini (yang memuat timestamp waktu seperti "0.000 detik...", dialek lisan sehari-hari, bahasa daerah/Jawa santai, kata pengisi lisan, dan kutipan ayat lisan yang belum terstruktur) menjadi sebuah Dokumen Notula Kajian Masjid Salahuddin yang bersih, berbobot, padat, dan langsung siap dipublikasikan/dicetak.
 
 METADATA KAJIAN SAAT INI:
-- Format Dokumen: {$meta['doc_type']}
 - Tema / Judul: {$meta['title']}
 - Pemateri: {$meta['speaker']}
-- Tanggal: {$meta['date']}
+- Hari, Tanggal: {$meta['date']}
+- Tempat: {$meta['place']}
 
-STANDAR ATURAN PENYUSUNAN (WAJIB DIIKUTI DENGAN SANGAT KETAT):
-1. PEMBERSIHAN TOTAL:
-   - Hilangkan SEMUA timestamp waktu ("0.000 detik", "1.441 detik", "00:00", dsb.).
-   - Ubah gaya tutur lisan santai atau campuran bahasa daerah (misal bahasa Jawa: "wis gelem zikir", "loro merer gak ono", "sedino gorengan ek lim", "lingges kambang", dsb.) menjadi Bahasa Indonesia ragam baku, anggun, akademis, dan formal tanpa menghilangkan konteks analogi maupun pesan penceramah.
+ATURAN STRUKTUR DOKUMEN (WAJIB PERSIS IKUTI FORMAT BERIKUT TANPA MODIFIKASI STRUKTUR):
 
-2. EKSTRAKSI AYAT AL-QUR'AN DAN HADITS:
-   - Setiap kali penceramah melafalkan penggalan ayat Al-Qur'an atau hadits secara lisan (misal potongan doa Allahumma Antas Salam, ayat tentang surga surah Yunus, doa selamat fid din wa afiyatan fil jasad, dsb.), identifikasi rujukan aslinya secara presisi.
-   - Wajib menyertakan:
-     a. Teks Arab berharakat lengkap dalam format blok kutipan:
-        > [Teks Arab Berharakat]
-        > *"Terjemahan resmi Kemenag RI atau terjemahan hadits shahih..."*
-     b. Nama surah dan nomor ayat yang jelas (contoh: QS. Yunus: 10, QS. Yunus: 25, QS. Al-Baqarah: 152, HR. Muslim no. 591).
-     c. Analisis makna per frasa / kata kunci (*dilalah lafzhiyyah*).
+KAJIAN {$judulUpper}
+Hari, Tanggal : {$meta['date']}
+Tempat : {$meta['place']}
+Pemateri : {$meta['speaker']}
+Tema / Kitab : {$meta['title']}
+Notulis : Tim Media & Notula Masjid Salahuddin
 
-3. STRUKTUR FORMAT DOKUMEN (HARUS PERSIS FORMAT MARKDOWN DI BAWAH):
-# {$meta['doc_type']}
-**Tema:** {$meta['title']}
-**Fokus Bahasan:** [Tuliskan fokus pokok kajian berdasarkan transkrip]
-**Pemateri:** {$meta['speaker']}
----
+📌 RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
+[Tulis 2 paragraf ringkas, padat, dan berbobot yang merangkum esensi pokok kajian, latar belakang urgensi materi, serta benang merah bahasan].
 
-## 1. Intisari dan Latar Belakang Urgensi
-[Uraikan latar belakang masalah, urgensi tema dalam kehidupan seorang muslim, dan benang merah materi kajian].
+📑 DAFTAR ISI PEMBAHASAN
+[Judul Poin Pembahasan 1]
+[Judul Poin Pembahasan 2]
+[Judul Poin Pembahasan 3]
+[Judul Poin Pembahasan 4]
+(Tulis daftar judul pembahasan, satu baris per judul, tanpa nomor, tanpa bullet, tanpa strip)
 
-## 2. Analisis Dalil Al-Qur'an dan Sunnah
-[Uraikan dalil-dalil utama yang dibahas pemateri. Sertakan teks Arab berharakat lengkap, terjemahan, dan ulasan hikmahnya].
-
-### [Nama Sub-Bahasan Dalil] (QS. [Nama Surah]: [Ayat] atau Riwayat Hadits)
+📖 PEMBAHASAN LENGKAP
+1. [Judul Poin Pembahasan 1]
+[Uraian materi mengalir padat, jelas, menggunakan Bahasa Indonesia baku dan elegan tanpa sub-poin bersarang atau sub-header. Jika materi membahas dalil Al-Qur'an atau Hadits, cantumkan teks Arab berharakat lengkap dan terjemahan resmi dalam blok kutipan:
 > [Teks Arab Berharakat]
-> *"[Terjemahan]"*
+> *"[Terjemahan resmi]"*
+Lalu lanjutkan uraian hikmahnya secara langsung].
 
-* **[Kata Kunci / Frasa Arab 1]:** [Ulasan makna dan pesan teologis/akhlak]
-* **[Kata Kunci / Frasa Arab 2]:** [Ulasan makna dan hikmah]
+2. [Judul Poin Pembahasan 2]
+[Uraian materi berikutnya...]
 
-## 3. Hikmah, Konteks Sosial, dan Budaya
-[Uraikan hikmah, studi kasus, atau kritik membangun terhadap tradisi masyarakat dan sinkronisasi doa dengan gaya hidup yang dianalogikan oleh pemateri].
+3. [Judul Poin Pembahasan 3]
+...
 
-## 4. Sesi Diskusi / Tanya Jawab Interaktif
-[Jika dalam transkrip ada sesi tanya jawab atau diskusi (misalnya pertanyaan seputar posisi imam setelah salam, kisah para sahabat seperti Umar bin Khattab dan Abu Sulaiman, interaksi pemateri dengan jamaah), rangkum dalam format tanya jawab berbobot yang lugas. Jika tidak ada tanya jawab, rangkum studi kasus penerapan fikih praktis].
+💡 KESIMPULAN & PESAN AKSI
+[Poin 1 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan nyata]
+[Poin 2 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan nyata]
+[Poin 3 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan nyata]
 
-## 5. Ringkasan Poin Aksi dan Karakter Pribadi Muslim
-1. **[Poin Aksi 1]:** [Penjelasan praktis amalan]
-2. **[Poin Aksi 2]:** [Penjelasan praktis amalan]
-3. **[Poin Aksi 3]:** [Penjelasan praktis amalan]
-4. **[Poin Aksi 4]:** [Penjelasan praktis amalan]
-5. **[Poin Aksi 5]:** [Penjelasan praktis amalan]
-
----
-
-### Catatan Kaki (Footnotes): Informasi Tambahan di Luar Transkrip
-
-[^1]: **[Istilah Fikih / Kaidah]:** [Penjelasan ilmiah tambahan mengenai istilah atau konsep yang disinggung pemateri].
-[^2]: **[Identifikasi Referensi Al-Qur'an / Hadits]:** [Keterangan takhrij hadits atau penegasan nomor ayat Al-Qur'an yang dilafalkan secara lisan oleh pemateri].
-[^3]: **[Konteks Sejarah / Tokoh]:** [Keterangan biografi singkat sahabat atau tokoh yang disebut dalam transkrip].
-
-(Pastikan setiap catatan kaki [^1], [^2], dst. ditautkan di dalam teks tubuh utama pada kalimat yang relevan).
-
-ATURAN OUTPUT:
-- Berikan HANYA teks dokumen Markdown di atas secara langsung dimulai dari "# {$meta['doc_type']}".
-- DILARANG menambahkan kalimat pengantar apapun seperti "Berikut adalah hasil notula..." atau penutup.
+PEDOMAN KETAT:
+1. PEMBERSIHAN TOTAL:
+   - Bersihkan SEMUA timestamp YouTube ("0.000 detik", "00:00", dll).
+   - Ubah kosakata percakapan santai, dialek bahasa daerah (misal bahasa Jawa santai: "wis gelem zikir", "loro merer", "lingges kambang", dll), atau celetukan lisan menjadi kalimat bahasa Indonesia resmi, formal, dan berbobot tanpa mengurangi konteks analogi penceramah.
+2. DILARANG KERAS MENGGUNAKAN:
+   - Sub-header bertingkat (###, ####).
+   - Sub-poin bersarang / nested bullets (daftar poin di dalam poin).
+   - Catatan kaki / footnotes ([^1], [^2], dll). Semua penjelasan penting harus langsung disatukan ke dalam teks narasi.
+3. OUTPUT HARUS BERSIH:
+   - Berikan HANYA teks notula markdown di atas, langsung dimulai dari baris "KAJIAN {$judulUpper}".
+   - DILARANG menambahkan kata pembuka ("Berikut adalah notula..."), penutup, atau tanda kurung kode markdown (```markdown).
 
 TRANSKRIP MENTAH YOUTUBE YANG AKAN DIPROSES:
 \"\"\"
 {$transcript}
+\"\"\"
+PROMPT;
+    }
+
+    /**
+     * Membangun prompt untuk mengonversi notula lama menjadi format ringkas standar baru.
+     */
+    protected function buildReformatPrompt(string $oldNotula, array $meta = []): string
+    {
+        $defaultPlace = !empty($meta['place']) ? $meta['place'] : 'Masjid Salahuddin KPP Madya Malang';
+        $defaultSpeaker = !empty($meta['speaker_name']) ? $meta['speaker_name'] : '';
+        $defaultTitle = !empty($meta['title']) ? $meta['title'] : '';
+        $defaultDate = !empty($meta['date']) ? $meta['date'] : '';
+
+        return <<<PROMPT
+Anda adalah Sekretaris Keilmuan dan Ahli Notulensi Eksekutif Kajian Islam resmi Masjid Salahuddin yang sangat teliti, objektif, dan mahir merangkum risalah ilmiah menjadi format yang ringkas, elegan, dan padat.
+
+TUGAS ANDA:
+Ubah dan susun kembali naskah risalah/notula kajian lama di bawah ini (yang sebelumnya memiliki format berbelit, terlalu banyak sub-header, sub-poin bersarang, atau catatan kaki/footnotes) menjadi format standar notula baru Masjid Salahuddin yang bersih, elegan, dan padat.
+
+ATURAN STRUKTUR DOKUMEN TARGET (WAJIB PERSIS IKUTI FORMAT BERIKUT):
+
+KAJIAN [JUDUL/TEMA DALAM HURUF BESAR]
+Hari, Tanggal : [Ambil hari dan tanggal dari dokumen lama, atau gunakan "{$defaultDate}"]
+Tempat : {$defaultPlace}
+Pemateri : [Ambil nama lengkap pemateri beserta gelar dari dokumen lama, atau gunakan "{$defaultSpeaker}"]
+Tema / Kitab : [Ambil tema kajian atau kitab dari dokumen lama, atau gunakan "{$defaultTitle}"]
+Notulis : Tim Media & Notula Masjid Salahuddin
+
+📌 RINGKASAN EKSEKUTIF (EXECUTIVE SUMMARY)
+[Tulis 2 paragraf ringkas, padat, dan berbobot yang merangkum esensi kajian dan latar belakang urgensi materi].
+
+📑 DAFTAR ISI PEMBAHASAN
+[Judul Poin Pembahasan 1]
+[Judul Poin Pembahasan 2]
+[Judul Poin Pembahasan 3]
+[Judul Poin Pembahasan 4]
+(Daftar judul poin pembahasan, satu baris per judul, tanpa nomor dan tanpa bullet)
+
+📖 PEMBAHASAN LENGKAP
+1. [Judul Poin Pembahasan 1]
+[Uraian materi yang mengalir secara naratif, padat, jelas, dan berbobot tanpa sub-poin bersarang atau sub-header. Jika dalam materi terdapat pembahasan dalil ayat Al-Qur'an atau Hadits, tetap wajib mencantumkan teks Arab berharakat lengkap dan terjemahan resminya dalam format blok kutipan:
+> [Teks Arab Berharakat]
+> *"[Terjemahan]"*
+Lalu lanjutkan ulasan hikmahnya secara langsung tanpa membuat sub-poin nested atau sub-header tambahan].
+
+2. [Judul Poin Pembahasan 2]
+[Uraian materi berikutnya...]
+
+3. [Judul Poin Pembahasan 3]
+...
+
+💡 KESIMPULAN & PESAN AKSI
+[Poin 1 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan aksi nyata]
+[Poin 2 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan aksi nyata]
+[Poin 3 Judul Tebal: Uraian ringkas padat kesimpulan dan amalan aksi nyata]
+
+PEDOMAN KETAT:
+1. PANGKAS & RINGKAS:
+   - Hilangkan semua sub-header (###, ####).
+   - Hilangkan semua sub-poin bersarang (nested bullet points).
+   - Hilangkan bagian Catatan Kaki (Footnotes [^1], [^2], dll). Jika ada takhrij hadits atau catatan istilah penting di footnote lama, leburkan keterangannya secara ringkas langsung ke dalam alur narasi di nomor pembahasan yang relevan.
+2. TETAPKAN DALIL ARAB:
+   - Jika dokumen lama memuat dalil Al-Qur'an atau Hadits (teks Arab), tetap pertahankan teks Arab berharakat dan terjemahannya dalam format blok kutipan (>).
+3. OUTPUT HARUS BERSIH:
+   - Berikan HANYA teks Markdown di atas, langsung dimulai dari baris "KAJIAN [JUDUL]".
+   - DILARANG menambahkan kalimat pembuka atau penutup ("Berikut adalah...", dll) dan DILARANG membungkus dengan kode blok markdown (```markdown).
+
+NASKAH NOTULA LAMA YANG AKAN DIUBAH:
+\"\"\"
+{$oldNotula}
 \"\"\"
 PROMPT;
     }
