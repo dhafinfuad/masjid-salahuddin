@@ -20,22 +20,6 @@
                     <span class="truncate text-slate-300 text-xs font-normal" x-show="notulaForm.title" x-text="notulaForm.title"></span>
                 </div>
 
-                <!-- Center: Mode Tab Switcher (Preview vs Editor) -->
-                <div class="flex items-center bg-gov-900/90 rounded-lg p-0.5 border border-slate-700/80 text-xs font-medium">
-                    <button type="button" @click="notulaActiveTab = 'preview'"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md transition cursor-pointer"
-                        :class="notulaActiveTab === 'preview' ? 'bg-gov-700 text-white shadow-xs font-semibold' : 'text-slate-300 hover:text-white hover:bg-gov-800'">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <span>Pratinjau</span>
-                    </button>
-                    <button type="button" @click="notulaActiveTab = 'editor'"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md transition cursor-pointer"
-                        :class="notulaActiveTab === 'editor' ? 'bg-gov-700 text-white shadow-xs font-semibold' : 'text-slate-300 hover:text-white hover:bg-gov-800'">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                        <span>Tulis / Edit</span>
-                    </button>
-                </div>
-
                 <!-- Right Quick Action Buttons -->
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     <!-- Zoom Buttons (Only visible in Preview tab) -->
@@ -60,18 +44,52 @@
 
             <!-- Main Body: Tab 1 Preview Eksekutif -->
             <div x-show="notulaActiveTab === 'preview'" class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable">
-                <div class="w-full max-w-4xl bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200/80 overflow-hidden flex flex-col h-fit">
-                    <main id="notulaContentContainer" 
-                        class="p-5 sm:p-8 md:p-11 space-y-6 sm:space-y-7 leading-relaxed text-slate-700 transition-all"
-                        :class="['text-sm', 'text-base', 'text-lg', 'text-xl'][notulaFontSizeIndex]"
-                        x-html="window.parseNotulaToHtml ? window.parseNotulaToHtml(notulaForm.raw_text, notulaForm) : notulaForm.raw_text">
-                    </main>
+                <div class="w-full max-w-4xl space-y-4">
+                    <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit -->
+                    <div class="no-print flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
+                        <button type="button" @click="notulaActiveTab = 'preview'"
+                            class="flex-1 py-1.5 sm:py-2 rounded-lg font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Pratinjau</span>
+                        </button>
+                        <button type="button" @click="notulaActiveTab = 'editor'"
+                            class="flex-1 py-1.5 sm:py-2 rounded-lg font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="notulaActiveTab === 'editor' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Tulis / Edit</span>
+                        </button>
+                    </div>
+
+                    <div class="w-full bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200/80 overflow-hidden flex flex-col h-fit">
+                        <main id="notulaContentContainer" 
+                            class="p-5 sm:p-8 md:p-11 space-y-6 sm:space-y-7 leading-relaxed text-slate-700 transition-all"
+                            :class="['text-sm', 'text-base', 'text-lg', 'text-xl'][notulaFontSizeIndex]"
+                            x-html="window.parseNotulaToHtml ? window.parseNotulaToHtml(notulaForm.raw_text, notulaForm) : notulaForm.raw_text">
+                        </main>
+                    </div>
                 </div>
             </div>
 
             <!-- Main Body: Tab 2 Editor / Tulis Notula -->
             <div x-show="notulaActiveTab === 'editor'" class="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 space-y-4 notula-scrollable">
                 <div class="max-w-4xl mx-auto space-y-4">
+                    <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit -->
+                    <div class="no-print flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200">
+                        <button type="button" @click="notulaActiveTab = 'preview'"
+                            class="flex-1 py-1.5 sm:py-2 rounded-lg font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Pratinjau</span>
+                        </button>
+                        <button type="button" @click="notulaActiveTab = 'editor'"
+                            class="flex-1 py-1.5 sm:py-2 rounded-lg font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="notulaActiveTab === 'editor' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Tulis / Edit</span>
+                        </button>
+                    </div>
+
                     <!-- Petunjuk / Helper Banner -->
                     <div class="bg-gov-50/80 border border-gov-200 rounded-xl p-4 text-xs text-gov-900 flex items-start gap-3">
                         <svg class="w-5 h-5 text-gov-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
