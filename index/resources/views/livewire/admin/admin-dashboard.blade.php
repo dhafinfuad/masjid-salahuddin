@@ -954,12 +954,10 @@
             noticeText: ''
         },
         openDeleteModal(options) {
-            // Khusus halaman Kas dan Keuangan: Gunakan SweetAlert2 (Opsi 1)
-            if (options.action === 'deleteFinance' || options.action === 'deleteFinanceCategory' || options.useSweetAlert) {
-                if (typeof window.showSweetAlertConfirm === 'function') {
-                    window.showSweetAlertConfirm(options, $wire);
-                    return;
-                }
+            // Gunakan modal konfirmasi bergaya Gambar 1 yang kebal terhadap glitch DOM
+            if (typeof window.showSweetAlertConfirm === 'function') {
+                window.showSweetAlertConfirm(options, $wire);
+                return;
             }
 
             const isDanger = !options.type || options.type === 'danger';

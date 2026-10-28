@@ -216,8 +216,106 @@
             </button>
         </div>
 
-        <!-- SweetAlert2 Modal Engine -->
+        <!-- SweetAlert2 Modal Engine (Styled to Match Native Modal Design Exactly) -->
         <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+        <style>
+            .swal2-container.swal2-backdrop-show {
+                background: rgba(15, 23, 42, 0.6) !important;
+                backdrop-filter: blur(4px) !important;
+                -webkit-backdrop-filter: blur(4px) !important;
+            }
+            .swal2-modal-salahuddin {
+                background: #ffffff !important;
+                border-radius: 1rem !important; /* rounded-2xl (16px), identik dengan Gambar 1 */
+                border: 1px solid rgba(226, 232, 240, 0.8) !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+                padding: 1.5rem !important; /* p-6 */
+                max-width: 28rem !important; /* max-w-md */
+                width: 92% !important;
+                box-sizing: border-box !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                position: relative !important;
+            }
+            .swal2-modal-salahuddin .swal2-html-container {
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                text-align: left !important;
+            }
+            .swal2-close-salahuddin {
+                position: absolute !important;
+                top: 1.25rem !important;
+                right: 1.25rem !important;
+                width: 2rem !important;
+                height: 2rem !important;
+                border-radius: 0.5rem !important;
+                color: #94a3b8 !important;
+                transition: all 0.15s ease !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-shadow: none !important;
+                outline: none !important;
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+                padding: 0 !important;
+                font-family: inherit !important;
+            }
+            .swal2-close-salahuddin:hover {
+                color: #0f172a !important;
+                background-color: #f1f5f9 !important;
+            }
+            .swal2-actions-salahuddin {
+                width: 100% !important;
+                margin: 1rem 0 0 0 !important;
+                padding-top: 0.75rem !important;
+                border-top: 1px solid #f1f5f9 !important;
+                display: flex !important;
+                justify-content: flex-end !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+            .swal2-cancel-salahuddin {
+                padding: 0.5rem 0.875rem !important;
+                border-radius: 0.5rem !important;
+                color: #475569 !important; /* text-slate-600 */
+                font-weight: 500 !important;
+                font-size: 0.875rem !important;
+                background: transparent !important;
+                border: none !important;
+                cursor: pointer !important;
+                transition: all 0.15s ease !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+            .swal2-cancel-salahuddin:hover {
+                background-color: #f1f5f9 !important;
+                color: #0f172a !important;
+            }
+            .swal2-confirm-salahuddin {
+                padding: 0.5rem 1rem !important;
+                border-radius: 0.5rem !important;
+                font-weight: 700 !important;
+                font-size: 0.875rem !important;
+                color: #ffffff !important;
+                border: none !important;
+                cursor: pointer !important;
+                transition: all 0.15s ease !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.375rem !important;
+                outline: none !important;
+            }
+            .swal2-confirm-salahuddin:disabled {
+                opacity: 0.5 !important;
+                cursor: not-allowed !important;
+            }
+        </style>
         <script>
             window.showSweetAlertConfirm = function(options, wireInstance) {
                 if (typeof Swal === 'undefined') {
@@ -229,54 +327,155 @@
                 const isWarning = options.type === 'warning';
                 const isPrimary = options.type === 'primary';
 
-                const confirmColor = options.confirmButtonColor || (isPrimary ? '#102a43' : (isWarning ? '#d97706' : '#e11d48'));
+                const title = options.title || (isPrimary ? 'Konfirmasi Tindakan' : 'Konfirmasi Hapus Data');
+                const message = options.message || (isPrimary ? 'Apakah Anda yakin ingin memproses tindakan ini?' : 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.');
                 const confirmText = options.confirmButtonText || (isPrimary ? 'Ya, Lanjutkan' : (isWarning ? 'Ya, Hapus' : 'Ya, Hapus'));
+                const loadingText = options.loadingText || (isPrimary ? 'Memproses...' : 'Menghapus...');
 
-                let htmlContent = '<div style="text-align: left; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">';
-                if (options.message) {
-                    htmlContent += `<p style="font-size: 0.8125rem; color: #64748b; line-height: 1.5; margin: 0;">${options.message}</p>`;
+                // 1. Icon Badge di kiri atas (identik persis dengan Gambar 1)
+                let iconBadgeHtml = '';
+                if (isPrimary) {
+                    iconBadgeHtml = `
+                        <div style="width: 3rem; height: 3rem; min-width: 3rem; border-radius: 0.75rem; background-color: #f0f9ff; border: 1px solid rgba(186, 230, 253, 0.7); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 1.5rem; height: 1.5rem; color: #0284c7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <line x1="19" y1="8" x2="19" y2="14"></line>
+                                <line x1="22" y1="11" x2="16" y2="11"></line>
+                            </svg>
+                        </div>
+                    `;
+                } else if (isWarning) {
+                    iconBadgeHtml = `
+                        <div style="width: 3rem; height: 3rem; min-width: 3rem; border-radius: 0.75rem; background-color: #fffbeb; border: 1px solid rgba(253, 230, 138, 0.7); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 1.5rem; height: 1.5rem; color: #d97706;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                    `;
+                } else {
+                    // Danger (Identik dengan Gambar 1)
+                    iconBadgeHtml = `
+                        <div style="width: 3rem; height: 3rem; min-width: 3rem; border-radius: 0.75rem; background-color: #fff1f2; border: 1px solid rgba(254, 205, 211, 0.8); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 1.5rem; height: 1.5rem; color: #e11d48;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </div>
+                    `;
                 }
+
+                // Header Layout
+                const headerHtml = `
+                    <div style="display: flex; align-items: flex-start; gap: 1rem; text-align: left; padding-right: 1.75rem;">
+                        ${iconBadgeHtml}
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 style="font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.35; font-family: 'Plus Jakarta Sans', sans-serif;">${title}</h3>
+                            <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; margin-bottom: 0; line-height: 1.45; font-family: 'Plus Jakarta Sans', sans-serif;">${message}</p>
+                        </div>
+                    </div>
+                `;
+
+                // 2. Item Name Box (Identik dengan Gambar 1: rounded-xl, background merah muda halus, teks merah tua di tengah)
+                let itemHtml = '';
                 if (options.itemName) {
-                    const bg = isPrimary ? '#f0f9ff' : (isWarning ? '#fffbeb' : '#fff1f2');
-                    const border = isPrimary ? '#bae6fd' : (isWarning ? '#fde68a' : '#fecdd3');
-                    const text = isPrimary ? '#0369a1' : (isWarning ? '#b45309' : '#be123c');
-                    htmlContent += `
-                        <div style="background-color: ${bg}; border: 1px solid ${border}; color: ${text}; padding: 0.75rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; word-break: break-word;">
+                    const bg = isPrimary ? '#f0f9ff' : (isWarning ? '#fffbeb' : 'rgba(255, 241, 242, 0.7)');
+                    const border = isPrimary ? 'rgba(186, 230, 253, 0.7)' : (isWarning ? 'rgba(253, 230, 138, 0.7)' : 'rgba(254, 205, 211, 0.7)');
+                    const text = isPrimary ? '#0369a1' : (isWarning ? '#78350f' : '#881337');
+                    itemHtml = `
+                        <div style="padding: 0.75rem 1rem; border-radius: 0.75rem; background-color: ${bg}; border: 1px solid ${border}; color: ${text}; font-size: 0.8125rem; font-weight: 700; text-align: center; word-break: break-word; line-height: 1.45; font-family: 'Plus Jakarta Sans', sans-serif;">
                             ${options.itemName}
                         </div>
                     `;
                 }
+
+                // 3. Notice / Caution Banner (Identik dengan Gambar 1: background kuning muda halus dengan ikon info)
+                let noticeHtml = '';
                 if (options.noticeText !== false && options.noticeText !== '') {
-                    const notice = options.noticeText || 'Tindakan ini tidak dapat dibatalkan. Pastikan Anda telah memeriksa kembali data yang akan diproses.';
-                    htmlContent += `
-                        <div style="background-color: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 0.625rem 0.75rem; border-radius: 0.75rem; font-size: 0.6875rem; line-height: 1.4;">
-                            ${notice}
+                    const noticeText = options.noticeText || 'Tindakan ini tidak dapat dibatalkan. Pastikan Anda telah memeriksa kembali data yang akan diproses.';
+                    const bg = isPrimary ? '#f8fafc' : 'rgba(254, 252, 232, 0.7)';
+                    const border = isPrimary ? 'rgba(226, 232, 240, 0.8)' : 'rgba(253, 230, 138, 0.6)';
+                    const text = isPrimary ? '#334155' : '#78350f';
+                    const iconColor = isPrimary ? '#64748b' : '#d97706';
+                    noticeHtml = `
+                        <div style="padding: 0.75rem 1rem; border-radius: 0.75rem; background-color: ${bg}; border: 1px solid ${border}; color: ${text}; font-size: 0.6875rem; line-height: 1.45; display: flex; align-items: flex-start; gap: 0.5rem; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <svg style="width: 1rem; height: 1rem; color: ${iconColor}; flex-shrink: 0; margin-top: 0.125rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <span style="line-height: 1.45;">${noticeText}</span>
                         </div>
                     `;
                 }
-                htmlContent += '</div>';
+
+                // Confirm button styling
+                const confirmBg = isPrimary ? '#102a43' : (isWarning ? '#d97706' : '#e11d48');
+                const confirmIconSvg = isPrimary
+                    ? '<svg style="width: 0.875rem; height: 0.875rem;" class="shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+                    : '<svg style="width: 0.875rem; height: 0.875rem;" class="shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
 
                 Swal.fire({
-                    title: `<span style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">${options.title || 'Konfirmasi Tindakan'}</span>`,
-                    html: htmlContent,
-                    icon: isPrimary ? 'info' : (isWarning ? 'warning' : 'warning'),
-                    iconColor: confirmColor,
+                    html: `
+                        <div style="font-family: 'Plus Jakarta Sans', sans-serif; display: flex; flex-direction: column; gap: 0.875rem;">
+                            ${headerHtml}
+                            ${itemHtml}
+                            ${noticeHtml}
+                        </div>
+                    `,
+                    showCloseButton: true,
+                    closeButtonHtml: '<svg style="width: 1.25rem; height: 1.25rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
                     showCancelButton: true,
-                    confirmButtonColor: confirmColor,
-                    cancelButtonColor: '#94a3b8',
-                    confirmButtonText: confirmText,
-                    cancelButtonText: 'Batal',
+                    buttonsStyling: false,
                     reverseButtons: true,
                     focusCancel: true,
-                    showLoaderOnConfirm: true,
+                    showLoaderOnConfirm: false,
                     allowOutsideClick: () => !Swal.isLoading(),
                     allowEscapeKey: () => !Swal.isLoading(),
+                    confirmButtonText: `${confirmIconSvg}<span>${confirmText}</span>`,
+                    cancelButtonText: 'Batal',
                     customClass: {
-                        popup: 'rounded-2xl border border-slate-200/90 shadow-2xl p-5 sm:p-6',
-                        confirmButton: 'font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs',
-                        cancelButton: 'font-semibold text-xs px-4 py-2.5 rounded-xl'
+                        popup: 'swal2-modal-salahuddin',
+                        closeButton: 'swal2-close-salahuddin',
+                        actions: 'swal2-actions-salahuddin',
+                        confirmButton: 'swal2-confirm-salahuddin',
+                        cancelButton: 'swal2-cancel-salahuddin'
+                    },
+                    didOpen: () => {
+                        const confirmBtn = Swal.getConfirmButton();
+                        if (confirmBtn) {
+                            confirmBtn.style.backgroundColor = confirmBg;
+                        }
                     },
                     preConfirm: async () => {
+                        const confirmBtn = Swal.getConfirmButton();
+                        const cancelBtn = Swal.getCancelButton();
+                        const closeBtn = Swal.getCloseButton();
+
+                        if (confirmBtn) {
+                            confirmBtn.disabled = true;
+                            confirmBtn.innerHTML = `
+                                <svg style="width: 0.875rem; height: 0.875rem; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none">
+                                    <circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path style="opacity: 0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>${loadingText}</span>
+                            `;
+                        }
+                        if (cancelBtn) {
+                            cancelBtn.disabled = true;
+                            cancelBtn.style.opacity = '0.5';
+                            cancelBtn.style.pointerEvents = 'none';
+                        }
+                        if (closeBtn) {
+                            closeBtn.disabled = true;
+                            closeBtn.style.opacity = '0.4';
+                            closeBtn.style.pointerEvents = 'none';
+                        }
+
                         try {
                             const params = Array.isArray(options.params)
                                 ? options.params
@@ -284,7 +483,21 @@
                             await wireInstance.call(options.action, ...params);
                             return true;
                         } catch (error) {
-                            console.error('SweetAlert action error:', error);
+                            console.error('Confirm action error:', error);
+                            if (confirmBtn) {
+                                confirmBtn.disabled = false;
+                                confirmBtn.innerHTML = `${confirmIconSvg}<span>${confirmText}</span>`;
+                            }
+                            if (cancelBtn) {
+                                cancelBtn.disabled = false;
+                                cancelBtn.style.opacity = '1';
+                                cancelBtn.style.pointerEvents = 'auto';
+                            }
+                            if (closeBtn) {
+                                closeBtn.disabled = false;
+                                closeBtn.style.opacity = '1';
+                                closeBtn.style.pointerEvents = 'auto';
+                            }
                             Swal.showValidationMessage(`Gagal: ${error?.message || 'Terjadi kesalahan sistem'}`);
                             return false;
                         }

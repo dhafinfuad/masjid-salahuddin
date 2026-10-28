@@ -2379,16 +2379,10 @@
                 </button>
             </div>
 
-            <!-- Item Name Highlight Badge -->
-            <div x-show="confirmDeleteModal.itemName" class="p-3 rounded-xl border flex items-start gap-2.5 text-xs"
-                :class="(confirmDeleteModal.type === 'primary') ? 'bg-sky-50/70 border-sky-200/70 text-sky-900' : ((confirmDeleteModal.type === 'warning') ? 'bg-amber-50/70 border-amber-200/70 text-amber-900' : 'bg-rose-50/70 border-rose-200/70 text-rose-900')">
-                <svg x-show="confirmDeleteModal.type === 'primary'" class="w-4 h-4 shrink-0 mt-0.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                </svg>
-                <svg x-show="confirmDeleteModal.type !== 'primary'" class="w-4 h-4 shrink-0 mt-0.5" :class="(confirmDeleteModal.type === 'warning') ? 'text-amber-600' : 'text-rose-500'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-                <span class="font-bold line-clamp-3 wrap-break-word whitespace-pre-line leading-relaxed" x-text="confirmDeleteModal.itemName"></span>
+            <!-- Item Name Highlight Badge (Identik dengan Gambar 1: teks merah tebal di tengah) -->
+            <div x-show="confirmDeleteModal.itemName" class="p-3 rounded-xl border text-center text-xs font-bold wrap-break-word whitespace-pre-line leading-relaxed"
+                :class="(confirmDeleteModal.type === 'primary') ? 'bg-sky-50/70 border-sky-200/70 text-sky-900' : ((confirmDeleteModal.type === 'warning') ? 'bg-amber-50/70 border-amber-200/70 text-amber-900' : 'bg-rose-50/70 border-rose-200/70 text-rose-900')"
+                x-text="confirmDeleteModal.itemName">
             </div>
 
             <!-- Notice / Caution Banner -->
