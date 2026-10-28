@@ -96,7 +96,7 @@
                     </div>
                 @else
                     <!-- Form Input -->
-                    <form wire:submit.prevent="submit" class="space-y-4 text-xs">
+                    <form wire:submit.prevent="submit" novalidate class="space-y-4 text-xs">
                         
                         <!-- Anti-spam Honeypot (hidden from real users) -->
                         <div class="hidden" aria-hidden="true" style="display: none;">
@@ -166,7 +166,7 @@
                         </div>
 
                         <!-- Isi Saran & Kritik (Wajib) -->
-                        <div>
+                        <div x-data="{ err: '', touched: false }">
                             <div class="flex items-center justify-between mb-1">
                                 <label class="block font-semibold text-slate-700">
                                     Isi Saran, Kritik, atau Aspirasi <span class="text-rose-500">*</span>
@@ -174,10 +174,13 @@
                                 <span class="text-[10px] text-slate-400" x-text="charCount + ' / 2000'"></span>
                             </div>
                             <textarea wire:model="message" rows="5"
-                                @input="updateCount($event.target.value)"
+                                @input="updateCount($event.target.value); if (touched) err = (!$el.value || !$el.value.trim()) ? 'Isi saran/pesan wajib diisi.' : ''"
+                                @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Isi saran/pesan wajib diisi.' : ''"
                                 placeholder="Tuliskan secara jelas saran, kritik konstruktif, pengaduan fasilitas, atau usulan kegiatan Anda di sini..."
-                                class="w-full p-2.5 border border-gov-border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition shadow-2xs leading-relaxed resize-y"></textarea>
-                            @error('message') <span class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
+                                class="w-full p-2.5 border rounded-lg bg-white text-gov-textMain text-xs focus:ring-1 outline-none transition shadow-2xs leading-relaxed resize-y"
+                                :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:border-gov-navy'"></textarea>
+                            <span x-show="err" x-text="err" class="text-rose-600 text-[11px] block mt-1 font-semibold" style="display: none;"></span>
+                            @error('message') <span x-show="!err" class="text-rose-600 text-[11px] block mt-1 font-semibold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Tombol Submit -->

@@ -43,7 +43,7 @@
             </div>
 
             <!-- Registration Form -->
-            <form wire:submit.prevent="register" 
+            <form wire:submit.prevent="register" novalidate
                 x-data="{ 
                     showPass: false,
                     email: '{{ addslashes($email) }}',
@@ -87,7 +87,7 @@
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </div>
-                        <input wire:model="name" type="text" placeholder="Contoh: Ahmad Dahlan, S.E., M.Ak." required
+                        <input wire:model="name" type="text" placeholder="Contoh: Ahmad Dahlan, S.E., M.Ak."
                             class="w-full pl-10 pr-3.5 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 text-sm text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                     @error('name') <span class="text-xs text-rose-600 mt-1 block font-medium">{{ $message }}</span> @enderror
@@ -107,8 +107,7 @@
                             x-model="email"
                             @input="hasInteracted = true"
                             type="email" 
-                            placeholder="namapegawai@pajak.go.id" 
-                            required
+                            placeholder="namapegawai@pajak.go.id"
                             :class="isInvalidDomain ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500' : (isPajakDomain ? 'border-emerald-400 bg-emerald-50/20 text-gov-textMain focus:ring-emerald-500 focus:border-emerald-500' : 'border-gov-border bg-slate-50/50 text-gov-textMain focus:ring-gov-navy focus:border-gov-navy')"
                             class="w-full pl-10 pr-3.5 py-2.5 rounded-lg border text-sm focus:bg-white focus:outline-none focus:ring-1 transition font-medium">
                     </div>
@@ -166,7 +165,7 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                 </svg>
                             </div>
-                            <input wire:model="password" :type="showPass ? 'text' : 'password'" placeholder="Min. 8 karakter (Kapital, angka, simbol)" required
+                            <input wire:model="password" :type="showPass ? 'text' : 'password'" placeholder="Min. 8 karakter (Kapital, angka, simbol)"
                                 class="w-full pl-10 pr-3.5 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 text-sm text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                         </div>
                         <p class="text-[11px] text-slate-500 mt-1">Minimal 8 karakter, wajib kombinasi huruf kapital, angka, dan simbol.</p>
@@ -183,7 +182,7 @@
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                 </svg>
                             </div>
-                            <input wire:model="password_confirmation" :type="showPass ? 'text' : 'password'" placeholder="Ulangi kata sandi" required
+                            <input wire:model="password_confirmation" :type="showPass ? 'text' : 'password'" placeholder="Ulangi kata sandi"
                                 class="w-full pl-10 pr-3.5 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 text-sm text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                         </div>
                         @error('password_confirmation') <span class="text-xs text-rose-600 mt-1 block font-medium">{{ $message }}</span> @enderror

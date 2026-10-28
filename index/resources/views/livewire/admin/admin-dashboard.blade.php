@@ -150,6 +150,39 @@
          showImportDutyModal: false,
          importDutyTab: 'paste',
          isEditingKajian: false,
+         kajianErrors: {},
+         validateKajianField(field) {
+             if (field === 'date') {
+                 if (!this.kajianForm.date) {
+                     this.kajianErrors.date = 'Hari & tanggal kajian wajib diisi.';
+                 } else {
+                     delete this.kajianErrors.date;
+                 }
+             }
+             if (field === 'title' && this.kajianForm.type !== 'jumat') {
+                 if (!this.kajianForm.title || !this.kajianForm.title.trim()) {
+                     this.kajianErrors.title = 'Judul / tema kajian wajib diisi.';
+                 } else {
+                     delete this.kajianErrors.title;
+                 }
+             }
+             if (field === 'speaker_name' && this.kajianForm.type !== 'jumat') {
+                 if (!this.kajianForm.speaker_name || !this.kajianForm.speaker_name.trim()) {
+                     this.kajianErrors.speaker_name = 'Nama pembicara wajib diisi.';
+                 } else {
+                     delete this.kajianErrors.speaker_name;
+                 }
+             }
+         },
+         validateKajianAll() {
+             this.kajianErrors = {};
+             this.validateKajianField('date');
+             if (this.kajianForm.type !== 'jumat') {
+                 this.validateKajianField('title');
+                 this.validateKajianField('speaker_name');
+             }
+             return Object.keys(this.kajianErrors).length === 0;
+         },
          kajianForm: {
              id: null,
              type: 'pekanan',
@@ -182,6 +215,7 @@
          },
          openCreateKajian(type = 'pekanan') {
              this.isEditingKajian = false;
+             this.kajianErrors = {};
              this.kajianForm = {
                  id: null,
                  type: type || 'pekanan',
@@ -215,6 +249,7 @@
          },
          openEditKajian(data) {
              this.isEditingKajian = true;
+             this.kajianErrors = {};
              this.kajianForm = {
                  id: data.id,
                  type: data.type || 'pekanan',
@@ -251,6 +286,7 @@
          closeKajianModal() {
              this.showKajianModal = false;
              this.isEditingKajian = false;
+             this.kajianErrors = {};
              if (typeof $wire !== 'undefined') {
                  $wire.set('showKajianModal', false, false);
                  $wire.set('isEditingKajian', false, false);
@@ -486,6 +522,29 @@
         showImportAgendaModal: false,
         importAgendaTab: 'paste',
         isEditingAgenda: false,
+        agendaErrors: {},
+        validateAgendaField(field) {
+            if (field === 'title') {
+                if (!this.agendaForm.title || !this.agendaForm.title.trim()) {
+                    this.agendaErrors.title = 'Nama kegiatan wajib diisi.';
+                } else {
+                    delete this.agendaErrors.title;
+                }
+            }
+            if (field === 'event_date') {
+                if (!this.agendaForm.event_date) {
+                    this.agendaErrors.event_date = 'Tanggal kegiatan wajib diisi.';
+                } else {
+                    delete this.agendaErrors.event_date;
+                }
+            }
+        },
+        validateAgendaAll() {
+            this.agendaErrors = {};
+            this.validateAgendaField('title');
+            this.validateAgendaField('event_date');
+            return Object.keys(this.agendaErrors).length === 0;
+        },
         agendaForm: {
             id: null,
             title: '',
@@ -500,6 +559,7 @@
         },
         openCreateAgenda() {
             this.isEditingAgenda = false;
+            this.agendaErrors = {};
             this.agendaForm = {
                 id: null,
                 title: '',
@@ -524,6 +584,7 @@
         },
         openEditAgenda(data) {
             this.isEditingAgenda = true;
+            this.agendaErrors = {};
             this.agendaForm = {
                 id: data.id,
                 title: data.title || '',

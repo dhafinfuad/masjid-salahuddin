@@ -78,7 +78,7 @@
         @endif
 
         <!-- Login Form -->
-        <form wire:submit.prevent="login" x-data="{ showPass: false }" class="space-y-4 text-sm">
+        <form wire:submit.prevent="login" novalidate x-data="{ showPass: false }" class="space-y-4 text-sm">
             <div>
                 <label class="block font-semibold text-slate-700 mb-1.5">ID Email *</label>
                 <div class="relative flex items-center">

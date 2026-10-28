@@ -960,13 +960,17 @@
                     </button>
                 </div>
             @else
-                <form wire:submit.prevent="submitSocialRegistration" class="space-y-3.5 text-xs">
-                    <div>
+                <form wire:submit.prevent="submitSocialRegistration" novalidate class="space-y-3.5 text-xs">
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
                         <input type="text" wire:model="socialParticipantName"
                             placeholder="Nama sesuai KTP / Pegawai"
-                            class="w-full p-2.5 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition text-xs font-medium">
-                        @error('socialParticipantName') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
+                            class="w-full p-2.5 border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain focus:ring-1 transition text-xs font-medium"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:border-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-rose-500 text-[11px] block mt-0.5" style="display: none;"></span>
+                        @error('socialParticipantName') <span x-show="!err" class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                     </div>
 
                     <div>

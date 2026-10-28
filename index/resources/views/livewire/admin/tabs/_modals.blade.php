@@ -209,14 +209,14 @@
             </div>
 
             <!-- Form -->
-            <form @submit.prevent="$wire.saveYoutubeLink(youtubeForm.id, youtubeForm.youtube_url, youtubeForm.type)" class="space-y-4 text-xs">
+            <form novalidate @submit.prevent="$wire.saveYoutubeLink(youtubeForm.id, youtubeForm.youtube_url, youtubeForm.type)" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">
                         <span>URL Video atau Siaran YouTube</span>
                         <span class="text-rose-500">*</span>
                     </label>
                     <div class="relative">
-                        <input x-model="youtubeForm.youtube_url" type="url" required
+                        <input x-model="youtubeForm.youtube_url" type="url"
                             placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
                             class="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gov-border bg-white text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition shadow-2xs">
                         <svg class="w-4 h-4 text-rose-500 absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="currentColor">
@@ -303,7 +303,7 @@
                         data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <form @submit.prevent="$wire.saveKajian(kajianForm)" class="space-y-3.5 text-xs">
+            <form novalidate @submit.prevent="if (validateKajianAll()) { $wire.saveKajian(kajianForm); }" class="space-y-3.5 text-xs">
                 <!-- Pilihan Tipe Kajian jika menambah baru -->
                 <div x-show="!isEditingKajian">
                     <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
@@ -332,10 +332,15 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
-                        <input x-model="kajianForm.date" @change="updateKajianDefaultTime()" type="date"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
-                        @error('kajianDate') <span
-                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        <input x-model="kajianForm.date" 
+                            @change="updateKajianDefaultTime(); validateKajianField('date')" 
+                            @blur="validateKajianField('date')"
+                            type="date"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"
+                            :class="kajianErrors.date ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="kajianErrors.date" x-text="kajianErrors.date" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                        @error('kajianDate') <span x-show="!kajianErrors.date"
+                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">
@@ -350,11 +355,16 @@
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1"
                         x-text="kajianForm.type === 'jumat' ? 'Judul / Tema Khutbah Jumat (Opsional)' : 'Judul / Tema Kajian *'"></label>
-                    <input x-model="kajianForm.title" type="text"
+                    <input x-model="kajianForm.title" 
+                        @blur="validateKajianField('title')"
+                        @input="if (kajianErrors.title) validateKajianField('title')"
+                        type="text"
                         :placeholder="kajianForm.type === 'jumat' ? 'Kosongkan atau ketik tema khutbah (opsional)' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                    @error('kajianTitle') <span
-                    class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                        :class="kajianErrors.title ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="kajianErrors.title" x-text="kajianErrors.title" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                    @error('kajianTitle') <span x-show="!kajianErrors.title"
+                    class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Khusus Kajian Pekanan & Tematik -->
@@ -368,6 +378,7 @@
                         },
                         selectUstadz(u) {
                             kajianForm.speaker_name = u.name;
+                            delete kajianErrors.speaker_name;
                             if (u.phone && !kajianForm.speaker_phone) {
                                 kajianForm.speaker_phone = u.phone;
                             }
@@ -381,12 +392,14 @@
                         <div class="relative">
                             <input x-model="kajianForm.speaker_name"
                                 @focus="openSuggestions = true"
-                                @input="openSuggestions = true"
+                                @input="openSuggestions = true; if (kajianErrors.speaker_name) validateKajianField('speaker_name')"
+                                @blur="validateKajianField('speaker_name')"
                                 @keydown.escape="openSuggestions = false"
                                 type="text"
                                 placeholder="Ketik nama pembicara..."
                                 autocomplete="off"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                                :class="kajianErrors.speaker_name ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
 
                             <!-- Dropdown Saran Database Ustadz -->
                             <div x-show="openSuggestions && filteredUstadz.length > 0"
@@ -426,8 +439,9 @@
                                 </template>
                             </div>
                         </div>
-                        @error('kajianSpeakerName') <span
-                        class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
+                        <span x-show="kajianErrors.speaker_name" x-text="kajianErrors.speaker_name" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                        @error('kajianSpeakerName') <span x-show="!kajianErrors.speaker_name"
+                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">WhatsApp</label>
@@ -785,7 +799,7 @@
                         data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <form @submit.prevent="$wire.savePrayerDuty(dutyForm)" class="space-y-4 text-xs">
+            <form novalidate @submit.prevent="$wire.savePrayerDuty(dutyForm)" class="space-y-4 text-xs">
                 <!-- Waktu Shalat Toggle -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Waktu Shalat *</label>
@@ -1164,7 +1178,7 @@
             </div>
 
             <!-- Form Body -->
-            <form wire:submit.prevent="executeBatchReplaceDuty" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="executeBatchReplaceDuty" class="space-y-4 text-xs">
                 <!-- Filter Scope 1: Cakupan Peran -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
@@ -1346,17 +1360,21 @@
                 </button>
             </div>
 
-            <form @submit.prevent="$wire.saveAgenda(agendaForm)" class="space-y-4 text-xs">
+            <form novalidate @submit.prevent="if (validateAgendaAll()) { $wire.saveAgenda(agendaForm); }" class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Left Column -->
                     <div class="space-y-3.5">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Nama Kegiatan <span
                                     class="text-rose-500">*</span></label>
-                            <input type="text" x-model="agendaForm.title" placeholder="Misal: Buka Puasa Bersama"
-                                required
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                            @error('agendaTitle') <span
+                            <input type="text" x-model="agendaForm.title" 
+                                @blur="validateAgendaField('title')"
+                                @input="if (agendaErrors.title) validateAgendaField('title')"
+                                placeholder="Misal: Buka Puasa Bersama"
+                                class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                                :class="agendaErrors.title ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                            <span x-show="agendaErrors.title" x-text="agendaErrors.title" class="text-rose-600 text-[11px] font-semibold block mt-1" style="display: none;"></span>
+                            @error('agendaTitle') <span x-show="!agendaErrors.title"
                                 class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
                             @enderror
                         </div>
@@ -1364,9 +1382,13 @@
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Tanggal Kegiatan <span
                                     class="text-rose-500">*</span></label>
-                            <input type="date" x-model="agendaForm.event_date" required
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
-                            @error('agendaDate') <span
+                            <input type="date" x-model="agendaForm.event_date" 
+                                @change="validateAgendaField('event_date')"
+                                @blur="validateAgendaField('event_date')"
+                                class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"
+                                :class="agendaErrors.event_date ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                            <span x-show="agendaErrors.event_date" x-text="agendaErrors.event_date" class="text-rose-600 text-[11px] font-semibold block mt-1" style="display: none;"></span>
+                            @error('agendaDate') <span x-show="!agendaErrors.event_date"
                                 class="text-rose-600 text-[11px] font-semibold block mt-1">{{ $message }}</span>
                             @enderror
                         </div>
@@ -1706,7 +1728,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveOdojAssignment" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="saveOdojAssignment" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nomor Juz *</label>
                     @php
@@ -1728,11 +1750,15 @@
                     @enderror
                 </div>
 
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Pegawai 1 *</label>
-                    <input type="text" wire:model="assignPegawai1" placeholder="Contoh: Ahmad Fauzi" required
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                    @error('assignPegawai1') <span
+                    <input type="text" wire:model="assignPegawai1" placeholder="Contoh: Ahmad Fauzi"
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Pegawai pembaca 1 wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Pegawai pembaca 1 wajib diisi.' : ''"
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                    @error('assignPegawai1') <span x-show="!err"
                         class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
@@ -1790,23 +1816,31 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveUser" class="space-y-3 text-xs">
+            <form novalidate wire:submit.prevent="saveUser" class="space-y-3 text-xs">
                 <!-- Nama Lengkap -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nama Ustadz *</label>
+                <div x-data="{ err: '', touched: false }">
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Pengguna *</label>
                     <input wire:model="userName" type="text" placeholder="Contoh: Dr. H. Bambang Irawan"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                    @error('userName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama pengguna wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama pengguna wajib diisi.' : ''"
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                    @error('userName') <span x-show="!err" class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <!-- Email & Kata Sandi -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Alamat Email *</label>
                         <input wire:model="userEmail" type="email" placeholder="nama@masjidsalahuddin.id"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                        @error('userEmail') <span
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Alamat email wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Alamat email wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                        @error('userEmail') <span x-show="!err"
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
@@ -1914,7 +1948,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveUploadDoc" class="space-y-3.5 text-xs">
+            <form novalidate wire:submit.prevent="saveUploadDoc" class="space-y-3.5 text-xs">
                 <!-- Input Berkas PDF -->
                 <div x-data="{ isDragging: false, isUploading: false, progress: 0 }"
                      x-on:livewire-upload-start="isUploading = true"
@@ -2607,7 +2641,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveFinance" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="saveFinance" class="space-y-4 text-xs">
                 @php
                     $isTesting = app()->runningUnitTests();
 
@@ -2711,11 +2745,15 @@
 
                 <!-- Tanggal & Kategori -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Tanggal Transaksi *</label>
-                        <input wire:model="financeDate" type="date" required
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
-                        @error('financeDate') <span
+                        <input wire:model="financeDate" type="date"
+                            @blur="touched = true; err = !$el.value ? 'Tanggal transaksi wajib diisi.' : ''"
+                            @change="if (touched) err = !$el.value ? 'Tanggal transaksi wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                        @error('financeDate') <span x-show="!err"
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
@@ -2754,22 +2792,30 @@
                             buttonClass="p-2.5 bg-slate-50/50"
                         />
                     </div>
-                    <div>
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Nominal Anggaran (Rp) *</label>
-                        <input wire:model="financeAmount" x-ribuan="$wire.financeAmount" type="text" inputmode="numeric" placeholder="Contoh: 1.500.000" required
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-bold">
-                        @error('financeAmount') <span
+                        <input wire:model="financeAmount" x-ribuan="$wire.financeAmount" type="text" inputmode="numeric" placeholder="Contoh: 1.500.000"
+                            @blur="touched = true; err = (!$el.value || $el.value === '0') ? 'Nominal transaksi wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || $el.value === '0') ? 'Nominal transaksi wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-bold"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                        @error('financeAmount') <span x-show="!err"
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 <!-- Deskripsi / Keterangan -->
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Uraian Transaksi *</label>
                     <textarea wire:model="financeDescription" rows="2"
-                        placeholder="Contoh: Pembelian sound system mimbar ruang sholat utama..." required
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
-                    @error('financeDescription') <span
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Keterangan transaksi wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Keterangan transaksi wajib diisi.' : ''"
+                        placeholder="Contoh: Pembelian sound system mimbar ruang sholat utama..."
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'"></textarea>
+                    <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                    @error('financeDescription') <span x-show="!err"
                     class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
@@ -2964,14 +3010,18 @@
             </div>
 
             <!-- Form Tambah / Edit Kategori -->
-            <form @submit.prevent="$wire.saveFinanceCategory(financeCategoryForm)" class="space-y-4 text-xs">
+            <form novalidate @submit.prevent="$wire.saveFinanceCategory(financeCategoryForm)" class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Nama Pos Anggaran *</label>
                         <input x-model="financeCategoryForm.name" type="text"
-                            placeholder="Misal: Biaya Operasional & Sarana" required
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                        @error('newCategoryName') <span
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
+                            placeholder="Misal: Biaya Operasional & Sarana"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                        @error('newCategoryName') <span x-show="!err"
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
                     <div>
@@ -3439,7 +3489,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="processLumpSumDeposit" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="processLumpSumDeposit" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nominal Transfer (Rp) *</label>
                     <input wire:model="lumpSumAmount" x-ribuan="$wire.lumpSumAmount" type="text" inputmode="numeric" placeholder="Contoh: 18.250.000"
@@ -3526,13 +3576,17 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveParticipant" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="saveParticipant" class="space-y-4 text-xs">
                 <!-- Nama Peserta -->
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
-                    <input wire:model="participantName" type="text" placeholder="Contoh: Dr. H. Bambang Irawan" required
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                    @error('participantName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    <input wire:model="participantName" type="text" placeholder="Contoh: Dr. H. Bambang Irawan"
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama penerima manfaat wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama penerima manfaat wajib diisi.' : ''"
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                    @error('participantName') <span x-show="!err" class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Program Pilihan & Nominal Bulanan -->
@@ -3557,7 +3611,6 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nominal Potongan Bulanan (Rp) *</label>
                         <input wire:model="participantAmount" x-ribuan="$wire.participantAmount" type="text" inputmode="numeric" placeholder="Contoh: 250.000"
-                            required
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-bold">
                         @error('participantAmount') <span
                         class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
@@ -3568,7 +3621,6 @@
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Periode Potongan *</label>
                     <input wire:model="participantPeriod" list="available-periods-list" type="text" placeholder="Periode {{ now()->month }}/{{ now()->year }}"
-                        required
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     <datalist id="available-periods-list">
                         @if(isset($availablePeriods))
@@ -4004,13 +4056,17 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveSocialProgram" class="space-y-4 text-xs">
+            <form novalidate wire:submit.prevent="saveSocialProgram" class="space-y-4 text-xs">
                 <!-- Nama Program -->
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Program Sosial *</label>
-                    <input wire:model="socialProgramName" type="text" placeholder="Contoh: Santunan Anak Yatim" required
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                    @error('socialProgramName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    <input wire:model="socialProgramName" type="text" placeholder="Contoh: Santunan Anak Yatim"
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama program sosial wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama program sosial wajib diisi.' : ''"
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                    @error('socialProgramName') <span x-show="!err" class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Periode & Status Program -->
@@ -4124,14 +4180,18 @@
             </div>
 
             <!-- Form Content -->
-            <form wire:submit.prevent="saveGallery" class="space-y-4 text-xs overflow-y-auto flex-1 pr-1">
+            <form novalidate wire:submit.prevent="saveGallery" class="space-y-4 text-xs overflow-y-auto flex-1 pr-1">
                 <!-- Judul Kegiatan -->
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Judul Kegiatan <span class="text-rose-500">*</span></label>
                     <input type="text" wire:model="galleryTitle"
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Judul kegiatan wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Judul kegiatan wajib diisi.' : ''"
                         placeholder="Contoh: Kajian Rutin Ba'da Ashar Bersama Ustadz..."
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition text-xs font-medium text-gov-textMain">
-                    @error('galleryTitle') <span class="text-rose-600 text-[11px] mt-1 block">{{ $message }}</span> @enderror
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition text-xs font-medium text-gov-textMain"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-rose-600 text-[11px] mt-1 block" style="display: none;"></span>
+                    @error('galleryTitle') <span x-show="!err" class="text-rose-600 text-[11px] mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Tanggal & Lokasi Grid -->
@@ -4598,13 +4658,17 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveEmployee" class="space-y-3.5 text-xs">
+            <form wire:submit.prevent="saveEmployee" novalidate class="space-y-3.5 text-xs">
                 <!-- Nama Pegawai -->
-                <div>
+                <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap &amp; Gelar *</label>
-                    <input type="text" wire:model="employeeFormName" placeholder="Contoh: Deril Amrizal Kholid, S.Kom." required
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                    @error('employeeFormName') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    <input type="text" wire:model="employeeFormName" placeholder="Contoh: Deril Amrizal Kholid, S.Kom."
+                        @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap pegawai wajib diisi.' : ''"
+                        @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap pegawai wajib diisi.' : ''"
+                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium"
+                        :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                    <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                    @error('employeeFormName') <span x-show="!err" class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- NIP Pendek & NIP Panjang -->
@@ -4695,7 +4759,7 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="importEmployees" class="space-y-4 text-xs">
+            <form wire:submit.prevent="importEmployees" novalidate class="space-y-4 text-xs">
                 <!-- Unduh Template Excel Card -->
                 <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
                     <div class="flex items-center gap-2.5">

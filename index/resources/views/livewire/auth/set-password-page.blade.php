@@ -103,7 +103,7 @@
             </div>
 
             <!-- Form -->
-            <form wire:submit.prevent="setPassword" x-data="{ showPass: false, showConfirmPass: false }" class="space-y-4 text-sm">
+            <form wire:submit.prevent="setPassword" novalidate x-data="{ showPass: false, showConfirmPass: false }" class="space-y-4 text-sm">
                 <!-- Kata Sandi Baru -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Kata Sandi Baru *</label>
@@ -114,7 +114,7 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
                         </div>
-                        <input wire:model="password" :type="showPass ? 'text' : 'password'" placeholder="Min. 8 karakter (Kapital, angka, simbol)" required
+                        <input wire:model="password" :type="showPass ? 'text' : 'password'" placeholder="Min. 8 karakter (Kapital, angka, simbol)"
                             class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 text-sm text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                         <div class="absolute right-2 top-0 bottom-0 flex items-center justify-center">
                             <button type="button" @click="showPass = !showPass"
@@ -147,7 +147,7 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
                         </div>
-                        <input wire:model="password_confirmation" :type="showConfirmPass ? 'text' : 'password'" placeholder="Ulangi kata sandi baru" required
+                        <input wire:model="password_confirmation" :type="showConfirmPass ? 'text' : 'password'" placeholder="Ulangi kata sandi baru"
                             class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gov-border bg-slate-50/50 text-sm text-gov-textMain focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                         <div class="absolute right-2 top-0 bottom-0 flex items-center justify-center">
                             <button type="button" @click="showConfirmPass = !showConfirmPass"

@@ -50,7 +50,7 @@
             @endif
 
             <!-- Form -->
-            <form wire:submit.prevent="sendResetLink" 
+            <form wire:submit.prevent="sendResetLink" novalidate
                 x-data="{
                     email: '{{ addslashes($email) }}',
                     hasInteracted: false,
@@ -97,7 +97,6 @@
                             @input="hasInteracted = true"
                             type="email" 
                             placeholder="namapegawai@pajak.go.id" 
-                            required 
                             autofocus
                             :class="isInvalidDomain ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:ring-rose-500 focus:border-rose-500' : (isPajakDomain ? 'border-emerald-400 bg-emerald-50/20 text-gov-textMain focus:ring-emerald-500 focus:border-emerald-500' : 'border-gov-border bg-slate-50/50 text-gov-textMain focus:ring-gov-navy focus:border-gov-navy')"
                             class="w-full pl-10 pr-3.5 py-2.5 rounded-lg border text-sm focus:bg-white focus:outline-none focus:ring-1 transition font-medium">

@@ -156,22 +156,119 @@ return [
     */
 
     'attributes' => [
+        // Autentikasi & Akun
         'name' => 'Nama lengkap',
         'email' => 'Alamat email',
         'password' => 'Kata sandi',
         'password_confirmation' => 'Konfirmasi kata sandi',
+        'userName' => 'Nama pengguna',
+        'userEmail' => 'Alamat email',
         'userPassword' => 'Kata sandi',
+        'userRole' => 'Peran pengguna',
+        'userStatus' => 'Status pengguna',
+
+        // Kajian
+        'kajianTitle' => 'Judul / tema kajian',
+        'kajianDate' => 'Hari & tanggal kajian',
+        'kajianType' => 'Jenis jadwal',
+        'kajianSpeakerName' => 'Nama pembicara',
+        'kajianSpeakerPhone' => 'Nomor WhatsApp pembicara',
+        'kajianSpeakerPhoto' => 'Foto pembicara',
+        'kajianKhatibName' => 'Nama khatib',
+        'kajianKhatibPhone' => 'Nomor WhatsApp khatib',
+        'kajianMcName' => 'Nama petugas MC',
+        'kajianMuadzinName' => 'Nama muadzin',
+        'kajianYoutubeUrl' => 'Tautan video YouTube',
+        'importKajianFile' => 'Berkas Excel jadwal kajian',
+
+        // Agenda & Kegiatan
+        'agendaTitle' => 'Nama kegiatan',
+        'agendaDate' => 'Tanggal kegiatan',
+        'agendaEventDate' => 'Tanggal kegiatan',
+        'agenda_event_date' => 'Tanggal kegiatan',
+        'event_date' => 'Tanggal kegiatan',
+        'agendaStatus' => 'Status kegiatan',
+        'agendaBudget' => 'Anggaran kegiatan',
+        'agendaReportPdf' => 'Berkas dokumen LPJ',
+        'importAgendaFile' => 'Berkas Excel agenda kegiatan',
+        'assignJuzNumber' => 'Nomor juz',
+        'assignPegawai1' => 'Pegawai pembaca 1',
+        'assignPegawai2' => 'Pegawai pembaca 2',
+
+        // Petugas Sholat
+        'dutyPrayerTime' => 'Waktu sholat',
+        'dutyDayName' => 'Hari penugasan',
+        'dutyTahun' => 'Tahun penugasan',
+        'dutyWeekPattern' => 'Pola pekan penugasan',
+        'dutyImamName' => 'Nama imam',
+        'dutyMuadzinName' => 'Nama muadzin',
+        'replaceOldOfficerName' => 'Nama petugas yang diganti',
+        'replaceNewOfficerName' => 'Nama petugas pengganti',
+        'importDutyFile' => 'Berkas Excel petugas sholat',
+
+        // Kas & Keuangan
+        'financeDate' => 'Tanggal transaksi',
+        'financeType' => 'Jenis transaksi',
+        'financeCategoryId' => 'Kategori kas',
+        'financeAmount' => 'Nominal transaksi',
+        'financeDescription' => 'Keterangan transaksi',
+        'financeReceiptFile' => 'Foto bukti transaksi',
+        'financeReceiptFiles' => 'Foto bukti transaksi',
+        'financeReceiptFiles.*' => 'Foto bukti transaksi',
+        'financeCategoryName' => 'Nama kategori kas',
+        'depositAmount' => 'Nominal setoran',
+
+        // Program Sosial
+        'socialProgramName' => 'Nama program sosial',
+        'socialProgramBudget' => 'Anggaran program sosial',
+        'socialProgramTargetQuota' => 'Target kuota penerima',
+        'participantName' => 'Nama penerima manfaat',
+        'participantNik' => 'NIK penerima manfaat',
+        'participantPhone' => 'Nomor telepon penerima',
+        'participantAddress' => 'Alamat penerima manfaat',
+        'participantAmount' => 'Nominal bantuan',
+        'participantProgramId' => 'Program sosial',
+        'socialParticipantName' => 'Nama lengkap',
+        'socialParticipantProgram' => 'Pilihan program sosial',
+        'socialParticipantAmount' => 'Nominal infaq/bantuan',
+        'scanPdfFile' => 'Berkas scan surat pernyataan',
+
+        // Pegawai Takmir
+        'employeeFormName' => 'Nama lengkap pegawai',
+        'employeeFormEmail' => 'Alamat email pegawai',
+        'employeeFormRole' => 'Jabatan pegawai',
+        'employeeFormPhone' => 'Nomor telepon pegawai',
+        'employeeFormStatus' => 'Status pegawai',
+        'importEmployeeFile' => 'Berkas Excel data pegawai',
+        'uploadDocFile' => 'Berkas dokumen SK',
+        'uploadDocNumber' => 'Nomor surat keputusan',
+        'uploadDocDate' => 'Tanggal penetapan SK',
+        'docSkNumber' => 'Nomor surat keputusan',
+        'docDitetapkanDi' => 'Tempat penetapan',
+        'docTanggalSk' => 'Tanggal surat keputusan',
+
+        // Pengaturan & Ustadz
+        'ustadzName' => 'Nama ustadz',
+        'ustadzTitle' => 'Gelar / keahlian',
+        'ustadzPhone' => 'Nomor kontak WhatsApp',
+        'ustadzPhoto' => 'Foto ustadz',
+        'settingMasjidName' => 'Nama masjid',
+        'settingMasjidAddress' => 'Alamat masjid',
+
+        // Galeri & Media
         'galleryUploadedPhotos' => 'Foto dokumentasi',
         'galleryUploadedPhotos.*' => 'Foto dokumentasi',
         'galleryTitle' => 'Judul kegiatan',
         'galleryDate' => 'Tanggal kegiatan',
         'galleryLocation' => 'Lokasi kegiatan',
-        'financeReceiptFile' => 'Foto bukti transaksi',
-        'financeReceiptFiles' => 'Foto bukti transaksi',
-        'financeReceiptFiles.*' => 'Foto bukti transaksi',
         'poster' => 'Poster kegiatan',
         'banner' => 'Banner kegiatan',
-    ],
 
+        // Saran & Kritik
+        'category' => 'Kategori saran',
+        'contact' => 'Nomor kontak',
+        'title' => 'Judul saran',
+        'message' => 'Isi saran/pesan',
+    ],
 ];
 

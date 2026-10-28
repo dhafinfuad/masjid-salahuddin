@@ -44,7 +44,7 @@
                 </div>
             @endif
 
-            <form wire:submit.prevent="saveSettings" class="space-y-4 text-xs">
+            <form wire:submit.prevent="saveSettings" novalidate class="space-y-4 text-xs">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nama Masjid</label>
@@ -222,13 +222,17 @@
                     @endif
                 </div>
 
-                <form wire:submit.prevent="saveUstadz" class="space-y-4 text-xs">
+                <form wire:submit.prevent="saveUstadz" novalidate class="space-y-4 text-xs">
                     <!-- Nama Lengkap -->
-                    <div>
+                    <div x-data="{ err: '', touched: false }">
                         <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
                         <input type="text" wire:model="ustadzName" placeholder="Contoh: Ust. Hasyim Azhari, S.Pd.I."
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
-                        @error('ustadzName') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 font-medium text-xs text-gov-textMain transition"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                        @error('ustadzName') <span x-show="!err" class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <!-- Bidang Kajian / Gelar -->
