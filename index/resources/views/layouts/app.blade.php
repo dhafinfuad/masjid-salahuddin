@@ -387,8 +387,8 @@
 
         <!-- PWA Service Worker Registration & Instant Auto-Update Engine -->
         <script>
-            // Force Purge Stale Caches on Client Devices (Mobile PWA Auto-Sync)
-            const CURRENT_APP_VERSION = '1.0.9';
+            window.CURRENT_APP_VERSION = '1.0.9';
+            var CURRENT_APP_VERSION = window.CURRENT_APP_VERSION;
             if (localStorage.getItem('app_installed_version') !== CURRENT_APP_VERSION) {
                 if ('caches' in window) {
                     caches.keys().then((keys) => {
