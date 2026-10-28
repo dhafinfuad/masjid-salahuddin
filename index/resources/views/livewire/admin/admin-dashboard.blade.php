@@ -1503,38 +1503,6 @@
             </div>
         </div>
 
-        <!-- Floating Auto-Dismiss Toast Notification -->
-        <div x-data="{ 
-                show: false, 
-                message: '',
-                timer: null,
-                trigger(msg) {
-                    if (!msg) return;
-                    this.message = msg;
-                    this.show = true;
-                    clearTimeout(this.timer);
-                    this.timer = setTimeout(() => {
-                        this.show = false;
-                    }, 3500);
-                }
-             }" @toast.window="trigger($event.detail.message)" x-cloak x-show="show"
-            x-transition:enter="transition ease-out duration-250 transform"
-            x-transition:enter-start="opacity-0 translate-y-4 scale-95"
-            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-            x-transition:leave="transition ease-in duration-200 transform"
-            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-            x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-            class="fixed top-16 inset-x-4 sm:top-auto sm:bottom-6 sm:right-6 sm:inset-x-auto z-50 flex items-center justify-between sm:justify-start gap-3 bg-gov-navy text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700/60 text-xs font-semibold backdrop-blur-md"
-            style="display: none;">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-            <span x-text="message" class="tracking-wide"></span>
-            <button type="button" @click="show = false"
-                class="ml-3 text-slate-300 hover:text-white p-1 rounded-lg transition cursor-pointer" title="Tutup">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
 
         <!-- Admin Workspace Body -->
         <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
