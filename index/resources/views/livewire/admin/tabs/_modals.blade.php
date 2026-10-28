@@ -172,44 +172,46 @@
     <!-- MODAL: KELOLA LINK YOUTUBE KEGIATAN -->
     <!-- ======================================================== -->
     <div x-show="showYoutubeModal" x-cloak wire:ignore.self @keydown.escape.window="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
-        @click="if (window.isBackdropClick($event, $el)) { showYoutubeModal = false; $wire.set('showYoutubeModal', false, false); }"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[92vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-slate-200 pb-3 gap-2">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0 shadow-2xs">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-gov-textMain">Kelola Link YouTube Siaran</h3>
-                        <p class="text-[11px] text-slate-500">
-                            Tautkan siaran langsung (live streaming) atau rekaman kajian/agenda.
-                        </p>
-                    </div>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showYoutubeModal = false; $wire.set('showYoutubeModal', false, false); }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="youtube-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="youtube-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Kelola Link YouTube Siaran</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Tautkan siaran langsung (live streaming) atau rekaman kajian/agenda</p>
                 </div>
                 <button type="button" @click="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
-                    class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Item Info Card -->
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gov-navy/10 text-gov-navy capitalize"
-                        x-text="youtubeForm.type === 'agenda' ? 'Agenda Kegiatan' : 'Kajian Masjid'"></span>
-                    <span class="text-slate-400 text-[11px]" x-show="youtubeForm.date" x-text="youtubeForm.date"></span>
-                </div>
-                <div class="font-bold text-gov-textMain text-sm leading-snug" x-text="youtubeForm.title || '-'"></div>
-                <div class="text-slate-500 text-xs" x-show="youtubeForm.subtitle" x-text="youtubeForm.subtitle"></div>
-            </div>
-
-            <!-- Form -->
-            <form novalidate @submit.prevent="$wire.saveYoutubeLink(youtubeForm.id, youtubeForm.youtube_url, youtubeForm.type)" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate @submit.prevent="$wire.saveYoutubeLink(youtubeForm.id, youtubeForm.youtube_url, youtubeForm.type)" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
+                    <!-- Item Info Card -->
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1 text-xs">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gov-navy/10 text-gov-navy capitalize"
+                                x-text="youtubeForm.type === 'agenda' ? 'Agenda Kegiatan' : 'Kajian Masjid'"></span>
+                            <span class="text-slate-400 text-[11px]" x-show="youtubeForm.date" x-text="youtubeForm.date"></span>
+                        </div>
+                        <div class="font-bold text-gov-textMain text-sm leading-snug" x-text="youtubeForm.title || '-'"></div>
+                        <div class="text-slate-500 text-xs" x-show="youtubeForm.subtitle" x-text="youtubeForm.subtitle"></div>
+                    </div>
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">
                         <span>URL Video atau Siaran YouTube</span>
@@ -252,37 +254,44 @@
                         </div>
                     </template>
                 </div>
+            </div>
 
-                <!-- Bottom Actions -->
-                <div class="pt-3 flex items-center justify-between border-t border-slate-200">
-                    <div>
-                        <button type="button" x-show="youtubeForm.youtube_url"
-                            @click="youtubeForm.youtube_url = ''; $wire.saveYoutubeLink(youtubeForm.id, '', youtubeForm.type)"
-                            class="px-2.5 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer inline-flex items-center gap-1.5"
-                            title="Hapus tautan YouTube dari kegiatan ini">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            <span>Hapus Link</span>
-                        </button>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
-                            class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold shadow-2xs transition cursor-pointer">
-                            Batal
-                        </button>
-                        <button type="submit" wire:loading.attr="disabled"
-                            class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                            <span wire:loading.remove wire:target="saveYoutubeLink">Simpan Link</span>
-                            <span wire:loading.inline-flex wire:target="saveYoutubeLink" class="inline-flex items-center gap-2" style="display: none;">
-                                <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                <span>Menyimpan...</span>
-                            </span>
-                        </button>
-                    </div>
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div>
+                    <button type="button" x-show="youtubeForm.youtube_url"
+                        @click="youtubeForm.youtube_url = ''; $wire.saveYoutubeLink(youtubeForm.id, '', youtubeForm.type)"
+                        class="px-2.5 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-semibold transition cursor-pointer inline-flex items-center gap-1.5"
+                        title="Hapus tautan YouTube dari kegiatan ini">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <span>Hapus Link</span>
+                    </button>
                 </div>
-            </form>
-        </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveYoutubeLink" style="color: #ffffff;">Simpan Link</span>
+                        <span wire:loading.inline-flex wire:target="saveYoutubeLink" class="inline-flex items-center gap-2" style="display: none; color: #ffffff;">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (TERPADU & STABIL) -->
     <!-- ======================================================== -->
@@ -801,20 +810,37 @@
     <!-- MODAL: INPUT / EDIT JADWAL PENUGASAN (MILESTONE 2) -->
     <!-- ======================================================== -->
     <div x-show="showPrayerDutyModal" x-cloak wire:ignore.self @keydown.escape.window="showPrayerDutyModal = false"
-        @click="if (window.isBackdropClick($event, $el)) showPrayerDutyModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <h3 class="text-base font-bold text-gov-textMain"
-                    x-text="isEditingPrayerDuty ? 'Edit Penugasan Petugas' : 'Tambah Penugasan Petugas'"></h3>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showPrayerDutyModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="prayer-duty-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="prayer-duty-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingPrayerDuty ? 'Edit Penugasan Petugas' : 'Tambah Penugasan Petugas'"></h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Pengaturan jadwal penugasan imam &amp; muadzin rawatib</p>
+                </div>
                 <button type="button" @click="showPrayerDutyModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
-                        data-lucide="x" class="w-5 h-5"></i></button>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
-            <form novalidate @submit.prevent="$wire.savePrayerDuty(dutyForm)" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate @submit.prevent="$wire.savePrayerDuty(dutyForm)" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Waktu Shalat Toggle -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Waktu Shalat *</label>
@@ -944,41 +970,44 @@
                     nama Imam dan Muadzin akan otomatis disinkronkan dengan nama Khatib dan Muadzin Shalat Jumat pada
                     modul Kajian Jumat.
                 </div>
+            </div>
 
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showPrayerDutyModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    
-                    <!-- Tombol Arahkan jika Jumat Dzuhur -->
-                    <button type="button" x-show="isDutyFridayDzuhur()"
-                        @click="redirectToFridayKajian(dutyRowData ? dutyRowData.friday_kajian_id : null); $wire.openFridayKajianFromPetugas(dutyRowData ? dutyRowData.friday_kajian_id : null)"
-                        class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
-                        <span>Arahkan ke Modal Jadwal Kajian</span>
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="showPrayerDutyModal = false"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                
+                <!-- Tombol Arahkan jika Jumat Dzuhur -->
+                <button type="button" x-show="isDutyFridayDzuhur()"
+                    @click="redirectToFridayKajian(dutyRowData ? dutyRowData.friday_kajian_id : null); $wire.openFridayKajianFromPetugas(dutyRowData ? dutyRowData.friday_kajian_id : null)"
+                    class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5 text-xs">
+                    <span>Arahkan ke Modal Jadwal Kajian</span>
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
 
-                    <!-- Tombol Simpan reguler jika bukan Jumat Dzuhur -->
-                    <button type="submit" x-show="!isDutyFridayDzuhur()" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="savePrayerDuty"
-                            x-text="isEditingPrayerDuty ? 'Simpan Perubahan' : 'Tambah Penugasan'"></span>
-                        <span wire:loading.inline-flex wire:target="savePrayerDuty" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
-                        </span>
-                    </button>
-                </div>
-            </form>
-        </div>
+                <!-- Tombol Simpan reguler jika bukan Jumat Dzuhur -->
+                <button type="submit" x-show="!isDutyFridayDzuhur()" wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="savePrayerDuty" style="color: #ffffff;"
+                        x-text="isEditingPrayerDuty ? 'Simpan Perubahan' : 'Tambah Penugasan'"></span>
+                    <span wire:loading.inline-flex wire:target="savePrayerDuty" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                    </span>
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- ======================================================== -->
     <!-- MODAL: IMPORT JADWAL PENUGASAN (MILESTONE 2) -->
@@ -1164,26 +1193,25 @@
     <!-- ======================================================== -->
     <div x-show="showBatchReplaceDutyModal" x-cloak wire:ignore.self
         @keydown.escape.window="closeBatchReplaceDutyModal()"
-        @click="if (window.isBackdropClick($event, $el)) closeBatchReplaceDutyModal()"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m19 8 3 3-6 6h-3v-3l6-6Z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain leading-tight">Edit Petugas Shalat</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Perbarui nama petugas pada seluruh jadwal shalat sekaligus</p>
-                    </div>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) closeBatchReplaceDutyModal()"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="batch-replace-duty-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="batch-replace-duty-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Edit Petugas Shalat</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Perbarui nama petugas pada seluruh jadwal shalat sekaligus</p>
                 </div>
                 <button type="button" @click="closeBatchReplaceDutyModal()"
-                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
                     title="Tutup Modal">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1192,8 +1220,9 @@
                 </button>
             </div>
 
-            <!-- Form Body -->
-            <form novalidate wire:submit.prevent="executeBatchReplaceDuty" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="executeBatchReplaceDuty" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Filter Scope 1: Cakupan Peran -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
@@ -1326,56 +1355,73 @@
                         <span>Pilih nama petugas lama di atas untuk melihat pratinjau jadwal yang akan diperbarui secara otomatis.</span>
                     </div>
                 @endif
+            </div>
 
-                <!-- Modal Actions -->
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="closeBatchReplaceDutyModal()"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">
-                        Batal
-                    </button>
-                    <button type="submit" wire:loading.attr="disabled"
-                        @if(empty($replaceOldOfficerName) || empty($replaceNewOfficerName) || $previewCount === 0) disabled @endif
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="executeBatchReplaceDuty">
-                            Terapkan Perubahan ({{ $previewCount }})
-                        </span>
-                        <span wire:loading.inline-flex wire:target="executeBatchReplaceDuty" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Memperbarui Jadwal...</span>
-                        </span>
-                    </button>
-                </div>
-            </form>
-        </div>
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="closeBatchReplaceDutyModal()"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                <button type="submit" wire:loading.attr="disabled"
+                    @if(empty($replaceOldOfficerName) || empty($replaceNewOfficerName) || $previewCount === 0) disabled @endif
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="executeBatchReplaceDuty" style="color: #ffffff;">
+                        Terapkan Perubahan ({{ $previewCount }})
+                    </span>
+                    <span wire:loading.inline-flex wire:target="executeBatchReplaceDuty" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Memperbarui Jadwal...</span>
+                    </span>
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
 <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT PERENCANAAN KEGIATAN (MILESTONE 3) -->
     <!-- ======================================================== -->
     <div x-show="showAgendaModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) { showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); } }"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }">
-        <div
-            class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between border-b border-slate-200 pb-3.5">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain tracking-tight"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); } }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="agenda-modal-title"
+        @keydown.escape.window="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-2xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="agenda-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
                         x-text="isEditingAgenda ? 'Edit Perencanaan Kegiatan' : 'Buat Perencanaan Kegiatan'"></h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Lengkapi parameter kegiatan, estimasi anggaran, dan berkas LPJ.</p>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Lengkapi parameter kegiatan, estimasi anggaran, dan berkas LPJ</p>
                 </div>
                 <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
-                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
                     title="Tutup Modal">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate @submit.prevent="if (validateAgendaAll()) { $wire.saveAgenda(agendaForm); }" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate @submit.prevent="if (validateAgendaAll()) { $wire.saveAgenda(agendaForm); }" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Left Column -->
                     <div class="space-y-3.5">
@@ -1520,26 +1566,26 @@
                     </div>
                 </div>
 
-                <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200">
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
                         Batal
                     </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="saveAgenda"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveAgenda" style="color: #ffffff;"
                             x-text="isEditingAgenda ? 'Perbarui Kegiatan' : 'Simpan Kegiatan'"></span>
-                        <span wire:loading.inline-flex wire:target="saveAgenda" style="display: none;"
+                        <span wire:loading.inline-flex wire:target="saveAgenda" style="display: none; color: #ffffff;"
                             class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                         </span>
                     </button>
                 </div>
@@ -1727,23 +1773,37 @@
     <!-- MODAL: ATUR JUZ PEGAWAI (ODOJ) -->
     <!-- ======================================================== -->
     <div x-show="showAssignOdojModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showAssignOdojModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showAssignOdojModal = false">
-        <div
-            class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain">Atur Juz Pegawai</h3>
-                    <p class="text-xs text-slate-500">Tugaskan hingga maksimal 2 pegawai per Juz.</p>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showAssignOdojModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="assign-odoj-modal-title"
+        @keydown.escape.window="showAssignOdojModal = false">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-md shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="assign-odoj-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Atur Juz Pegawai</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Tugaskan hingga maksimal 2 pegawai per Juz</p>
                 </div>
                 <button type="button" @click="showAssignOdojModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveOdojAssignment" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveOdojAssignment" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Nomor Juz *</label>
                     @php
@@ -1788,30 +1848,33 @@
                         class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span>
                     @enderror
                 </div>
+            </div>
 
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showAssignOdojModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="saveOdojAssignment">Simpan Penugasan</span>
-                        <span wire:loading.inline-flex wire:target="saveOdojAssignment" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
-                        </span>
-                    </button>
-                </div>
-            </form>
-        </div>
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="showAssignOdojModal = false"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                <button type="submit" wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="saveOdojAssignment" style="color: #ffffff;">Simpan Penugasan</span>
+                    <span wire:loading.inline-flex wire:target="saveOdojAssignment" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                    </span>
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT PENGGUNA (MILESTONE 4) -->
