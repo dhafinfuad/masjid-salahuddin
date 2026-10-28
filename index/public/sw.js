@@ -4,7 +4,7 @@
  * Architecture: Optimized for Laravel 11 & Livewire 3
  */
 
-const CACHE_NAME = 'masjid-salahuddin-v1.0.9';
+const CACHE_NAME = 'masjid-salahuddin-v1.1.0';
 
 // Assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -16,7 +16,8 @@ const PRECACHE_ASSETS = [
     '/images/icons/icon-512x512.png',
     '/images/icons/icon-maskable-192x192.png',
     '/images/icons/icon-maskable-512x512.png',
-    '/Logo Masjid Salahuddin.webp'
+    '/Logo Masjid Salahuddin.webp',
+    '/vendor/sweetalert2/sweetalert2.all.min.js'
 ];
 
 // Install Event: Pre-cache core offline assets
@@ -46,7 +47,7 @@ self.addEventListener('activate', (event) => {
         }).then(() => {
             return self.clients.matchAll({ type: 'window' }).then((clients) => {
                 clients.forEach((client) => {
-                    client.postMessage({ type: 'VERSION_UPDATED', version: 'v1.0.9' });
+                    client.postMessage({ type: 'VERSION_UPDATED', version: 'v1.1.0' });
                 });
             });
         })

@@ -216,6 +216,83 @@
             </button>
         </div>
 
+        <!-- SweetAlert2 Modal Engine -->
+        <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+        <script>
+            window.showSweetAlertConfirm = function(options, wireInstance) {
+                if (typeof Swal === 'undefined') {
+                    console.warn('SweetAlert2 belum dimuat');
+                    return;
+                }
+
+                const isDanger = !options.type || options.type === 'danger';
+                const isWarning = options.type === 'warning';
+                const isPrimary = options.type === 'primary';
+
+                const confirmColor = options.confirmButtonColor || (isPrimary ? '#102a43' : (isWarning ? '#d97706' : '#e11d48'));
+                const confirmText = options.confirmButtonText || (isPrimary ? 'Ya, Lanjutkan' : (isWarning ? 'Ya, Hapus' : 'Ya, Hapus'));
+
+                let htmlContent = '<div style="text-align: left; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem;">';
+                if (options.message) {
+                    htmlContent += `<p style="font-size: 0.8125rem; color: #64748b; line-height: 1.5; margin: 0;">${options.message}</p>`;
+                }
+                if (options.itemName) {
+                    const bg = isPrimary ? '#f0f9ff' : (isWarning ? '#fffbeb' : '#fff1f2');
+                    const border = isPrimary ? '#bae6fd' : (isWarning ? '#fde68a' : '#fecdd3');
+                    const text = isPrimary ? '#0369a1' : (isWarning ? '#b45309' : '#be123c');
+                    htmlContent += `
+                        <div style="background-color: ${bg}; border: 1px solid ${border}; color: ${text}; padding: 0.75rem; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 700; word-break: break-word;">
+                            ${options.itemName}
+                        </div>
+                    `;
+                }
+                if (options.noticeText !== false && options.noticeText !== '') {
+                    const notice = options.noticeText || 'Tindakan ini tidak dapat dibatalkan. Pastikan Anda telah memeriksa kembali data yang akan diproses.';
+                    htmlContent += `
+                        <div style="background-color: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 0.625rem 0.75rem; border-radius: 0.75rem; font-size: 0.6875rem; line-height: 1.4;">
+                            ${notice}
+                        </div>
+                    `;
+                }
+                htmlContent += '</div>';
+
+                Swal.fire({
+                    title: `<span style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">${options.title || 'Konfirmasi Tindakan'}</span>`,
+                    html: htmlContent,
+                    icon: isPrimary ? 'info' : (isWarning ? 'warning' : 'warning'),
+                    iconColor: confirmColor,
+                    showCancelButton: true,
+                    confirmButtonColor: confirmColor,
+                    cancelButtonColor: '#94a3b8',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    focusCancel: true,
+                    showLoaderOnConfirm: true,
+                    allowOutsideClick: () => !Swal.isLoading(),
+                    allowEscapeKey: () => !Swal.isLoading(),
+                    customClass: {
+                        popup: 'rounded-2xl border border-slate-200/90 shadow-2xl p-5 sm:p-6',
+                        confirmButton: 'font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs',
+                        cancelButton: 'font-semibold text-xs px-4 py-2.5 rounded-xl'
+                    },
+                    preConfirm: async () => {
+                        try {
+                            const params = Array.isArray(options.params)
+                                ? options.params
+                                : (options.id !== undefined && options.id !== null ? [options.id] : []);
+                            await wireInstance.call(options.action, ...params);
+                            return true;
+                        } catch (error) {
+                            console.error('SweetAlert action error:', error);
+                            Swal.showValidationMessage(`Gagal: ${error?.message || 'Terjadi kesalahan sistem'}`);
+                            return false;
+                        }
+                    }
+                });
+            };
+        </script>
+
         @livewireScripts
         <script>
             document.addEventListener('livewire:navigated', () => {
@@ -387,7 +464,7 @@
 
         <!-- PWA Service Worker Registration & Instant Auto-Update Engine -->
         <script>
-            window.CURRENT_APP_VERSION = '1.0.9';
+            window.CURRENT_APP_VERSION = '1.1.0';
             var CURRENT_APP_VERSION = window.CURRENT_APP_VERSION;
             if (localStorage.getItem('app_installed_version') !== CURRENT_APP_VERSION) {
                 if ('caches' in window) {

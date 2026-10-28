@@ -954,6 +954,14 @@
             noticeText: ''
         },
         openDeleteModal(options) {
+            // Khusus halaman Kas dan Keuangan: Gunakan SweetAlert2 (Opsi 1)
+            if (options.action === 'deleteFinance' || options.action === 'deleteFinanceCategory' || options.useSweetAlert) {
+                if (typeof window.showSweetAlertConfirm === 'function') {
+                    window.showSweetAlertConfirm(options, $wire);
+                    return;
+                }
+            }
+
             const isDanger = !options.type || options.type === 'danger';
             const isWarning = options.type === 'warning';
             const isPrimary = options.type === 'primary';

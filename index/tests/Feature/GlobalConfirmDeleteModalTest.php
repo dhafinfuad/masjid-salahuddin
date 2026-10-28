@@ -99,6 +99,6 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($swPath);
         $content = file_get_contents($swPath);
 
-        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.9'", $content);
+        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.1.0'", $content);
     }
 }
