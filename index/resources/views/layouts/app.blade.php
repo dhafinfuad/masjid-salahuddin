@@ -270,15 +270,26 @@
                 color: #0f172a !important;
                 background-color: #f1f5f9 !important;
             }
+            .swal2-modal-salahuddin .swal2-loader {
+                display: none !important;
+            }
             .swal2-actions-salahuddin {
                 width: 100% !important;
                 margin: 1rem 0 0 0 !important;
                 padding-top: 0.75rem !important;
                 border-top: 1px solid #f1f5f9 !important;
                 display: flex !important;
+                flex-direction: row !important;
                 justify-content: flex-end !important;
                 align-items: center !important;
-                gap: 0.5rem !important;
+                gap: 0.625rem !important;
+                box-sizing: border-box !important;
+            }
+            .swal2-modal-salahuddin .swal2-actions.swal2-loading {
+                justify-content: flex-end !important;
+            }
+            .swal2-modal-salahuddin .swal2-actions button {
+                margin: 0 !important;
             }
             .swal2-cancel-salahuddin {
                 padding: 0.5rem 0.875rem !important;

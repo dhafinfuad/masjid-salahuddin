@@ -1565,8 +1565,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Modal Footer (Sticky at bottom) -->
+            <!-- Modal Footer (Sticky at bottom) -->
                 <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
                     style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showAgendaModal = false; if (window.Livewire) { $wire.set('showAgendaModal', false, false); }"
@@ -2510,7 +2511,7 @@
                 <span class="leading-relaxed" x-text="confirmDeleteModal.noticeText"></span>
             </div>
 
-            <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-200">
                 <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
                     class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer disabled:opacity-50">
                     Batal
