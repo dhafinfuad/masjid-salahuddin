@@ -331,6 +331,36 @@ Ketika pengguna membuka modal di Tab A, menutupnya dengan cepat, lalu berpindah 
 5. **Proteksi Re-inisialisasi Root `x-data`**:
    Simpan pointer tipe/state modal aktif di level window (`window._activeKajianType = type;`) dan pulihkan saat `init()` Alpine berjalan agar state lokal tidak di-reset ke nilai default jika Livewire melakukan morphing root.
 
+### Aturan 12: Standar Form Submission Modal & Larangan Alpine State Loading pada Tombol Simpan (Anti-Ghosting / Text Collision Prevention)
+1. **Anatomi Masalah Text Clashing / Overlapping pada Tombol Simpan**:
+   - Jika modal mendefinisikan flag loading manual di Alpine (seperti `isSaving: false` atau `async submitFoo()`) lalu menggunakan `x-show="!isSaving"` dan `x-show="isSaving"` pada tombol submit:
+     - Ketika Livewire melakukan diffing DOM atau network request, Tailwind utility class `inline-flex` menimpa evaluasi `x-show` inline style `display: none` pada engine browser mobile (WebKit iOS / Chromium Android).
+     - Akibatnya, teks idle (misal "Simpan & Unduh PDF") dan teks loading ("Menyiapkan PDF...") ter-render bersamaan di dalam tombol sehingga bertumpuk, berbayang, dan tidak terbaca (*text ghosting / visual collision*).
+2. **Pola Baku Form Submission Livewire**:
+   - Bungkus seluruh isian dan footer modal dalam satu form:
+     ```blade
+     <form wire:submit.prevent="saveAction" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+         style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+         <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable bg-white">
+             <!-- Input Form Fields -->
+         </div>
+         <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl" ...>
+             <button type="button" @click="showModal = false" class="...">Batal</button>
+             <button type="submit" wire:loading.attr="disabled" class="...">
+                 <span wire:loading.remove wire:target="saveAction" style="color: #ffffff;">Simpan Data</span>
+                 <span wire:loading.inline-flex wire:target="saveAction" style="display: none; color: #ffffff;" class="inline-flex items-center justify-center gap-2">
+                     <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">...</svg>
+                     <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                 </span>
+             </button>
+         </div>
+     </form>
+     ```
+3. **Karakteristik Wajib**:
+   - Hapus properti `isSaving` atau fungsi async tombol dari `x-data`.
+   - Gunakan `wire:loading.remove` dan `wire:loading.inline-flex` bawaan Livewire dengan target method yang tepat.
+   - Jangan menyisipkan ikon ekstra atau label tombol ganda yang rumit. Gunakan teks bersih dan jelas.
+
 ---
 
 ## 3. Checklist Sebelum Deploy Fitur Baru
@@ -344,6 +374,7 @@ Ketika pengguna membuka modal di Tab A, menutupnya dengan cepat, lalu berpindah 
 - [ ] Apakah kontainer modal terluar bebas border putih di atas backdrop gelap (`border-0` & `border: none;`)?
 - [ ] Apakah kontainer modal atas menggunakan warna latar yang sama dengan header (`bg-[#0b2b54]`) untuk mencegah corner bleeding antialiasing di desktop?
 - [ ] Apakah header modal bersih tanpa kotak pembungkus ikon (`div.w-8.h-8`)?
+- [ ] Apakah modal dibungkus dalam `<form wire:submit.prevent="saveAction" novalidate>` dengan tombol submit `<button type="submit" wire:loading.attr="disabled">` tanpa flag loading kustom Alpine `isSaving` / `x-show`?
 - [ ] Apakah indikator proses/loading menggunakan modifier spesifik (`wire:loading.inline-flex` / `wire:loading.flex`) dengan `style="display: none;"` agar icon dan teks tidak bertumpuk vertikal akibat `display: inline-block` bawaan Livewire?
 - [ ] Apakah tidak ada konflik antara parameter path URL dan anotasi `#[Url]`?
 - [ ] Untuk elemen dinamis berbasis state Livewire: Apakah sudah menggunakan Blade murni (`@if`) dengan `wire:key` unik berbeda, tanpa manipulasi Alpine `:class`/`x-text`, tanpa kelas `transition`, dan dengan native inline SVG?

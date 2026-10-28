@@ -580,7 +580,15 @@ Semua modal dialog CRUD, pop-up formulir, dan drawer di sistem wajib mengikuti s
   - Sisi kanan: Tombol silang (X) penutup modal dengan efek hover halus (`hover:bg-white/10`).
 - **Footer Sticky**:
   - Warna latar `#f8fafc`, pembatas atas `border-top: 1px solid #e2e8f0`, radius sudut bawah `rounded-b-2xl`.
-  - Tombol "Batal" putih-slate di sisi kiri, tombol aksi "Simpan" biru navy solid (`bg-gov-navy` / `#0b2b54`) dengan spinner `wire:loading` di sisi kanan.
+  - Tombol "Batal" putih-slate di sisi kiri (`type="button"` `@click="showModal = false"`).
+  - Tombol aksi "Simpan" biru navy solid (`bg-gov-navy` / `#0b2b54`) dengan spinner `wire:loading` di sisi kanan.
+- **Form Submission & Tombol Submit (Anti-Ghosting / Anti-Clash)**:
+  - Seluruh modal form wajib membungkus body dan footer dalam satu `<form wire:submit.prevent="actionMethod" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" ...>`.
+  - Tombol submit wajib menggunakan `<button type="submit" wire:loading.attr="disabled" ...>`.
+  - **DILARANG KERAS** menggunakan kontrol loading Alpine kustom (`isSaving`, `submitFoo()`, `x-show="!isSaving"`, dsb.) pada tombol simpan modal. Kombinasi `inline-flex` dan `x-show` saat morphdom Livewire menyebabkan teks idle dan teks loading bertumpuk / clash di mobile iOS & Android.
+  - Teks idle wajib: `<span wire:loading.remove wire:target="actionMethod" style="color: #ffffff;">Simpan Data</span>`.
+  - Teks loading wajib: `<span wire:loading.inline-flex wire:target="actionMethod" style="display: none; color: #ffffff;" class="inline-flex items-center justify-center gap-2"><svg class="w-4 h-4 animate-spin text-white ...>...</svg><span ...>Menyimpan...</span></span>`.
+
 
 
 
