@@ -5310,9 +5310,12 @@ class AdminDashboard extends Component
         }
     }
 
-    protected function parseLines(string $text): array
+    protected function parseLines(?string $text): array
     {
-        return array_values(array_filter(array_map('trim', explode("\n", $text)), fn($item) => $item !== ''));
+        if (empty($text)) {
+            return [];
+        }
+        return array_values(array_filter(array_map('trim', explode("\n", (string) $text)), fn($item) => $item !== ''));
     }
 
     // ==========================================
