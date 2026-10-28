@@ -462,59 +462,13 @@
             @include('components.pwa-install-banner')
         </div>
 
-        <!-- PWA Service Worker Registration (Clean, Zero-Loop Engine) -->
+        <!-- PWA Service Worker Registration (Clean, Zero-Reload Engine) -->
         <script>
-            window.CURRENT_APP_VERSION = '1.1.0';
-            var CURRENT_APP_VERSION = window.CURRENT_APP_VERSION;
-
-            // Bersihkan cache lama secara senyap tanpa me-reload halaman
-            if (localStorage.getItem('app_installed_version') !== CURRENT_APP_VERSION) {
-                localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
-                if ('caches' in window) {
-                    caches.keys().then((keys) => {
-                        return Promise.all(keys.map(k => {
-                            if (!k.includes(CURRENT_APP_VERSION)) {
-                                return caches.delete(k);
-                            }
-                        }));
-                    }).catch(() => {});
-                }
-            }
-
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js')
-                        .then(function(registration) {
-                            registration.update().catch(() => {});
-                            registration.addEventListener('updatefound', () => {
-                                const newWorker = registration.installing;
-                                if (newWorker) {
-                                    newWorker.addEventListener('statechange', () => {
-                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                        }
-                                    });
-                                }
-                            });
-                        })
-                        .catch(function(error) {
-                            console.warn('[PWA] Service Worker registration failed:', error);
-                        });
-                });
-
-                // Cegah infinite reload loop di iOS Safari / PWA Standalone
-                let hasExistingController = Boolean(navigator.serviceWorker.controller);
-                let hasReloaded = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    // Abaikan reload saat service worker baru pertama kali terpasang di perangkat
-                    if (!hasExistingController) {
-                        hasExistingController = true;
-                        return;
-                    }
-                    if (!hasReloaded) {
-                        hasReloaded = true;
-                        window.location.reload();
-                    }
+                    navigator.serviceWorker.register('/sw.js').catch(function(error) {
+                        console.warn('[PWA] Service Worker registration failed:', error);
+                    });
                 });
             }
         </script>

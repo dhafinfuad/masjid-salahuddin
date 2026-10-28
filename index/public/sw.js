@@ -44,12 +44,6 @@ self.addEventListener('activate', (event) => {
             );
         }).then(() => {
             return self.clients.claim();
-        }).then(() => {
-            return self.clients.matchAll({ type: 'window' }).then((clients) => {
-                clients.forEach((client) => {
-                    client.postMessage({ type: 'VERSION_UPDATED', version: 'v1.1.0' });
-                });
-            });
         })
     );
 });
