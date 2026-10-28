@@ -2350,28 +2350,22 @@
                 <div
                     class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-2xs"
                     :class="(confirmDeleteModal.type === 'primary') ? 'bg-sky-50 border border-sky-200/70 text-sky-600' : ((confirmDeleteModal.type === 'warning') ? 'bg-amber-50 border border-amber-200/70 text-amber-600' : 'bg-rose-50 border border-rose-200/70 text-rose-600')">
-                    <template x-if="confirmDeleteModal.type === 'primary'">
-                        <svg class="w-6 h-6 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <line x1="19" y1="8" x2="19" y2="14"></line>
-                            <line x1="22" y1="11" x2="16" y2="11"></line>
-                        </svg>
-                    </template>
-                    <template x-if="confirmDeleteModal.type === 'warning'">
-                        <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                    </template>
-                    <template x-if="!confirmDeleteModal.type || confirmDeleteModal.type === 'danger'">
-                        <svg class="w-6 h-6 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                    </template>
+                    <svg x-show="confirmDeleteModal.type === 'primary'" class="w-6 h-6 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
+                    <svg x-show="confirmDeleteModal.type === 'warning'" class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <svg x-show="!confirmDeleteModal.type || confirmDeleteModal.type === 'danger'" class="w-6 h-6 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-base font-bold text-gov-textMain"
@@ -2386,57 +2380,48 @@
             </div>
 
             <!-- Item Name Highlight Badge -->
-            <template x-if="confirmDeleteModal.itemName">
-                <div class="p-3 rounded-xl border flex items-start gap-2.5 text-xs"
-                    :class="(confirmDeleteModal.type === 'primary') ? 'bg-sky-50/70 border-sky-200/70 text-sky-900' : ((confirmDeleteModal.type === 'warning') ? 'bg-amber-50/70 border-amber-200/70 text-amber-900' : 'bg-rose-50/70 border-rose-200/70 text-rose-900')">
-                    <svg class="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        :class="(confirmDeleteModal.type === 'primary') ? 'text-sky-600' : ((confirmDeleteModal.type === 'warning') ? 'text-amber-600' : 'text-rose-500')">
-                        <template x-if="confirmDeleteModal.type === 'primary'">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        </template>
-                        <template x-if="confirmDeleteModal.type !== 'primary'">
-                            <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>
-                        </template>
-                    </svg>
-                    <span class="font-bold line-clamp-3 wrap-break-word whitespace-pre-line leading-relaxed" x-text="confirmDeleteModal.itemName"></span>
-                </div>
-            </template>
+            <div x-show="confirmDeleteModal.itemName" class="p-3 rounded-xl border flex items-start gap-2.5 text-xs"
+                :class="(confirmDeleteModal.type === 'primary') ? 'bg-sky-50/70 border-sky-200/70 text-sky-900' : ((confirmDeleteModal.type === 'warning') ? 'bg-amber-50/70 border-amber-200/70 text-amber-900' : 'bg-rose-50/70 border-rose-200/70 text-rose-900')">
+                <svg x-show="confirmDeleteModal.type === 'primary'" class="w-4 h-4 shrink-0 mt-0.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                </svg>
+                <svg x-show="confirmDeleteModal.type !== 'primary'" class="w-4 h-4 shrink-0 mt-0.5" :class="(confirmDeleteModal.type === 'warning') ? 'text-amber-600' : 'text-rose-500'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span class="font-bold line-clamp-3 wrap-break-word whitespace-pre-line leading-relaxed" x-text="confirmDeleteModal.itemName"></span>
+            </div>
 
             <!-- Notice / Caution Banner -->
-            <template x-if="confirmDeleteModal.noticeText !== false && confirmDeleteModal.noticeText !== ''">
-                <div
-                    class="p-3 rounded-xl border text-[11px] flex items-start gap-2"
-                    :class="(confirmDeleteModal.type === 'primary') ? 'bg-slate-50 border-slate-200/80 text-slate-700' : 'bg-amber-50/70 border-amber-200/60 text-amber-900'">
-                    <svg class="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        :class="(confirmDeleteModal.type === 'primary') ? 'text-slate-500' : 'text-amber-600'">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <span class="leading-relaxed" x-text="confirmDeleteModal.noticeText"></span>
-                </div>
-            </template>
+            <div x-show="confirmDeleteModal.noticeText !== false && confirmDeleteModal.noticeText !== ''"
+                class="p-3 rounded-xl border text-[11px] flex items-start gap-2"
+                :class="(confirmDeleteModal.type === 'primary') ? 'bg-slate-50 border-slate-200/80 text-slate-700' : 'bg-amber-50/70 border-amber-200/60 text-amber-900'">
+                <svg class="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    :class="(confirmDeleteModal.type === 'primary') ? 'text-slate-500' : 'text-amber-600'">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span class="leading-relaxed" x-text="confirmDeleteModal.noticeText"></span>
+            </div>
 
-            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+            <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
                 <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
-                    class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+                    class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer disabled:opacity-50">
                     Batal
                 </button>
                 <button type="button" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
                     :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'))"
-                    class="min-w-[130px] h-9 px-4 rounded-lg text-xs font-bold shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-wait">
-                    <template x-if="confirmDeleteModal.loading">
-                        <svg class="w-3.5 h-3.5 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </template>
-                    <template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type === 'primary'">
-                        <svg class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    </template>
-                    <template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type !== 'primary'">
-                        <svg class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </template>
+                    class="px-4 py-2 rounded-lg font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                    <svg x-show="confirmDeleteModal.loading" class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none" style="display: none;">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type === 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <svg x-show="!confirmDeleteModal.loading && confirmDeleteModal.type !== 'primary'" class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
                     <span class="whitespace-nowrap" x-text="confirmDeleteModal.loading ? (confirmDeleteModal.loadingText || (confirmDeleteModal.type === 'primary' ? 'Memproses...' : 'Menghapus...')) : (confirmDeleteModal.confirmButtonText || 'Ya, Hapus')"></span>
                 </button>
             </div>

@@ -19,27 +19,25 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertStringNotContainsString('<template x-teleport="body">', $content, 'confirmDeleteModal dilarang dibungkus template x-teleport agar tidak menduplikasi modal di body');
         $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal harus menggunakan wire:ignore.self standar seperti modal lainnya');
 
-        // 2. Pastikan footer menggunakan flex gap-2.5 dan BEBAS dari wire:key sintetis (mencegah Morphdom menduplikasi elemen)
-        $this->assertMatchesRegularExpression('/flex items-center justify-end gap-2\.5 border-t/i', $content, 'Footer modal konfirmasi hapus harus menggunakan gap-2.5');
+        // 2. Pastikan footer menggunakan flex justify-end space-x-2 (identik dengan modal lain) dan BEBAS dari wire:key sintetis
+        $this->assertMatchesRegularExpression('/flex justify-end space-x-2 border-t/i', $content, 'Footer modal konfirmasi hapus harus menggunakan standar modal lain flex justify-end space-x-2');
         $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-footer"', $content, 'Footer modal tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
         $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-submit-btn"', $content, 'Tombol submit tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
         $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-cancel-btn"', $content, 'Tombol cancel tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
 
-        // Alternatif A: Tombol Batal tetap tampil (tidak di-hide dengan x-show) tapi dinonaktifkan dengan disabled dan pointer-events-none
-        $footerPos = strpos($content, 'flex items-center justify-end gap-2.5 border-t');
+        // 3. Tombol Batal tetap tampil (tidak di-hide dengan x-show) dan memiliki :disabled="confirmDeleteModal.loading"
+        $modalPos = strpos($content, 'confirmDeleteModal.show');
+        $this->assertNotFalse($modalPos);
+        $footerPos = strpos($content, 'flex justify-end space-x-2 border-t', $modalPos);
         $this->assertNotFalse($footerPos);
         $footerHtml = substr($content, $footerPos, 600);
-        $this->assertStringNotContainsString('x-show="!confirmDeleteModal.loading"', $footerHtml, 'Tombol Batal tetap harus tampil saat loading pada Alternatif A');
-        $this->assertStringContainsString('disabled:pointer-events-none', $footerHtml, 'Tombol Batal harus memiliki disabled:pointer-events-none saat status loading aktif');
+        $this->assertStringNotContainsString('x-show="!confirmDeleteModal.loading"', $footerHtml, 'Tombol Batal tetap harus tampil saat loading');
+        $this->assertStringContainsString(':disabled="confirmDeleteModal.loading"', $footerHtml, 'Tombol Batal harus memiliki :disabled="confirmDeleteModal.loading" saat status loading aktif');
 
-        // 3. Pastikan tombol konfirmasi memiliki dimensi stabil, tidak menggunakan disabled:opacity-50 (mencegah ghosting pink)
-        $this->assertMatchesRegularExpression('/min-w-\[130px\]\s+h-9\s+px-4/i', $content, 'Tombol konfirmasi harus memiliki min-w-[130px] h-9 untuk menjaga stabilitas layout');
-        $this->assertStringNotContainsString('disabled:opacity-50', substr($content, strpos($content, 'executeConfirmDelete()'), 200), 'Tombol konfirmasi tidak boleh menggunakan disabled:opacity-50');
-
-        // 4. Pastikan ikon SVG dimuat secara eksklusif menggunakan template x-if
-        $this->assertStringContainsString('<template x-if="confirmDeleteModal.loading">', $content);
-        $this->assertStringContainsString('<template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type === \'primary\'">', $content);
-        $this->assertStringContainsString('<template x-if="!confirmDeleteModal.loading && confirmDeleteModal.type !== \'primary\'">', $content);
+        // 4. Pastikan DILARANG KERAS menggunakan <template x-if> di dalam SVG / button (mencegah error fatal cloneNode Alpine)
+        $this->assertStringNotContainsString('<template x-if="confirmDeleteModal.loading">', $content, 'Dilarang menggunakan template x-if untuk loading icon');
+        $this->assertStringNotContainsString('<template x-if="confirmDeleteModal.type !== \'primary\'">', $content, 'Dilarang menggunakan template x-if di dalam SVG badge');
+        $this->assertStringNotContainsString('<template x-if="!confirmDeleteModal.loading', $content, 'Dilarang menggunakan template x-if di dalam tombol submit');
     }
 
     /**
@@ -101,6 +99,6 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($swPath);
         $content = file_get_contents($swPath);
 
-        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.8'", $content);
+        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.9'", $content);
     }
 }
