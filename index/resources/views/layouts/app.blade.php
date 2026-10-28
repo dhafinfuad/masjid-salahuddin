@@ -462,57 +462,30 @@
             @include('components.pwa-install-banner')
         </div>
 
-        <!-- PWA Service Worker Registration & Instant Auto-Update Engine -->
+        <!-- PWA Service Worker Registration (Clean, Zero-Loop Engine) -->
         <script>
             window.CURRENT_APP_VERSION = '1.1.0';
             var CURRENT_APP_VERSION = window.CURRENT_APP_VERSION;
+
+            // Bersihkan cache lama secara senyap tanpa me-reload halaman
             if (localStorage.getItem('app_installed_version') !== CURRENT_APP_VERSION) {
+                localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
                 if ('caches' in window) {
                     caches.keys().then((keys) => {
-                        return Promise.all(keys.map(k => caches.delete(k)));
-                    }).then(() => {
-                        localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
-                        if ('serviceWorker' in navigator) {
-                            navigator.serviceWorker.getRegistrations().then(registrations => {
-                                for (let reg of registrations) {
-                                    reg.unregister();
-                                }
-                                window.location.reload();
-                            });
-                        } else {
-                            window.location.reload();
-                        }
-                    });
-                } else {
-                    localStorage.setItem('app_installed_version', CURRENT_APP_VERSION);
+                        return Promise.all(keys.map(k => {
+                            if (!k.includes(CURRENT_APP_VERSION)) {
+                                return caches.delete(k);
+                            }
+                        }));
+                    }).catch(() => {});
                 }
             }
 
             if ('serviceWorker' in navigator) {
-                let refreshing = false;
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                    if (!refreshing) {
-                        refreshing = true;
-                        window.location.reload();
-                    }
-                });
-
-                navigator.serviceWorker.addEventListener('message', (event) => {
-                    if (event.data && event.data.type === 'VERSION_UPDATED') {
-                        if ('caches' in window) {
-                            caches.keys().then((keys) => Promise.all(keys.map(k => caches.delete(k)))).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            window.location.reload();
-                        }
-                    }
-                });
-
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/sw.js')
                         .then(function(registration) {
-                            registration.update();
+                            registration.update().catch(() => {});
                             registration.addEventListener('updatefound', () => {
                                 const newWorker = registration.installing;
                                 if (newWorker) {
@@ -529,11 +502,18 @@
                         });
                 });
 
-                document.addEventListener('visibilitychange', () => {
-                    if (document.visibilityState === 'visible') {
-                        navigator.serviceWorker.getRegistration().then(reg => {
-                            if (reg) reg.update();
-                        });
+                // Cegah infinite reload loop di iOS Safari / PWA Standalone
+                let hasExistingController = Boolean(navigator.serviceWorker.controller);
+                let hasReloaded = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    // Abaikan reload saat service worker baru pertama kali terpasang di perangkat
+                    if (!hasExistingController) {
+                        hasExistingController = true;
+                        return;
+                    }
+                    if (!hasReloaded) {
+                        hasReloaded = true;
+                        window.location.reload();
                     }
                 });
             }
