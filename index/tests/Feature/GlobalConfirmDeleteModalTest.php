@@ -15,8 +15,8 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($modalsPath);
         $content = file_get_contents($modalsPath);
 
-        // 1. Pastikan modal dibungkus dalam <template x-teleport="body"> dan memiliki wire:ignore penuh
-        $this->assertStringContainsString('<template x-teleport="body">', $content, 'confirmDeleteModal harus dibungkus template x-teleport="body" agar terisolasi di luar pohon Livewire DOM');
+        // 1. Pastikan modal TIDAK dibungkus dalam <template x-teleport="body"> (karena x-teleport di Livewire menduplikasi modal di body) dan memiliki wire:ignore penuh
+        $this->assertStringNotContainsString('<template x-teleport="body">', $content, 'confirmDeleteModal dilarang dibungkus template x-teleport agar tidak menduplikasi modal di body');
         $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"', $content, 'confirmDeleteModal harus menggunakan wire:ignore penuh dan memiliki wire:key');
         $this->assertStringNotContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal dilarang menggunakan wire:ignore.self karena menyebabkan duplikasi tombol saat morphing');
 
@@ -99,6 +99,6 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($swPath);
         $content = file_get_contents($swPath);
 
-        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.6'", $content);
+        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.7'", $content);
     }
 }
