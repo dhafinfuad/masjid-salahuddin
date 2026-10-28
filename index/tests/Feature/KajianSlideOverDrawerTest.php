@@ -39,48 +39,48 @@ class KajianSlideOverDrawerTest extends TestCase
     }
 
     /** @test */
-    public function test_kegiatan_tab_renders_slide_over_drawer_with_teleportation_and_backdrop()
+    public function test_kegiatan_tab_renders_solid_centered_modal_without_buggy_teleportation()
     {
         $this->actingAs($this->adminUser);
 
         $response = $this->get('/admin/kegiatan');
         $response->assertOk();
 
-        // 1. Verifikasi template x-teleport="body" agar modal terbebas dari siklus morphing Livewire tab
-        $response->assertSee('x-teleport="body"', false);
+        // 1. Pastikan modal tidak menggunakan x-teleport="body" (penyebab duplikasi dan modal tembus pandang di Livewire)
+        $this->assertStringNotContainsString('x-teleport="body"', $response->getContent());
 
-        // 2. Verifikasi keberadaan backdrop pengunci layar penuh (z-[100])
-        $response->assertSee('fixed inset-0 z-[100] overflow-hidden', false);
-        $response->assertSee('fixed inset-0 bg-slate-900/60 backdrop-blur-xs', false);
+        // 2. Verifikasi keberadaan backdrop pengunci layar penuh dengan z-index inline 9999
+        $response->assertSee('z-index: 9999', false);
+        $response->assertSee('rgba(15, 23, 42, 0.75)', false);
 
-        // 3. Verifikasi drawer panel sisi kanan (translate-x-full / translate-x-0)
-        $response->assertSee('translate-x-full', false);
-        $response->assertSee('translate-x-0', false);
+        // 3. Verifikasi modal card putih solid dengan z-index 10000
+        $response->assertSee('z-index: 10000', false);
+        $response->assertSee('background-color: #ffffff', false);
 
-        // 4. Verifikasi tombol Batal dan Simpan di footer sticky
+        // 4. Verifikasi tombol Batal dan Simpan di footer
         $response->assertSee('closeKajianModal()', false);
         $response->assertSee('saveKajian', false);
     }
 
     /** @test */
-    public function test_slide_over_drawer_lifecycle_and_livewire_events()
+    public function test_kajian_modal_lifecycle_and_livewire_events()
     {
         Livewire::actingAs($this->adminUser)
             ->test(AdminDashboard::class, ['tab' => 'kegiatan'])
             ->set('kegiatanSubTab', 'pekanan')
-            // Buka drawer pembuatan jadwal
+            // Buka modal pembuatan jadwal
             ->call('openCreateKajian', 'pekanan')
             ->assertSet('showKajianModal', true)
             ->assertSet('kajianType', 'pekanan')
             ->assertDispatched('open-kajian-modal')
-            // Tutup drawer
+            // Tutup modal
             ->call('closeKajianModal')
             ->assertSet('showKajianModal', false)
             ->assertDispatched('close-kajian-modal');
     }
 
     /** @test */
-    public function test_saving_kajian_from_drawer_persists_data_and_closes_drawer()
+    public function test_saving_kajian_from_modal_persists_data_and_closes_modal()
     {
         $payload = [
             'id' => null,

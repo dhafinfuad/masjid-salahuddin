@@ -73,6 +73,9 @@
              document.title = tabTitle + ' - Masjid Salahuddin';
          },
          switchSubTab(tab) {
+             if (this.showKajianModal) {
+                 this.closeKajianModal();
+             }
              this.kegiatanSubTab = tab;
              if (tab === 'pekanan' || tab === 'jumat') this.kajianSubTab = tab;
              if (tab === 'agenda' || tab === 'odoj') this.agendaSubTab = tab;
