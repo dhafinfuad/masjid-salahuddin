@@ -299,20 +299,11 @@
             <!-- Modal Header: Solid Navy (#0b2b54) -->
             <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
                 style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20"
-                        style="background-color: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2);">
-                        <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
-                            <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
-                        </svg>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 id="kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
-                            x-text="isEditingKajian ? 'Edit Jadwal Kajian' : (kajianForm.type === 'jumat' ? 'Tambah Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Tambah Jadwal Kajian Tematik' : 'Tambah Jadwal Kajian Pekanan'))"></h3>
-                        <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;"
-                            x-text="kajianForm.type === 'jumat' ? 'Jadwal Khatib, Muadzin, MC & Naskah Khutbah' : 'Pengaturan tanggal, waktu, dan narasumber'"></p>
-                    </div>
+                <div class="min-w-0">
+                    <h3 id="kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingKajian ? 'Edit Jadwal Kajian' : (kajianForm.type === 'jumat' ? 'Tambah Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Tambah Jadwal Kajian Tematik' : 'Tambah Jadwal Kajian Pekanan'))"></h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;"
+                        x-text="kajianForm.type === 'jumat' ? 'Jadwal Khatib, Muadzin, MC & Naskah Khutbah' : 'Pengaturan tanggal, waktu, dan narasumber'"></p>
                 </div>
                 <button type="button" @click="closeKajianModal()"
                     class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
