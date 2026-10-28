@@ -1880,22 +1880,38 @@
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT PENGGUNA (MILESTONE 4) -->
     <!-- ======================================================== -->
-    <div x-show="showUserModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showUserModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showUserModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <h3 class="text-base font-bold text-gov-textMain"
-                    x-text="isEditingUser ? 'Edit Data Pengguna' : 'Tambah Pengguna'"></h3>
+    <div x-show="showUserModal" x-cloak wire:ignore.self @keydown.escape.window="showUserModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showUserModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="user-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingUser ? 'Edit Data Pengguna' : 'Tambah Pengguna Baru'"></h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Kelola akun akses dan peran pengguna DKM</p>
+                </div>
                 <button type="button" @click="showUserModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveUser" class="space-y-3 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveUser" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Nama Lengkap -->
                 <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Pengguna *</label>
@@ -1974,23 +1990,28 @@
                     </div>
                 </div>
 
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showUserModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="saveUser">Simpan Pengguna</span>
-                        <span wire:loading.inline-flex wire:target="saveUser" style="display: none;"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveUser" style="color: #ffffff;"
+                            x-text="isEditingUser ? 'Simpan Perubahan' : 'Simpan Pengguna'"></span>
+                        <span wire:loading.inline-flex wire:target="saveUser" style="display: none; color: #ffffff;"
                             class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                         </span>
                     </button>
                 </div>
@@ -2001,33 +2022,39 @@
     <!-- ======================================================== -->
     <!-- MODAL: UPLOAD DOKUMEN RESMI TAKMIR (SK / LAMPIRAN) -->
     <!-- ======================================================== -->
-    <div x-show="showUploadDocModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showUploadDocModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showUploadDocModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between gap-3 border-b border-slate-200 pb-3.5">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-10 h-10 rounded-xl bg-gov-navy/10 text-gov-navy flex items-center justify-center shrink-0 shadow-2xs">
-                        <i data-lucide="file-up" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="text-base font-bold text-gov-textMain leading-tight">Unggah Dokumen Resmi</h3>
-                        <p class="text-xs text-slate-500 font-medium truncate mt-0.5" title="{{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}">
-                            {{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}
-                        </p>
-                    </div>
+    <div x-show="showUploadDocModal" x-cloak wire:ignore.self @keydown.escape.window="showUploadDocModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showUploadDocModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="upload-doc-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="upload-doc-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Unggah Dokumen Resmi</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;" title="{{ $uploadDocTitle ?: 'Unggah Berkas PDF' }}">
+                        {{ $uploadDocTitle ?: 'Unggah Berkas PDF Legalitas / SK' }}
+                    </p>
                 </div>
                 <button type="button" @click="showUploadDocModal = false"
-                    class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-gov-textMain hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer shrink-0 -mr-1 -mt-1"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
                     title="Tutup Modal">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveUploadDoc" class="space-y-3.5 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveUploadDoc" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Input Berkas PDF -->
                 <div x-data="{ isDragging: false, isUploading: false, progress: 0 }"
                      x-on:livewire-upload-start="isUploading = true"
@@ -2128,24 +2155,27 @@
                     <span>Berkas PDF yang diunggah akan langsung menggantikan dokumen aktif di portal publik profil masjid dan siap diunduh oleh jamaah.</span>
                 </div>
 
-                <!-- Footer Buttons (Rule 5 & PANDUAN_ARSITEKTUR_DAN_PERFORMA) -->
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showUploadDocModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled" wire:target="saveUploadDoc, uploadDocFile"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="saveUploadDoc, uploadDocFile">Unggah & Simpan Dokumen</span>
-                        <span wire:loading.inline-flex wire:target="saveUploadDoc, uploadDocFile" style="display: none;"
-                            class="items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveUploadDoc, uploadDocFile" style="color: #ffffff;">Unggah & Simpan Dokumen</span>
+                        <span wire:loading.inline-flex wire:target="saveUploadDoc, uploadDocFile" style="display: none; color: #ffffff;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Menyimpan berkas...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan berkas...</span>
                         </span>
                     </button>
                 </div>
@@ -2157,39 +2187,38 @@
     <!-- MODAL: TEMPLATE SURAT KEPUTUSAN KEPALA KPP MADYA MALANG -->
     <!-- TENTANG PERUBAHAN SUSUNAN PENGURUS TAKMIR MASJID SALAHUDDIN -->
     <!-- ======================================================== -->
-    <div x-show="showTemplateKepModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showTemplateKepModal = false"
+    <div x-show="showTemplateKepModal" x-cloak wire:ignore.self @keydown.escape.window="showTemplateKepModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showTemplateKepModal = false; }"
         @download-kep-pdf.window="window.downloadPdfDirect($event.detail.url, $event.detail.filename)"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
-        style="display: none;" @keydown.escape.window="showTemplateKepModal = false">
-        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-gov-border flex flex-col max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="template-kep-modal-title">
+        <div @click.stop
+             class="bg-[#0b2b54] rounded-2xl max-w-4xl w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+             style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;"
              x-data="{ kepActiveTab: 'identitas' }">
             
-            <!-- Modal Header -->
-            <div class="p-5 border-b border-slate-200 flex items-center justify-between gap-4 bg-slate-50/60">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gov-navy text-amber-400 flex items-center justify-center shadow-xs shrink-0">
-                        <i data-lucide="file-text" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain leading-tight">
-                            Template Surat Keputusan
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Susunan Kepengurusan
-                        </p>
-                    </div>
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="template-kep-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Template Surat Keputusan</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Susunan Kepengurusan Takmir Masjid</p>
                 </div>
 
                 <button type="button" @click="showTemplateKepModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-200/60 transition cursor-pointer"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
                     title="Tutup Modal">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
             <!-- Modal Nav Tabs -->
-            <div class="border-b border-slate-200 bg-white px-5 pt-2">
+            <div class="border-b border-slate-200 bg-white px-5 pt-2 shrink-0">
                 <nav class="flex items-center gap-2 overflow-x-auto text-xs no-scrollbar" aria-label="Template KEP Tabs">
                     <button type="button" @click="kepActiveTab = 'identitas'"
                         class="py-2.5 px-3 border-b-2 rounded-t-lg transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer -mb-px text-xs font-semibold"
@@ -2219,7 +2248,7 @@
             </div>
 
             <!-- Modal Body (Scrollable) -->
-            <div class="p-6 overflow-y-auto max-h-[60vh] space-y-5 text-xs">
+            <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable bg-white">
                 
                 <!-- TAB 1: IDENTITAS DOKUMEN SK -->
                 <div x-show="kepActiveTab === 'identitas'" class="space-y-4">
@@ -2424,25 +2453,32 @@
 
             </div>
 
-            <!-- Modal Footer: 2 Buttons Clean Layout -->
-            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5">
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                 <button type="button" @click="showTemplateKepModal = false"
-                    class="w-full sm:w-auto h-10 sm:h-9 px-4 rounded-xl sm:rounded-lg border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition cursor-pointer text-center inline-flex items-center justify-center">
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
                     Batal
                 </button>
                 <button type="button" wire:click="saveTemplateKep(true)" wire:loading.attr="disabled" wire:target="saveTemplateKep"
-                    class="w-full sm:w-auto sm:min-w-[195px] h-10 sm:h-9 px-5 rounded-xl sm:rounded-lg bg-gov-navy hover:bg-gov-navyHover active:bg-gov-navy text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-75 disabled:cursor-wait inline-flex items-center justify-center gap-1.5">
-                    <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap">
-                        <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="saveTemplateKep" class="inline-flex items-center justify-center gap-1.5 whitespace-nowrap" style="color: #ffffff;">
+                        <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                         <span>Simpan & Unduh PDF</span>
                     </span>
-                    <span wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none;"
-                        class="items-center justify-center gap-2 text-white font-bold text-xs whitespace-nowrap">
+                    <span wire:loading.inline-flex wire:target="saveTemplateKep" style="display: none; color: #ffffff;"
+                        class="items-center justify-center gap-2 text-xs whitespace-nowrap">
                         <svg class="w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>Menyiapkan PDF...</span>
+                        <span style="color: #ffffff;">Menyiapkan PDF...</span>
                     </span>
                 </button>
             </div>
@@ -2696,31 +2732,38 @@
     <!-- ======================================================== -->
     <!-- MODAL: CATAT / EDIT TRANSAKSI KAS (MILESTONE 5) -->
     <!-- ======================================================== -->
-    <div x-show="showFinanceModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showFinanceModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showFinanceModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain"
-                            x-text="isEditingFinance ? 'Edit Transaksi Kas' : 'Catat Transaksi Kas Baru'"></h3>
-                        <p class="text-xs text-slate-500">Mutasi kas operasional dan program dakwah masjid</p>
-                    </div>
+    <div x-show="showFinanceModal" x-cloak wire:ignore.self @keydown.escape.window="showFinanceModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showFinanceModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="finance-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="finance-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingFinance ? 'Edit Transaksi Kas' : 'Catat Transaksi Kas Baru'"></h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Mutasi kas operasional dan program dakwah masjid</p>
                 </div>
                 <button type="button" @click="showFinanceModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveFinance" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveFinance" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 @php
                     $isTesting = app()->runningUnitTests();
 
@@ -3034,12 +3077,18 @@
                         </div>
                     @endif
                 </div>
+                </div>
 
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showFinanceModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="saveFinance"
                             x-text="isEditingFinance ? 'Perbarui Transaksi' : 'Simpan Transaksi'"></span>
                         <span wire:loading.inline-flex wire:target="saveFinance" style="display: none;"
@@ -3063,71 +3112,83 @@
     <!-- ======================================================== -->
     <!-- MODAL: KELOLA KATEGORI KAS (MILESTONE 5) -->
     <!-- ======================================================== -->
-    <div x-show="showFinanceCategoryModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showFinanceCategoryModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showFinanceCategoryModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                        <i data-lucide="tags" class="w-4 h-4 text-emerald-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain"
-                            x-text="isEditingFinanceCategory ? 'Edit Pos Anggaran' : 'Tambah Pos Anggaran'">
-                            Tambah Pos Anggaran
-                        </h3>
-                    </div>
+    <div x-show="showFinanceCategoryModal" x-cloak wire:ignore.self @keydown.escape.window="showFinanceCategoryModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showFinanceCategoryModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="finance-category-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="finance-category-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingFinanceCategory ? 'Edit Pos Anggaran' : 'Tambah Pos Anggaran'">
+                        Tambah Pos Anggaran
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Master kategori pos penerimaan dan pengeluaran kas</p>
                 </div>
                 <button type="button" @click="showFinanceCategoryModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Form Tambah / Edit Kategori -->
-            <form novalidate @submit.prevent="$wire.saveFinanceCategory(financeCategoryForm)" class="space-y-4 text-xs">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div x-data="{ err: '', touched: false }">
-                        <label class="block font-semibold text-slate-700 mb-1">Nama Pos Anggaran *</label>
-                        <input x-model="financeCategoryForm.name" type="text"
-                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
-                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
-                            placeholder="Misal: Biaya Operasional & Sarana"
-                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
-                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
-                        <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
-                        @error('newCategoryName') <span x-show="!err"
-                        class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Kelompok Pos *</label>
-                        <x-custom-select 
-                            x-model="financeCategoryForm.group"
-                            :options="[
-                                ['value' => 'penerimaan', 'label' => 'Penerimaan (Kas Masuk)'],
-                                ['value' => 'pengeluaran_rutin', 'label' => 'Pengeluaran Rutin'],
-                                ['value' => 'pengeluaran_nonrutin', 'label' => 'Pengeluaran Non-Rutin'],
-                            ]"
-                            placeholder="Pilih Kelompok Pos"
-                            buttonClass="p-2.5 bg-slate-50/50"
-                        />
-                        @error('newCategoryGroup') <span
-                        class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate @submit.prevent="$wire.saveFinanceCategory(financeCategoryForm)" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div x-data="{ err: '', touched: false }">
+                            <label class="block font-semibold text-slate-700 mb-1">Nama Pos Anggaran *</label>
+                            <input x-model="financeCategoryForm.name" type="text"
+                                @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
+                                @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama kategori kas wajib diisi.' : ''"
+                                placeholder="Misal: Biaya Operasional & Sarana"
+                                class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                                :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                            <span x-show="err" x-text="err" class="text-xs font-medium text-rose-600 block mt-1" style="display: none;"></span>
+                            @error('newCategoryName') <span x-show="!err"
+                            class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Kelompok Pos *</label>
+                            <x-custom-select 
+                                x-model="financeCategoryForm.group"
+                                :options="[
+                                    ['value' => 'penerimaan', 'label' => 'Penerimaan (Kas Masuk)'],
+                                    ['value' => 'pengeluaran_rutin', 'label' => 'Pengeluaran Rutin'],
+                                    ['value' => 'pengeluaran_nonrutin', 'label' => 'Pengeluaran Non-Rutin'],
+                                ]"
+                                placeholder="Pilih Kelompok Pos"
+                                buttonClass="p-2.5 bg-slate-50/50"
+                            />
+                            @error('newCategoryGroup') <span
+                            class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showFinanceCategoryModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="saveFinanceCategory"
-                            x-text="isEditingFinanceCategory ? 'Perbarui Pos Anggaran' : 'Simpan Pos Anggaran'">Simpan
-                            Pos Anggaran</span>
+                            x-text="isEditingFinanceCategory ? 'Perbarui Pos Anggaran' : 'Simpan Pos Anggaran'">Simpan Pos Anggaran</span>
                         <span wire:loading.inline-flex wire:target="saveFinanceCategory" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
@@ -3149,30 +3210,39 @@
     <!-- ======================================================== -->
     <!-- MODAL: CETAK LAPORAN KAS & LPJ AGENDA (MILESTONE 5) -->
     <!-- ======================================================== -->
-    <div x-show="showPrintFinanceModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showPrintFinanceModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showPrintFinanceModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200 shrink-0">
-                        <i data-lucide="printer" class="w-4 h-4 text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Cetak Laporan Kas & LPJ</h3>
-                        <p class="text-xs text-slate-500">Pilih format laporan keuangan resmi Masjid Salahuddin</p>
-                    </div>
+    <div x-show="showPrintFinanceModal" x-cloak wire:ignore.self @keydown.escape.window="showPrintFinanceModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showPrintFinanceModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="print-finance-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="print-finance-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Cetak Laporan Kas & LPJ
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Pilih format laporan keuangan resmi Masjid Salahuddin</p>
                 </div>
                 <button type="button" @click="showPrintFinanceModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <div class="space-y-4 text-xs">
+            <!-- Body Area -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Pilihan Mode Laporan -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Jenis Dokumen Laporan</label>
@@ -3338,19 +3408,29 @@
                     @endif
                 </div>
 
-                <!-- Tombol Aksi -->
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-200">
-                    <button type="button" @click="showPrintFinanceModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                </div>
 
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="showPrintFinanceModal = false"
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="button"
                         @click="showPrintFinanceModal = false; window.downloadPdfDirect('{{ url('/admin/finance/unduh-pdf') }}?' + (
                             $wire.printReportType === 'agenda' 
                                 ? ('type=agenda&agenda_id=' + $wire.printAgendaId + '&tte=' + ($wire.tteSigned ? '1' : '0'))
                                 : ('type=monthly&month=' + $wire.printMonth + '&year=' + $wire.printYear + '&tte=' + ($wire.tteSigned ? '1' : '0'))
                         ), ($wire.printReportType === 'agenda' ? 'LPJ_Keuangan_Agenda.pdf' : ('Laporan_Arus_Kas_Bulan_' + $wire.printMonth + '_' + $wire.printYear + '.pdf')))"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs inline-flex items-center justify-center gap-2 shadow-2xs shrink-0 cursor-pointer">
-                        <i data-lucide="file-down" class="w-4 h-4"></i>
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M12 18v-6"/>
+                            <path d="m9 15 3 3 3-3"/>
+                        </svg>
                         <span>Unduh Laporan (PDF)</span>
                     </button>
                 </div>
@@ -3545,73 +3625,88 @@
     <!-- ======================================================== -->
     <!-- MODAL: CATAT SETORAN KLIRING KANTOR (LUMP-SUM) -->
     <!-- ======================================================== -->
-    <div x-show="showLumpSumModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showLumpSumModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showLumpSumModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                        <i data-lucide="building-2" class="w-4 h-4 text-emerald-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Catat Setoran Kliring Kantor</h3>
-                        <p class="text-xs text-slate-400">Pencatatan dana potongan kantor yang ditransfer secara glondongan (*lump-sum*)</p>
-                    </div>
+    <div x-show="showLumpSumModal" x-cloak wire:ignore.self @keydown.escape.window="showLumpSumModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showLumpSumModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="lump-sum-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="lump-sum-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Catat Setoran Kliring Kantor
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Pencatatan dana potongan kantor yang ditransfer secara glondongan (*lump-sum*)</p>
                 </div>
                 <button type="button" @click="showLumpSumModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="processLumpSumDeposit" class="space-y-4 text-xs">
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nominal Transfer (Rp) *</label>
-                    <input wire:model="lumpSumAmount" x-ribuan="$wire.lumpSumAmount" type="text" inputmode="numeric" placeholder="Contoh: 18.250.000"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-black text-sm transition">
-                    @error('lumpSumAmount') <span class="text-rose-600 text-xs mt-1 block">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="processLumpSumDeposit" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Tanggal Transfer Masuk *</label>
-                        <input wire:model="lumpSumDate" type="date"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
-                        @error('lumpSumDate') <span class="text-rose-600 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        <label class="block font-semibold text-slate-700 mb-1">Nominal Transfer (Rp) *</label>
+                        <input wire:model="lumpSumAmount" x-ribuan="$wire.lumpSumAmount" type="text" inputmode="numeric" placeholder="Contoh: 18.250.000"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-black text-sm transition">
+                        @error('lumpSumAmount') <span class="text-rose-600 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Tanggal Transfer Masuk *</label>
+                            <input wire:model="lumpSumDate" type="date"
+                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
+                            @error('lumpSumDate') <span class="text-rose-600 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Alokasi Program Utama</label>
+                            <x-custom-select 
+                                wire:model="lumpSumProgram"
+                                :options="[
+                                    ['value' => 'Infaq Rutin', 'label' => 'Infaq Rutin Pegawai'],
+                                    ['value' => 'Santunan Anak Yatim', 'label' => 'Santunan Anak Yatim'],
+                                    ['value' => 'Zakat Mal Rutin', 'label' => 'Zakat Mal Rutin'],
+                                    ['value' => 'Tabungan Qurban', 'label' => 'Tabungan Qurban'],
+                                ]"
+                                placeholder="Pilih Alokasi Program"
+                                buttonClass="p-2.5 bg-slate-50/50"
+                            />
+                        </div>
                     </div>
 
                     <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Alokasi Program Utama</label>
-                        <x-custom-select 
-                            wire:model="lumpSumProgram"
-                            :options="[
-                                ['value' => 'Infaq Rutin', 'label' => 'Infaq Rutin Pegawai'],
-                                ['value' => 'Santunan Anak Yatim', 'label' => 'Santunan Anak Yatim'],
-                                ['value' => 'Zakat Mal Rutin', 'label' => 'Zakat Mal Rutin'],
-                                ['value' => 'Tabungan Qurban', 'label' => 'Tabungan Qurban'],
-                            ]"
-                            placeholder="Pilih Alokasi Program"
-                            buttonClass="p-2.5 bg-slate-50/50"
-                        />
+                        <label class="block font-semibold text-slate-700 mb-1">Nomor Bukti / Keterangan Transfer</label>
+                        <input wire:model="lumpSumNotes" type="text"
+                            placeholder="No. Ref / Bilyet Kliring Bank"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nomor Bukti / Keterangan Transfer</label>
-                    <input wire:model="lumpSumNotes" type="text"
-                        placeholder="No. Ref / Bilyet Kliring Bank"
-                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
-                </div>
-
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showLumpSumModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="processLumpSumDeposit">Simpan Setoran Glondongan</span>
                         <span wire:loading.inline-flex wire:target="processLumpSumDeposit" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
@@ -3632,30 +3727,43 @@
     <!-- ======================================================== -->
     <!-- MODAL: EDIT PESERTA PROGRAM SOSIAL -->
     <!-- ======================================================== -->
-    <div x-show="showParticipantModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showParticipantModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showParticipantModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain" x-text="isEditingParticipant ? 'Edit Peserta Program Sosial' : 'Tambah Peserta Program Sosial'">Edit Peserta Program Sosial</h3>
-                        <p class="text-xs text-slate-500" x-text="isEditingParticipant ? 'Perbarui data komitmen pemotongan gaji / tukin bulanan pegawai' : 'Pendaftaran komitmen pemotongan gaji / tukin bulanan pegawai'">Perbarui data komitmen pemotongan gaji / tukin bulanan pegawai</p>
-                    </div>
+    <div x-show="showParticipantModal" x-cloak wire:ignore.self @keydown.escape.window="showParticipantModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showParticipantModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="participant-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="participant-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingParticipant ? 'Edit Peserta Program Sosial' : 'Tambah Peserta Program Sosial'">
+                        Edit Peserta Program Sosial
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;"
+                        x-text="isEditingParticipant ? 'Perbarui data komitmen pemotongan gaji / tukin bulanan pegawai' : 'Pendaftaran komitmen pemotongan gaji / tukin bulanan pegawai'">
+                        Perbarui data komitmen pemotongan gaji / tukin bulanan pegawai
+                    </p>
                 </div>
                 <button type="button" @click="showParticipantModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveParticipant" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveParticipant" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Nama Peserta -->
                 <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
@@ -3713,11 +3821,18 @@
                     @error('participantPeriod') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                </div>
+
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showParticipantModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="saveParticipant" x-text="isEditingParticipant ? 'Perbarui Peserta' : 'Tambah Peserta'">Perbarui Peserta</span>
                         <span wire:loading.inline-flex wire:target="saveParticipant" style="display: none;"
                             class="inline-flex items-center justify-center gap-2">
@@ -3971,33 +4086,40 @@
     <!-- ======================================================== -->
     <!-- MODAL: EXPORT REKAPITULASI POTONGAN PROGRAM SOSIAL -->
     <!-- ======================================================== -->
-    <div x-show="showExportPotonganModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showExportPotonganModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showExportPotonganModal = false">
-        <div
-            class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center border border-blue-200 shrink-0">
-                        <i data-lucide="download" class="w-4 h-4 text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Export Rekapitulasi Potongan</h3>
-                        <p class="text-xs text-slate-500">Unduh data potongan pegawai dalam format Excel (.xlsx)</p>
-                    </div>
+    <div x-show="showExportPotonganModal" x-cloak wire:ignore.self @keydown.escape.window="showExportPotonganModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showExportPotonganModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="export-potongan-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-md shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="export-potongan-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Export Rekapitulasi Potongan
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Unduh data potongan pegawai dalam format Excel (.xlsx)</p>
                 </div>
                 <button type="button" @click="showExportPotonganModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Form Content -->
-            <div class="space-y-4 text-xs">
-                <!-- Filter Tahun -->
+            <!-- Body Area -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
+                    <!-- Filter Tahun -->
                 <div class="space-y-1.5">
                     <label class="block font-bold text-gov-textMain">Tahun Potongan</label>
                     @php
@@ -4089,20 +4211,27 @@
                         </span>
                     </p>
                 </div>
-            </div>
+                </div>
 
-            <!-- Modal Footer -->
-            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
-                <button type="button" @click="showExportPotonganModal = false"
-                    class="px-4 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer">
-                    Batal
-                </button>
-                <a :href="'{{ route('admin.programs.export-excel') }}?year=' + exportPotonganYear + '&start_month=' + exportPotonganStartMonth + '&end_month=' + exportPotonganEndMonth + '&month=' + exportPotonganStartMonth"
-                    @click="setTimeout(() => { showExportPotonganModal = false; }, 300)"
-                    class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-1.5">
-                    <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
-                    <span>Download Excel (.xlsx)</span>
-                </a>
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="showExportPotonganModal = false"
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
+                    <a :href="'{{ route('admin.programs.export-excel') }}?year=' + exportPotonganYear + '&start_month=' + exportPotonganStartMonth + '&end_month=' + exportPotonganEndMonth + '&month=' + exportPotonganStartMonth"
+                        @click="setTimeout(() => { showExportPotonganModal = false; }, 300)"
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
+                        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Download Excel (.xlsx)</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -4110,32 +4239,39 @@
     <!-- ========================================== -->
     <!-- MODAL: TAMBAH / EDIT PROGRAM SOSIAL (MILESTONE 6) -->
     <!-- ========================================== -->
-    <div x-show="showSocialProgramModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showSocialProgramModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showSocialProgramModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                        <i data-lucide="heart-handshake" class="w-4 h-4 text-emerald-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain"
-                            x-text="isEditingSocialProgram ? 'Edit Program Sosial' : 'Tambah Program Sosial Baru'">
-                        </h3>
-                        <p class="text-xs text-slate-500">Kelola master program sosial masjid</p>
-                    </div>
+    <div x-show="showSocialProgramModal" x-cloak wire:ignore.self @keydown.escape.window="showSocialProgramModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showSocialProgramModal = false; }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="social-program-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="social-program-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="isEditingSocialProgram ? 'Edit Program Sosial' : 'Tambah Program Sosial Baru'">
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Kelola master program sosial masjid</p>
                 </div>
                 <button type="button" @click="showSocialProgramModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form novalidate wire:submit.prevent="saveSocialProgram" class="space-y-4 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveSocialProgram" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Nama Program -->
                 <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Program Sosial *</label>
@@ -4210,12 +4346,18 @@
                     @error('socialProgramDescription') <span class="text-xs font-medium text-rose-600 block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Footer Buttons (Rule 5) -->
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
+                </div>
+
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showSocialProgramModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                        Batal
+                    </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="saveSocialProgram"
                             x-text="isEditingSocialProgram ? 'Perbarui Program' : 'Simpan Program'"></span>
                         <span wire:loading.inline-flex wire:target="saveSocialProgram" style="display: none;"
@@ -4234,32 +4376,39 @@
     </div>
 
     <!-- Modal: Tambah / Edit Galeri Kegiatan -->
-    <div x-show="$wire.showGalleryModal" x-cloak
-        @click="if (window.isBackdropClick($event, $el)) $wire.closeGalleryModal()"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="$wire.closeGalleryModal()">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] flex flex-col">
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-slate-100 pb-3 shrink-0">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <i data-lucide="images" class="w-4 h-4 text-amber-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-gov-textMain">
-                            <span x-text="$wire.isEditingGallery ? 'Edit Galeri Kegiatan' : 'Tambah Galeri Kegiatan'"></span>
-                        </h3>
-                        <p class="text-[11px] text-slate-500">Dokumentasi foto kegiatan ibadah & agenda Masjid Salahuddin</p>
-                    </div>
+    <div x-show="$wire.showGalleryModal" x-cloak wire:ignore.self @keydown.escape.window="$wire.closeGalleryModal()"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { $wire.closeGalleryModal(); }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="gallery-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="gallery-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        <span x-text="$wire.isEditingGallery ? 'Edit Galeri Kegiatan' : 'Tambah Galeri Kegiatan'"></span>
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Dokumentasi foto kegiatan ibadah & agenda Masjid Salahuddin</p>
                 </div>
                 <button type="button" wire:click="closeGalleryModal"
-                    class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Form Content -->
-            <form novalidate wire:submit.prevent="saveGallery" class="space-y-4 text-xs overflow-y-auto flex-1 pr-1">
+            <!-- Form & Scrollable Body Area -->
+            <form novalidate wire:submit.prevent="saveGallery" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Judul Kegiatan -->
                 <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Judul Kegiatan <span class="text-rose-500">*</span></label>
@@ -4410,15 +4559,19 @@
                     </div>
                 @endif
 
-                <!-- Modal Action Buttons -->
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 shrink-0">
+                </div>
+
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" wire:click="closeGalleryModal"
-                        class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer">
+                        class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
                         Batal
                     </button>
                     <button type="submit"
                         wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
+                        class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
                         <span wire:loading.remove wire:target="saveGallery, galleryUploadedPhotos">Simpan Galeri</span>
                         <span wire:loading.inline-flex wire:target="saveGallery, galleryUploadedPhotos" style="display: none;"
                             class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
@@ -4426,7 +4579,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap leading-none">Menyimpan..</span>
+                            <span class="whitespace-nowrap leading-none">Menyimpan...</span>
                         </span>
                     </button>
                 </div>
@@ -4435,32 +4588,39 @@
     </div>
 
         <!-- Modal: Detail & Tanggapan Saran Jamaah -->
-    <div x-show="$wire.showSaranDetailModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) $wire.closeSaranDetailModal()"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="$wire.closeSaranDetailModal()">
-        <div class="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] flex flex-col">
+    <div x-show="$wire.showSaranDetailModal" x-cloak wire:ignore.self @keydown.escape.window="$wire.closeSaranDetailModal()"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { $wire.closeSaranDetailModal(); }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="saran-detail-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
             
-            <!-- Modal Header -->
-            <div class="flex items-start justify-between border-b border-slate-100 pb-3 shrink-0">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <svg class="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-gov-textMain">
-                            {{ Auth::check() && Auth::user()->isJamaah() ? 'Detail Saran Masukan Jamaah' : 'Detail Saran & Tanggapan Takmir' }}
-                        </h3>
-                        <p class="text-[11px] text-slate-500">Masjid Salahuddin KPP Madya Malang</p>
-                    </div>
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="saran-detail-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        {{ Auth::check() && Auth::user()->isJamaah() ? 'Detail Saran Masukan Jamaah' : 'Detail Saran & Tanggapan Takmir' }}
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Masjid Salahuddin KPP Madya Malang</p>
                 </div>
-                <button type="button" wire:click="closeSaranDetailModal" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <button type="button" wire:click="closeSaranDetailModal"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Modal Body (Scrollable) -->
-            <div class="flex-1 overflow-y-auto space-y-4 pr-1 text-xs">
+            <!-- Body Area -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 @if($selectedSaran)
                     <!-- Informasi Pengirim & Metadata -->
                     <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/80 grid grid-cols-2 gap-3">
@@ -4548,49 +4708,51 @@
                         @endif
                     @endif
                 @endif
-            </div>
-
-            <!-- Modal Action Buttons -->
-            <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 shrink-0">
-                <div>
-                    @if(Auth::check() && Auth::user()->canManage() && $selectedSaran)
-                        <button type="button"
-                            @click="openDeleteModal({{ Js::from([
-                                'id' => $selectedSaran->id,
-                                'action' => 'deleteSaran',
-                                'title' => 'Hapus Catatan Saran & Kritik',
-                                'itemName' => ($selectedSaran->name ? $selectedSaran->name . ' - ' : '') . Str::limit($selectedSaran->message ?? '', 80),
-                                'message' => 'Apakah Anda yakin ingin menghapus catatan saran ini dari sistem?',
-                            ]) }})"
-                            class="px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5"
-                            title="Hapus catatan saran ini (tetap tersedia untuk saran yang telah ditanggapi)">
-                            <svg class="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            <span>Hapus Saran</span>
-                        </button>
-                    @endif
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <button type="button" wire:click="closeSaranDetailModal"
-                        class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer">
-                        {{ Auth::check() && Auth::user()->isJamaah() ? 'Tutup' : 'Batal / Tutup' }}
-                    </button>
+                <!-- Sticky Modal Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <div>
+                        @if(Auth::check() && Auth::user()->canManage() && $selectedSaran)
+                            <button type="button"
+                                @click="openDeleteModal({{ Js::from([
+                                    'id' => $selectedSaran->id,
+                                    'action' => 'deleteSaran',
+                                    'title' => 'Hapus Catatan Saran & Kritik',
+                                    'itemName' => ($selectedSaran->name ? $selectedSaran->name . ' - ' : '') . Str::limit($selectedSaran->message ?? '', 80),
+                                    'message' => 'Apakah Anda yakin ingin menghapus catatan saran ini dari sistem?',
+                                ]) }})"
+                                class="px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer inline-flex items-center gap-1.5"
+                                title="Hapus catatan saran ini (tetap tersedia untuk saran yang telah ditanggapi)">
+                                <svg class="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                <span>Hapus Saran</span>
+                            </button>
+                        @endif
+                    </div>
 
-                    @if(Auth::check() && Auth::user()->canManage())
-                        <button type="button" wire:click="saveSaranResponse"
-                            wire:loading.attr="disabled"
-                            class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-1.5">
-                            <span wire:loading.remove wire:target="saveSaranResponse">Simpan Tanggapan</span>
-                            <span wire:loading.inline-flex wire:target="saveSaranResponse" style="display: none;"
-                                class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
-                                <svg class="w-3.5 h-3.5 animate-spin text-white inline-block" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                <span>Menyimpan...</span>
-                            </span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" wire:click="closeSaranDetailModal"
+                            class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer shadow-2xs">
+                            {{ Auth::check() && Auth::user()->isJamaah() ? 'Tutup' : 'Batal / Tutup' }}
                         </button>
-                    @endif
+
+                        @if(Auth::check() && Auth::user()->canManage())
+                            <button type="button" wire:click="saveSaranResponse"
+                                wire:loading.attr="disabled"
+                                class="px-4 py-2 text-xs font-semibold text-white bg-gov-navy hover:bg-gov-navyHover active:scale-[0.98] rounded-xl transition cursor-pointer shadow-sm disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                                style="background-color: #0b2b54; color: #ffffff;">
+                                <span wire:loading.remove wire:target="saveSaranResponse">Simpan Tanggapan</span>
+                                <span wire:loading.inline-flex wire:target="saveSaranResponse" style="display: none;"
+                                    class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
+                                    <svg class="w-3.5 h-3.5 animate-spin text-white inline-block" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    <span>Menyimpan...</span>
+                                </span>
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -4710,34 +4872,37 @@
     <!-- ======================================================== -->
     <!-- MODAL: TAMBAH / EDIT PEGAWAI MUSLIM KPP MADYA MALANG -->
     <!-- ======================================================== -->
-    <div x-show="showEmployeeModal" x-cloak wire:ignore.self
-         @click="if (window.isBackdropClick($event, $el)) { showEmployeeModal = false; $wire.closeEmployeeModal(); }"
-         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-         style="display: none;" @keydown.escape.window="showEmployeeModal = false; $wire.closeEmployeeModal();">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-gov-navy/10 text-gov-navy flex items-center justify-center">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="16" rx="3"/>
-                            <circle cx="9" cy="10" r="2"/>
-                            <line x1="15" y1="8" x2="17" y2="8"/>
-                            <line x1="15" y1="12" x2="17" y2="12"/>
-                            <line x1="7" y1="16" x2="17" y2="16"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">{{ $editingEmployeeId ? 'Ubah Data Pegawai' : 'Tambah Pegawai Muslim' }}</h3>
-                        <p class="text-xs text-slate-500 font-medium">Civitas Pegawai Kantor Pelayanan Pajak Madya Malang</p>
-                    </div>
+    <div x-show="showEmployeeModal" x-cloak wire:ignore.self @keydown.escape.window="showEmployeeModal = false; $wire.closeEmployeeModal();"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showEmployeeModal = false; $wire.closeEmployeeModal(); }"
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="employee-modal-title">
+        
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-lg shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="employee-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">{{ $editingEmployeeId ? 'Ubah Data Pegawai' : 'Tambah Pegawai Muslim' }}</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Civitas Pegawai Kantor Pelayanan Pajak Madya Malang</p>
                 </div>
                 <button type="button" @click="showEmployeeModal = false; $wire.closeEmployeeModal()"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form wire:submit.prevent="saveEmployee" novalidate class="space-y-3.5 text-xs">
+            <!-- Form & Scrollable Body Area -->
+            <form wire:submit.prevent="saveEmployee" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                 <!-- Nama Pegawai -->
                 <div x-data="{ err: '', touched: false }">
                     <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap &amp; Gelar *</label>
@@ -4790,17 +4955,26 @@
                     </div>
                 </div>
 
-                <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showEmployeeModal = false; $wire.closeEmployeeModal()"
-                        class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
                         Batal
                     </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-2">
-                        <span wire:loading.remove wire:target="saveEmployee">{{ $editingEmployeeId ? 'Simpan Perubahan' : 'Tambahkan Pegawai' }}</span>
-                        <span wire:loading.inline-flex wire:target="saveEmployee" style="display: none;" class="inline-flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            <span>Menyimpan...</span>
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveEmployee" style="color: #ffffff;">{{ $editingEmployeeId ? 'Simpan Perubahan' : 'Tambahkan Pegawai' }}</span>
+                        <span wire:loading.inline-flex wire:target="saveEmployee" style="display: none; color: #ffffff;" class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                         </span>
                     </button>
                 </div>
