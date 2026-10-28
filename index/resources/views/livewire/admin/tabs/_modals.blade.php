@@ -293,27 +293,30 @@
         role="dialog" aria-modal="true" aria-labelledby="kajian-modal-title">
         
         <div @click.stop
-            class="bg-white rounded-2xl w-full max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] relative animate-in fade-in zoom-in-95 duration-200"
-            style="z-index: 10000; background-color: #ffffff;">
+            class="bg-white rounded-2xl w-full max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #ffffff; max-height: min(88vh, 85dvh); height: auto;">
             
-            <!-- Modal Header: Solid Navy (#0e2547) -->
-            <div class="px-5 py-3.5 bg-[#0e2547] text-white flex items-center justify-between border-b border-white/10 shrink-0">
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0"
+                style="background-color: #0b2b54; color: #ffffff;">
                 <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/15">
+                    <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20"
+                        style="background-color: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2);">
                         <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                             <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
                         </svg>
                     </div>
                     <div class="min-w-0">
-                        <h3 id="kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate"
+                        <h3 id="kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
                             x-text="isEditingKajian ? 'Edit Jadwal Kajian' : (kajianForm.type === 'jumat' ? 'Tambah Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Tambah Jadwal Kajian Tematik' : 'Tambah Jadwal Kajian Pekanan'))"></h3>
-                        <p class="text-[11px] text-slate-300 truncate"
+                        <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;"
                             x-text="kajianForm.type === 'jumat' ? 'Jadwal Khatib, Muadzin, MC & Naskah Khutbah' : 'Pengaturan tanggal, waktu, dan narasumber'"></p>
                     </div>
                 </div>
                 <button type="button" @click="closeKajianModal()"
-                    class="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
                     title="Tutup Modal">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -331,20 +334,23 @@
                         <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
                             <button type="button"
                                 @click="kajianForm.type = 'pekanan'; updateKajianDefaultTime()"
-                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs"
-                                :class="kajianForm.type === 'pekanan' ? 'border-[#0e2547] bg-[#0e2547] text-white shadow-xs' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'">
+                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs shadow-2xs"
+                                :class="kajianForm.type === 'pekanan' ? 'bg-gov-navy text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'"
+                                :style="kajianForm.type === 'pekanan' ? 'background-color: #0b2b54; color: #ffffff; border-color: #0b2b54;' : 'background-color: #ffffff; color: #334155; border-color: #cbd5e1;'">
                                 Pekanan
                             </button>
                             <button type="button"
                                 @click="kajianForm.type = 'tematik'; updateKajianDefaultTime()"
-                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs"
-                                :class="kajianForm.type === 'tematik' ? 'border-[#0e2547] bg-[#0e2547] text-white shadow-xs' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'">
+                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs shadow-2xs"
+                                :class="kajianForm.type === 'tematik' ? 'bg-gov-navy text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'"
+                                :style="kajianForm.type === 'tematik' ? 'background-color: #0b2b54; color: #ffffff; border-color: #0b2b54;' : 'background-color: #ffffff; color: #334155; border-color: #cbd5e1;'">
                                 Tematik
                             </button>
                             <button type="button"
                                 @click="kajianForm.type = 'jumat'; updateKajianDefaultTime()"
-                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs"
-                                :class="kajianForm.type === 'jumat' ? 'border-[#0e2547] bg-[#0e2547] text-white shadow-xs' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'">
+                                class="py-2 px-1 rounded-lg border font-bold text-center transition cursor-pointer text-[11px] sm:text-xs shadow-2xs"
+                                :class="kajianForm.type === 'jumat' ? 'bg-gov-navy text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'"
+                                :style="kajianForm.type === 'jumat' ? 'background-color: #0b2b54; color: #ffffff; border-color: #0b2b54;' : 'background-color: #ffffff; color: #334155; border-color: #cbd5e1;'">
                                 Khutbah Jumat
                             </button>
                         </div>
@@ -599,22 +605,25 @@
                 </div>
 
                 <!-- Modal Footer (Sticky at bottom) -->
-                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
                     <button type="button" @click="closeKajianModal()"
-                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition cursor-pointer text-xs">
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
                         Batal
                     </button>
                     <button type="submit" wire:loading.attr="disabled"
-                        class="px-5 py-2 rounded-lg bg-[#0e2547] hover:bg-[#163a6f] text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs">
-                        <span wire:loading.remove wire:target="saveKajian"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveKajian" style="color: #ffffff;"
                             x-text="isEditingKajian ? 'Simpan Perubahan' : 'Simpan Jadwal'"></span>
-                        <span wire:loading.inline-flex wire:target="saveKajian" style="display: none;"
+                        <span wire:loading.inline-flex wire:target="saveKajian" style="display: none; color: #ffffff;"
                             class="inline-flex items-center justify-center gap-2">
                             <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                         </span>
                     </button>
                 </div>

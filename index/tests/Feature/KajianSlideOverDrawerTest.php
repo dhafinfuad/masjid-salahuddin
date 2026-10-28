@@ -57,7 +57,11 @@ class KajianSlideOverDrawerTest extends TestCase
         $response->assertSee('z-index: 10000', false);
         $response->assertSee('background-color: #ffffff', false);
 
-        // 4. Verifikasi tombol Batal dan Simpan di footer
+        // 4. Verifikasi header memiliki latar belakang solid navy (#0b2b54) dan teks putih (#ffffff)
+        $response->assertSee('background-color: #0b2b54', false);
+        $response->assertSee('color: #ffffff', false);
+
+        // 5. Verifikasi tombol Batal dan Simpan di footer
         $response->assertSee('closeKajianModal()', false);
         $response->assertSee('saveKajian', false);
     }
