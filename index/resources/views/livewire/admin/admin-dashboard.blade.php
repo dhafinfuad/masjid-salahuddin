@@ -243,6 +243,7 @@
                  $wire.set('showKajianModal', true, false);
              }
              this.showKajianModal = true;
+             document.body.style.overflow = 'hidden';
              this.$nextTick(() => {
                  if (window.createLucideIcons) window.createLucideIcons();
              });
@@ -279,6 +280,7 @@
                  $wire.set('showKajianModal', true, false);
              }
              this.showKajianModal = true;
+             document.body.style.overflow = 'hidden';
              this.$nextTick(() => {
                  if (window.createLucideIcons) window.createLucideIcons();
              });
@@ -287,6 +289,7 @@
              this.showKajianModal = false;
              this.isEditingKajian = false;
              this.kajianErrors = {};
+             document.body.style.overflow = '';
              if (typeof $wire !== 'undefined') {
                  $wire.set('showKajianModal', false, false);
                  $wire.set('isEditingKajian', false, false);
@@ -1140,8 +1143,8 @@
         }
         openCreateKajian($event.detail.type || 'jumat');
     "
-    @open-kajian-modal.window="showKajianModal = true; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', true, false); }"
-    @close-kajian-modal.window="showKajianModal = false; if (typeof $wire !== 'undefined') { $wire.set('showKajianModal', false, false); }"
+    @open-kajian-modal.window="showKajianModal = true; document.body.style.overflow = 'hidden';"
+    @close-kajian-modal.window="closeKajianModal()"
     @open-ustadz-modal.window="showUstadzModal = true; $wire.set('showUstadzModal', true, false)" @close-ustadz-modal.window="showUstadzModal = false; $wire.set('showUstadzModal', false, false)"
     @open-import-kajian-modal.window="if ($event.detail && $event.detail.type) { importKajianType = $event.detail.type; } showImportKajianModal = true"
     @close-import-kajian-modal.window="showImportKajianModal = false"

@@ -284,328 +284,367 @@
         </div>
     </div>
     <!-- ======================================================== -->
-    <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (MILESTONE 1) -->
+    <!-- SLIDE-OVER DRAWER: BUAT / EDIT JADWAL KAJIAN (OPSI 1) -->
     <!-- ======================================================== -->
-    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
-        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { if (!showUstadzModal) closeKajianModal(); }"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style="display: none; z-index: 50; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
-        <div @click.stop
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto relative"
-            style="z-index: 51;">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain"
-                        x-text="isEditingKajian ? 'Edit Jadwal Kajian' : 'Tambah Jadwal Kajian Baru'"></h3>
-                </div>
-                <button type="button" @click="closeKajianModal()"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
-                        data-lucide="x" class="w-5 h-5"></i></button>
+    <template x-teleport="body">
+        <div x-show="showKajianModal" x-cloak
+            @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
+            class="fixed inset-0 z-[100] overflow-hidden"
+            role="dialog" aria-modal="true" aria-labelledby="kajian-drawer-title">
+            
+            <!-- Backdrop Overlay (Mengunci seluruh halaman dan tab navigasi di belakangnya) -->
+            <div x-show="showKajianModal"
+                x-transition:enter="ease-in-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in-out duration-300"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click="if (!showUstadzModal) closeKajianModal()"
+                class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity cursor-pointer">
             </div>
 
-            <form novalidate @submit.prevent="if (validateKajianAll()) { $wire.saveKajian(kajianForm); }" class="space-y-3.5 text-xs">
-                <!-- Pilihan Tipe Kajian jika menambah baru -->
-                <div x-show="!isEditingKajian">
-                    <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <button type="button"
-                            @click="kajianForm.type = 'pekanan'; updateKajianDefaultTime()"
-                            class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
-                            :class="kajianForm.type === 'pekanan' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
-                            Kajian Pekanan
-                        </button>
-                        <button type="button"
-                            @click="kajianForm.type = 'tematik'; updateKajianDefaultTime()"
-                            class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
-                            :class="kajianForm.type === 'tematik' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
-                            Kajian Tematik
-                        </button>
-                        <button type="button"
-                            @click="kajianForm.type = 'jumat'; updateKajianDefaultTime()"
-                            class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
-                            :class="kajianForm.type === 'jumat' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
-                            Shalat Jumat & Khutbah
-                        </button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
-                        <input x-model="kajianForm.date" 
-                            @change="updateKajianDefaultTime(); validateKajianField('date')" 
-                            @blur="validateKajianField('date')"
-                            type="date"
-                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"
-                            :class="kajianErrors.date ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
-                        <span x-show="kajianErrors.date" x-text="kajianErrors.date" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
-                        @error('kajianDate') <span x-show="!kajianErrors.date"
-                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">
-                            <span x-text="kajianForm.type === 'jumat' ? 'Waktu Khutbah' : (kajianForm.type === 'pekanan' ? 'Waktu Kajian' : 'Waktu Kajian')"></span>
-                        </label>
-                        <input x-model="kajianForm.time_display" type="text"
-                            :placeholder="kajianForm.type === 'jumat' ? 'Contoh: 11:49 WIB' : (kajianForm.type === 'pekanan' ? 'Contoh: 15:05 WIB' : 'Contoh: 09:00 WIB')"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1"
-                        x-text="kajianForm.type === 'jumat' ? 'Judul / Tema Khutbah Jumat (Opsional)' : 'Judul / Tema Kajian *'"></label>
-                    <input x-model="kajianForm.title" 
-                        @blur="validateKajianField('title')"
-                        @input="if (kajianErrors.title) validateKajianField('title')"
-                        type="text"
-                        :placeholder="kajianForm.type === 'jumat' ? 'Kosongkan atau ketik tema khutbah (opsional)' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
-                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
-                        :class="kajianErrors.title ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
-                    <span x-show="kajianErrors.title" x-text="kajianErrors.title" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
-                    @error('kajianTitle') <span x-show="!kajianErrors.title"
-                    class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
-                </div>
-
-                <!-- Khusus Kajian Pekanan & Tematik -->
-                <div x-show="kajianForm.type === 'pekanan' || kajianForm.type === 'tematik'" class="grid grid-cols-2 gap-3">
-                    <div class="relative" x-data="{
-                        openSuggestions: false,
-                        get filteredUstadz() {
-                            const query = (kajianForm.speaker_name || '').toLowerCase().trim();
-                            if (!query) return (ustadzDirectory || []).slice(0, 6);
-                            return (ustadzDirectory || []).filter(u => u.name.toLowerCase().includes(query)).slice(0, 6);
-                        },
-                        selectUstadz(u) {
-                            kajianForm.speaker_name = u.name;
-                            delete kajianErrors.speaker_name;
-                            if (u.phone && !kajianForm.speaker_phone) {
-                                kajianForm.speaker_phone = u.phone;
-                            }
-                            this.openSuggestions = false;
-                        }
-                    }" @click.outside="openSuggestions = false">
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="block font-semibold text-slate-700">Pembicara *</label>
-                            <span x-show="openSuggestions && filteredUstadz.length > 0" class="text-[10px] text-emerald-600 font-medium">Saran aktif</span>
+            <!-- Slide-Over Drawer Panel Container -->
+            <div class="fixed inset-y-0 right-0 max-w-full flex pl-4 sm:pl-10 pointer-events-none">
+                <div x-show="showKajianModal"
+                    x-transition:enter="transform transition ease-in-out duration-300"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in-out duration-300"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full"
+                    class="pointer-events-auto w-screen max-w-lg bg-white shadow-2xl flex flex-col border-l border-slate-200 h-full">
+                    
+                    <!-- Drawer Header -->
+                    <div class="px-5 py-4 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/15">
+                                <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                                    <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <h3 id="kajian-drawer-title" class="text-base font-bold text-white truncate"
+                                    x-text="isEditingKajian ? 'Edit Jadwal Kajian' : 'Tambah Jadwal Kajian Baru'"></h3>
+                                <p class="text-xs text-slate-300 truncate"
+                                    x-text="kajianForm.type === 'jumat' ? 'Jadwal Khutbah & Petugas Shalat Jumat' : 'Parameter jadwal, narasumber, dan waktu'"></p>
+                            </div>
                         </div>
-                        <div class="relative">
-                            <input x-model="kajianForm.speaker_name"
-                                @focus="openSuggestions = true"
-                                @input="openSuggestions = true; if (kajianErrors.speaker_name) validateKajianField('speaker_name')"
-                                @blur="validateKajianField('speaker_name')"
-                                @keydown.escape="openSuggestions = false"
-                                type="text"
-                                placeholder="Ketik nama pembicara..."
-                                autocomplete="off"
-                                class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
-                                :class="kajianErrors.speaker_name ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <button type="button" @click="closeKajianModal()"
+                            class="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                            title="Tutup Panel">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
 
-                            <!-- Dropdown Saran Database Ustadz -->
-                            <div x-show="openSuggestions && filteredUstadz.length > 0"
-                                x-transition:enter="transition ease-out duration-50"
-                                x-transition:enter-start="opacity-0 translate-y-1"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-50"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
-                                style="display: none;">
-                                <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
-                                    <span>Pilih dari Database Ustadz</span>
-                                    <span class="text-[10px] text-slate-400 font-normal shrink-0">Klik untuk memilih</span>
+                    <!-- Drawer Form & Body -->
+                    <form novalidate @submit.prevent="if (validateKajianAll()) { $wire.saveKajian(kajianForm); }" class="flex flex-col flex-1 min-h-0">
+                        <!-- Scrollable Form Fields Area -->
+                        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs">
+                            <!-- Pilihan Tipe Kajian jika menambah baru -->
+                            <div x-show="!isEditingKajian">
+                                <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <button type="button"
+                                        @click="kajianForm.type = 'pekanan'; updateKajianDefaultTime()"
+                                        class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
+                                        :class="kajianForm.type === 'pekanan' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
+                                        Kajian Pekanan
+                                    </button>
+                                    <button type="button"
+                                        @click="kajianForm.type = 'tematik'; updateKajianDefaultTime()"
+                                        class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
+                                        :class="kajianForm.type === 'tematik' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
+                                        Kajian Tematik
+                                    </button>
+                                    <button type="button"
+                                        @click="kajianForm.type = 'jumat'; updateKajianDefaultTime()"
+                                        class="p-2.5 rounded-lg border font-bold text-center transition cursor-pointer text-xs"
+                                        :class="kajianForm.type === 'jumat' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'border-gov-border bg-slate-50 text-slate-700 hover:bg-slate-100'">
+                                        Shalat Jumat & Khutbah
+                                    </button>
                                 </div>
-                                <template x-for="u in filteredUstadz" :key="'speaker-' + u.id">
-                                    <button type="button" @click="selectUstadz(u)"
-                                        class="w-full text-left px-3 py-2 hover:bg-emerald-50/60 flex items-center justify-between gap-2.5 transition cursor-pointer border-b border-slate-50 last:border-0 group">
-                                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                                                <template x-if="u.photo">
-                                                    <img :src="'{{ asset('storage') }}/' + u.photo" class="w-full h-full object-cover">
-                                                </template>
-                                                <template x-if="!u.photo">
-                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                    </svg>
-                                                </template>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
+                                    <input x-model="kajianForm.date" 
+                                        @change="updateKajianDefaultTime(); validateKajianField('date')" 
+                                        @blur="validateKajianField('date')"
+                                        type="date"
+                                        class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"
+                                        :class="kajianErrors.date ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                                    <span x-show="kajianErrors.date" x-text="kajianErrors.date" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                                    @error('kajianDate') <span x-show="!kajianErrors.date"
+                                    class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">
+                                        <span x-text="kajianForm.type === 'jumat' ? 'Waktu Khutbah' : (kajianForm.type === 'pekanan' ? 'Waktu Kajian' : 'Waktu Kajian')"></span>
+                                    </label>
+                                    <input x-model="kajianForm.time_display" type="text"
+                                        :placeholder="kajianForm.type === 'jumat' ? 'Contoh: 11:49 WIB' : (kajianForm.type === 'pekanan' ? 'Contoh: 15:05 WIB' : 'Contoh: 09:00 WIB')"
+                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1"
+                                    x-text="kajianForm.type === 'jumat' ? 'Judul / Tema Khutbah Jumat (Opsional)' : 'Judul / Tema Kajian *'"></label>
+                                <input x-model="kajianForm.title" 
+                                    @blur="validateKajianField('title')"
+                                    @input="if (kajianErrors.title) validateKajianField('title')"
+                                    type="text"
+                                    :placeholder="kajianForm.type === 'jumat' ? 'Kosongkan atau ketik tema khutbah (opsional)' : (kajianForm.type === 'tematik' ? 'Contoh: Peringatan Isra Miraj 1448 H' : 'Contoh: Kajian Tafsir Al-Kahfi')"
+                                    class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                                    :class="kajianErrors.title ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                                <span x-show="kajianErrors.title" x-text="kajianErrors.title" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                                @error('kajianTitle') <span x-show="!kajianErrors.title"
+                                class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Khusus Kajian Pekanan & Tematik -->
+                            <div x-show="kajianForm.type === 'pekanan' || kajianForm.type === 'tematik'" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="relative" x-data="{
+                                    openSuggestions: false,
+                                    get filteredUstadz() {
+                                        const query = (kajianForm.speaker_name || '').toLowerCase().trim();
+                                        if (!query) return (ustadzDirectory || []).slice(0, 6);
+                                        return (ustadzDirectory || []).filter(u => u.name.toLowerCase().includes(query)).slice(0, 6);
+                                    },
+                                    selectUstadz(u) {
+                                        kajianForm.speaker_name = u.name;
+                                        delete kajianErrors.speaker_name;
+                                        if (u.phone && !kajianForm.speaker_phone) {
+                                            kajianForm.speaker_phone = u.phone;
+                                        }
+                                        this.openSuggestions = false;
+                                    }
+                                }" @click.outside="openSuggestions = false">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block font-semibold text-slate-700">Pembicara *</label>
+                                        <span x-show="openSuggestions && filteredUstadz.length > 0" class="text-[10px] text-emerald-600 font-medium">Saran aktif</span>
+                                    </div>
+                                    <div class="relative">
+                                        <input x-model="kajianForm.speaker_name"
+                                            @focus="openSuggestions = true"
+                                            @input="openSuggestions = true; if (kajianErrors.speaker_name) validateKajianField('speaker_name')"
+                                            @blur="validateKajianField('speaker_name')"
+                                            @keydown.escape="openSuggestions = false"
+                                            type="text"
+                                            placeholder="Ketik nama pembicara..."
+                                            autocomplete="off"
+                                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain"
+                                            :class="kajianErrors.speaker_name ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+
+                                        <!-- Dropdown Saran Database Ustadz -->
+                                        <div x-show="openSuggestions && filteredUstadz.length > 0"
+                                            x-transition:enter="transition ease-out duration-50"
+                                            x-transition:enter-start="opacity-0 translate-y-1"
+                                            x-transition:enter-end="opacity-100 translate-y-0"
+                                            x-transition:leave="transition ease-in duration-50"
+                                            x-transition:leave-start="opacity-100 translate-y-0"
+                                            x-transition:leave-end="opacity-0 translate-y-1"
+                                            class="absolute left-0 top-full mt-1 z-50 w-full sm:w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
+                                            style="display: none;">
+                                            <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
+                                                <span>Pilih dari Database Ustadz</span>
+                                                <span class="text-[10px] text-slate-400 font-normal shrink-0">Klik untuk memilih</span>
                                             </div>
-                                            <div class="min-w-0 flex-1">
-                                                <p class="text-xs font-semibold text-slate-800 group-hover:text-gov-navy truncate" x-text="u.name"></p>
-                                                <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
+                                            <template x-for="u in filteredUstadz" :key="'speaker-' + u.id">
+                                                <button type="button" @click="selectUstadz(u)"
+                                                    class="w-full text-left px-3 py-2 hover:bg-emerald-50/60 flex items-center justify-between gap-2.5 transition cursor-pointer border-b border-slate-50 last:border-0 group">
+                                                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                                            <template x-if="u.photo">
+                                                                <img :src="'{{ asset('storage') }}/' + u.photo" class="w-full h-full object-cover">
+                                                            </template>
+                                                            <template x-if="!u.photo">
+                                                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                                </svg>
+                                                            </template>
+                                                        </div>
+                                                        <div class="min-w-0 flex-1">
+                                                            <p class="text-xs font-semibold text-slate-800 group-hover:text-gov-navy truncate" x-text="u.name"></p>
+                                                            <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
+                                                        </div>
+                                                    </div>
+                                                    <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <span x-show="kajianErrors.speaker_name" x-text="kajianErrors.speaker_name" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                                    @error('kajianSpeakerName') <span x-show="!kajianErrors.speaker_name"
+                                    class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">WhatsApp</label>
+                                    <input x-model="kajianForm.speaker_phone" type="text" placeholder="+62 812-3456-7890"
+                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                </div>
+                            </div>
+
+                            <!-- Khusus Kajian Jumat -->
+                            <div x-show="kajianForm.type === 'jumat'" class="space-y-3">
+                                <div
+                                    class="p-3 bg-amber-50/60 rounded-lg border border-amber-200 flex items-center justify-between">
+                                    <div>
+                                        <span class="font-bold text-amber-950 block">Opsi Hari Libur</span>
+                                        <span class="text-xs text-amber-800">Nonaktifkan petugas jika bertepatan dengan libur bersama atau cuti.</span>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" x-model="kajianForm.is_holiday_disabled" class="sr-only peer">
+                                        <div
+                                            class="w-10 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gov-navy">
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="relative" x-data="{
+                                        openKhatibSuggestions: false,
+                                        get filteredKhatib() {
+                                            const query = (kajianForm.khatib_name || '').toLowerCase().trim();
+                                            if (!query) return (ustadzDirectory || []).slice(0, 6);
+                                            return (ustadzDirectory || []).filter(u => u.name.toLowerCase().includes(query)).slice(0, 6);
+                                        },
+                                        selectKhatib(u) {
+                                            kajianForm.khatib_name = u.name;
+                                            if (u.phone && !kajianForm.khatib_phone) {
+                                                kajianForm.khatib_phone = u.phone;
+                                            }
+                                            this.openKhatibSuggestions = false;
+                                        }
+                                    }" @click.outside="openKhatibSuggestions = false">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <label class="block font-semibold text-slate-700">Khatib & Imam</label>
+                                            <span x-show="openKhatibSuggestions && filteredKhatib.length > 0" class="text-[10px] text-emerald-600 font-medium">Saran aktif</span>
+                                        </div>
+                                        <div class="relative">
+                                            <input x-model="kajianForm.khatib_name"
+                                                @focus="openKhatibSuggestions = true"
+                                                @input="openKhatibSuggestions = true"
+                                                @keydown.escape="openKhatibSuggestions = false"
+                                                type="text"
+                                                placeholder="Ketik nama khatib..."
+                                                autocomplete="off"
+                                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+
+                                            <!-- Dropdown Saran Khatib -->
+                                            <div x-show="openKhatibSuggestions && filteredKhatib.length > 0"
+                                                x-transition:enter="transition ease-out duration-50"
+                                                x-transition:enter-start="opacity-0 translate-y-1"
+                                                x-transition:enter-end="opacity-100 translate-y-0"
+                                                x-transition:leave="transition ease-in duration-50"
+                                                x-transition:leave-start="opacity-100 translate-y-0"
+                                                x-transition:leave-end="opacity-0 translate-y-1"
+                                                class="absolute left-0 top-full mt-1 z-50 w-full sm:w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
+                                                style="display: none;">
+                                                <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
+                                                    <span>Pilih dari Database Ustadz</span>
+                                                    <span class="text-[10px] text-slate-400 font-normal shrink-0">Klik untuk memilih</span>
+                                                </div>
+                                                <template x-for="u in filteredKhatib" :key="'khatib-' + u.id">
+                                                    <button type="button" @click="selectKhatib(u)"
+                                                        class="w-full text-left px-3 py-2 hover:bg-emerald-50/60 flex items-center justify-between gap-2.5 transition cursor-pointer border-b border-slate-50 last:border-0 group">
+                                                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                                            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                                                <template x-if="u.photo">
+                                                                    <img :src="'{{ asset('storage') }}/' + u.photo" class="w-full h-full object-cover">
+                                                                </template>
+                                                                <template x-if="!u.photo">
+                                                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                                    </svg>
+                                                                </template>
+                                                            </div>
+                                                            <div class="min-w-0 flex-1">
+                                                                <p class="text-xs font-semibold text-slate-800 group-hover:text-gov-navy truncate" x-text="u.name"></p>
+                                                                <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
+                                                            </div>
+                                                        </div>
+                                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
+                                                    </button>
+                                                </template>
                                             </div>
                                         </div>
-                                        <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-                        <span x-show="kajianErrors.speaker_name" x-text="kajianErrors.speaker_name" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
-                        @error('kajianSpeakerName') <span x-show="!kajianErrors.speaker_name"
-                        class="text-xs text-rose-600 font-semibold block mt-1">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">WhatsApp</label>
-                        <input x-model="kajianForm.speaker_phone" type="text" placeholder="+62 812-3456-7890"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                    </div>
-                </div>
-
-
-
-                <!-- Khusus Kajian Jumat -->
-                <div x-show="kajianForm.type === 'jumat'" class="space-y-3">
-                    <div
-                        class="p-3 bg-amber-50/60 rounded-lg border border-amber-200 flex items-center justify-between">
-                        <div>
-                            <span class="font-bold text-amber-950 block">Opsi Hari Libur</span>
-                            <span class="text-xs text-amber-800">Nonaktifkan petugas jika bertepatan dengan libur
-                                bersama atau cuti.</span>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" x-model="kajianForm.is_holiday_disabled" class="sr-only peer">
-                            <div
-                                class="w-10 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gov-navy">
-                            </div>
-                        </label>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="relative" x-data="{
-                            openKhatibSuggestions: false,
-                            get filteredKhatib() {
-                                const query = (kajianForm.khatib_name || '').toLowerCase().trim();
-                                if (!query) return (ustadzDirectory || []).slice(0, 6);
-                                return (ustadzDirectory || []).filter(u => u.name.toLowerCase().includes(query)).slice(0, 6);
-                            },
-                            selectKhatib(u) {
-                                kajianForm.khatib_name = u.name;
-                                if (u.phone && !kajianForm.khatib_phone) {
-                                    kajianForm.khatib_phone = u.phone;
-                                }
-                                this.openKhatibSuggestions = false;
-                            }
-                        }" @click.outside="openKhatibSuggestions = false">
-                            <div class="flex items-center justify-between mb-1">
-                                <label class="block font-semibold text-slate-700">Khatib & Imam</label>
-                                <span x-show="openKhatibSuggestions && filteredKhatib.length > 0" class="text-[10px] text-emerald-600 font-medium">Saran aktif</span>
-                            </div>
-                            <div class="relative">
-                                <input x-model="kajianForm.khatib_name"
-                                    @focus="openKhatibSuggestions = true"
-                                    @input="openKhatibSuggestions = true"
-                                    @keydown.escape="openKhatibSuggestions = false"
-                                    type="text"
-                                    placeholder="Ketik nama khatib..."
-                                    autocomplete="off"
-                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-
-                                <!-- Dropdown Saran Khatib -->
-                                <div x-show="openKhatibSuggestions && filteredKhatib.length > 0"
-                                    x-transition:enter="transition ease-out duration-50"
-                                    x-transition:enter-start="opacity-0 translate-y-1"
-                                    x-transition:enter-end="opacity-100 translate-y-0"
-                                    x-transition:leave="transition ease-in duration-50"
-                                    x-transition:leave-start="opacity-100 translate-y-0"
-                                    x-transition:leave-end="opacity-0 translate-y-1"
-                                    class="absolute left-0 top-full mt-1 z-50 w-[calc(200%+0.75rem)] min-w-70 max-w-[calc(100vw-3.5rem)] bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden py-1 max-h-60 overflow-y-auto"
-                                    style="display: none;">
-                                    <div class="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2">
-                                        <span>Pilih dari Database Ustadz</span>
-                                        <span class="text-[10px] text-slate-400 font-normal shrink-0">Klik untuk memilih</span>
                                     </div>
-                                    <template x-for="u in filteredKhatib" :key="'khatib-' + u.id">
-                                        <button type="button" @click="selectKhatib(u)"
-                                            class="w-full text-left px-3 py-2 hover:bg-emerald-50/60 flex items-center justify-between gap-2.5 transition cursor-pointer border-b border-slate-50 last:border-0 group">
-                                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                                                    <template x-if="u.photo">
-                                                        <img :src="'{{ asset('storage') }}/' + u.photo" class="w-full h-full object-cover">
-                                                    </template>
-                                                    <template x-if="!u.photo">
-                                                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                        </svg>
-                                                    </template>
-                                                </div>
-                                                <div class="min-w-0 flex-1">
-                                                    <p class="text-xs font-semibold text-slate-800 group-hover:text-gov-navy truncate" x-text="u.name"></p>
-                                                    <p class="text-[10px] text-slate-400 truncate" x-text="u.phone ? u.phone : 'Tanpa No. WhatsApp'"></p>
-                                                </div>
-                                            </div>
-                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border border-emerald-400 bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100 group-hover:border-emerald-300 leading-none shrink-0 transition-colors">Pilih</span>
-                                        </button>
-                                    </template>
+                                    <div>
+                                        <label class="block font-semibold text-slate-700 mb-1">No HP Khatib</label>
+                                        <input x-model="kajianForm.khatib_phone" type="text" placeholder="+62 812-9876-5432"
+                                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block font-semibold text-slate-700 mb-1">MC / Protokol Shalat Jumat</label>
+                                        <input x-model="kajianForm.mc_name" type="text" placeholder="H. Bambang Sugiarto"
+                                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                    </div>
+                                    <div>
+                                        <label class="block font-semibold text-slate-700 mb-1">Muadzin & Bilal</label>
+                                        <input x-model="kajianForm.muadzin_name" type="text" placeholder="Ustadz Bilal Ramadhan"
+                                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block font-semibold text-slate-700 mb-1">Catatan Pengumuman MC (Tampil pada Cetak Teks MC)</label>
+                                    <textarea x-model="kajianForm.mc_notes" rows="2"
+                                        placeholder="Tuliskan pengumuman khusus DKM yang harus dibacakan MC sebelum adzan..."
+                                        class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Link YouTube (Opsional) -->
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">
+                                    <span>Link YouTube</span>
+                                    <span class="text-[10px] text-slate-400 font-normal ml-1">(Opsional)</span>
+                                </label>
+                                <div class="relative">
+                                    <input x-model="kajianForm.youtube_url" type="url" placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
+                                        class="w-full p-2.5 pl-8 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                    <svg class="w-4 h-4 text-rose-500 absolute left-2.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">No HP Khatib</label>
-                            <input x-model="kajianForm.khatib_phone" type="text" placeholder="+62 812-9876-5432"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+
+                        <!-- Drawer Footer (Sticky at bottom) -->
+                        <div class="px-5 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
+                            <button type="button" @click="closeKajianModal()"
+                                class="px-4 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold transition cursor-pointer text-xs">
+                                Batal
+                            </button>
+                            <button type="submit" wire:loading.attr="disabled"
+                                class="px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs">
+                                <span wire:loading.remove wire:target="saveKajian"
+                                    x-text="isEditingKajian ? 'Simpan Perubahan' : 'Simpan Jadwal'"></span>
+                                <span wire:loading.inline-flex wire:target="saveKajian" style="display: none;"
+                                    class="inline-flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="whitespace-nowrap">Menyimpan...</span>
+                                </span>
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">MC / Protokol Shalat Jumat</label>
-                            <input x-model="kajianForm.mc_name" type="text" placeholder="H. Bambang Sugiarto"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Muadzin & Bilal</label>
-                            <input x-model="kajianForm.muadzin_name" type="text" placeholder="Ustadz Bilal Ramadhan"
-                                class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Catatan Pengumuman MC (Tampil pada Cetak
-                            Teks MC)</label>
-                        <textarea x-model="kajianForm.mc_notes" rows="2"
-                            placeholder="Tuliskan pengumuman khusus DKM yang harus dibacakan MC sebelum adzan..."
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain"></textarea>
-                    </div>
+                    </form>
                 </div>
-
-                <!-- Link YouTube (Opsional) -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">
-                        <span>Link YouTube</span>
-                        <span class="text-[10px] text-slate-400 font-normal ml-1">(Opsional)</span>
-                    </label>
-                    <div class="relative">
-                        <input x-model="kajianForm.youtube_url" type="url" placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
-                            class="w-full p-2.5 pl-8 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
-                        <svg class="w-4 h-4 text-rose-500 absolute left-2.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="closeKajianModal()"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="submit" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="saveKajian"
-                            x-text="isEditingKajian ? 'Simpan Perubahan' : 'Simpan Jadwal'"></span>
-                        <span wire:loading.inline-flex wire:target="saveKajian" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Menyimpan...</span>
-                        </span>
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </template>
 
     <!-- ======================================================== -->
     <!-- MODAL: IMPORT JADWAL KAJIAN (MILESTONE 1) -->

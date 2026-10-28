@@ -20,6 +20,7 @@ class KajianTematikTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Carbon::setTestNow('2026-10-15 10:00:00');
 
         MasjidSetting::getActive();
 
@@ -28,6 +29,12 @@ class KajianTematikTest extends TestCase
             'email' => 'master@masjidsalahuddin.id',
             'role' => 'Master',
         ]);
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 
     /** @test */
