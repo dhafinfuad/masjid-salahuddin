@@ -635,32 +635,57 @@
     <!-- MODAL: IMPORT JADWAL KAJIAN (MILESTONE 1) -->
     <!-- ======================================================== -->
     <div x-show="showImportKajianModal" x-cloak wire:ignore.self @keydown.escape.window="showImportKajianModal = false"
-        @click="if (window.isBackdropClick($event, $el)) showImportKajianModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain" x-text="importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian'">
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showImportKajianModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="import-kajian-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
+                        x-text="importKajianType === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian'">
                         {{ ($importKajianType ?? 'pekanan') === 'jumat' ? 'Import Jadwal Khutbah Jumat' : 'Import Jadwal Kajian' }}
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Impor perencanaan kegiatan dari Excel atau file CSV</p>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Impor perencanaan kegiatan dari Excel atau file CSV</p>
                 </div>
                 <button type="button" @click="showImportKajianModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
-                        data-lucide="x" class="w-5 h-5"></i></button>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
                 <!-- Tab Selector di dalam Modal: Copypaste Excel vs Upload Excel -->
-            <div class="flex items-center p-1 bg-slate-100 rounded-lg">
-                <button type="button" @click="importKajianTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer"
-                    :class="importKajianTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Copypaste Excel
-                </button>
-                <button type="button" @click="importKajianTab = 'file'" class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5" :class="importKajianTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Upload File Excel</span></button>
-            </div>
+                <div class="px-5 pt-4 pb-2 bg-white shrink-0">
+                    <div class="flex items-center p-1 bg-slate-100 rounded-lg">
+                        <button type="button" @click="importKajianTab = 'paste'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importKajianTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                            <span>Copypaste Excel</span>
+                        </button>
+                        <button type="button" @click="importKajianTab = 'file'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importKajianTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Upload File Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body Content (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6 space-y-4 text-xs notula-scrollable bg-white">
 
             <!-- TAB 1: COPYPASTE DARI EXCEL -->
             <div x-show="importKajianTab === 'paste'" class="space-y-3 text-xs">
@@ -682,27 +707,6 @@
                     <textarea wire:model="importKajianPasteText" rows="6"
                         placeholder="Blok kolom tabel di Excel/Google Sheets -> Copy (Ctrl+C) -> Paste (Ctrl+V) ke sini..."
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-mono text-xs transition"></textarea>
-                </div>
-
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportKajianModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportKajianPaste" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportKajianPaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportKajianPaste" style="display: none;"
-                            class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
-                            <svg class="w-4 h-4 animate-spin shrink-0 text-white inline-block" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap leading-none">Mengimpor...</span>
-                        </span>
-                    </button>
                 </div>
             </div>
 
@@ -782,28 +786,49 @@
                     class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportKajianModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportKajianFile" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportKajianFile">Upload & Impor File Excel</span>
-                        <span wire:loading.inline-flex wire:target="processImportKajianFile" style="display: none;"
-                            class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
-                            <svg class="w-4 h-4 animate-spin shrink-0 text-white inline-block" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap leading-none">Mengunggah...</span>
-                        </span>
-                    </button>
                 </div>
             </div>
+
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="showImportKajianModal = false"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                <!-- Tombol untuk Tab Paste -->
+                <button type="button" x-show="importKajianTab === 'paste'" wire:click="processImportKajianPaste" wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportKajianPaste" style="color: #ffffff;">Proses Impor Teks</span>
+                    <span wire:loading.inline-flex wire:target="processImportKajianPaste" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengimpor...</span>
+                    </span>
+                </button>
+                <!-- Tombol untuk Tab File -->
+                <button type="button" x-show="importKajianTab === 'file'" wire:click="processImportKajianFile" wire:loading.attr="disabled" wire:target="processImportKajianFile, importKajianFile"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportKajianFile, importKajianFile" style="color: #ffffff;">Upload & Impor File Excel</span>
+                    <span wire:loading.inline-flex wire:target="processImportKajianFile, importKajianFile" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengunggah...</span>
+                    </span>
+                </button>
+            </div>
+
         </div>
+    </div>
     </div>
 
     <!-- ======================================================== -->
@@ -1013,36 +1038,55 @@
     <!-- MODAL: IMPORT JADWAL PENUGASAN (MILESTONE 2) -->
     <!-- ======================================================== -->
     <div x-show="showImportDutyModal" x-cloak wire:ignore.self @keydown.escape.window="showImportDutyModal = false"
-        @click="if (window.isBackdropClick($event, $el)) showImportDutyModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain">Import Jadwal Penugasan Ibadah</h3>
-                    <p class="text-xs text-slate-500">Impor data jadwal Imam & Muadzin dari Excel atau CSV</p>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showImportDutyModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="import-duty-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-duty-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Import Jadwal Penugasan Ibadah</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Impor data jadwal Imam & Muadzin dari Excel atau CSV</p>
                 </div>
                 <button type="button" @click="showImportDutyModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"><i
-                        data-lucide="x" class="w-5 h-5"></i></button>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
-            <!-- Tab Selector di dalam Modal: Copypaste Excel vs Upload CSV -->
-            <div class="flex items-center p-1 bg-slate-100 rounded-lg">
-                <button type="button" @click="importDutyTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importDutyTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                    <span>Copypaste Excel</span>
-                </button>
-                <button type="button" @click="importDutyTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importDutyTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload File Excel</span>
-                </button>
-            </div>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Tab Selector di dalam Modal: Copypaste Excel vs Upload CSV -->
+                <div class="px-5 pt-4 pb-2 bg-white shrink-0">
+                    <div class="flex items-center p-1 bg-slate-100 rounded-lg">
+                        <button type="button" @click="importDutyTab = 'paste'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importDutyTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                            <span>Copypaste Excel</span>
+                        </button>
+                        <button type="button" @click="importDutyTab = 'file'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importDutyTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Upload File Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body Content (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6 space-y-4 text-xs notula-scrollable bg-white">
 
             <!-- TAB 1: COPYPASTE DARI EXCEL -->
             <div x-show="importDutyTab === 'paste'" class="space-y-3 text-xs">
@@ -1064,27 +1108,6 @@
                     <textarea wire:model="importDutyPasteText" rows="6"
                         placeholder="Blok kolom tabel di Excel/Google Sheets -> Copy (Ctrl+C) -> Paste (Ctrl+V) ke sini..."
                         class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-mono text-xs transition"></textarea>
-                </div>
-
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportDutyModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportDutyPaste" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportDutyPaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportDutyPaste" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Mengimpor...</span>
-                        </span>
-                    </button>
                 </div>
             </div>
 
@@ -1163,29 +1186,49 @@
                     @error('importDutyFile') <span
                     class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
                 </div>
-
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportDutyModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportDutyFile" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportDutyFile">Upload & Impor File Excel</span>
-                        <span wire:loading.inline-flex wire:target="processImportDutyFile" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Mengunggah...</span>
-                        </span>
-                    </button>
-                </div>
             </div>
+            </div>
+
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="showImportDutyModal = false"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                <!-- Tombol untuk Tab Paste -->
+                <button type="button" x-show="importDutyTab === 'paste'" wire:click="processImportDutyPaste" wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportDutyPaste" style="color: #ffffff;">Proses Impor Teks</span>
+                    <span wire:loading.inline-flex wire:target="processImportDutyPaste" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengimpor...</span>
+                    </span>
+                </button>
+                <!-- Tombol untuk Tab File -->
+                <button type="button" x-show="importDutyTab === 'file'" wire:click="processImportDutyFile" wire:loading.attr="disabled" wire:target="processImportDutyFile, importDutyFile"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportDutyFile, importDutyFile" style="color: #ffffff;">Upload & Impor File Excel</span>
+                    <span wire:loading.inline-flex wire:target="processImportDutyFile, importDutyFile" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengunggah...</span>
+                    </span>
+                </button>
+            </div>
+
         </div>
+    </div>
     </div>
 
         <!-- ======================================================== -->
@@ -1598,37 +1641,56 @@
     <!-- MODAL: IMPORT AGENDA KEGIATAN (MILESTONE 3) -->
     <!-- ======================================================== -->
     <div x-show="showImportAgendaModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showImportAgendaModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showImportAgendaModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div>
-                    <h3 class="text-base font-bold text-gov-textMain">Import Data Agenda Kegiatan</h3>
-                    <p class="text-xs text-slate-500">Impor perencanaan kegiatan dari Excel atau file CSV</p>
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showImportAgendaModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="import-agenda-modal-title"
+        @keydown.escape.window="showImportAgendaModal = false">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-agenda-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">Import Data Agenda Kegiatan</h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Impor perencanaan kegiatan dari Excel atau file CSV</p>
                 </div>
                 <button type="button" @click="showImportAgendaModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Tab Selector: Copypaste Excel vs Upload CSV -->
-            <div class="flex items-center p-1 bg-slate-100 rounded-lg">
-                <button type="button" @click="importAgendaTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importAgendaTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                    <span>Copypaste Excel</span>
-                </button>
-                <button type="button" @click="importAgendaTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importAgendaTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload File Excel</span>
-                </button>
-            </div>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Tab Selector: Copypaste Excel vs Upload CSV -->
+                <div class="px-5 pt-4 pb-2 bg-white shrink-0">
+                    <div class="flex items-center p-1 bg-slate-100 rounded-lg">
+                        <button type="button" @click="importAgendaTab = 'paste'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importAgendaTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                            <span>Copypaste Excel</span>
+                        </button>
+                        <button type="button" @click="importAgendaTab = 'file'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importAgendaTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Upload File Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body Content (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6 space-y-4 text-xs notula-scrollable bg-white">
 
             <!-- TAB 1: COPYPASTE DARI EXCEL -->
             <div x-show="importAgendaTab === 'paste'" class="space-y-3 text-xs">
@@ -1650,27 +1712,6 @@
                     <textarea wire:model="importAgendaPasteText" rows="6"
                         placeholder="Blok cell di Excel -> Copy -> Paste ke sini..."
                         class="w-full p-2.5 rounded-lg border border-gov-border font-mono text-[11px] bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
-                </div>
-
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportAgendaModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportAgendaPaste" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportAgendaPaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportAgendaPaste" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Mengimpor...</span>
-                        </span>
-                    </button>
                 </div>
             </div>
 
@@ -1746,28 +1787,50 @@
                 @error('importAgendaFile') <span
                 class="text-xs text-rose-600 font-semibold block">{{ $message }}</span> @enderror
 
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showImportAgendaModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportAgendaFile" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                        <span wire:loading.remove wire:target="processImportAgendaFile">Upload & Impor File</span>
-                        <span wire:loading.inline-flex wire:target="processImportAgendaFile" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Mengunggah...</span>
-                        </span>
-                    </button>
-                </div>
+                <div class="hidden"></div>
             </div>
+            </div>
+
+            <!-- Modal Footer (Sticky at bottom) -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                <button type="button" @click="showImportAgendaModal = false"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                    style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                    Batal
+                </button>
+                <!-- Tombol untuk Tab Paste -->
+                <button type="button" x-show="importAgendaTab === 'paste'" wire:click="processImportAgendaPaste" wire:loading.attr="disabled"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportAgendaPaste" style="color: #ffffff;">Proses Impor Teks</span>
+                    <span wire:loading.inline-flex wire:target="processImportAgendaPaste" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengimpor...</span>
+                    </span>
+                </button>
+                <!-- Tombol untuk Tab File -->
+                <button type="button" x-show="importAgendaTab === 'file'" wire:click="processImportAgendaFile" wire:loading.attr="disabled" wire:target="processImportAgendaFile, importAgendaFile"
+                    class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                    style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                    <span wire:loading.remove wire:target="processImportAgendaFile, importAgendaFile" style="color: #ffffff;">Upload & Impor File</span>
+                    <span wire:loading.inline-flex wire:target="processImportAgendaFile, importAgendaFile" style="display: none; color: #ffffff;"
+                        class="inline-flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap" style="color: #ffffff;">Mengunggah...</span>
+                    </span>
+                </button>
+            </div>
+
         </div>
+    </div>
     </div>
 
     <!-- ======================================================== -->
@@ -3438,183 +3501,197 @@
     <!-- ======================================================== -->
     <!-- MODAL: IMPORT DATA KAS (MILESTONE 5) -->
     <!-- ======================================================== -->
-    <div x-show="showFinanceImportModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) showFinanceImportModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showFinanceImportModal = false">
-        <div
-            class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center border border-gov-border shrink-0">
-                        <i data-lucide="upload-cloud" class="w-4 h-4 text-gov-navy"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Import Data Transaksi Kas</h3>
-                        <p class="text-xs text-slate-500">Impor mutasi kas dari Excel atau file CSV</p>
-                    </div>
+    <div x-show="showFinanceImportModal" x-cloak wire:ignore.self @keydown.escape.window="showFinanceImportModal = false"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showFinanceImportModal = false"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="import-finance-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-finance-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Import Data Transaksi Kas
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Impor mutasi kas dari Excel atau file CSV</p>
                 </div>
                 <button type="button" @click="showFinanceImportModal = false"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Tab Selector: Copypaste Excel vs Upload CSV -->
-            <div class="flex items-center p-1 bg-slate-100 rounded-lg">
-                <button type="button" @click="importFinanceTab = 'paste'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importFinanceTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                    <span>Copypaste Excel</span>
-                </button>
-                <button type="button" @click="importFinanceTab = 'file'"
-                    class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
-                    :class="importFinanceTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload File Excel</span>
-                </button>
-            </div>
-
-            <!-- TAB 1: COPYPASTE DARI EXCEL -->
-            <div x-show="importFinanceTab === 'paste'" class="space-y-3 text-xs">
-                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5">
-                        <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
-                        <span>Format Kolom Excel yang Diharapkan:</span>
-                    </span>
-                    <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
-                        Tipe (Masuk/Keluar) → Kategori → Nominal → Tanggal (YYYY-MM-DD) → Keterangan
-                    </p>
-                    <p class="text-[11px] text-amber-800 leading-relaxed">Contoh data:
-                        <code class="bg-white/80 px-1.5 py-0.5 rounded border border-amber-200 font-mono text-[10px]">Pemasukan | Infaq Jumat | 4500000 | 2026-09-12 | Infaq Kotak Utama Sholat Jumat</code>
-                    </p>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Tab Selector di dalam Modal: Copypaste Excel vs Upload Excel -->
+                <div class="px-5 pt-4 pb-2 bg-white shrink-0">
+                    <div class="flex items-center p-1 bg-slate-100 rounded-lg">
+                        <button type="button" @click="importFinanceTab = 'paste'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importFinanceTab === 'paste' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                            <span>Copypaste Excel</span>
+                        </button>
+                        <button type="button" @click="importFinanceTab = 'file'"
+                            class="flex-1 py-1.5 rounded-md font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="importFinanceTab === 'file' ? 'bg-white text-gov-navy shadow-2xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Upload File Excel</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block font-semibold text-slate-700">Tempelkan Data Excel (Paste Here):</label>
-                    <textarea wire:model="importFinancePasteText" rows="6"
-                        placeholder="Blok baris & kolom di Excel -> Copy (Ctrl+C) -> Paste (Ctrl+V) ke sini..."
-                        class="w-full p-2.5 rounded-lg border border-gov-border font-mono text-[11px] bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
-                </div>
+                <!-- Body Content (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-5 pb-5 sm:px-6 sm:pb-6 space-y-4 text-xs notula-scrollable bg-white">
 
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
-                    <button type="button" @click="showFinanceImportModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportFinancePaste" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="processImportFinancePaste">Proses Impor Teks</span>
-                        <span wire:loading.inline-flex wire:target="processImportFinancePaste" style="display: none;"
-                            class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            <span class="whitespace-nowrap">Mengimpor...</span>
-                        </span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- TAB 2: UPLOAD FILE EXCEL / CSV -->
-            <div x-show="importFinanceTab === 'file'" class="space-y-3 text-xs">
-                <!-- Unduh Template Excel Card -->
-                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="8" y1="13" x2="16" y2="13"/>
-                                <line x1="8" y1="17" x2="16" y2="17"/>
-                            </svg>
+                    <!-- TAB 1: COPYPASTE DARI EXCEL -->
+                    <div x-show="importFinanceTab === 'paste'" class="space-y-3 text-xs">
+                        <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-900 space-y-1">
+                            <span class="font-bold flex items-center gap-1.5">
+                                <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
+                                <span>Format Kolom Excel yang Diharapkan:</span>
+                            </span>
+                            <p class="text-xs font-mono bg-white/70 p-2 rounded border border-amber-300">
+                                Tipe (Masuk/Keluar) → Kategori → Nominal → Tanggal (YYYY-MM-DD) → Keterangan
+                            </p>
+                            <p class="text-[11px] text-amber-800 leading-relaxed">Contoh data:
+                                <code class="bg-white/80 px-1.5 py-0.5 rounded border border-amber-200 font-mono text-[10px]">Pemasukan | Infaq Jumat | 4500000 | 2026-09-12 | Infaq Kotak Utama Sholat Jumat</code>
+                            </p>
                         </div>
+
                         <div>
-                            <span class="font-bold text-slate-800 block">Template Excel</span>
+                            <label class="block font-semibold text-slate-700 mb-1">Tempelkan Data Excel (Paste Here):</label>
+                            <textarea wire:model="importFinancePasteText" rows="6"
+                                placeholder="Blok baris & kolom di Excel -> Copy (Ctrl+C) -> Paste (Ctrl+V) ke sini..."
+                                class="w-full p-2.5 rounded-lg border border-gov-border font-mono text-[11px] bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition"></textarea>
                         </div>
                     </div>
-                    <a href="{{ route('admin.template-import', 'kas') }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        <span>Unduh</span>
-                    </a>
-                </div>
 
-                <div x-data="{ isDragging: false }"
-                     :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
-                     class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
-                    
-                    <!-- Invisible Full-Surface Native File Input -->
-                    <input id="importFinanceFile"
-                           type="file"
-                           wire:model="importFinanceFile"
-                           accept=".xlsx,.xls,.csv,.txt"
-                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                           @dragenter="isDragging = true"
-                           @dragover.prevent="isDragging = true"
-                           @dragleave="isDragging = false"
-                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+                    <!-- TAB 2: UPLOAD FILE EXCEL / CSV -->
+                    <div x-show="importFinanceTab === 'file'" class="space-y-3 text-xs">
+                        <!-- Unduh Template Excel Card -->
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="8" y1="13" x2="16" y2="13"/>
+                                        <line x1="8" y1="17" x2="16" y2="17"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-slate-800 block">Template Excel</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.template-import', 'kas') }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>Unduh</span>
+                            </a>
+                        </div>
 
-                    <div class="pointer-events-none space-y-2">
-                        <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
-                             :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
-                            <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
-                                <path d="M12 12v9"/>
-                                <path d="m16 16-4-4-4 4"/>
-                            </svg>
-                        </div>
-                        <div class="text-xs text-slate-600">
-                            <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
-                            <span>atau seret & lepas berkas ke area ini</span>
-                        </div>
-                        <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv, atau .txt (Maksimal 5 MB)</p>
-                        @if($importFinanceFile)
-                            <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
-                                <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span>{{ $importFinanceFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                        <div x-data="{ isDragging: false }"
+                             :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                             class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                            
+                            <!-- Invisible Full-Surface Native File Input -->
+                            <input id="importFinanceFile"
+                                   type="file"
+                                   wire:model="importFinanceFile"
+                                   accept=".xlsx,.xls,.csv,.txt"
+                                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                   @dragenter="isDragging = true"
+                                   @dragover.prevent="isDragging = true"
+                                   @dragleave="isDragging = false"
+                                   @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                            <div class="pointer-events-none space-y-2">
+                                <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                                     :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                                    <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                        <path d="M12 12v9"/>
+                                        <path d="m16 16-4-4-4 4"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs text-slate-600">
+                                    <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                                    <span>atau seret & lepas berkas ke area ini</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400">Format: .xlsx, .xls, .csv, atau .txt (Maksimal 5 MB)</p>
+                                @if($importFinanceFile)
+                                    <div class="pt-1 text-xs font-semibold text-emerald-700 flex items-center justify-center gap-1">
+                                        <svg class="w-4 h-4 text-emerald-600 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                        <span>{{ $importFinanceFile->getClientOriginalName() }} (Siap Diimpor)</span>
+                                    </div>
+                                @endif
+                                <template x-if="isDragging">
+                                    <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                        Lepaskan berkas di sini untuk mengunggah
+                                    </div>
+                                </template>
                             </div>
-                        @endif
-                        <template x-if="isDragging">
-                            <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
-                                Lepaskan berkas di sini untuk mengunggah
-                            </div>
-                        </template>
+                        </div>
+                        @error('importFinanceFile')
+                            <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
+                        @enderror
                     </div>
-                </div>
-                @error('importFinanceFile')
-                    <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
-                @enderror
 
-                <div class="pt-2 flex justify-end space-x-2 border-t border-slate-200">
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="showFinanceImportModal = false"
-                        class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">Batal</button>
-                    <button type="button" wire:click="processImportFinanceFile" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="processImportFinanceFile">Upload & Impor File</span>
-                        <span wire:loading.inline-flex wire:target="processImportFinanceFile" style="display: none;"
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
+                    <!-- Tombol untuk Tab Paste -->
+                    <button type="button" x-show="importFinanceTab === 'paste'" wire:click="processImportFinancePaste" wire:loading.attr="disabled"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="processImportFinancePaste" style="color: #ffffff;">Proses Impor Teks</span>
+                        <span wire:loading.inline-flex wire:target="processImportFinancePaste" style="display: none; color: #ffffff;"
                             class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24"
-                                fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap">Mengunggah...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Mengimpor...</span>
+                        </span>
+                    </button>
+                    <!-- Tombol untuk Tab File -->
+                    <button type="button" x-show="importFinanceTab === 'file'" wire:click="processImportFinanceFile" wire:loading.attr="disabled" wire:target="processImportFinanceFile, importFinanceFile"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="processImportFinanceFile, importFinanceFile" style="color: #ffffff;">Upload & Impor File</span>
+                        <span wire:loading.inline-flex wire:target="processImportFinanceFile, importFinanceFile" style="display: none; color: #ffffff;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Mengunggah...</span>
                         </span>
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -3852,230 +3929,246 @@
     <!-- ======================================================== -->
     <!-- MODAL: IMPORT & SINKRONISASI POTONGAN PROGRAM SOSIAL -->
     <!-- ======================================================== -->
-    <div x-show="showImportPotonganModal" x-cloak wire:ignore.self
-        @click="if (window.isBackdropClick($event, $el)) { showImportPotonganModal = false; $wire.closeImportPotonganModal(); }"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="showImportPotonganModal = false; $wire.closeImportPotonganModal();">
-        <div
-            class="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Import Potongan</h3>
-                        <p class="text-xs text-slate-500">Unggah berkas rekap Excel untuk sinkronisasi otomatis peserta program</p>
-                    </div>
+    <div x-show="showImportPotonganModal" x-cloak wire:ignore.self @keydown.escape.window="showImportPotonganModal = false; $wire.closeImportPotonganModal();"
+        @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showImportPotonganModal = false; $wire.closeImportPotonganModal(); }"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="import-potongan-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-xl w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-potongan-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Import Potongan
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Unggah berkas rekap Excel untuk sinkronisasi otomatis peserta program</p>
                 </div>
                 <button type="button" @click="showImportPotonganModal = false; $wire.closeImportPotonganModal();"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <!-- Error Banner -->
-            @if(!empty($importPotonganError))
-                <div class="p-3 bg-rose-50 rounded-lg border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
-                    <div class="flex-1">
-                        <span class="font-semibold block">Gagal Memproses Berkas:</span>
-                        <span class="text-[11px]">{{ $importPotonganError }}</span>
-                    </div>
-                    <button type="button" wire:click="$set('importPotonganError', '')" class="text-rose-400 hover:text-rose-700 cursor-pointer">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-            @endif
-
-            <!-- Step 1: Upload Dropzone (When preview is not yet generated) -->
-            @if(!$importPotonganPreview)
-                <!-- Unduh Template Excel Card -->
-                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs mb-3">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="8" y1="13" x2="16" y2="13"/>
-                                <line x1="8" y1="17" x2="16" y2="17"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <span class="font-bold text-slate-800 block">Template Excel</span>
-                        </div>
-                    </div>
-                    <a href="{{ route('admin.template-import', 'potongan_sosial') }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        <span>Unduh</span>
-                    </a>
-                </div>
-
-                <div class="space-y-3" x-data="{ isDragging: false }">
-                    <div :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
-                         class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
-                        
-                        <!-- Invisible Full-Surface Native File Input -->
-                        <input id="potonganFileInput"
-                               type="file"
-                               wire:model.live="potonganFile"
-                               accept=".xlsx,.xls"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               @dragenter="isDragging = true"
-                               @dragover.prevent="isDragging = true"
-                               @dragleave="isDragging = false"
-                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
-
-                        <!-- Loading Overlay during file upload & parsing -->
-                        <div wire:loading.flex wire:target="potonganFile" style="display: none;" class="absolute inset-0 bg-white/90 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-20">
-                            <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="text-xs font-semibold text-slate-700 whitespace-nowrap">Menganalisis isi berkas Excel...</span>
-                        </div>
-
-                        <!-- Dropzone Visual Elements (pointer-events-none prevents child drag interference) -->
-                        <div class="pointer-events-none space-y-2">
-                            <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
-                                 :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
-                                <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
-                                    <path d="M12 12v9"/>
-                                    <path d="m16 16-4-4-4 4"/>
-                                </svg>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Scrollable Body Content -->
+                <div class="flex-1 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 space-y-4 text-xs notula-scrollable bg-white">
+                    <!-- Error Banner -->
+                    @if(!empty($importPotonganError))
+                        <div class="p-3 bg-rose-50 rounded-lg border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                            <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <div class="flex-1">
+                                <span class="font-semibold block">Gagal Memproses Berkas:</span>
+                                <span class="text-[11px]">{{ $importPotonganError }}</span>
                             </div>
+                            <button type="button" wire:click="$set('importPotonganError', '')" class="text-rose-400 hover:text-rose-700 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                    @endif
 
-                            <div class="text-xs text-slate-600">
-                                <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
-                                <span>atau seret & lepas berkas Excel ke area ini</span>
-                            </div>
-
-                            <p class="text-[11px] text-slate-400">Format: Rekapitulasi Potongan Masjid 2.0.xlsx / .xls (Maksimal 15 MB)</p>
-
-                            <template x-if="isDragging">
-                                <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
-                                    Lepaskan berkas di sini untuk mengunggah
+                    <!-- Step 1: Upload Dropzone (When preview is not yet generated) -->
+                    @if(!$importPotonganPreview)
+                        <!-- Unduh Template Excel Card -->
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="8" y1="13" x2="16" y2="13"/>
+                                        <line x1="8" y1="17" x2="16" y2="17"/>
+                                    </svg>
                                 </div>
-                            </template>
+                                <div>
+                                    <span class="font-bold text-slate-800 block">Template Excel</span>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.template-import', 'potongan_sosial') }}" 
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>Unduh</span>
+                            </a>
                         </div>
-                    </div>
-                    @error('potonganFile')
-                        <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
-                    @enderror
-                </div>
-            @else
-                <!-- Step 2: Smart Preview Card (When preview is ready) -->
-                <div class="space-y-3.5">
-                    <!-- File Badge & Reset -->
-                    <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                        <div class="flex items-center gap-2.5">
-                            <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600 shrink-0"></i>
-                            <div>
-                                <span class="font-bold text-slate-900 block truncate max-w-xs">{{ $importPotonganPreview['file_name'] }}</span>
-                                <span class="text-[11px] text-slate-500">{{ number_format($importPotonganPreview['file_size'] / 1024, 1) }} KB &bull; <span class="text-emerald-700 font-semibold">Siap Disinkronkan</span></span>
+
+                        <div class="space-y-3" x-data="{ isDragging: false }">
+                            <div :class="isDragging ? 'border-gov-navy bg-blue-50/70 ring-2 ring-gov-navy/20' : 'border-gov-border bg-slate-50/50 hover:bg-slate-50'"
+                                 class="border-2 border-dashed rounded-xl p-8 text-center space-y-2.5 transition relative overflow-hidden group">
+                                
+                                <!-- Invisible Full-Surface Native File Input -->
+                                <input id="potonganFileInput"
+                                       type="file"
+                                       wire:model.live="potonganFile"
+                                       accept=".xlsx,.xls"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       @dragenter="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave="isDragging = false"
+                                       @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }">
+
+                                <!-- Loading Overlay during file upload & parsing -->
+                                <div wire:loading.flex wire:target="potonganFile" style="display: none;" class="absolute inset-0 bg-white/90 backdrop-blur-xs rounded-xl flex-col items-center justify-center gap-2 z-20">
+                                    <svg class="w-7 h-7 animate-spin text-gov-navy shrink-0" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="text-xs font-semibold text-slate-700 whitespace-nowrap">Menganalisis isi berkas Excel...</span>
+                                </div>
+
+                                <!-- Dropzone Visual Elements -->
+                                <div class="pointer-events-none space-y-2">
+                                    <div class="w-12 h-12 rounded-full bg-gov-navy/10 flex items-center justify-center mx-auto text-gov-navy transition group-hover:scale-105"
+                                         :class="isDragging ? 'scale-110 bg-gov-navy/20' : ''">
+                                        <svg class="w-6 h-6 text-gov-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                                            <path d="M12 12v9"/>
+                                            <path d="m16 16-4-4-4 4"/>
+                                        </svg>
+                                    </div>
+
+                                    <div class="text-xs text-slate-600">
+                                        <span class="font-bold text-gov-navy group-hover:underline">Klik untuk memilih berkas</span>
+                                        <span>atau seret & lepas berkas Excel ke area ini</span>
+                                    </div>
+
+                                    <p class="text-[11px] text-slate-400">Format: Rekapitulasi Potongan Masjid 2.0.xlsx / .xls (Maksimal 15 MB)</p>
+
+                                    <template x-if="isDragging">
+                                        <div class="text-xs font-bold text-blue-700 animate-pulse pt-1">
+                                            Lepaskan berkas di sini untuk mengunggah
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            @error('potonganFile')
+                                <span class="text-xs font-medium text-rose-600 block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @else
+                        <!-- Step 2: Smart Preview Card (When preview is ready) -->
+                        <div class="space-y-3.5">
+                            <!-- File Badge & Reset -->
+                            <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                                <div class="flex items-center gap-2.5">
+                                    <svg class="w-5 h-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+                                    <div>
+                                        <span class="font-bold text-slate-900 block truncate max-w-xs">{{ $importPotonganPreview['file_name'] }}</span>
+                                        <span class="text-[11px] text-slate-500">{{ number_format($importPotonganPreview['file_size'] / 1024, 1) }} KB &bull; <span class="text-emerald-700 font-semibold">Siap Disinkronkan</span></span>
+                                    </div>
+                                </div>
+                                <button type="button" wire:click="resetImportPotonganFile"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-xs font-medium transition cursor-pointer">
+                                    <svg class="w-3 h-3 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+                                    <span>Ganti File</span>
+                                </button>
+                            </div>
+
+                            <!-- Highlight Metrics -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100 text-center">
+                                    <span class="block text-[10px] text-slate-400 uppercase font-semibold">Total Baris Excel</span>
+                                    <span class="text-sm font-black text-slate-800">{{ number_format($importPotonganPreview['total_rows'] ?? $importPotonganPreview['total_excel_unique'], 0, ',', '.') }}</span>
+                                    <span class="text-[10px] text-slate-500 block">baris potongan</span>
+                                </div>
+                                <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100 text-center">
+                                    <span class="block text-[10px] text-blue-600 uppercase font-semibold">Periode Terdeteksi</span>
+                                    <span class="text-sm font-black text-blue-700">{{ count($importPotonganPreview['by_period'] ?? []) }}</span>
+                                    <span class="text-[10px] text-blue-600 block">bulan periode</span>
+                                </div>
+                                <div class="p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-center">
+                                    <span class="block text-[10px] text-emerald-600 uppercase font-semibold">Bulan Berjalan ({{ now()->format('M Y') }})</span>
+                                    <span class="text-sm font-black text-emerald-700">{{ $importPotonganPreview['current_period_count'] ?? $importPotonganPreview['active_count'] }}</span>
+                                    <span class="text-[10px] text-emerald-600 block">peserta aktif</span>
+                                </div>
+                                <div class="p-2.5 bg-amber-50 rounded-lg border border-amber-100 text-center">
+                                    <span class="block text-[10px] text-amber-700 uppercase font-semibold">Potongan Bulan Ini</span>
+                                    <span class="text-xs font-black text-amber-800">Rp {{ number_format($importPotonganPreview['current_period_amount'] ?? $importPotonganPreview['active_total_amount'], 0, ',', '.') }}</span>
+                                    <span class="text-[10px] text-amber-600 block">{{ $importPotonganPreview['current_period'] ?? ('Periode ' . now()->month . '/' . now()->year) }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Program Breakdown Mini-Table -->
+                            <div class="bg-white rounded-lg border border-slate-200 overflow-hidden text-xs">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100/70 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
+                                            <th class="p-2">Program Sosial</th>
+                                            <th class="p-2 text-center">Bulan Ini ({{ now()->month }}/{{ now()->year }})</th>
+                                            <th class="p-2 text-right">Potongan Bulan Ini</th>
+                                            <th class="p-2 text-center">Total Baris</th>
+                                            <th class="p-2 text-right">Total Akumulasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-[11px]">
+                                        @foreach($importPotonganPreview['by_program'] as $p)
+                                            <tr class="hover:bg-slate-50/50">
+                                                <td class="p-2 font-bold text-slate-800">{{ $p['name'] }}</td>
+                                                <td class="p-2 text-center font-semibold text-emerald-700">{{ $p['current_month_count'] ?? $p['active'] }} org</td>
+                                                <td class="p-2 text-right font-black text-slate-900">Rp {{ number_format($p['current_month_amount'] ?? $p['active_amount'], 0, ',', '.') }}</td>
+                                                <td class="p-2 text-center text-slate-500">{{ $p['total_rows'] ?? $p['total'] }} baris</td>
+                                                <td class="p-2 text-right font-semibold text-slate-700">Rp {{ number_format($p['total_amount'] ?? 0, 0, ',', '.') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Impact Summary Note -->
+                            <div class="flex items-center gap-2 p-2 bg-blue-50/70 border border-blue-200 rounded-lg text-[11px] text-blue-900">
+                                <svg class="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                <span>
+                                    @if(($importPotonganPreview['deleted_count'] ?? 0) > 0)
+                                        Data periode terkait akan diperbarui bersih: <strong>{{ number_format($importPotonganPreview['deleted_count'], 0, ',', '.') }}</strong> data lama dihapus, lalu <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru dimasukkan ke sistem.
+                                    @else
+                                        Sebanyak <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru akan dimasukkan ke sistem.
+                                    @endif
+                                </span>
                             </div>
                         </div>
-                        <button type="button" wire:click="resetImportPotonganFile"
-                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-xs font-medium transition cursor-pointer">
-                            <i data-lucide="refresh-cw" class="w-3 h-3 text-slate-500"></i>
-                            <span>Ganti File</span>
-                        </button>
-                    </div>
-
-                    <!-- Highlight Metrics -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100 text-center">
-                            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Total Baris Excel</span>
-                            <span class="text-sm font-black text-slate-800">{{ number_format($importPotonganPreview['total_rows'] ?? $importPotonganPreview['total_excel_unique'], 0, ',', '.') }}</span>
-                            <span class="text-[10px] text-slate-500 block">baris potongan</span>
-                        </div>
-                        <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100 text-center">
-                            <span class="block text-[10px] text-blue-600 uppercase font-semibold">Periode Terdeteksi</span>
-                            <span class="text-sm font-black text-blue-700">{{ count($importPotonganPreview['by_period'] ?? []) }}</span>
-                            <span class="text-[10px] text-blue-600 block">bulan periode</span>
-                        </div>
-                        <div class="p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-center">
-                            <span class="block text-[10px] text-emerald-600 uppercase font-semibold">Bulan Berjalan ({{ now()->format('M Y') }})</span>
-                            <span class="text-sm font-black text-emerald-700">{{ $importPotonganPreview['current_period_count'] ?? $importPotonganPreview['active_count'] }}</span>
-                            <span class="text-[10px] text-emerald-600 block">peserta aktif</span>
-                        </div>
-                        <div class="p-2.5 bg-amber-50 rounded-lg border border-amber-100 text-center">
-                            <span class="block text-[10px] text-amber-700 uppercase font-semibold">Potongan Bulan Ini</span>
-                            <span class="text-xs font-black text-amber-800">Rp {{ number_format($importPotonganPreview['current_period_amount'] ?? $importPotonganPreview['active_total_amount'], 0, ',', '.') }}</span>
-                            <span class="text-[10px] text-amber-600 block">{{ $importPotonganPreview['current_period'] ?? ('Periode ' . now()->month . '/' . now()->year) }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Program Breakdown Mini-Table -->
-                    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden text-xs">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100/70 border-b border-slate-200 text-slate-500 font-semibold text-[10px] uppercase">
-                                    <th class="p-2">Program Sosial</th>
-                                    <th class="p-2 text-center">Bulan Ini ({{ now()->month }}/{{ now()->year }})</th>
-                                    <th class="p-2 text-right">Potongan Bulan Ini</th>
-                                    <th class="p-2 text-center">Total Baris</th>
-                                    <th class="p-2 text-right">Total Akumulasi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-[11px]">
-                                @foreach($importPotonganPreview['by_program'] as $p)
-                                    <tr class="hover:bg-slate-50/50">
-                                        <td class="p-2 font-bold text-slate-800">{{ $p['name'] }}</td>
-                                        <td class="p-2 text-center font-semibold text-emerald-700">{{ $p['current_month_count'] ?? $p['active'] }} org</td>
-                                        <td class="p-2 text-right font-black text-slate-900">Rp {{ number_format($p['current_month_amount'] ?? $p['active_amount'], 0, ',', '.') }}</td>
-                                        <td class="p-2 text-center text-slate-500">{{ $p['total_rows'] ?? $p['total'] }} baris</td>
-                                        <td class="p-2 text-right font-semibold text-slate-700">Rp {{ number_format($p['total_amount'] ?? 0, 0, ',', '.') }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Impact Summary Note -->
-                    <div class="flex items-center gap-2 p-2 bg-blue-50/70 border border-blue-200 rounded-lg text-[11px] text-blue-900">
-                        <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-600 shrink-0"></i>
-                        <span>
-                            @if(($importPotonganPreview['deleted_count'] ?? 0) > 0)
-                                Data periode terkait akan diperbarui bersih: <strong>{{ number_format($importPotonganPreview['deleted_count'], 0, ',', '.') }}</strong> data lama dihapus, lalu <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru dimasukkan ke sistem.
-                            @else
-                                Sebanyak <strong>{{ number_format($importPotonganPreview['inserted_count'], 0, ',', '.') }}</strong> data potongan baru akan dimasukkan ke sistem.
-                            @endif
-                        </span>
-                    </div>
+                    @endif
                 </div>
-            @endif
 
-            <!-- Modal Footer -->
-            <div class="pt-3 flex items-center justify-end space-x-2 border-t border-slate-200 text-xs">
-                <button type="button" @click="showImportPotonganModal = false; $wire.closeImportPotonganModal();"
-                    class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer">
-                    Batal
-                </button>
-                @if($importPotonganPreview)
-                    <button type="button" wire:click="processConfirmImportPotongan" wire:loading.attr="disabled"
-                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                        <span wire:loading.remove wire:target="processConfirmImportPotongan">
-                            <i data-lucide="check" class="w-4 h-4 inline-block mr-1"></i>
-                            Konfirmasi & Sinkronkan ke Database
-                        </span>
-                        <span wire:loading.inline-flex wire:target="processConfirmImportPotongan" style="display: none;" class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap">Menyinkronkan...</span>
-                        </span>
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="showImportPotonganModal = false; $wire.closeImportPotonganModal();"
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
                     </button>
-                @endif
+                    @if($importPotonganPreview)
+                        <button type="button" wire:click="processConfirmImportPotongan" wire:loading.attr="disabled"
+                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                            <span wire:loading.remove wire:target="processConfirmImportPotongan" style="color: #ffffff;">
+                                Konfirmasi & Sinkronkan ke Database
+                            </span>
+                            <span wire:loading.inline-flex wire:target="processConfirmImportPotongan" style="display: none; color: #ffffff;"
+                                class="inline-flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="whitespace-nowrap" style="color: #ffffff;">Menyinkronkan...</span>
+                            </span>
+                        </button>
+                    @endif
+                </div>
+
             </div>
         </div>
     </div>
@@ -4982,167 +5075,194 @@
     <!-- ======================================================== -->
     <!-- MODAL: IMPOR BERKAS REKAP PEGAWAI EXCEL / CSV -->
     <!-- ======================================================== -->
-    <div x-show="showImportEmployeeModal" x-cloak wire:ignore.self
-         @click="if (window.isBackdropClick($event, $el)) { showImportEmployeeModal = false; $wire.closeImportEmployeeModal(); }"
-         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-         style="display: none;" @keydown.escape.window="showImportEmployeeModal = false; $wire.closeImportEmployeeModal();">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="8" y1="13" x2="16" y2="13"/>
-                            <line x1="8" y1="17" x2="16" y2="17"/>
-                            <polyline points="10 9 9 9 8 9"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Impor Data Pegawai Muslim</h3>
-                        <p class="text-xs text-slate-500 font-medium">Unggah berkas spreadsheet Excel (.xlsx, .xls) atau CSV</p>
-                    </div>
+    <div x-show="showImportEmployeeModal" x-cloak wire:ignore.self @keydown.escape.window="showImportEmployeeModal = false; $wire.closeImportEmployeeModal();"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { showImportEmployeeModal = false; $wire.closeImportEmployeeModal(); }"
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="import-employee-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="import-employee-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Impor Data Pegawai Muslim
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Unggah berkas spreadsheet Excel (.xlsx, .xls) atau CSV</p>
                 </div>
                 <button type="button" @click="showImportEmployeeModal = false; $wire.closeImportEmployeeModal()"
-                    class="text-slate-400 hover:text-gov-textMain p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
 
-            <form wire:submit.prevent="importEmployees" novalidate class="space-y-4 text-xs">
-                <!-- Unduh Template Excel Card -->
-                <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="8" y1="13" x2="16" y2="13"/>
-                                <line x1="8" y1="17" x2="16" y2="17"/>
-                            </svg>
+            <form wire:submit.prevent="importEmployees" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Scrollable Body Content -->
+                <div class="flex-1 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 space-y-4 text-xs notula-scrollable bg-white">
+                    <!-- Unduh Template Excel Card -->
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="8" y1="13" x2="16" y2="13"/>
+                                    <line x1="8" y1="17" x2="16" y2="17"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-800 block">Template Excel</span>
+                            </div>
                         </div>
-                        <div>
-                            <span class="font-bold text-slate-800 block">Template Excel</span>
+                        <a href="{{ route('admin.template-import', 'pegawai') }}" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            <span>Unduh</span>
+                        </a>
+                    </div>
+
+                    <!-- Dropzone Area -->
+                    <div x-data="{ isDragging: false }"
+                         @dragenter.prevent="isDragging = true"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop="isDragging = false"
+                         :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
+                         class="relative border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 cursor-pointer group">
+                        <input id="importEmployeeFileInput"
+                               type="file"
+                               wire:model="importEmployeeFile"
+                               accept=".xlsx,.xls,.csv"
+                               @dragenter="isDragging = true"
+                               @dragover.prevent="isDragging = true"
+                               @dragleave="isDragging = false"
+                               @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                        <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
+                            <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-emerald-50 text-emerald-600 group-hover:scale-110'"
+                                 class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="8" y1="13" x2="16" y2="13"/>
+                                    <line x1="8" y1="17" x2="16" y2="17"/>
+                                </svg>
+                            </div>
+                            <p class="text-xs text-slate-700 font-semibold mt-1">
+                                <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau seret spreadsheet ke sini
+                            </p>
+                            <p class="text-[11px] text-slate-500">
+                                Format berkas: Rekapitulasi Pegawai (.xlsx, .xls, .csv maks. 10MB)
+                            </p>
                         </div>
                     </div>
-                    <a href="{{ route('admin.template-import', 'pegawai') }}" 
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-2xs transition shrink-0 cursor-pointer">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
+
+                    @error('importEmployeeFile')
+                        <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Loading Spinner Upload & Ekstraksi -->
+                    <div wire:loading.inline-flex wire:target="importEmployeeFile, importEmployees" style="display: none;"
+                        class="inline-flex flex-row items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 px-3.5 py-2 rounded-lg border border-amber-200 shrink-0">
+                        <svg class="w-4 h-4 animate-spin text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>Unduh</span>
-                    </a>
-                </div>
+                        <span class="whitespace-nowrap leading-none">Sedang membaca dan mengimpor data pegawai ke database...</span>
+                    </div>
 
-                <!-- Dropzone Area -->
-                <div x-data="{ isDragging: false }"
-                     @dragenter.prevent="isDragging = true"
-                     @dragover.prevent="isDragging = true"
-                     @dragleave.prevent="isDragging = false"
-                     @drop="isDragging = false"
-                     :class="isDragging ? 'border-gov-navy bg-sky-50/60 ring-2 ring-gov-navy/20 scale-[0.99]' : 'border-slate-300 hover:border-gov-navy hover:bg-slate-50/80 bg-slate-50/40'"
-                     class="relative border-2 border-dashed rounded-xl p-5 text-center transition-all duration-200 cursor-pointer group">
-                    <input id="importEmployeeFileInput"
-                           type="file"
-                           wire:model="importEmployeeFile"
-                           accept=".xlsx,.xls,.csv"
-                           @dragenter="isDragging = true"
-                           @dragover.prevent="isDragging = true"
-                           @dragleave="isDragging = false"
-                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
-                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-
-                    <div class="pointer-events-none flex flex-col items-center justify-center gap-1.5">
-                        <div :class="isDragging ? 'bg-gov-navy text-white scale-110' : 'bg-emerald-50 text-emerald-600 group-hover:scale-110'"
-                             class="w-10 h-10 rounded-xl flex items-center justify-center transition-transform shadow-2xs">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <polyline points="14 2 14 8 20 8"/>
-                                <line x1="8" y1="13" x2="16" y2="13"/>
-                                <line x1="8" y1="17" x2="16" y2="17"/>
-                            </svg>
+                    <!-- Opsi Filter Hanya Pegawai Muslim -->
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-50/50 border border-emerald-200 cursor-pointer select-none">
+                        <input type="checkbox" wire:model="importEmployeeOnlyMuslim"
+                            class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
+                        <div class="text-xs">
+                            <span class="font-bold text-slate-800 block">Hanya impor pegawai yang beragama Islam</span>
+                            <span class="text-slate-500 text-[11px] block mt-0.5">
+                                Jika spreadsheet memuat kolom Agama (misal format resmi SIKKA Kemenkeu), sistem otomatis menyaring dan hanya memasukkan pegawai muslim ke database.
+                            </span>
                         </div>
-                        <p class="text-xs text-slate-700 font-semibold mt-1">
-                            <span class="text-gov-navy underline underline-offset-2">Klik untuk memilih berkas</span> atau seret spreadsheet ke sini
-                        </p>
-                        <p class="text-[11px] text-slate-500">
-                            Format berkas: Rekapitulasi Pegawai (.xlsx, .xls, .csv maks. 10MB)
-                        </p>
-                    </div>
-                </div>
+                    </label>
 
-                @error('importEmployeeFile')
-                    <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
-                @enderror
-
-                <!-- Loading Spinner Upload & Ekstraksi -->
-                <div wire:loading.inline-flex wire:target="importEmployeeFile, importEmployees" style="display: none;"
-                    class="inline-flex flex-row items-center gap-2 text-xs font-semibold text-amber-700 bg-amber-50 px-3.5 py-2 rounded-lg border border-amber-200 shrink-0">
-                    <svg class="w-4 h-4 animate-spin text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span class="whitespace-nowrap leading-none">Sedang membaca dan mengimpor data pegawai ke database...</span>
-                </div>
-
-                <!-- Opsi Filter Hanya Pegawai Muslim -->
-                <label class="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-50/50 border border-emerald-200 cursor-pointer select-none">
-                    <input type="checkbox" wire:model="importEmployeeOnlyMuslim"
-                        class="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300">
-                    <div class="text-xs">
-                        <span class="font-bold text-slate-800 block">Hanya impor pegawai yang beragama Islam</span>
-                        <span class="text-slate-500 text-[11px] block mt-0.5">
-                            Jika spreadsheet memuat kolom Agama (misal format resmi SIKKA Kemenkeu), sistem otomatis menyaring dan hanya memasukkan pegawai muslim ke database.
-                        </span>
-                    </div>
-                </label>
-
-                <!-- Opsi Auto Link ke Akun Pengguna -->
-                <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none">
-                    <input type="checkbox" wire:model="importEmployeeAutoLink"
-                        class="mt-0.5 rounded text-gov-navy focus:ring-gov-navy border-slate-300">
-                    <div class="text-xs">
-                        <span class="font-bold text-slate-800 block">Tautkan otomatis dengan akun pengguna yang cocok</span>
-                        <span class="text-slate-500 text-[11px] block mt-0.5">
-                            Jika ditemukan akun pada tabel Anggota yang memiliki NIP atau nama yang sama, data pegawai akan langsung ditautkan ke akun tersebut.
-                        </span>
-                    </div>
-                </label>
-
-                <!-- Ringkasan Hasil Impor -->
-                @if($importEmployeeResult)
-                    <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs space-y-1.5 animate-in fade-in">
-                        <div class="font-bold flex items-center gap-1.5 text-emerald-900">
-                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span>Hasil Impor Spreadsheet:</span>
+                    <!-- Opsi Auto Link ke Akun Pengguna -->
+                    <label class="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-200 cursor-pointer select-none">
+                        <input type="checkbox" wire:model="importEmployeeAutoLink"
+                            class="mt-0.5 rounded text-gov-navy focus:ring-gov-navy border-slate-300">
+                        <div class="text-xs">
+                            <span class="font-bold text-slate-800 block">Tautkan otomatis dengan akun pengguna yang cocok</span>
+                            <span class="text-slate-500 text-[11px] block mt-0.5">
+                                Jika ditemukan akun pada tabel Anggota yang memiliki NIP atau nama yang sama, data pegawai akan langsung ditautkan ke akun tersebut.
+                            </span>
                         </div>
-                        <p class="text-[11px] leading-relaxed text-emerald-800">
-                            Total baris: <strong>{{ $importEmployeeResult['total_rows'] }}</strong> | 
-                            Baru: <strong>{{ $importEmployeeResult['imported'] }}</strong> | 
-                            Diperbarui: <strong>{{ $importEmployeeResult['updated'] }}</strong> | 
-                            Tertaut akun: <strong>{{ $importEmployeeResult['linked'] }}</strong>
-                            @if(($importEmployeeResult['skipped_non_muslim'] ?? 0) > 0)
-                                | Non-muslim dilewati: <strong>{{ $importEmployeeResult['skipped_non_muslim'] }}</strong>
-                            @endif
-                        </p>
-                    </div>
-                @endif
+                    </label>
 
-                <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+                    <!-- Ringkasan Hasil Impor -->
+                    @if($importEmployeeResult)
+                        <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs space-y-1.5 animate-in fade-in">
+                            <div class="font-bold flex items-center gap-1.5 text-emerald-900">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>Hasil Impor Spreadsheet:</span>
+                            </div>
+                            <p class="text-[11px] leading-relaxed text-emerald-800">
+                                Total baris: <strong>{{ $importEmployeeResult['total_rows'] }}</strong> | 
+                                Baru: <strong>{{ $importEmployeeResult['imported'] }}</strong> | 
+                                Diperbarui: <strong>{{ $importEmployeeResult['updated'] }}</strong> | 
+                                Tertaut akun: <strong>{{ $importEmployeeResult['linked'] }}</strong>
+                                @if(($importEmployeeResult['skipped_non_muslim'] ?? 0) > 0)
+                                    | Non-muslim dilewati: <strong>{{ $importEmployeeResult['skipped_non_muslim'] }}</strong>
+                                @endif
+                            </p>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     @if($importEmployeeResult)
                         <button type="button" @click="showImportEmployeeModal = false; $wire.closeImportEmployeeModal()"
-                            class="px-5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer">
+                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer text-xs"
+                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
                             Selesai
                         </button>
                     @else
                         <button type="button" @click="showImportEmployeeModal = false; $wire.closeImportEmployeeModal()"
-                            class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
+                            class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                            style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
                             Batal
                         </button>
+                        @if($importEmployeeFile)
+                            <button type="submit" wire:loading.attr="disabled"
+                                class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                                style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                                <span wire:loading.remove wire:target="importEmployeeFile, importEmployees" style="color: #ffffff;">Impor Pegawai</span>
+                                <span wire:loading.inline-flex wire:target="importEmployeeFile, importEmployees" style="display: none; color: #ffffff;"
+                                    class="inline-flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="whitespace-nowrap" style="color: #ffffff;">Mengimpor...</span>
+                                </span>
+                            </button>
+                        @endif
                     @endif
                 </div>
+
             </form>
         </div>
     </div>
