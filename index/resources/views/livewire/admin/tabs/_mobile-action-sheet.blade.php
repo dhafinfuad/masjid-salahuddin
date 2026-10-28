@@ -70,7 +70,7 @@
                 <!-- Subtab: Pekanan -->
                 <div x-show="kegiatanSubTab === 'pekanan'" class="space-y-3">
                     @if(Auth::user()->canManage())
-                        <button type="button" @click="closeMobileActionSheet(); openCreateKajian('pekanan')"
+                        <button type="button" @click="closeMobileActionSheet(); let token = startAction('kajian-pekanan'); openCreateKajian('pekanan', token)"
                             class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -122,7 +122,7 @@
                 <!-- Subtab: Jumat -->
                 <div x-show="kegiatanSubTab === 'jumat'" class="space-y-3">
                     @if(Auth::user()->canManage())
-                        <button type="button" @click="closeMobileActionSheet(); openCreateKajian('jumat')"
+                        <button type="button" @click="closeMobileActionSheet(); let token = startAction('kajian-jumat'); openCreateKajian('jumat', token)"
                             class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>

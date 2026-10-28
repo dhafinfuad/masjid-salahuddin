@@ -4,6 +4,17 @@
     x-data="{
          sidebarDrawerOpen: window.innerWidth >= 768,
          isScrolled: false,
+         currentActionToken: null,
+         startAction(scope) {
+             this.currentActionToken = scope + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+             return this.currentActionToken;
+         },
+         cancelAction() {
+             this.currentActionToken = null;
+         },
+         isActionActive(token) {
+             return Boolean(token && this.currentActionToken === token);
+         },
          activeTab: '{{ $currentTab }}',
          kegiatanSubTab: '{{ $kegiatanSubTab }}',
          kajianSubTab: '{{ $kajianSubTab }}',
@@ -11,6 +22,9 @@
          userSubTab: '{{ $userSubTab }}',
          settingsSubTab: '{{ $settingsSubTab }}',
          init() {
+             if (window._activeKajianType && this.showKajianModal) {
+                 this.kajianForm.type = window._activeKajianType;
+             }
              this.updateDocumentTitle();
              const updateScroll = () => {
                  this.isScrolled = (window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0) > 0;
@@ -73,6 +87,9 @@
              document.title = tabTitle + ' - Masjid Salahuddin';
          },
          switchSubTab(tab) {
+             this.cancelAction();
+             window._activeKajianType = null;
+             window._activeActionToken = null;
              if (this.showKajianModal) {
                  this.closeKajianModal();
              }
@@ -202,21 +219,29 @@
              mc_notes: '',
              youtube_url: '',
          },
-         async updateKajianDefaultTime() {
+         async updateKajianDefaultTime(token = null) {
+             const activeToken = token || this.currentActionToken;
              if (this.kajianForm.type === 'tematik') {
                  this.kajianForm.time_display = '';
                  return;
              }
              if (typeof $wire !== 'undefined' && typeof $wire.getDefaultKajianTime === 'function') {
                  try {
-                     const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date);
+                     const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date, activeToken);
+                     // Action Token Guard: Abaikan jika token usang atau modal sudah ditutup/berganti aksi
+                     if (activeToken && this.currentActionToken !== activeToken) {
+                         return;
+                     }
                      if (res) {
                          this.kajianForm.time_display = res;
                      }
                  } catch (e) {}
              }
          },
-         openCreateKajian(type = 'pekanan') {
+         openCreateKajian(type = 'pekanan', token = null) {
+             const actionToken = token || this.startAction('kajian-' + (type || 'pekanan'));
+             window._activeKajianType = type || 'pekanan';
+             window._activeActionToken = actionToken;
              this.isEditingKajian = false;
              this.kajianErrors = {};
              this.kajianForm = {
@@ -236,7 +261,7 @@
                  speaker_photo: '',
                  youtube_url: '',
              };
-             this.updateKajianDefaultTime();
+             this.updateKajianDefaultTime(actionToken);
              if (typeof $wire !== 'undefined') {
                  $wire.set('isEditingKajian', false, false);
                  $wire.set('editingKajianId', null, false);
@@ -251,7 +276,10 @@
                  if (window.createLucideIcons) window.createLucideIcons();
              });
          },
-         openEditKajian(data) {
+         openEditKajian(data, token = null) {
+             const actionToken = token || this.startAction('kajian-edit-' + (data.type || 'pekanan'));
+             window._activeKajianType = data.type || 'pekanan';
+             window._activeActionToken = actionToken;
              this.isEditingKajian = true;
              this.kajianErrors = {};
              this.kajianForm = {
@@ -272,7 +300,7 @@
                  youtube_url: data.youtube_url || '',
              };
              if (!this.kajianForm.time_display && this.kajianForm.type !== 'tematik') {
-                 this.updateKajianDefaultTime();
+                 this.updateKajianDefaultTime(actionToken);
              }
              if (typeof $wire !== 'undefined') {
                  $wire.set('isEditingKajian', true, false);
@@ -289,6 +317,9 @@
              });
          },
          closeKajianModal() {
+             this.cancelAction();
+             window._activeKajianType = null;
+             window._activeActionToken = null;
              this.showKajianModal = false;
              this.isEditingKajian = false;
              this.kajianErrors = {};
@@ -1134,7 +1165,7 @@
         if (window.history && window.history.replaceState) {
             window.history.replaceState({}, '', '/admin/kegiatan');
         }
-        openEditKajian($event.detail.data || $event.detail);
+        openEditKajian($event.detail.data || $event.detail, $event.detail.token || null);
     "
     @open-create-kajian-modal.window="
         activeTab = 'kegiatan';
@@ -1144,9 +1175,14 @@
         if (window.history && window.history.replaceState) {
             window.history.replaceState({}, '', '/admin/kegiatan');
         }
-        openCreateKajian($event.detail.type || 'jumat');
+        openCreateKajian($event.detail.type || 'jumat', $event.detail.token || null);
     "
-    @open-kajian-modal.window="showKajianModal = true; document.body.style.overflow = 'hidden';"
+    @open-kajian-modal.window="
+        if (!$event.detail || !$event.detail.token || $event.detail.token === currentActionToken) {
+            showKajianModal = true;
+            document.body.style.overflow = 'hidden';
+        }
+    "
     @close-kajian-modal.window="closeKajianModal()"
     @open-ustadz-modal.window="showUstadzModal = true; $wire.set('showUstadzModal', true, false)" @close-ustadz-modal.window="showUstadzModal = false; $wire.set('showUstadzModal', false, false)"
     @open-import-kajian-modal.window="if ($event.detail && $event.detail.type) { importKajianType = $event.detail.type; } showImportKajianModal = true"

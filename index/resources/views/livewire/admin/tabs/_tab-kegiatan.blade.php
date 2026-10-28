@@ -64,7 +64,7 @@
                                 </div>
 
                                 @if(Auth::user()->canManage())
-                                    <button type="button" @click="openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')"
+                                    <button type="button" @click="let token = startAction('kajian-' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan')); openCreateKajian(kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan', token)"
                                         class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
                                         <i data-lucide="plus" class="w-4 h-4"></i>
                                         <span>Tambah Jadwal</span>

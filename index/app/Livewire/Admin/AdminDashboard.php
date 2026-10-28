@@ -174,6 +174,7 @@ class AdminDashboard extends Component
     public string $kajianSpeakerPhone = '';
     public mixed $kajianSpeakerPhoto = null;
     public ?string $kajianExistingPhoto = null;
+    public ?string $actionToken = null;
     public bool $kajianIsHolidayDisabled = false;
     public string $kajianKhatibName = '';
     public string $kajianMcName = '';
@@ -1638,18 +1639,19 @@ class AdminDashboard extends Component
         $this->resetPage('agendaPage');
     }
 
-    public function getDefaultKajianTime(string $type, ?string $date = null): ?string
+    public function getDefaultKajianTime(string $type, ?string $date = null, ?string $token = null): ?string
     {
         return app(PrayerTimeService::class)->getDefaultKajianTime($type, $date);
     }
 
-    public function openCreateKajian(string $type = 'pekanan'): void
+    public function openCreateKajian(string $type = 'pekanan', ?string $token = null): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
             return;
         }
 
+        $this->actionToken = $token;
         $this->isEditingKajian = false;
         $this->editingKajianId = null;
         $this->kajianType = $type;
@@ -1667,10 +1669,10 @@ class AdminDashboard extends Component
         $this->kajianKhatibPhone = '';
         $this->kajianMcNotes = '';
         $this->showKajianModal = true;
-        $this->dispatch('open-kajian-modal');
+        $this->dispatch('open-kajian-modal', token: $this->actionToken, type: $type);
     }
 
-    public function openEditKajian(int $id): void
+    public function openEditKajian(int $id, ?string $token = null): void
     {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
@@ -1678,6 +1680,7 @@ class AdminDashboard extends Component
         }
 
         $k = Kajian::findOrFail($id);
+        $this->actionToken = $token;
         $this->isEditingKajian = true;
         $this->editingKajianId = $k->id;
         $this->kajianType = $k->type;
@@ -1695,7 +1698,7 @@ class AdminDashboard extends Component
         $this->kajianKhatibPhone = $k->khatib_phone ?? '';
         $this->kajianMcNotes = $k->mc_notes ?? '';
         $this->showKajianModal = true;
-        $this->dispatch('open-kajian-modal');
+        $this->dispatch('open-kajian-modal', token: $this->actionToken, type: $k->type);
     }
 
     public function removeKajianPhoto(): void
@@ -1840,12 +1843,14 @@ class AdminDashboard extends Component
             $this->notify('Jadwal kajian baru berhasil ditambahkan.');
         }
 
+        $this->actionToken = null;
         $this->showKajianModal = false;
         $this->dispatch('close-kajian-modal');
     }
 
     public function closeKajianModal(): void
     {
+        $this->actionToken = null;
         $this->showKajianModal = false;
         $this->kajianSpeakerPhoto = null;
         $this->dispatch('close-kajian-modal');
