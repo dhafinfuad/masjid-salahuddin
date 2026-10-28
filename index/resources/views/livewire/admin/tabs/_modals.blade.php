@@ -2340,13 +2340,12 @@
     <!-- ======================================================== -->
     <!-- MODAL: KONFIRMASI HAPUS & TINDAKAN SISTEM (GLOBAL POP-UP) -->
     <!-- ======================================================== -->
-    <div x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"
+    <div x-show="confirmDeleteModal.show" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el) && !confirmDeleteModal.loading) confirmDeleteModal.show = false"
         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
         style="display: none;"
         @keydown.escape.window="if (!confirmDeleteModal.loading) confirmDeleteModal.show = false">
-        <div wire:key="global-confirm-delete-modal-dialog"
-            class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200/80 space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div class="flex items-start gap-4">
                 <div
                     class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-2xs"
@@ -2418,12 +2417,12 @@
                 </div>
             </template>
 
-            <div wire:ignore wire:key="global-confirm-delete-modal-footer" class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
-                <button type="button" wire:key="global-confirm-delete-modal-cancel-btn" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
+            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
                     class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 text-xs font-semibold transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
                     Batal
                 </button>
-                <button type="button" wire:key="global-confirm-delete-modal-submit-btn" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
+                <button type="button" @click="if (!confirmDeleteModal.loading) executeConfirmDelete()" :disabled="confirmDeleteModal.loading"
                     :class="confirmDeleteModal.confirmButtonClass || (confirmDeleteModal.type === 'primary' ? 'bg-gov-navy hover:bg-slate-800 text-white' : (confirmDeleteModal.type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'))"
                     class="min-w-[130px] h-9 px-4 rounded-lg text-xs font-bold shadow-2xs inline-flex items-center justify-center gap-2 cursor-pointer disabled:cursor-wait">
                     <template x-if="confirmDeleteModal.loading">

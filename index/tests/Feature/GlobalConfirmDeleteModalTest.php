@@ -15,20 +15,22 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($modalsPath);
         $content = file_get_contents($modalsPath);
 
-        // 1. Pastikan modal TIDAK dibungkus dalam <template x-teleport="body"> (karena x-teleport di Livewire menduplikasi modal di body) dan memiliki wire:ignore penuh
+        // 1. Pastikan modal TIDAK dibungkus dalam <template x-teleport="body"> dan menggunakan wire:ignore.self standar (seperti modal lainnya)
         $this->assertStringNotContainsString('<template x-teleport="body">', $content, 'confirmDeleteModal dilarang dibungkus template x-teleport agar tidak menduplikasi modal di body');
-        $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore wire:key="global-confirm-delete-modal"', $content, 'confirmDeleteModal harus menggunakan wire:ignore penuh dan memiliki wire:key');
-        $this->assertStringNotContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal dilarang menggunakan wire:ignore.self karena menyebabkan duplikasi tombol saat morphing');
+        $this->assertStringContainsString('x-show="confirmDeleteModal.show" x-cloak wire:ignore.self', $content, 'confirmDeleteModal harus menggunakan wire:ignore.self standar seperti modal lainnya');
 
-        // 2. Pastikan footer menggunakan flex gap-2.5, wire:ignore, dan wire:key untuk proteksi mutlak
+        // 2. Pastikan footer menggunakan flex gap-2.5 dan BEBAS dari wire:key sintetis (mencegah Morphdom menduplikasi elemen)
         $this->assertMatchesRegularExpression('/flex items-center justify-end gap-2\.5 border-t/i', $content, 'Footer modal konfirmasi hapus harus menggunakan gap-2.5');
-        $this->assertStringContainsString('wire:ignore wire:key="global-confirm-delete-modal-footer"', $content, 'Footer modal harus memiliki isolasi wire:ignore dan wire:key tersendiri');
-        $this->assertStringContainsString('wire:key="global-confirm-delete-modal-submit-btn"', $content, 'Tombol submit harus memiliki wire:key stabil');
-        $this->assertStringContainsString('wire:key="global-confirm-delete-modal-cancel-btn"', $content, 'Tombol cancel harus memiliki wire:key stabil');
+        $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-footer"', $content, 'Footer modal tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
+        $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-submit-btn"', $content, 'Tombol submit tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
+        $this->assertStringNotContainsString('wire:key="global-confirm-delete-modal-cancel-btn"', $content, 'Tombol cancel tidak boleh memiliki wire:key yang memicu duplikasi morphdom');
 
         // Alternatif A: Tombol Batal tetap tampil (tidak di-hide dengan x-show) tapi dinonaktifkan dengan disabled dan pointer-events-none
-        $this->assertStringNotContainsString('x-show="!confirmDeleteModal.loading"', substr($content, strpos($content, 'global-confirm-delete-modal-cancel-btn'), 250), 'Tombol Batal tetap harus tampil saat loading pada Alternatif A');
-        $this->assertStringContainsString('disabled:pointer-events-none', substr($content, strpos($content, 'global-confirm-delete-modal-cancel-btn'), 450), 'Tombol Batal harus memiliki disabled:pointer-events-none saat status loading aktif');
+        $footerPos = strpos($content, 'flex items-center justify-end gap-2.5 border-t');
+        $this->assertNotFalse($footerPos);
+        $footerHtml = substr($content, $footerPos, 600);
+        $this->assertStringNotContainsString('x-show="!confirmDeleteModal.loading"', $footerHtml, 'Tombol Batal tetap harus tampil saat loading pada Alternatif A');
+        $this->assertStringContainsString('disabled:pointer-events-none', $footerHtml, 'Tombol Batal harus memiliki disabled:pointer-events-none saat status loading aktif');
 
         // 3. Pastikan tombol konfirmasi memiliki dimensi stabil, tidak menggunakan disabled:opacity-50 (mencegah ghosting pink)
         $this->assertMatchesRegularExpression('/min-w-\[130px\]\s+h-9\s+px-4/i', $content, 'Tombol konfirmasi harus memiliki min-w-[130px] h-9 untuk menjaga stabilitas layout');
@@ -99,6 +101,6 @@ class GlobalConfirmDeleteModalTest extends TestCase
         $this->assertFileExists($swPath);
         $content = file_get_contents($swPath);
 
-        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.7'", $content);
+        $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.0.8'", $content);
     }
 }
