@@ -420,6 +420,18 @@
                     }
                 });
 
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data && event.data.type === 'VERSION_UPDATED') {
+                        if ('caches' in window) {
+                            caches.keys().then((keys) => Promise.all(keys.map(k => caches.delete(k)))).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            window.location.reload();
+                        }
+                    }
+                });
+
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/sw.js')
                         .then(function(registration) {

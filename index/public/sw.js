@@ -46,7 +46,7 @@ self.addEventListener('activate', (event) => {
         }).then(() => {
             return self.clients.matchAll({ type: 'window' }).then((clients) => {
                 clients.forEach((client) => {
-                    client.postMessage({ type: 'VERSION_UPDATED', version: 'v1.0.6' });
+                    client.postMessage({ type: 'VERSION_UPDATED', version: 'v1.0.9' });
                 });
             });
         })
