@@ -293,8 +293,8 @@
         role="dialog" aria-modal="true" aria-labelledby="kajian-modal-title">
         
         <div @click.stop
-            class="bg-white rounded-2xl w-full max-w-xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
-            style="z-index: 10000; background-color: #ffffff; max-height: min(88vh, 85dvh); height: auto;">
+            class="bg-white rounded-2xl w-full max-w-xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #ffffff; border: none; max-height: min(88vh, 85dvh); height: auto;">
             
             <!-- Modal Header: Solid Navy (#0b2b54) -->
             <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0"

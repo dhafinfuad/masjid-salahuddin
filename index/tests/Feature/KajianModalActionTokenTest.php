@@ -123,5 +123,11 @@ class KajianModalActionTokenTest extends TestCase
 
         // Verifikasi guard pada event listener open-kajian-modal
         $response->assertSee('token === currentActionToken', false);
+
+        // Verifikasi border putih/terang di pinggiran modal telah dihilangkan
+        $response->assertSee('border: none', false);
+        $response->assertDontSee('w-full max-w-xl shadow-2xl border border-slate-200', false);
+        $response->assertSee('w-full max-w-xl shadow-2xl border-0', false);
     }
 }
+
