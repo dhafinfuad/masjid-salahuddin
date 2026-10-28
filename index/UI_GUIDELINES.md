@@ -562,4 +562,25 @@ Seluruh navigasi sub-tab sekunder di modul admin (Kajian/Kegiatan, Keuangan, Pro
 </button>
 ```
 
+---
+
+## 13. Modal Dialog & Slide-Over Drawer Standard (Standar Modal Form & Dialog)
+
+Semua modal dialog CRUD, pop-up formulir, dan drawer di sistem wajib mengikuti standar berikut:
+
+### Standard Specifications
+- **Backdrop**: `z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px);`.
+- **Card Container**: `max-w-xl` (atau `max-w-2xl` untuk formulir lebar), `rounded-2xl`, `shadow-2xl`, `overflow-hidden`.
+- **Bebas Border**: DILARANG menambahkan `border border-slate-200` pada kontainer modal kartu. Wajib menggunakan `border-0` dan `border: none;`.
+- **Pencegahan Corner Bleeding**: Kontainer modal terluar menggunakan warna dasar `#0b2b54` (senada dengan warna header). Form body di bawahnya menggunakan `bg-white rounded-b-2xl` dengan `style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;"`.
+- **Header Bersih**:
+  - Warna solid navy `#0b2b54` dengan `rounded-t-2xl` (`border-top-left-radius: 1rem; border-top-right-radius: 1rem;`).
+  - Sisi kiri: judul `h3 font-bold text-white` dan subjudul `p text-slate-200`.
+  - **DILARANG** menambahkan kotak ikon pembungkus (`div.w-8.h-8 bg-white/15`) di dalam header modal.
+  - Sisi kanan: Tombol silang (X) penutup modal dengan efek hover halus (`hover:bg-white/10`).
+- **Footer Sticky**:
+  - Warna latar `#f8fafc`, pembatas atas `border-top: 1px solid #e2e8f0`, radius sudut bawah `rounded-b-2xl`.
+  - Tombol "Batal" putih-slate di sisi kiri, tombol aksi "Simpan" biru navy solid (`bg-gov-navy` / `#0b2b54`) dengan spinner `wire:loading` di sisi kanan.
+
+
 

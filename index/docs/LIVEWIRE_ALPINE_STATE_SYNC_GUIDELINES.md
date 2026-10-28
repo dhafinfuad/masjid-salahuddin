@@ -297,6 +297,40 @@ Ketika mengirim data dinamis (teks deskripsi, nama entitas, judul kegiatan, obje
      })"
      ```
 
+### Aturan 11: Pencegahan Race Condition Antarmuka Modal Antar-Tab via Action Token (Nonce)
+Ketika pengguna membuka modal di Tab A, menutupnya dengan cepat, lalu berpindah ke Tab B dan membuka modal di Tab B, respon HTTP asynchronous tertunda dari Tab A yang baru tiba 1-2 detik kemudian dapat membajak (*hijack*) antarmuka modal Tab B jika tidak dilindungi token transaksi.
+
+1. **Token Nonce di State Parent Alpine (`currentActionToken`)**:
+   ```javascript
+   currentActionToken: null,
+   startAction(scope) {
+       this.currentActionToken = scope + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+       return this.currentActionToken;
+   },
+   cancelAction() {
+       this.currentActionToken = null;
+   }
+   ```
+2. **Pemicu Tombol Aksi**:
+   ```html
+   @click="let token = startAction('kajian-' + tab); openCreateKajian(tab, token)"
+   ```
+3. **Penyaringan Respon Asynchronous (Stale Response Invalidation)**:
+   Pada seluruh pemanggilan async server (misal `getDefaultKajianTime`), simpan token awal dan verifikasi sebelum menyentuh state:
+   ```javascript
+   async updateKajianDefaultTime(token = null) {
+       const activeToken = token || this.currentActionToken;
+       const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date, activeToken);
+       if (activeToken && this.currentActionToken !== activeToken) return; // Abaikan respon basi
+       if (res) this.kajianForm.time_display = res;
+   }
+   ```
+4. **Invalidasi Otomatis saat Ganti Tab & Tutup Modal**:
+   - Saat modal ditutup: Panggil `this.cancelAction(); window._activeKajianType = null;`.
+   - Saat beralih sub-tab (`switchSubTab`): Panggil `this.cancelAction(); window._activeKajianType = null;`.
+5. **Proteksi Re-inisialisasi Root `x-data`**:
+   Simpan pointer tipe/state modal aktif di level window (`window._activeKajianType = type;`) dan pulihkan saat `init()` Alpine berjalan agar state lokal tidak di-reset ke nilai default jika Livewire melakukan morphing root.
+
 ---
 
 ## 3. Checklist Sebelum Deploy Fitur Baru
@@ -306,6 +340,10 @@ Ketika mengirim data dinamis (teks deskripsi, nama entitas, judul kegiatan, obje
 - [ ] Apakah form modal menggunakan `@submit.prevent="$wire.save*(formObject)"`?
 - [ ] Apakah method modal (tutup/simpan) memancarkan event `$this->dispatch('close-*-modal')`?
 - [ ] Apakah modal HTML sudah memiliki atribut `wire:ignore.self`?
+- [ ] Apakah modal dilindungi dari race condition dengan pola Action Token / Nonce (`currentActionToken`)?
+- [ ] Apakah kontainer modal terluar bebas border putih di atas backdrop gelap (`border-0` & `border: none;`)?
+- [ ] Apakah kontainer modal atas menggunakan warna latar yang sama dengan header (`bg-[#0b2b54]`) untuk mencegah corner bleeding antialiasing di desktop?
+- [ ] Apakah header modal bersih tanpa kotak pembungkus ikon (`div.w-8.h-8`)?
 - [ ] Apakah indikator proses/loading menggunakan modifier spesifik (`wire:loading.inline-flex` / `wire:loading.flex`) dengan `style="display: none;"` agar icon dan teks tidak bertumpuk vertikal akibat `display: inline-block` bawaan Livewire?
 - [ ] Apakah tidak ada konflik antara parameter path URL dan anotasi `#[Url]`?
 - [ ] Untuk elemen dinamis berbasis state Livewire: Apakah sudah menggunakan Blade murni (`@if`) dengan `wire:key` unik berbeda, tanpa manipulasi Alpine `:class`/`x-text`, tanpa kelas `transition`, dan dengan native inline SVG?
