@@ -293,12 +293,12 @@
         role="dialog" aria-modal="true" aria-labelledby="kajian-modal-title">
         
         <div @click.stop
-            class="bg-white rounded-2xl w-full max-w-xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
-            style="z-index: 10000; background-color: #ffffff; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
             
             <!-- Modal Header: Solid Navy (#0b2b54) -->
-            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0"
-                style="background-color: #0b2b54; color: #ffffff;">
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20"
                         style="background-color: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.2);">
@@ -326,7 +326,7 @@
             </div>
 
             <!-- Form & Scrollable Body Area -->
-            <form novalidate @submit.prevent="if (validateKajianAll()) { $wire.saveKajian(kajianForm); }" class="flex flex-col flex-1 min-h-0">
+            <form novalidate @submit.prevent="if (validateKajianAll()) { $wire.saveKajian(kajianForm); }" class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl" style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                 <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable">
                     <!-- Pilihan Tipe Kajian jika menambah baru -->
                     <div x-show="!isEditingKajian" class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
@@ -605,8 +605,8 @@
                 </div>
 
                 <!-- Modal Footer (Sticky at bottom) -->
-                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0"
-                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                     <button type="button" @click="closeKajianModal()"
                         class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
                         style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
