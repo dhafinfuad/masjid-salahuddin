@@ -101,4 +101,32 @@ class GlobalConfirmDeleteModalTest extends TestCase
 
         $this->assertStringContainsString("CACHE_NAME = 'masjid-salahuddin-v1.1.0'", $content);
     }
+
+    /**
+     * Memverifikasi SweetAlert2 dikonfigurasi secara global dengan styling Gambar 1.
+     */
+    public function test_sweetalert_confirm_modal_is_configured_globally_and_matches_design(): void
+    {
+        $appPath = resource_path('views/layouts/app.blade.php');
+        $this->assertFileExists($appPath);
+        $appContent = file_get_contents($appPath);
+
+        // Pastikan library SweetAlert2 dimuat dan helper global didefinisikan
+        $this->assertStringContainsString('/vendor/sweetalert2/sweetalert2.all.min.js', $appContent);
+        $this->assertStringContainsString('window.showSweetAlertConfirm', $appContent);
+        $this->assertStringContainsString('swal2-modal-salahuddin', $appContent);
+        $this->assertStringContainsString('swal2-confirm-salahuddin', $appContent);
+        $this->assertStringContainsString('swal2-cancel-salahuddin', $appContent);
+
+        // Pastikan berkas SweetAlert2 mandiri tersedia di direktori public
+        $swalFile = public_path('vendor/sweetalert2/sweetalert2.all.min.js');
+        $this->assertFileExists($swalFile);
+        $this->assertGreaterThan(10000, filesize($swalFile), 'Berkas vendor SweetAlert2 tidak boleh kosong');
+
+        // Pastikan dashboard controller mengalirkan openDeleteModal ke SweetAlert2
+        $dashboardPath = resource_path('views/livewire/admin/admin-dashboard.blade.php');
+        $this->assertFileExists($dashboardPath);
+        $dashboardContent = file_get_contents($dashboardPath);
+        $this->assertStringContainsString('window.showSweetAlertConfirm(options, $wire)', $dashboardContent);
+    }
 }

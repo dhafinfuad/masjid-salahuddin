@@ -315,6 +315,10 @@
                 opacity: 0.5 !important;
                 cursor: not-allowed !important;
             }
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
         </style>
         <script>
             window.showSweetAlertConfirm = function(options, wireInstance) {
