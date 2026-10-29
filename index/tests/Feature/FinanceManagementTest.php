@@ -782,6 +782,24 @@ class FinanceManagementTest extends TestCase
         // 3. Memastikan month & year filter dikelompokkan berdampingan pada baris kedua mobile
         $this->assertStringContainsString('flex items-center gap-2 w-full sm:w-auto flex-1', $html);
     }
+
+    public function test_receipt_preview_modal_does_not_contain_buka_file_asli_button(): void
+    {
+        $this->actingAs($this->bendahara);
+
+        $html = Livewire::test(AdminDashboard::class, ['tab' => 'finance'])
+            ->assertOk()
+            ->html();
+
+        // Memastikan judul modal Bukti Transaksi Kas tetap tersedia
+        $this->assertStringContainsString('Bukti Transaksi Kas', $html);
+
+        // Memastikan tombol "Buka File Asli" sudah dihapus
+        $this->assertStringNotContainsString('Buka File Asli', $html);
+
+        // Memastikan tombol Tutup modal tetap ada
+        $this->assertStringContainsString('Tutup', $html);
+    }
 }
 
 

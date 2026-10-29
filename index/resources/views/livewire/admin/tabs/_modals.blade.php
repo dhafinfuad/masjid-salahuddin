@@ -2778,33 +2778,22 @@
                 </div>
 
                 <!-- Sticky Footer Actions -->
-                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0 rounded-b-2xl"
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
                     style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
-                    <a :href="receiptPreviewModal.isPdf ? ('{{ route('document.viewer') }}?file=' + encodeURIComponent(receiptPreviewModal.currentUrl) + '&fallback=' + encodeURIComponent('{{ url('/admin/finance') }}')) : receiptPreviewModal.currentUrl"
-                        class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition inline-flex items-center gap-1.5 cursor-pointer border border-slate-300 text-xs shadow-2xs">
-                        <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                        <span>Buka File Asli</span>
-                    </a>
-                    <div class="flex items-center gap-2">
-                        <template x-if="receiptPreviewModal.fromFinanceModal">
-                            <button type="button" @click="closeReceiptModal(false)"
-                                class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition cursor-pointer border border-slate-300 inline-flex items-center gap-1.5 text-xs">
-                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m15 18-6-6 6-6"/>
-                                </svg>
-                                <span>Kembali ke Form Edit</span>
-                            </button>
-                        </template>
-                        <button type="button" @click="closeReceiptModal(true)"
-                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer text-xs"
-                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
-                            Tutup
+                    <template x-if="receiptPreviewModal.fromFinanceModal">
+                        <button type="button" @click="closeReceiptModal(false)"
+                            class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition cursor-pointer border border-slate-300 inline-flex items-center gap-1.5 text-xs">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m15 18-6-6 6-6"/>
+                            </svg>
+                            <span>Kembali ke Form Edit</span>
                         </button>
-                    </div>
+                    </template>
+                    <button type="button" @click="closeReceiptModal(true)"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        Tutup
+                    </button>
                 </div>
 
             </div>
