@@ -27,17 +27,6 @@
 
                 <!-- Right Quick Action Buttons -->
                 <div class="flex items-center gap-1.5 sm:gap-2">
-                    <!-- Zoom Buttons (Only visible in Preview tab) -->
-                    <div x-show="notulaActiveTab === 'preview'" class="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/15 text-slate-200 mr-0.5">
-                        <button type="button" @click="adjustNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-200" x-text="['A-', 'A', 'A+', 'A++'][notulaFontSizeIndex]"></span>
-                        <button type="button" @click="adjustNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                    </div>
-
                     <!-- Tombol X Tutup Modal -->
                     <button type="button" @click="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
                         class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
@@ -150,13 +139,6 @@
                         x-show="notulaActiveTab === 'editor'"
                         class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold transition cursor-pointer">
                         Bersihkan Naskah
-                    </button>
-                    <button type="button"
-                        x-show="notulaActiveTab === 'preview'"
-                        @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(notulaForm.raw_text, notulaForm), notulaForm.title || 'Notula Kajian') : window.print()"
-                        class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold transition cursor-pointer inline-flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                        <span>Cetak / PDF</span>
                     </button>
                     <button type="button"
                         @click="$wire.saveNotula(notulaForm.id, notulaForm.raw_text)"

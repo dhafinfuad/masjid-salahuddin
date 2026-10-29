@@ -181,4 +181,25 @@ MARKDOWN;
         $response->assertSee('Baca Risalah Notula Kajian');
         $response->assertSee('showPortalNotulaModal');
     }
+
+    /** @test */
+    public function test_notula_modal_does_not_contain_zoom_and_print_pdf_buttons()
+    {
+        $this->actingAs($this->masterUser);
+
+        $html = Livewire::test(AdminDashboard::class, ['tab' => 'kegiatan'])
+            ->call('openNotulaModal', $this->sampleKajian->id)
+            ->html();
+
+        // Memastikan tombol zoom - A + sudah dihapus dari header
+        $this->assertStringNotContainsString('Perkecil Teks (A-)', $html);
+        $this->assertStringNotContainsString('Perbesar Teks (A+)', $html);
+
+        // Memastikan tombol Cetak / PDF sudah dihapus dari footer
+        $this->assertStringNotContainsString('Cetak / PDF', $html);
+        $this->assertStringNotContainsString('window.printNotulaDocument', $html);
+
+        // Memastikan aksi esensial Simpan Notula tetap ada
+        $this->assertStringContainsString('Simpan Notula', $html);
+    }
 }
