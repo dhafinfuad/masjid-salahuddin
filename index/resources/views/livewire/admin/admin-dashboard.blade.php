@@ -1040,7 +1040,7 @@
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                setTimeout(() => {
+                setTimeout(function() {
                     if (link.parentNode) link.parentNode.removeChild(link);
                     URL.revokeObjectURL(blobUrl);
                 }, 2500);
@@ -1091,7 +1091,7 @@
                 console.warn('[PDF Share] navigator.share dari drawer gagal/ditolak sistem, beralih ke fallback blob:', e);
             }
 
-            // 2. Fallback tangguh: Unduh langsung via Blob Object URL agar user tidak pernah stuck "tidak terjadi apa-apa"
+            // 2. Fallback tangguh: Unduh langsung via Blob Object URL agar tidak macet
             try {
                 const blob = window._rawPernyataanPdfBlob || rawFile;
                 const blobUrl = URL.createObjectURL(blob);
@@ -1101,7 +1101,7 @@
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                setTimeout(() => {
+                setTimeout(function() {
                     if (link.parentNode) link.parentNode.removeChild(link);
                     URL.revokeObjectURL(blobUrl);
                 }, 2500);
