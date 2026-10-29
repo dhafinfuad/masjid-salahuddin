@@ -1,4 +1,4 @@
-<div class="{{ $isEmbedded ? 'space-y-6 pb-20 sm:pb-0' : 'min-h-screen bg-gov-canvas py-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8' }}"
+<div class="{{ $isEmbedded ? 'space-y-6' : 'min-h-screen bg-gov-canvas py-6 px-4 sm:px-6 lg:px-8 pb-8' }}"
      x-data="posterSettingStudio({
         template: @entangle('template'),
         masjid_line1: @entangle('masjid_line1'),
@@ -275,6 +275,23 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Footer Action Button (Standard Footer, Non-sticky) -->
+                <div class="flex items-center justify-end pt-4 border-t border-slate-200">
+                    <button type="button" wire:click="save" wire:loading.attr="disabled"
+                        class="px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
+                        <span wire:loading.remove wire:target="save">Simpan Konfigurasi</span>
+                        <span wire:loading.inline-flex wire:target="save" style="display: none;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -282,12 +299,12 @@
     <!-- ======================================================== -->
     <!-- MODE 2: POSTER KAJIAN STUDIO WORKSPACE -->
     <!-- ======================================================== -->
-    <div x-show="studioMode === 'poster'" x-cloak class="w-full min-w-0 space-y-6">
+    <div x-show="studioMode === 'poster'" x-cloak class="w-full min-w-0">
 
         <!-- PRESET & TEMPLATE SELECTION SUB-TAB BAR (FULL WIDTH) -->
         <div class="bg-white rounded-2xl border border-gov-border shadow-2xs overflow-hidden">
             <!-- Sub-tab Navigation (Kajian Tematik vs Rutin Pekanan) -->
-            <div class="px-5 sm:px-6 pt-4 pb-3 flex items-center justify-between shrink-0 w-full bg-white flex-wrap gap-3">
+            <div class="px-5 sm:px-6 pt-4 pb-3 flex items-center justify-between border-b border-slate-200 shrink-0 w-full bg-white flex-wrap gap-3">
                 <div class="flex items-center gap-2">
                     <button type="button" wire:click="selectTemplate(1)"
                             :class="template === 1 ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
@@ -311,29 +328,30 @@
                     <span x-show="template === 2" x-cloak>Template 2: Background navy gradient &amp; kartu tanggal biru</span>
                 </div>
             </div>
-        </div>
 
-        <!-- MAIN TWO-COLUMN BALANCED STUDIO WORKSPACE -->
-        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <!-- Content Area: 2 Column Studio Settings + Live Preview -->
+            <div class="p-5 sm:p-6 space-y-6">
+                <!-- MAIN TWO-COLUMN BALANCED STUDIO WORKSPACE -->
+                <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        <!-- ======================================================== -->
-        <!-- LEFT COLUMN: DESAIN, IDENTITAS, TIPOGRAFI -->
-        <!-- ======================================================== -->
-        <div class="space-y-6 min-w-0">
+                <!-- ======================================================== -->
+                <!-- LEFT COLUMN: DESAIN, IDENTITAS, TIPOGRAFI -->
+                <!-- ======================================================== -->
+                <div class="space-y-6 min-w-0">
 
-            <!-- IDENTITY & LOGO SETTINGS -->
-            <div class="bg-white rounded-2xl border border-gov-border shadow-2xs p-5 space-y-4">
-                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center text-xs border border-gov-border">
-                        <svg class="w-4 h-4 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Identitas Masjid &amp; Logo</h2>
-                </div>
+                    <!-- IDENTITY & LOGO SETTINGS -->
+                    <div class="p-4 sm:p-5 bg-slate-50/70 rounded-xl border border-gov-border space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                            <div class="w-6 h-6 rounded-md bg-white text-gov-navy flex items-center justify-center text-xs border border-gov-border shadow-2xs">
+                                <svg class="w-3.5 h-3.5 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700">Identitas Masjid &amp; Logo</h2>
+                        </div>
 
-                <!-- Logo Uploader & Size Slider -->
-                <div class="bg-slate-50/70 p-3.5 rounded-xl border border-gov-border space-y-3">
+                        <!-- Logo Uploader & Size Slider -->
+                        <div class="bg-white p-3.5 rounded-xl border border-gov-border space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-semibold text-slate-700">File Logo (PNG/SVG/WebP):</span>
                         @if($logo_url || $logo_file)
@@ -428,22 +446,22 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Teks Baris 1 (Instansi/Atas)</label>
                         <input type="text" x-model="masjid_line1"
-                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Teks Baris 2 (Nama Masjid)</label>
                         <input type="text" x-model="masjid_line2"
-                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                 </div>
             </div>
 
             <!-- TITLE & DESCRIPTION TUNING SLIDERS -->
-            <div class="bg-white rounded-2xl border border-gov-border shadow-2xs p-5 space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="p-4 sm:p-5 bg-slate-50/70 rounded-xl border border-gov-border space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
                     <div class="flex items-center gap-2">
-                        <div class="w-7 h-7 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center text-xs border border-gov-border">
-                            <svg class="w-4 h-4 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-6 h-6 rounded-md bg-white text-gov-navy flex items-center justify-center text-xs border border-gov-border shadow-2xs">
+                            <svg class="w-3.5 h-3.5 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
                             </svg>
                         </div>
@@ -456,7 +474,7 @@
 
                 <div class="space-y-4">
                     <!-- EDIT ISI TEKS JUDUL & DESKRIPSI -->
-                    <div class="bg-slate-50/70 p-3.5 rounded-xl border border-gov-border space-y-3">
+                    <div class="bg-white p-3.5 rounded-xl border border-gov-border space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-200/80 pb-2">
                             <span class="text-xs font-bold text-slate-700">Isi Teks Judul &amp; Deskripsi</span>
                             <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-400">Pratinjau Langsung</span>
@@ -839,10 +857,10 @@
         </div>
 
             <!-- SCHEDULE & CONTENT POSITION SLIDERS -->
-            <div class="bg-white rounded-2xl border border-gov-border shadow-2xs p-5 space-y-4">
-                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center text-xs border border-gov-border">
-                        <svg class="w-4 h-4 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-4 sm:p-5 bg-slate-50/70 rounded-xl border border-gov-border space-y-4">
+                <div class="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <div class="w-6 h-6 rounded-md bg-white text-gov-navy flex items-center justify-center text-xs border border-gov-border shadow-2xs">
+                        <svg class="w-3.5 h-3.5 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
@@ -879,10 +897,10 @@
             </div>
 
             <!-- FOOTER SETTINGS -->
-            <div class="bg-white rounded-2xl border border-gov-border shadow-2xs p-5 space-y-4">
-                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 text-gov-navy flex items-center justify-center text-xs border border-gov-border">
-                        <svg class="w-4 h-4 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-4 sm:p-5 bg-slate-50/70 rounded-xl border border-gov-border space-y-4">
+                <div class="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <div class="w-6 h-6 rounded-md bg-white text-gov-navy flex items-center justify-center text-xs border border-gov-border shadow-2xs">
+                        <svg class="w-3.5 h-3.5 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -893,12 +911,12 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Label Kiri Footer</label>
                         <input type="text" x-model="footer_label"
-                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">URL / Link Web</label>
                         <input type="text" x-model="footer_url"
-                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
+                               class="w-full text-xs px-3 py-2 border border-gov-border rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium">
                     </div>
                 </div>
             </div>
@@ -906,38 +924,23 @@
         </div>
 
     </div>
-    </div>
 
-    <!-- Sticky Floating Save Bar at the Bottom (Floating on Mobile/PWA, In-flow on Desktop) -->
-    <div class="fixed bottom-3 inset-x-3 z-40 sm:static sm:inset-auto sm:z-auto sm:mt-6 w-auto sm:w-full"
-         style="bottom: max(0.75rem, env(safe-area-inset-bottom, 0.75rem));">
-        <div class="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl sm:shadow-2xs p-3 sm:px-5 sm:py-3.5 flex items-center justify-between gap-3">
-            <div class="text-xs text-slate-500 hidden sm:flex items-center gap-2">
-                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span x-show="studioMode === 'jarkom'">Perubahan format jarkoman akan langsung tersimpan dan diterapkan pada tombol Salin Jarkom.</span>
-                <span x-show="studioMode === 'poster'" x-cloak>Konfigurasi desain template poster akan otomatis diterapkan ke seluruh generator poster kajian.</span>
-            </div>
-            <div class="flex items-center justify-end gap-2.5 w-full sm:w-auto">
-                <button type="button" wire:click="save" wire:loading.attr="disabled"
-                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-md transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
-                    style="background-color: #0b2b54; color: #ffffff;">
-                    <span wire:loading.remove wire:target="save" class="inline-flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                        </svg>
-                        <span>Simpan Konfigurasi</span>
-                    </span>
-                    <span wire:loading.inline-flex wire:target="save" style="display: none;"
-                          class="inline-flex flex-row items-center gap-1.5 shrink-0 whitespace-nowrap">
-                        <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-white inline-block" viewBox="0 0 24 24" fill="none">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span class="whitespace-nowrap leading-none">Menyimpan...</span>
-                    </span>
-                </button>
+                <!-- Footer Action Button (Standard Footer, Non-sticky) -->
+                <div class="flex items-center justify-end pt-4 border-t border-slate-200">
+                    <button type="button" wire:click="save" wire:loading.attr="disabled"
+                        class="px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                        style="background-color: #0b2b54; color: #ffffff;">
+                        <span wire:loading.remove wire:target="save">Simpan Konfigurasi</span>
+                        <span wire:loading.inline-flex wire:target="save" style="display: none;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap">Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

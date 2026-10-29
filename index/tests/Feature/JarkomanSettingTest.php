@@ -52,6 +52,7 @@ class JarkomanSettingTest extends TestCase
             ->assertSee('Poster Kajian')
             ->assertSee('Format Template Teks Kajian')
             ->assertSee('Simpan Konfigurasi')
+            ->assertDontSee('fixed bottom-3')
             ->assertDontSee('Data Ustadz')
             ->assertDontSee('Edit Jarkom')
             ->assertDontSee('downloadPreviewHD()');
