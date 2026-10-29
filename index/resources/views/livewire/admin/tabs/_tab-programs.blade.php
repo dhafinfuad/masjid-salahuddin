@@ -1675,46 +1675,37 @@
                     <!-- ============================================== -->
                     <!-- BOTTOM DRAWER HELPER: BERKAS SIAP (IOS WEBKIT) -->
                     <!-- ============================================== -->
-                    <!-- 1. Dark Backdrop Overlay (Ketuk untuk menutup) -->
                     <div x-show="pernyataanReadyShareDrawer" x-cloak
-                        @click="pernyataanReadyShareDrawer = false"
-                        x-transition:enter="transition-opacity ease-out duration-250"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        x-transition:leave="transition-opacity ease-in duration-200"
-                        x-transition:leave-start="opacity-100"
-                        x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50"
-                        style="display: none;">
-                    </div>
+                        @click="if (window.isBackdropClick($event, $el)) { pernyataanReadyShareDrawer = false; }"
+                        class="fixed inset-0 flex flex-col justify-end p-0 sm:p-4 sm:items-center sm:justify-center"
+                        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+                        role="dialog" aria-modal="true">
+                        
+                        <div @click.stop
+                            class="w-full max-w-md mx-auto bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 p-5 pb-8 space-y-4 relative animate-in fade-in slide-in-from-bottom duration-250"
+                            style="z-index: 10000; background-color: #ffffff;">
 
-                    <!-- 2. Minimalist Ready Sheet Panel -->
-                    <div x-show="pernyataanReadyShareDrawer" x-cloak
-                        x-transition:enter="transition ease-out duration-300 transform"
-                        x-transition:enter-start="translate-y-full"
-                        x-transition:enter-end="translate-y-0"
-                        x-transition:leave="transition ease-in duration-200 transform"
-                        x-transition:leave-start="translate-y-0"
-                        x-transition:leave-end="translate-y-full"
-                        class="fixed bottom-0 inset-x-0 z-[60] flex flex-col justify-end"
-                        style="display: none;">
-
-                        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-7 space-y-3.5">
                             <!-- Center Drag Indicator Handle -->
-                            <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
+                            <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1 sm:hidden"></div>
 
-                            <!-- Sheet Header Ringkas: "Berkas Siap" -->
-                            <div class="text-center">
-                                <h4 class="text-sm font-bold text-slate-900">Berkas Siap</h4>
-                                <p class="text-[11px] text-slate-500 mt-0.5 truncate" x-text="pernyataanPendingShareTitle ? pernyataanPendingShareTitle + '.pdf' : 'Surat Pernyataan Pemotongan Tukin.pdf'"></p>
+                            <!-- Sheet Header Ringkas: 'Berkas Siap' -->
+                            <div class="text-center pt-1">
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <h4 class="text-base font-bold text-slate-900">Berkas Siap Diunduh</h4>
+                                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto truncate" x-text="pernyataanPendingShareTitle ? pernyataanPendingShareTitle + '.pdf' : 'Surat_Pernyataan_Pemotongan_Tukin.pdf'"></p>
                             </div>
 
                             <!-- Tombol Utama: Buka Menu Simpan (Save to Files) -->
                             <button type="button" @click.stop="executePernyataanShareFromDrawer()"
                                 :disabled="isExecutingShare"
-                                class="w-full py-3.5 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75">
+                                class="w-full py-3.5 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                                style="background-color: #0b2b54; color: #ffffff;">
                                 <template x-if="!isExecutingShare">
-                                    <span class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center gap-2 text-white">
                                         <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                                             <polyline points="16 6 12 2 8 6"/>
@@ -1724,7 +1715,7 @@
                                     </span>
                                 </template>
                                 <template x-if="isExecutingShare">
-                                    <span class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center gap-2 text-white">
                                         <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
