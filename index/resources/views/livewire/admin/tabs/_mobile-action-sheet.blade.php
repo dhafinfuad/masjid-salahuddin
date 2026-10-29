@@ -100,7 +100,7 @@
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Download Excel</span>
                         </a>
 
-                        <button type="button" @click="closeMobileActionSheet(); showUstadzModal = true; $wire.set('showUstadzModal', true, false)"
+                        <button type="button" @click="closeMobileActionSheet(); activeTab = 'settings'; switchSettingsSubTab('ustadz')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
@@ -152,7 +152,7 @@
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Download Excel</span>
                         </a>
 
-                        <button type="button" @click="closeMobileActionSheet(); showUstadzModal = true; $wire.set('showUstadzModal', true, false)"
+                        <button type="button" @click="closeMobileActionSheet(); activeTab = 'settings'; switchSettingsSubTab('ustadz')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>

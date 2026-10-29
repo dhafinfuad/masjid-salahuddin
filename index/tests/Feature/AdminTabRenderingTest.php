@@ -155,5 +155,14 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString('title="Menu Aksi"', $html);
         $this->assertStringContainsString('openEditUstadzModal(' . $ustadz->id . ')', $html);
         $this->assertStringContainsString('Hapus Data Ustadz', $html);
+
+        // 7. Validasi: Menghapus ustadz TIDAK boleh membuka modal tambah ustadz
+        $component->call('deleteUstadz', $ustadz->id)
+            ->assertSet('showCreateUstadzModal', false)
+            ->assertSet('showEditUstadzModal', false)
+            ->assertNotDispatched('open-ustadz-modal')
+            ->assertNotDispatched('open-create-ustadz-modal');
+
+        $this->assertDatabaseMissing('ustadzs', ['id' => $ustadz->id]);
     }
 }

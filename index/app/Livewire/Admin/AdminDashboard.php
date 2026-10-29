@@ -2534,8 +2534,8 @@ class AdminDashboard extends Component
             $this->ustadzPhoto = null;
         }
 
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->showCreateUstadzModal = false;
+        $this->showUstadzModal = false;
         $this->notify('Foto ustadz berhasil dihapus dari database & jadwal.');
     }
 
@@ -2554,10 +2554,14 @@ class AdminDashboard extends Component
 
         if ($this->editingUstadzId === $id) {
             $this->resetUstadzForm();
+            $this->showEditUstadzModal = false;
+            $this->dispatch('close-edit-ustadz-modal');
         }
 
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->showCreateUstadzModal = false;
+        $this->showUstadzModal = false;
+        $this->dispatch('close-create-ustadz-modal');
+        $this->dispatch('close-ustadz-modal');
         $this->notify('Ustadz berhasil dihapus dari direktori.');
     }
 
