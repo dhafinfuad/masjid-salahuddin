@@ -1,4 +1,4 @@
-<div class="{{ $isEmbedded ? 'space-y-6' : 'min-h-screen bg-gov-canvas py-6 px-4 sm:px-6 lg:px-8' }}"
+<div class="{{ $isEmbedded ? 'space-y-6 pb-20 sm:pb-0' : 'min-h-screen bg-gov-canvas py-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8' }}"
      x-data="posterSettingStudio({
         template: @entangle('template'),
         masjid_line1: @entangle('masjid_line1'),
@@ -32,33 +32,23 @@
      @close-jarkom-modal.window="closeJarkomModal()">
 
     <!-- Mode Switcher: Template WA & Poster Kajian -->
-    <div class="w-full flex items-center justify-between gap-3 bg-white p-2 rounded-2xl border border-gov-border shadow-2xs mb-5">
-        <div class="flex items-center gap-1.5 w-full sm:w-auto">
-            <!-- Mode 1: Template WA -->
-            <button type="button" @click="studioMode = 'jarkom'"
-                :class="studioMode === 'jarkom' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'text-slate-600 hover:text-gov-navy hover:bg-slate-100 font-semibold'"
-                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
-                <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                </svg>
-                <span>Template WA</span>
-            </button>
-
-            <!-- Mode 2: Poster Kajian -->
-            <button type="button" @click="studioMode = 'poster'"
-                :class="studioMode === 'poster' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'text-slate-600 hover:text-gov-navy hover:bg-slate-100 font-semibold'"
-                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
-                <svg class="w-4 h-4 text-sky-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <span>Poster Kajian</span>
-            </button>
-        </div>
-
-        <div class="hidden sm:flex items-center text-xs text-gov-textMuted pr-3">
-            <span x-show="studioMode === 'jarkom'">Format pesan broadcast WhatsApp Kajian &amp; Khutbah Jumat</span>
-            <span x-show="studioMode === 'poster'" x-cloak>Generator Poster Persegi 1:1 (500×500 px &bull; Ekspor HD 720×720 px)</span>
-        </div>
+    <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-5">
+        <button type="button" @click="studioMode = 'jarkom'"
+            class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
+            :class="studioMode === 'jarkom' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+            <span>Template WA</span>
+        </button>
+        <button type="button" @click="studioMode = 'poster'"
+            class="px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer"
+            :class="studioMode === 'poster' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span>Poster Kajian</span>
+        </button>
     </div>
 
     <!-- ======================================================== -->
@@ -922,9 +912,10 @@
     </div>
     </div>
 
-    <!-- Sticky Floating Save Bar at the Bottom -->
-    <div class="sticky bottom-3 z-30 w-full mt-6">
-        <div class="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl p-3 sm:px-5 sm:py-3.5 flex items-center justify-between gap-3">
+    <!-- Sticky Floating Save Bar at the Bottom (Floating on Mobile/PWA, In-flow on Desktop) -->
+    <div class="fixed bottom-3 inset-x-3 z-40 sm:static sm:inset-auto sm:z-auto sm:mt-6 w-auto sm:w-full"
+         style="bottom: max(0.75rem, env(safe-area-inset-bottom, 0.75rem));">
+        <div class="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl sm:shadow-2xs p-3 sm:px-5 sm:py-3.5 flex items-center justify-between gap-3">
             <div class="text-xs text-slate-500 hidden sm:flex items-center gap-2">
                 <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
