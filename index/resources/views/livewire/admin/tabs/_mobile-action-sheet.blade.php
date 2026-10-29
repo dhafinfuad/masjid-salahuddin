@@ -4,7 +4,7 @@
 
 <!-- 1. Circular (+) Floating Action Button (Mobile Only) -->
 <div class="fixed bottom-6 right-5 z-40 sm:hidden"
-    x-show="!['dashboard', 'settings', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'programs' && socialSubTab === 'pernyataan') && !showKajianModal && !showUstadzModal && !showNotulaModal && !showPrayerDutyModal && !showAgendaModal && !showEmployeeModal"
+    x-show="(!['dashboard', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'settings' && settingsSubTab !== 'ustadz') && !(activeTab === 'programs' && socialSubTab === 'pernyataan') && !showKajianModal && !showUstadzModal && !showCreateUstadzModal && !showEditUstadzModal && !showNotulaModal && !showPrayerDutyModal && !showAgendaModal && !showEmployeeModal)"
     x-cloak>
     <button type="button"
         @click="openMobileActionSheet()"
@@ -599,6 +599,24 @@
                         <span class="text-xs font-semibold text-slate-800 leading-tight">Tambah Pegawai</span>
                     </button>
                 </div>
+            </div>
+        </template>
+
+        <!-- ============================================== -->
+        <!-- TAB 9: SETTINGS -> DATABASE USTADZ -->
+        <!-- ============================================== -->
+        <template x-if="activeTab === 'settings' && settingsSubTab === 'ustadz'">
+            <div class="space-y-3">
+                @if(Auth::user()->canManage())
+                    <button type="button" @click="closeMobileActionSheet(); openCreateUstadzModal()"
+                        class="w-full py-3 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                        <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Tambah Ustadz Baru</span>
+                    </button>
+                @endif
             </div>
         </template>
     </div>

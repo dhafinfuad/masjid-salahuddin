@@ -102,4 +102,58 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString("activeFinanceType === 'pemasukan'", $financeHtml);
         $this->assertStringContainsString("catSearch", $financeHtml);
     }
+
+    public function test_ustadz_database_separated_modals_and_action_menu(): void
+    {
+        // 1. Buat data ustadz sampel
+        \App\Models\Ustadz::create([
+            'name' => 'Ust. Dr. Syafiq Riza Basalamah, M.A.',
+            'title' => 'Kajian Tematik & Sirah',
+            'phone' => '081234567890',
+        ]);
+
+        $component = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'settings']);
+
+        // 2. Buka modal tambah ustadz
+        $component->call('openCreateUstadzModal')
+            ->assertSet('showCreateUstadzModal', true)
+            ->assertSet('showEditUstadzModal', false)
+            ->assertDispatched('open-create-ustadz-modal');
+
+        // 3. Tutup modal tambah ustadz
+        $component->call('closeCreateUstadzModal')
+            ->assertSet('showCreateUstadzModal', false)
+            ->assertDispatched('close-create-ustadz-modal');
+
+        // 4. Buka modal edit ustadz
+        $ustadz = \App\Models\Ustadz::first();
+        $component->call('editUstadz', $ustadz->id)
+            ->assertSet('showEditUstadzModal', true)
+            ->assertSet('editingUstadzId', $ustadz->id)
+            ->assertSet('ustadzName', $ustadz->name)
+            ->assertDispatched('open-edit-ustadz-modal');
+
+        // 5. Tutup modal edit ustadz
+        $component->call('closeEditUstadzModal')
+            ->assertSet('showEditUstadzModal', false)
+            ->assertDispatched('close-edit-ustadz-modal');
+
+        // 6. Validasi rendering HTML
+        $html = $component->html();
+
+        // Modal tambah dan edit harus ada di DOM
+        $this->assertStringContainsString('showCreateUstadzModal', $html);
+        $this->assertStringContainsString('showEditUstadzModal', $html);
+        $this->assertStringContainsString('Tambah Ustadz Baru', $html);
+        $this->assertStringContainsString('Edit Profil Ustadz', $html);
+
+        // Form inline 5 kolom di tab settings sudah tidak ada
+        $this->assertStringNotContainsString('KOLOM KIRI: Form Tambah / Edit Profil & Foto Ustadz', $html);
+
+        // Menu titik tiga ter-render pada kartu ustadz
+        $this->assertStringContainsString('title="Menu Aksi"', $html);
+        $this->assertStringContainsString('openEditUstadzModal(' . $ustadz->id . ')', $html);
+        $this->assertStringContainsString('Hapus Data Ustadz', $html);
+    }
 }

@@ -206,6 +206,8 @@ class AdminDashboard extends Component
 
     // Ustadz Directory State
     public bool $showUstadzModal = false;
+    public bool $showCreateUstadzModal = false;
+    public bool $showEditUstadzModal = false;
     public string $ustadzSearch = '';
     public ?int $editingUstadzId = null;
     public string $ustadzName = '';
@@ -2128,20 +2130,39 @@ class AdminDashboard extends Component
     // ==========================================
     public function openUstadzModal(): void
     {
+        $this->openCreateUstadzModal();
+    }
+
+    public function closeUstadzModal(): void
+    {
+        $this->closeCreateUstadzModal();
+        $this->closeEditUstadzModal();
+    }
+
+    public function openCreateUstadzModal(): void
+    {
         if (! Auth::user()->canManage()) {
             $this->notify('Akses ditolak: Akun viewer hanya memiliki izin baca (read-only).');
             return;
         }
 
-        $this->resetUstadzForm();
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->editingUstadzId = null;
+        $this->ustadzName = '';
+        $this->ustadzTitle = '';
+        $this->ustadzPhone = '';
+        $this->ustadzPhoto = null;
+        $this->ustadzExistingPhoto = null;
+        $this->resetErrorBag();
+        $this->showCreateUstadzModal = true;
+        $this->showEditUstadzModal = false;
+        $this->dispatch('open-create-ustadz-modal');
     }
 
-    public function closeUstadzModal(): void
+    public function closeCreateUstadzModal(): void
     {
-        $this->showUstadzModal = false;
-        $this->dispatch('close-ustadz-modal');
+        $this->showCreateUstadzModal = false;
+        $this->resetErrorBag();
+        $this->dispatch('close-create-ustadz-modal');
     }
 
     public function resetUstadzForm(): void
@@ -2152,8 +2173,7 @@ class AdminDashboard extends Component
         $this->ustadzPhone = '';
         $this->ustadzPhoto = null;
         $this->ustadzExistingPhoto = null;
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->resetErrorBag();
     }
 
     public function editUstadz(int $id): void
@@ -2170,8 +2190,17 @@ class AdminDashboard extends Component
         $this->ustadzPhone = $u->phone ?? '';
         $this->ustadzPhoto = null;
         $this->ustadzExistingPhoto = $u->photo ?? null;
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->resetErrorBag();
+        $this->showCreateUstadzModal = false;
+        $this->showEditUstadzModal = true;
+        $this->dispatch('open-edit-ustadz-modal');
+    }
+
+    public function closeEditUstadzModal(): void
+    {
+        $this->showEditUstadzModal = false;
+        $this->resetErrorBag();
+        $this->dispatch('close-edit-ustadz-modal');
     }
 
     public function saveUstadz(): void
@@ -2238,8 +2267,12 @@ class AdminDashboard extends Component
         }
 
         $this->resetUstadzForm();
-        $this->showUstadzModal = true;
-        $this->dispatch('open-ustadz-modal');
+        $this->showCreateUstadzModal = false;
+        $this->showEditUstadzModal = false;
+        $this->showUstadzModal = false;
+        $this->dispatch('close-create-ustadz-modal');
+        $this->dispatch('close-edit-ustadz-modal');
+        $this->dispatch('close-ustadz-modal');
     }
 
     // ==========================================

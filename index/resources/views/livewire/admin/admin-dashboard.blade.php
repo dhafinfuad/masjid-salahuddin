@@ -152,6 +152,8 @@
          showKajianModal: {{ $showKajianModal ? 'true' : 'false' }},
          showImportKajianModal: false,
          showUstadzModal: false,
+         showCreateUstadzModal: false,
+         showEditUstadzModal: false,
          get ustadzPhotoMap() {
              const el = document.getElementById('ustadzDataContainer');
              if (!el) return {};
@@ -1119,7 +1121,7 @@
         },
         mobileActionSheetOpen: false,
         openMobileActionSheet() {
-            if (['settings', 'statistics', 'statistik', 'saran'].includes(this.activeTab) || (this.activeTab === 'programs' && this.socialSubTab === 'pernyataan')) {
+            if (['statistics', 'statistik', 'saran'].includes(this.activeTab) || (this.activeTab === 'settings' && this.settingsSubTab !== 'ustadz') || (this.activeTab === 'programs' && this.socialSubTab === 'pernyataan')) {
                 return;
             }
             this.mobileActionSheetOpen = true;
@@ -1129,6 +1131,28 @@
         },
         closeMobileActionSheet() {
             this.mobileActionSheetOpen = false;
+        },
+        openCreateUstadzModal() {
+            this.showCreateUstadzModal = true;
+            $wire.openCreateUstadzModal();
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
+        },
+        closeCreateUstadzModal() {
+            this.showCreateUstadzModal = false;
+            $wire.closeCreateUstadzModal();
+        },
+        openEditUstadzModal(id) {
+            this.showEditUstadzModal = true;
+            $wire.editUstadz(id);
+            this.$nextTick(() => {
+                if (window.createLucideIcons) window.createLucideIcons();
+            });
+        },
+        closeEditUstadzModal() {
+            this.showEditUstadzModal = false;
+            $wire.closeEditUstadzModal();
         },
         getMobileActionSubtitle() {
             if (this.activeTab === 'kegiatan' || this.activeTab === 'kajian' || this.activeTab === 'agenda') {
@@ -1152,6 +1176,10 @@
                 if (this.userSubTab === 'pegawai') return 'Pilih aksi untuk Master Data Pegawai';
                 if (this.userSubTab === 'kepengurusan') return 'Pilih aksi untuk Kepengurusan Takmir & Dokumen SK';
                 return 'Pilih aksi untuk Manajemen Akun Pengguna';
+            }
+            if (this.activeTab === 'settings') {
+                if (this.settingsSubTab === 'ustadz') return 'Pilih aksi untuk Database Ustadz';
+                return 'Pilih aksi untuk Pengaturan Sistem';
             }
             if (this.activeTab === 'galeri' || this.activeTab === 'gallery') return 'Pilih aksi untuk Dokumentasi Galeri Kegiatan';
             return 'Pilih tindakan cepat untuk halaman ini';
@@ -1184,7 +1212,12 @@
         }
     "
     @close-kajian-modal.window="closeKajianModal()"
-    @open-ustadz-modal.window="showUstadzModal = true; $wire.set('showUstadzModal', true, false)" @close-ustadz-modal.window="showUstadzModal = false; $wire.set('showUstadzModal', false, false)"
+    @open-ustadz-modal.window="showCreateUstadzModal = true; $wire.set('showCreateUstadzModal', true, false)"
+    @close-ustadz-modal.window="showCreateUstadzModal = false; showEditUstadzModal = false; $wire.set('showCreateUstadzModal', false, false); $wire.set('showEditUstadzModal', false, false)"
+    @open-create-ustadz-modal.window="showCreateUstadzModal = true; $wire.set('showCreateUstadzModal', true, false)"
+    @close-create-ustadz-modal.window="showCreateUstadzModal = false; $wire.set('showCreateUstadzModal', false, false)"
+    @open-edit-ustadz-modal.window="showEditUstadzModal = true; $wire.set('showEditUstadzModal', true, false)"
+    @close-edit-ustadz-modal.window="showEditUstadzModal = false; $wire.set('showEditUstadzModal', false, false)"
     @open-import-kajian-modal.window="if ($event.detail && $event.detail.type) { importKajianType = $event.detail.type; } showImportKajianModal = true"
     @close-import-kajian-modal.window="showImportKajianModal = false"
     @open-notula-modal.window="openNotulaModal($event.detail)"

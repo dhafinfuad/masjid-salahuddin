@@ -5260,3 +5260,319 @@
         </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!-- MODAL: TAMBAH USTADZ BARU -->
+    <!-- ======================================================== -->
+    <div x-show="showCreateUstadzModal" x-cloak wire:ignore.self @keydown.escape.window="closeCreateUstadzModal()"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { closeCreateUstadzModal(); }"
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="create-ustadz-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="create-ustadz-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Tambah Ustadz Baru
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Lengkapi identitas narasumber dan unggah foto profil.</p>
+                </div>
+                <button type="button" @click="closeCreateUstadzModal()"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="saveUstadz" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Scrollable Body Content -->
+                <div class="flex-1 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 space-y-4 text-xs notula-scrollable bg-white">
+                    <!-- Nama Lengkap -->
+                    <div x-data="{ err: '', touched: false }">
+                        <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
+                        <input type="text" wire:model="ustadzName" placeholder="Contoh: Ust. Hasyim Azhari, S.Pd.I."
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 font-medium text-xs text-gov-textMain transition"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                        @error('ustadzName') <span x-show="!err" class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Bidang Kajian / Spesialisasi -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Bidang Kajian / Spesialisasi</label>
+                        <input type="text" wire:model="ustadzTitle" placeholder="Misal: Kajian Tematik / Tafsir / Sirah"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
+                        @error('ustadzTitle') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Nomor WhatsApp -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
+                        <input type="text" wire:model="ustadzPhone" placeholder="0821-xxxx-xxxx"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
+                        @error('ustadzPhone') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Foto Profil Ustadz -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Foto Profil Ustadz</label>
+                        <div class="flex items-center gap-3.5 p-3.5 bg-slate-50/70 rounded-xl border border-gov-border">
+                            <!-- Preview Avatar -->
+                            <div class="relative shrink-0 w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-white flex items-center justify-center shadow-2xs">
+                                @if ($ustadzPhoto)
+                                    <img src="{{ $ustadzPhoto->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover">
+                                @elseif ($ustadzExistingPhoto)
+                                    <img src="{{ asset('storage/' . $ustadzExistingPhoto) }}" alt="Foto Ustadz" class="w-full h-full object-cover">
+                                @else
+                                    <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                @endif
+                            </div>
+
+                            <!-- Upload Button & File Controls -->
+                            <div class="min-w-0 flex-1">
+                                <label class="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition overflow-hidden"
+                                       x-data="{ isDragging: false }"
+                                       @dragenter.prevent="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave.prevent="isDragging = false"
+                                       @drop="isDragging = false"
+                                       :class="isDragging ? 'ring-2 ring-gov-navy border-gov-navy bg-sky-50 text-gov-navy' : ''">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : '{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto / Seret' : 'Unggah Foto / Seret' }}'">{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto' : 'Unggah Foto' }}</span>
+                                    <input type="file"
+                                           wire:model="ustadzPhoto"
+                                           accept="image/png,image/jpeg,image/webp"
+                                           @dragenter="isDragging = true"
+                                           @dragover.prevent="isDragging = true"
+                                           @dragleave="isDragging = false"
+                                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                </label>
+                                <p class="text-[11px] text-slate-500 mt-1 truncate">JPG, PNG, WEBP (maks. 3MB). Proporsional/kotak direkomendasikan.</p>
+
+                                <div wire:loading.inline-flex wire:target="ustadzPhoto" style="display: none;"
+                                    class="inline-flex flex-row items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 mt-1 shrink-0 whitespace-nowrap">
+                                    <svg class="w-3 h-3 animate-spin shrink-0 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="whitespace-nowrap leading-none">Mengunggah file foto...</span>
+                                </div>
+                                @error('ustadzPhoto') <span class="text-xs font-semibold text-rose-600 block mt-0.5">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tip Card Otomatisasi -->
+                    <div class="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
+                        <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                            <path d="M9 18h6"/>
+                            <path d="M10 22h4"/>
+                        </svg>
+                        <div class="leading-relaxed">
+                            <strong class="font-semibold text-amber-950">Otomatisasi Cerdas:</strong> Foto ustadz yang tersimpan di sini akan otomatis terhubung ke seluruh jadwal kajian lama maupun baru dan generator poster dengan nama narasumber yang cocok.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="closeCreateUstadzModal()"
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveUstadz" style="color: #ffffff;">Simpan Ustadz</span>
+                        <span wire:loading.inline-flex wire:target="saveUstadz" style="display: none; color: #ffffff;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODAL: EDIT PROFIL USTADZ -->
+    <!-- ======================================================== -->
+    <div x-show="showEditUstadzModal" x-cloak wire:ignore.self @keydown.escape.window="closeEditUstadzModal()"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { closeEditUstadzModal(); }"
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="edit-ustadz-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(88vh, 85dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <h3 id="edit-ustadz-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                        Edit Profil Ustadz
+                    </h3>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;">Perbarui data profil &amp; foto profil narasumber kajian.</p>
+                </div>
+                <button type="button" @click="closeEditUstadzModal()"
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="saveUstadz" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Scrollable Body Content -->
+                <div class="flex-1 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 space-y-4 text-xs notula-scrollable bg-white">
+                    <!-- Nama Lengkap -->
+                    <div x-data="{ err: '', touched: false }">
+                        <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
+                        <input type="text" wire:model="ustadzName" placeholder="Contoh: Ust. Hasyim Azhari, S.Pd.I."
+                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
+                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 font-medium text-xs text-gov-textMain transition"
+                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
+                        <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
+                        @error('ustadzName') <span x-show="!err" class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Bidang Kajian / Spesialisasi -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Bidang Kajian / Spesialisasi</label>
+                        <input type="text" wire:model="ustadzTitle" placeholder="Misal: Kajian Tematik / Tafsir / Sirah"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
+                        @error('ustadzTitle') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Nomor WhatsApp -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
+                        <input type="text" wire:model="ustadzPhone" placeholder="0821-xxxx-xxxx"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
+                        @error('ustadzPhone') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Foto Profil Ustadz -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Foto Profil Ustadz</label>
+                        <div class="flex items-center gap-3.5 p-3.5 bg-slate-50/70 rounded-xl border border-gov-border">
+                            <!-- Preview Avatar -->
+                            <div class="relative shrink-0 w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-white flex items-center justify-center shadow-2xs">
+                                @if ($ustadzPhoto)
+                                    <img src="{{ $ustadzPhoto->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover">
+                                @elseif ($ustadzExistingPhoto)
+                                    <img src="{{ asset('storage/' . $ustadzExistingPhoto) }}" alt="Foto Ustadz" class="w-full h-full object-cover">
+                                @else
+                                    <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                @endif
+                            </div>
+
+                            <!-- Upload Button & File Controls -->
+                            <div class="min-w-0 flex-1">
+                                <label class="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition overflow-hidden"
+                                       x-data="{ isDragging: false }"
+                                       @dragenter.prevent="isDragging = true"
+                                       @dragover.prevent="isDragging = true"
+                                       @dragleave.prevent="isDragging = false"
+                                       @drop="isDragging = false"
+                                       :class="isDragging ? 'ring-2 ring-gov-navy border-gov-navy bg-sky-50 text-gov-navy' : ''">
+                                    <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : '{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto / Seret' : 'Unggah Foto / Seret' }}'">{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto' : 'Unggah Foto' }}</span>
+                                    <input type="file"
+                                           wire:model="ustadzPhoto"
+                                           accept="image/png,image/jpeg,image/webp"
+                                           @dragenter="isDragging = true"
+                                           @dragover.prevent="isDragging = true"
+                                           @dragleave="isDragging = false"
+                                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                </label>
+                                <p class="text-[11px] text-slate-500 mt-1 truncate">JPG, PNG, WEBP (maks. 3MB). Proporsional/kotak direkomendasikan.</p>
+
+                                <div wire:loading.inline-flex wire:target="ustadzPhoto" style="display: none;"
+                                    class="inline-flex flex-row items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 mt-1 shrink-0 whitespace-nowrap">
+                                    <svg class="w-3 h-3 animate-spin shrink-0 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="whitespace-nowrap leading-none">Mengunggah file foto...</span>
+                                </div>
+                                @error('ustadzPhoto') <span class="text-xs font-semibold text-rose-600 block mt-0.5">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tip Card Otomatisasi -->
+                    <div class="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
+                        <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                            <path d="M9 18h6"/>
+                            <path d="M10 22h4"/>
+                        </svg>
+                        <div class="leading-relaxed">
+                            <strong class="font-semibold text-amber-950">Otomatisasi Cerdas:</strong> Foto ustadz yang tersimpan di sini akan otomatis terhubung ke seluruh jadwal kajian lama maupun baru dan generator poster dengan nama narasumber yang cocok.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer (Sticky at bottom) -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="closeEditUstadzModal()"
+                        class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-100 font-semibold transition cursor-pointer text-xs"
+                        style="background-color: #ffffff; color: #334155; border-color: #cbd5e1;">
+                        Batal
+                    </button>
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveUstadz" style="color: #ffffff;">Simpan Perubahan</span>
+                        <span wire:loading.inline-flex wire:target="saveUstadz" style="display: none; color: #ffffff;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+

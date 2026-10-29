@@ -22,7 +22,19 @@
                     <span x-show="settingsSubTab === 'ustadz'" x-cloak>Kelola direktori profil, kontak WhatsApp, dan foto narasumber kajian.</span>
                 </div>
             </div>
-            <div class="shrink-0 hidden sm:flex sm:items-center"></div>
+            @if(Auth::user()->canManage())
+                <div class="shrink-0 hidden sm:flex sm:items-center">
+                    <div x-show="settingsSubTab === 'ustadz'" x-cloak>
+                        <button type="button" @click="openCreateUstadzModal()"
+                            class="justify-center inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-gov-navy font-bold text-xs shadow-2xs transition cursor-pointer">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Tambah Ustadz</span>
+                        </button>
+                    </div>
+                </div>
+            @else
+                <div class="shrink-0 hidden sm:flex sm:items-center"></div>
+            @endif
         </div>
     </div>
 
@@ -194,284 +206,162 @@
     <!-- KONTEN SUB-TAB 3: DATABASE USTADZ (HALAMAN DEDIKASI) -->
     <!-- ======================================================== -->
     <div x-show="settingsSubTab === 'ustadz'" x-cloak :class="{ 'hidden': settingsSubTab !== 'ustadz' }" class="space-y-6">
-        <!-- Layout 2 Kolom Responsif Desktop (5:7) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            
-            <!-- KOLOM KIRI: Form Tambah / Edit Profil & Foto Ustadz (5 Kolom) -->
-            <div class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-xl border border-gov-border shadow-2xs space-y-4 lg:sticky lg:top-4">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0">
-                            <i data-lucide="{{ $editingUstadzId ? 'edit-3' : 'user-plus' }}" class="w-4 h-4 text-emerald-700"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-sm text-gov-textMain">
-                                {{ $editingUstadzId ? 'Edit Profil Ustadz' : 'Tambah Ustadz Baru' }}
-                            </h3>
-                            <p class="text-[11px] text-slate-500">
-                                {{ $editingUstadzId ? 'Perbarui data profil & foto profil narasumber.' : 'Lengkapi identitas narasumber dan unggah foto profil.' }}
-                            </p>
-                        </div>
-                    </div>
+        <!-- Direktori & Daftar Ustadz -->
+        <div class="space-y-4">
+            <!-- Search & Header Bar -->
+            <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h4 class="font-bold text-sm text-gov-textMain flex items-center gap-2">
+                        <span>Direktori Ustadz</span>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                            {{ count($allUstadzs) }} Ustadz
+                        </span>
+                    </h4>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Daftar narasumber kajian yang terdata dalam sistem.</p>
+                </div>
 
-                    @if($editingUstadzId)
-                        <button type="button" wire:click="resetUstadzForm"
-                            class="text-xs text-slate-500 hover:text-slate-800 underline cursor-pointer shrink-0">
-                            Batal Edit
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text"
+                           wire:model.live.debounce.300ms="ustadzSearch"
+                           placeholder="Cari nama ustadz..."
+                           class="w-full pl-9 pr-8 py-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy text-xs text-gov-textMain transition">
+                    @if(!empty($ustadzSearch))
+                        <button type="button" wire:click="$set('ustadzSearch', '')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                     @endif
                 </div>
+            </div>
 
-                <form wire:submit.prevent="saveUstadz" novalidate class="space-y-4 text-xs">
-                    <!-- Nama Lengkap -->
-                    <div x-data="{ err: '', touched: false }">
-                        <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap *</label>
-                        <input type="text" wire:model="ustadzName" placeholder="Contoh: Ust. Hasyim Azhari, S.Pd.I."
-                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
-                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama ustadz wajib diisi.' : ''"
-                            class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 font-medium text-xs text-gov-textMain transition"
-                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:ring-gov-navy'">
-                        <span x-show="err" x-text="err" class="text-xs text-rose-600 font-semibold block mt-1" style="display: none;"></span>
-                        @error('ustadzName') <span x-show="!err" class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
+            <!-- Cards Grid -->
+            @if($allUstadzs->isNotEmpty())
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    @foreach($allUstadzs as $u)
+                        <div class="bg-white rounded-xl border border-slate-200 hover:border-slate-300 p-4 shadow-2xs transition flex flex-col justify-between gap-3 group">
+                            <div class="flex items-start gap-3">
+                                <!-- Foto Avatar -->
+                                <div class="relative shrink-0 w-12 h-12 rounded-full overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center shadow-2xs">
+                                    @if($u->photo)
+                                        <img src="{{ asset('storage/' . $u->photo) }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-700 font-bold text-xs uppercase">
+                                            {{ mb_substr(preg_replace('/^Ust(adz)?\.?\s+/i', '', $u->name), 0, 2) }}
+                                        </div>
+                                    @endif
+                                </div>
 
-                    <!-- Bidang Kajian / Gelar -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Bidang Kajian / Spesialisasi</label>
-                        <input type="text" wire:model="ustadzTitle" placeholder="Misal: Kajian Tematik / Tafsir / Sirah"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
-                        @error('ustadzTitle') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
+                                <!-- Nama & Info -->
+                                <div class="min-w-0 flex-1">
+                                    <h5 class="text-xs font-bold text-slate-900 group-hover:text-gov-navy transition truncate" title="{{ $u->name }}">
+                                        {{ $u->name }}
+                                    </h5>
+                                    @if($u->title)
+                                        <p class="text-[11px] text-slate-500 truncate mt-0.5" title="{{ $u->title }}">
+                                            {{ $u->title }}
+                                        </p>
+                                    @endif
+                                    @if($u->phone)
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $u->phone) }}" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 text-[11px] text-emerald-600 hover:text-emerald-700 font-medium mt-1 transition">
+                                            <i data-lucide="message-circle" class="w-3 h-3"></i>
+                                            <span>{{ $u->phone }}</span>
+                                        </a>
+                                    @else
+                                        <span class="text-[10px] text-slate-400 block mt-1">Tanpa WhatsApp</span>
+                                    @endif
+                                </div>
+                            </div>
 
-                    <!-- Nomor WhatsApp -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp</label>
-                        <input type="text" wire:model="ustadzPhone" placeholder="0821-xxxx-xxxx"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy font-medium text-xs text-gov-textMain transition">
-                        @error('ustadzPhone') <span class="text-xs font-semibold text-rose-600 block mt-1">{{ $message }}</span> @enderror
-                    </div>
+                            <!-- Card Footer: Stats & Actions -->
+                            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                                <span class="text-[10px] text-slate-500 font-medium">
+                                    {{ $u->kajians_count }} Jadwal Kajian
+                                </span>
 
-                    <!-- Foto Profil Ustadz -->
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Foto Profil Ustadz</label>
-                        <div class="flex items-center gap-3.5 p-3.5 bg-slate-50/70 rounded-xl border border-gov-border">
-                            <!-- Preview Avatar -->
-                            <div class="relative shrink-0 w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-white flex items-center justify-center shadow-2xs">
-                                @if ($ustadzPhoto)
-                                    <img src="{{ $ustadzPhoto->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover">
-                                @elseif ($ustadzExistingPhoto)
-                                    <img src="{{ asset('storage/' . $ustadzExistingPhoto) }}" alt="Foto Ustadz" class="w-full h-full object-cover">
-                                @else
-                                    <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
+                                @if(Auth::user()->canManage())
+                                    <!-- Titik Tiga Menu Aksi -->
+                                    <div x-data="{ openMenu: false }" class="relative inline-block text-left" @click.outside="openMenu = false" @keydown.escape.window="openMenu = false">
+                                        <button type="button" @click="openMenu = !openMenu" 
+                                            class="p-1.5 rounded-lg border border-slate-200 hover:border-gov-navy/40 hover:bg-slate-100/80 text-slate-500 hover:text-gov-navy transition shadow-2xs cursor-pointer inline-flex items-center justify-center" 
+                                            :class="openMenu ? 'bg-slate-100 border-gov-navy/50 text-gov-navy ring-1 ring-gov-navy/20' : ''" 
+                                            title="Menu Aksi">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+                                            </svg>
+                                        </button>
+
+                                        <!-- Dropdown Menu Aksi -->
+                                        <div x-show="openMenu" 
+                                            x-cloak
+                                            x-transition:enter="transition ease-out duration-50"
+                                            x-transition:enter-start="transform opacity-0 scale-98"
+                                            x-transition:enter-end="transform opacity-100 scale-100"
+                                            x-transition:leave="transition ease-in duration-50"
+                                            x-transition:leave-start="transform opacity-100 scale-100"
+                                            x-transition:leave-end="transform opacity-0 scale-98"
+                                            class="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-xl shadow-xl border border-gov-border py-1 z-40 text-xs text-left divide-y divide-slate-100">
+                                            
+                                            <div class="py-1">
+                                                <button type="button" 
+                                                    @click="openMenu = false; openEditUstadzModal({{ $u->id }})"
+                                                    class="w-full flex items-center gap-2.5 px-3 py-2 text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition font-medium text-xs cursor-pointer">
+                                                    <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Edit Profil &amp; Foto</div>
+                                                </button>
+
+                                                @if($u->photo)
+                                                    <button type="button"
+                                                        @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                            'id' => $u->id,
+                                                            'action' => 'removeUstadzPhoto',
+                                                            'title' => 'Hapus Foto Profil Ustadz',
+                                                            'itemName' => $u->name,
+                                                            'message' => 'Hapus foto profil ustadz ini? Foto akan dilepas dari seluruh jadwal kajian.',
+                                                            'type' => 'warning',
+                                                            'confirmButtonText' => 'Ya, Hapus Foto',
+                                                            'noticeText' => 'Foto profil ustadz ini akan dihapus dari server dan tidak akan tampil lagi di poster atau jadwal.',
+                                                        ]) }})"
+                                                        class="w-full flex items-center gap-2.5 px-3 py-2 text-amber-700 hover:bg-amber-50 transition font-medium text-xs cursor-pointer">
+                                                        <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                                        <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Foto Profil</div>
+                                                    </button>
+                                                @endif
+                                            </div>
+
+                                            <div class="py-1">
+                                                <button type="button"
+                                                    @click="openMenu = false; openDeleteModal({{ Js::from([
+                                                        'id' => $u->id,
+                                                        'action' => 'deleteUstadz',
+                                                        'title' => 'Hapus Data Ustadz',
+                                                        'itemName' => $u->name,
+                                                        'message' => 'Hapus data ustadz ini dari direktori? Data profil narasumber akan dihapus dari sistem.',
+                                                    ]) }})"
+                                                    class="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition font-medium text-xs cursor-pointer">
+                                                    <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                                    <div class="text-left flex-1 min-w-0 font-semibold leading-tight">Hapus Data Ustadz</div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endif
                             </div>
-
-                            <!-- Upload Button & File Controls -->
-                            <div class="min-w-0 flex-1">
-                                <label class="relative cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold shadow-2xs transition overflow-hidden"
-                                       x-data="{ isDragging: false }"
-                                       @dragenter.prevent="isDragging = true"
-                                       @dragover.prevent="isDragging = true"
-                                       @dragleave.prevent="isDragging = false"
-                                       @drop="isDragging = false"
-                                       :class="isDragging ? 'ring-2 ring-gov-navy border-gov-navy bg-sky-50 text-gov-navy' : ''">
-                                    <svg class="w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="pointer-events-none" x-text="isDragging ? 'Lepas Foto' : '{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto / Seret' : 'Unggah Foto / Seret' }}'">{{ $ustadzExistingPhoto || $ustadzPhoto ? 'Ganti Foto' : 'Unggah Foto' }}</span>
-                                    <input type="file"
-                                           wire:model="ustadzPhoto"
-                                           accept="image/png,image/jpeg,image/webp"
-                                           @dragenter="isDragging = true"
-                                           @dragover.prevent="isDragging = true"
-                                           @dragleave="isDragging = false"
-                                           @drop="isDragging = false; if ($event.dataTransfer && $event.dataTransfer.files && $event.dataTransfer.files.length) { $el.files = $event.dataTransfer.files; $el.dispatchEvent(new Event('change', { bubbles: true })); }"
-                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                </label>
-                                <p class="text-[11px] text-slate-500 mt-1 truncate">JPG, PNG, WEBP (maks. 3MB). Proporsional/kotak direkomendasikan.</p>
-
-                                <div wire:loading.inline-flex wire:target="ustadzPhoto" style="display: none;"
-                                    class="inline-flex flex-row items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 mt-1 shrink-0 whitespace-nowrap">
-                                    <svg class="w-3 h-3 animate-spin shrink-0 text-emerald-600 inline-block" viewBox="0 0 24 24" fill="none">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span class="whitespace-nowrap leading-none">Mengunggah file foto...</span>
-                                </div>
-                                @error('ustadzPhoto') <span class="text-xs font-semibold text-rose-600 block mt-0.5">{{ $message }}</span> @enderror
-                            </div>
                         </div>
-                    </div>
-
-                    <!-- Tombol Aksi Simpan Form -->
-                    <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-                        @if($editingUstadzId)
-                            <button type="button" wire:click="resetUstadzForm"
-                                class="px-3.5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold transition cursor-pointer">
-                                Batal
-                            </button>
-                        @endif
-                        <button type="submit" wire:loading.attr="disabled"
-                            class="px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                            <span wire:loading.remove wire:target="saveUstadz">{{ $editingUstadzId ? 'Simpan Perubahan' : 'Simpan Ustadz' }}</span>
-                            <span wire:loading.inline-flex wire:target="saveUstadz" style="display: none;"
-                                class="inline-flex items-center justify-center gap-2">
-                                <svg class="w-3.5 h-3.5 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Menyimpan...</span>
-                            </span>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Tip Card Otomatisasi -->
-                <div class="p-3 bg-amber-50/70 rounded-xl border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
-                    <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                        <path d="M9 18h6"/>
-                        <path d="M10 22h4"/>
-                    </svg>
-                    <div class="leading-relaxed">
-                        <strong class="font-semibold text-amber-950">Otomatisasi Cerdas:</strong> Foto ustadz yang tersimpan di sini akan otomatis terhubung ke seluruh jadwal kajian lama maupun baru dan generator poster dengan nama narasumber yang cocok.
-                    </div>
+                    @endforeach
                 </div>
-            </div>
-
-            <!-- KOLOM KANAN: Pencarian Interaktif & Grid Daftar Ustadz (7 Kolom) -->
-            <div class="lg:col-span-7 space-y-4">
-                <!-- Search & Header Bar -->
-                <div class="bg-white p-4 rounded-xl border border-gov-border shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h4 class="font-bold text-sm text-gov-textMain flex items-center gap-2">
-                            <span>Direktori Ustadz</span>
-                            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                                {{ count($allUstadzs) }} Ustadz
-                            </span>
-                        </h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Daftar narasumber kajian yang terdata dalam sistem.</p>
+            @else
+                <div class="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-2">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                        <i data-lucide="users" class="w-6 h-6"></i>
                     </div>
-
-                    <!-- Search Input -->
-                    <div class="relative w-full sm:w-64">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text"
-                               wire:model.live.debounce.300ms="ustadzSearch"
-                               placeholder="Cari nama ustadz..."
-                               class="w-full pl-9 pr-8 py-2 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy text-xs text-gov-textMain transition">
-                        @if(!empty($ustadzSearch))
-                            <button type="button" wire:click="$set('ustadzSearch', '')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
-                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                            </button>
-                        @endif
-                    </div>
+                    <h5 class="text-xs font-bold text-slate-800">Tidak ada data ustadz</h5>
+                    <p class="text-[11px] text-slate-500 max-w-sm mx-auto">
+                        {{ !empty($ustadzSearch) ? 'Tidak ditemukan ustadz yang cocok dengan kata kunci pencarian.' : 'Belum ada data ustadz yang ditambahkan. Silakan klik tombol Tambah Ustadz untuk menambah ustadz baru.' }}
+                    </p>
                 </div>
-
-                <!-- Cards Grid -->
-                @if($allUstadzs->isNotEmpty())
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                        @foreach($allUstadzs as $u)
-                            <div class="bg-white rounded-xl border border-slate-200 hover:border-slate-300 p-4 shadow-2xs transition flex flex-col justify-between gap-3 group">
-                                <div class="flex items-start gap-3">
-                                    <!-- Foto Avatar -->
-                                    <div class="relative shrink-0 w-12 h-12 rounded-full overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center shadow-2xs">
-                                        @if($u->photo)
-                                            <img src="{{ asset('storage/' . $u->photo) }}" alt="{{ $u->name }}" class="w-full h-full object-cover">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-700 font-bold text-xs uppercase">
-                                                {{ mb_substr(preg_replace('/^Ust(adz)?\.?\s+/i', '', $u->name), 0, 2) }}
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    <!-- Nama & Info -->
-                                    <div class="min-w-0 flex-1">
-                                        <h5 class="text-xs font-bold text-slate-900 group-hover:text-gov-navy transition truncate" title="{{ $u->name }}">
-                                            {{ $u->name }}
-                                        </h5>
-                                        @if($u->title)
-                                            <p class="text-[11px] text-slate-500 truncate mt-0.5" title="{{ $u->title }}">
-                                                {{ $u->title }}
-                                            </p>
-                                        @endif
-                                        @if($u->phone)
-                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $u->phone) }}" target="_blank" rel="noopener noreferrer"
-                                               class="inline-flex items-center gap-1 text-[11px] text-emerald-600 hover:text-emerald-700 font-medium mt-1 transition">
-                                                <i data-lucide="message-circle" class="w-3 h-3"></i>
-                                                <span>{{ $u->phone }}</span>
-                                            </a>
-                                        @else
-                                            <span class="text-[10px] text-slate-400 block mt-1">Tanpa WhatsApp</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <!-- Card Footer: Stats & Actions -->
-                                <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                                    <span class="text-[10px] text-slate-500 font-medium">
-                                        {{ $u->kajians_count }} Jadwal Kajian
-                                    </span>
-
-                                    <div class="flex items-center gap-1">
-                                        <!-- Edit Profil Button -->
-                                        <button type="button" wire:click="editUstadz({{ $u->id }})"
-                                            title="Edit Profil & Foto"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-gov-navy shadow-2xs transition cursor-pointer">
-                                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                                        </button>
-
-                                        <!-- Hapus Foto Button -->
-                                        @if($u->photo)
-                                            <button type="button"
-                                                @click="openDeleteModal({{ Js::from([
-                                                    'id' => $u->id,
-                                                    'action' => 'removeUstadzPhoto',
-                                                    'title' => 'Hapus Foto Profil Ustadz',
-                                                    'itemName' => $u->name,
-                                                    'message' => 'Hapus foto profil ustadz ini? Foto akan dilepas dari seluruh jadwal kajian.',
-                                                    'type' => 'warning',
-                                                    'confirmButtonText' => 'Ya, Hapus Foto',
-                                                    'noticeText' => 'Foto profil ustadz ini akan dihapus dari server dan tidak akan tampil lagi di poster atau jadwal.',
-                                                ]) }})"
-                                                title="Hapus Foto Profil"
-                                                class="inline-flex items-center justify-center p-1.5 rounded-lg border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-2xs transition cursor-pointer">
-                                                <i data-lucide="image-minus" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                        @endif
-
-                                        <!-- Hapus Ustadz Button -->
-                                        <button type="button"
-                                            @click="openDeleteModal({{ Js::from([
-                                                'id' => $u->id,
-                                                'action' => 'deleteUstadz',
-                                                'title' => 'Hapus Data Ustadz',
-                                                'itemName' => $u->name,
-                                                'message' => 'Hapus data ustadz ini dari direktori? Data profil narasumber akan dihapus dari sistem.',
-                                            ]) }})"
-                                            title="Hapus Ustadz"
-                                            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 shadow-2xs transition cursor-pointer">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-2">
-                        <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                        <h5 class="text-xs font-bold text-slate-800">Tidak ada data ustadz</h5>
-                        <p class="text-[11px] text-slate-500 max-w-sm mx-auto">
-                            {{ !empty($ustadzSearch) ? 'Tidak ditemukan ustadz yang cocok dengan kata kunci pencarian.' : 'Belum ada data ustadz yang ditambahkan. Silakan gunakan formulir di samping untuk menambah ustadz baru.' }}
-                        </p>
-                    </div>
-                @endif
-            </div>
+            @endif
         </div>
     </div>
 </div>
