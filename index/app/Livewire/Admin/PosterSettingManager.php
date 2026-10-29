@@ -249,7 +249,7 @@ class PosterSettingManager extends Component
             ]
         );
 
-        $this->dispatch('toast', ['message' => 'Konfigurasi template poster berhasil disimpan ke database!']);
+        $this->dispatch('toast', ['message' => 'Konfigurasi berhasil disimpan ke database!']);
     }
 
     public function saveJarkom(array $data = []): void

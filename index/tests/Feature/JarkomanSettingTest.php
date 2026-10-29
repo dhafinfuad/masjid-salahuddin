@@ -43,13 +43,17 @@ class JarkomanSettingTest extends TestCase
     }
 
     /** @test */
-    public function test_poster_setting_manager_renders_edit_jarkom_button_and_modal()
+    public function test_poster_setting_manager_renders_mode_switcher_and_inline_template_wa()
     {
         $this->actingAs($this->adminUser);
 
         Livewire::test(PosterSettingManager::class, ['isEmbedded' => true])
-            ->assertSee('Edit Jarkom')
-            ->assertSee('Format Jarkoman WhatsApp')
+            ->assertSee('Template WA')
+            ->assertSee('Poster Kajian')
+            ->assertSee('Format Template Teks Kajian')
+            ->assertSee('Simpan Konfigurasi')
+            ->assertDontSee('Data Ustadz')
+            ->assertDontSee('Edit Jarkom')
             ->assertDontSee('downloadPreviewHD()');
     }
 
@@ -71,6 +75,23 @@ class JarkomanSettingTest extends TestCase
         $activeConfig = PosterSetting::getAppConfig();
         $this->assertEquals($customKajian, $activeConfig['jarkom_kajian_template']);
         $this->assertEquals($customJumat, $activeConfig['jarkom_jumat_template']);
+    }
+
+    /** @test */
+    public function test_admin_can_save_via_bottom_sticky_save_button()
+    {
+        $this->actingAs($this->adminUser);
+
+        $customKajian = "KAJIAN VIA STICKY SAVE:\nPemateri: {pemateri}";
+
+        Livewire::test(PosterSettingManager::class)
+            ->set('jarkom_kajian_template', $customKajian)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertDispatched('toast');
+
+        $activeConfig = PosterSetting::getAppConfig();
+        $this->assertEquals($customKajian, $activeConfig['jarkom_kajian_template']);
     }
 
     /** @test */

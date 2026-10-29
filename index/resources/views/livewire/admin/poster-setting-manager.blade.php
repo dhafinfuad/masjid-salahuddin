@@ -31,70 +31,270 @@
      @open-jarkom-modal.window="openJarkomModal()"
      @close-jarkom-modal.window="closeJarkomModal()">
 
-    <!-- Top Breadcrumb & Action Bar -->
-    <div class="w-full mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gov-border shadow-2xs">
-        <div class="flex items-center gap-3">
-            @if(!$isEmbedded)
-                <a href="{{ url('/admin/kegiatan') }}" wire:navigate
-                   class="inline-flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
-                   title="Kembali ke Manajemen Kegiatan">
-                    <svg class="w-4 h-4 text-gov-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                </a>
-            @endif
-            <div>
-                <div class="flex items-center gap-2">
-                    <h1 class="text-base font-bold text-gov-textMain leading-tight">Template &amp; Studio Poster Kajian</h1>
-                </div>
-                <p class="text-xs text-gov-textMuted mt-0.5">Generator Poster Persegi 1:1 (500×500 px &bull; Ekspor HD 720×720 px)</p>
-            </div>
-        </div>
-
-        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
-            <!-- Tombol Database Ustadz -->
-            <button type="button" @click="$dispatch('open-ustadz-modal')"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
-                    title="Buka Direktori & Database Foto Ustadz">
-                <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                <span>Data Ustadz</span>
-            </button>
-
-            <!-- Tombol Edit Jarkom -->
-            <button type="button" @click="openJarkomModal()"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gov-border bg-white hover:bg-slate-50 text-gov-textMain text-xs font-semibold shadow-2xs transition cursor-pointer shrink-0 whitespace-nowrap"
-                    title="Atur Format Jarkoman WhatsApp Kajian & Khutbah Jumat">
-                <svg class="w-3.5 h-3.5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Mode Switcher: Template WA & Poster Kajian -->
+    <div class="w-full flex items-center justify-between gap-3 bg-white p-2 rounded-2xl border border-gov-border shadow-2xs mb-5">
+        <div class="flex items-center gap-1.5 w-full sm:w-auto">
+            <!-- Mode 1: Template WA -->
+            <button type="button" @click="studioMode = 'jarkom'"
+                :class="studioMode === 'jarkom' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'text-slate-600 hover:text-gov-navy hover:bg-slate-100 font-semibold'"
+                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                 </svg>
-                <span>Edit Jarkom</span>
+                <span>Template WA</span>
             </button>
 
-            <!-- Tombol Simpan Konfigurasi -->
-            <button type="button" wire:click="save" wire:loading.attr="disabled"
-                    class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap">
-                <span wire:loading.remove wire:target="save" class="inline-flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                    </svg>
-                    <span>Simpan Konfigurasi</span>
-                </span>
-                <span wire:loading.inline-flex wire:target="save" style="display: none;"
-                      class="inline-flex flex-row items-center gap-1.5 shrink-0 whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-white inline-block" viewBox="0 0 24 24" fill="none">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span class="whitespace-nowrap leading-none">Menyimpan...</span>
-                </span>
+            <!-- Mode 2: Poster Kajian -->
+            <button type="button" @click="studioMode = 'poster'"
+                :class="studioMode === 'poster' ? 'bg-gov-navy text-white shadow-xs font-bold' : 'text-slate-600 hover:text-gov-navy hover:bg-slate-100 font-semibold'"
+                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 text-sky-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Poster Kajian</span>
             </button>
+        </div>
+
+        <div class="hidden sm:flex items-center text-xs text-gov-textMuted pr-3">
+            <span x-show="studioMode === 'jarkom'">Format pesan broadcast WhatsApp Kajian &amp; Khutbah Jumat</span>
+            <span x-show="studioMode === 'poster'" x-cloak>Generator Poster Persegi 1:1 (500×500 px &bull; Ekspor HD 720×720 px)</span>
         </div>
     </div>
 
-    <!-- MAIN TWO-COLUMN BALANCED STUDIO WORKSPACE -->
-    <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+    <!-- ======================================================== -->
+    <!-- MODE 1: TEMPLATE WA WORKSPACE (INLINE) -->
+    <!-- ======================================================== -->
+    <div x-show="studioMode === 'jarkom'" x-cloak class="w-full min-w-0 space-y-4">
+        <div class="bg-white rounded-2xl border border-gov-border shadow-2xs overflow-hidden">
+            <!-- Sub-tab Navigation (Kajian vs Khutbah Jumat) -->
+            <div class="px-5 sm:px-6 pt-4 pb-3 flex items-center justify-between border-b border-slate-200 shrink-0 w-full bg-white flex-wrap gap-3">
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="jarkomSubTab = 'kajian'"
+                            :class="jarkomSubTab === 'kajian' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <span>Kajian</span>
+                    </button>
+                    <button type="button" @click="jarkomSubTab = 'jumat'"
+                            :class="jarkomSubTab === 'jumat' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <span>Khutbah Jumat</span>
+                    </button>
+                </div>
+                <div class="text-[11px] text-slate-500 font-medium">
+                    <span x-show="jarkomSubTab === 'kajian'">Format pesan broadcast untuk Kajian Pekanan / Tematik</span>
+                    <span x-show="jarkomSubTab === 'jumat'" x-cloak>Format pesan broadcast jadwal Petugas Khutbah Sholat Jumat</span>
+                </div>
+            </div>
+
+            <!-- Content Area: 2 Column Editor + Realtime WhatsApp Mockup -->
+            <div class="p-5 sm:p-6">
+                <div class="w-full min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <!-- Left Column: Template Editor -->
+                    <div class="w-full min-w-0 flex flex-col space-y-3">
+                        <!-- Kajian Tab Editor -->
+                        <div x-show="jarkomSubTab === 'kajian'" class="w-full min-w-0 space-y-3">
+                            <div class="flex items-center justify-between pb-0.5">
+                                <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    <span>Format Template Teks Kajian</span>
+                                </label>
+                                <button type="button" wire:click="resetJarkomToDefault('kajian')"
+                                        class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer">
+                                    Reset ke Default
+                                </button>
+                            </div>
+                            <textarea id="jarkomKajianTextarea"
+                                      x-model="jarkom_kajian_template"
+                                      rows="11"
+                                      class="w-full min-w-0 font-mono text-xs p-3.5 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition leading-relaxed text-slate-800 shadow-2xs resize-y"
+                                      style="min-height: 220px;"
+                                      placeholder="Tuliskan format jarkoman kajian..."></textarea>
+                            @error('jarkom_kajian_template')
+                                <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
+                            @enderror
+
+                            <!-- Variable Tags -->
+                            <div class="w-full min-w-0 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                                <span class="text-[11px] font-semibold text-slate-600 block">Sisipkan Variabel (klik untuk menyisipkan ke kursor):</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" @click="insertJarkomTag('{jenis}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan jenis kajian (Pekanan / Tematik)">
+                                        {jenis}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{pemateri}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama pemateri / ustadz">
+                                        {pemateri}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{hari_tanggal}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan hari dan tanggal">
+                                        {hari_tanggal}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{tanggal}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan tanggal masehi saja">
+                                        {tanggal}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{waktu}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan waktu pelaksanaan kajian">
+                                        {waktu}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{tempat}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan lokasi tempat kajian">
+                                        {tempat}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{judul}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan judul / tema kajian">
+                                        {judul}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{masjid}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama masjid">
+                                        {masjid}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Khutbah Jumat Tab Editor -->
+                        <div x-show="jarkomSubTab === 'jumat'" x-cloak class="w-full min-w-0 space-y-3">
+                            <div class="flex items-center justify-between pb-0.5">
+                                <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    <span>Format Template Teks Khutbah Jumat</span>
+                                </label>
+                                <button type="button" wire:click="resetJarkomToDefault('jumat')"
+                                        class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer">
+                                    Reset ke Default
+                                </button>
+                            </div>
+                            <textarea id="jarkomJumatTextarea"
+                                      x-model="jarkom_jumat_template"
+                                      rows="11"
+                                      class="w-full min-w-0 font-mono text-xs p-3.5 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition leading-relaxed text-slate-800 shadow-2xs resize-y"
+                                      style="min-height: 220px;"
+                                      placeholder="Tuliskan format jarkoman sholat jumat..."></textarea>
+                            @error('jarkom_jumat_template')
+                                <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
+                            @enderror
+
+                            <!-- Variable Tags -->
+                            <div class="w-full min-w-0 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                                <span class="text-[11px] font-semibold text-slate-600 block">Sisipkan Variabel (klik untuk menyisipkan ke kursor):</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" @click="insertJarkomTag('{khatib}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama khatib">
+                                        {khatib}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{muadzin}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama muadzin">
+                                        {muadzin}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{mc}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama MC">
+                                        {mc}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{waktu_dzuhur}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan waktu adzan dzuhur">
+                                        {waktu_dzuhur}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{tanggal_hijri}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan tanggal Hijriah">
+                                        {tanggal_hijri}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{tanggal_masehi}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan tanggal Masehi">
+                                        {tanggal_masehi}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{hari_tanggal}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan hari dan tanggal lengkap">
+                                        {hari_tanggal}
+                                    </button>
+                                    <button type="button" @click="insertJarkomTag('{masjid}')"
+                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
+                                            title="Sisipkan nama masjid">
+                                        {masjid}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Realtime WhatsApp Preview -->
+                    <div class="w-full min-w-0 flex flex-col space-y-2">
+                        <div class="flex items-center justify-between pb-0.5">
+                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                                <span>Pratinjau Pesan WhatsApp</span>
+                            </span>
+                            <span class="text-[11px] text-slate-500 font-medium">Simulasi Live</span>
+                        </div>
+
+                        <!-- WhatsApp Mockup Window Container -->
+                        <div class="w-full min-w-0 rounded-xl border border-slate-300 overflow-hidden shadow-2xs bg-[#efeae2] flex flex-col">
+                            <!-- WhatsApp Header Bar -->
+                            <div class="bg-[#075e54] text-white px-3.5 py-2.5 flex items-center justify-between shrink-0">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white shrink-0 shadow-inner">
+                                        <svg class="w-4 h-4 text-emerald-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 8 4.5v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12z"/><path d="M12 3v6"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/></svg>
+                                    </div>
+                                    <div class="leading-tight min-w-0">
+                                        <p class="text-xs font-bold text-white truncate" x-text="masjid_line2 || 'Masjid Salahuddin'"></p>
+                                        <p class="text-[10px] text-emerald-200">Info Broadcast DKM</p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-700/60 text-emerald-100 font-medium border border-emerald-600/40">WhatsApp</span>
+                            </div>
+
+                            <!-- Chat Area -->
+                            <div class="p-3.5 sm:p-4 flex-1 overflow-y-auto max-h-[380px] space-y-2">
+                                <div class="w-full flex justify-start">
+                                    <div class="w-full bg-[#dcf8c6] text-slate-900 p-3.5 rounded-xl rounded-tl-xs shadow-xs border border-emerald-300/50 text-xs whitespace-pre-wrap font-sans leading-relaxed break-words">
+                                        <div x-text="jarkomSubTab === 'kajian' ? previewJarkomKajian : previewJarkomJumat"></div>
+                                        <div class="mt-2.5 flex items-center justify-end gap-1 text-[10px] text-slate-500 select-none">
+                                            <span>10:15</span>
+                                            <svg class="w-3.5 h-3.5 text-blue-500 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7m-5 0l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MODE 2: POSTER KAJIAN STUDIO WORKSPACE -->
+    <!-- ======================================================== -->
+    <div x-show="studioMode === 'poster'" x-cloak class="w-full min-w-0">
+        <!-- MAIN TWO-COLUMN BALANCED STUDIO WORKSPACE -->
+        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
         <!-- ======================================================== -->
         <!-- LEFT COLUMN: DESAIN, IDENTITAS, TIPOGRAFI -->
@@ -720,282 +920,37 @@
         </div>
 
     </div>
+    </div>
 
-    <!-- ======================================================== -->
-    <!-- MODAL: PENGATURAN FORMAT JARKOMAN WHATSAPP -->
-    <!-- ======================================================== -->
-    <div x-show="showJarkomModal" x-cloak wire:ignore.self
-         @keydown.escape.window="closeJarkomModal()"
-         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { closeJarkomModal(); }"
-         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
-         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
-         role="dialog" aria-modal="true" aria-labelledby="jarkom-modal-title">
-        <div @click.stop
-             class="bg-[#0b2b54] rounded-2xl w-full max-w-5xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 max-h-[92vh]"
-             style="z-index: 10000; background-color: #0b2b54; border: none; height: auto;">
-            
-            <!-- Modal Header - Solid Navy (#0b2b54) -->
-            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
-                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-                <div class="min-w-0 pr-2">
-                    <h3 id="jarkom-modal-title" class="text-sm sm:text-base font-bold text-white truncate">Format Jarkoman WhatsApp</h3>
-                    <p class="text-[11px] text-slate-200 truncate">Kustomisasi draf pesan broadcast WhatsApp untuk Kajian dan Khutbah Jumat</p>
-                </div>
-                <button type="button" @click="closeJarkomModal()"
-                        class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
-                        title="Tutup Modal">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+    <!-- Sticky Floating Save Bar at the Bottom -->
+    <div class="sticky bottom-3 z-30 w-full mt-6">
+        <div class="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl p-3 sm:px-5 sm:py-3.5 flex items-center justify-between gap-3">
+            <div class="text-xs text-slate-500 hidden sm:flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span x-show="studioMode === 'jarkom'">Perubahan format jarkoman akan langsung tersimpan dan diterapkan pada tombol Salin Jarkom.</span>
+                <span x-show="studioMode === 'poster'" x-cloak>Konfigurasi desain template poster akan otomatis diterapkan ke seluruh generator poster kajian.</span>
+            </div>
+            <div class="flex items-center justify-end gap-2.5 w-full sm:w-auto">
+                <button type="button" wire:click="save" wire:loading.attr="disabled"
+                    class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-md transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                    style="background-color: #0b2b54; color: #ffffff;">
+                    <span wire:loading.remove wire:target="save" class="inline-flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span>Simpan Konfigurasi</span>
+                    </span>
+                    <span wire:loading.inline-flex wire:target="save" style="display: none;"
+                          class="inline-flex flex-row items-center gap-1.5 shrink-0 whitespace-nowrap">
+                        <svg class="w-3.5 h-3.5 animate-spin shrink-0 text-white inline-block" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap leading-none">Menyimpan...</span>
+                    </span>
                 </button>
-            </header>
-
-            <!-- Modal Body Container (White Solid, Rounded Bottom) -->
-            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
-                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
-
-                <!-- Sub-tab Navigation (0ms Alpine Switching) -->
-                <div class="px-5 sm:px-6 pt-4 pb-2.5 flex items-center gap-2 border-b border-slate-200 shrink-0 w-full bg-white">
-                    <button type="button" @click="jarkomSubTab = 'kajian'"
-                            :class="jarkomSubTab === 'kajian' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <span>Kajian</span>
-                    </button>
-                    <button type="button" @click="jarkomSubTab = 'jumat'"
-                            :class="jarkomSubTab === 'jumat' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg>
-                        <span>Khutbah Jumat</span>
-                    </button>
-                </div>
-
-                <!-- Scrollable Content Area: 2 Column Editor + Preview -->
-                <div class="w-full flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable bg-white">
-                <div class="w-full min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                    <!-- Left Column: Template Editor -->
-                    <div class="w-full min-w-0 flex flex-col space-y-3">
-                        <!-- Kajian Tab Editor -->
-                        <div x-show="jarkomSubTab === 'kajian'" class="w-full min-w-0 space-y-3">
-                            <div class="flex items-center justify-between pb-0.5">
-                                <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    <span>Format Template Teks Kajian</span>
-                                </label>
-                                <button type="button" wire:click="resetJarkomToDefault('kajian')"
-                                        class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer">
-                                    Reset ke Default
-                                </button>
-                            </div>
-                            <textarea id="jarkomKajianTextarea"
-                                      x-model="jarkom_kajian_template"
-                                      rows="11"
-                                      class="w-full min-w-0 font-mono text-xs p-3.5 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition leading-relaxed text-slate-800 shadow-2xs resize-y"
-                                      style="min-height: 220px;"
-                                      placeholder="Tuliskan format jarkoman kajian..."></textarea>
-                            @error('jarkom_kajian_template')
-                                <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
-                            @enderror
-
-                            <!-- Variable Tags (Minimalist Pill Buttons, No Excessive Badges) -->
-                            <div class="w-full min-w-0 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                                <span class="text-[11px] font-semibold text-slate-600 block">Sisipkan Variabel (klik untuk menyisipkan ke kursor):</span>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <button type="button" @click="insertJarkomTag('{jenis}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan jenis kajian (Pekanan / Tematik)">
-                                        {jenis}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{pemateri}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama pemateri / ustadz">
-                                        {pemateri}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{hari_tanggal}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan hari dan tanggal">
-                                        {hari_tanggal}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{tanggal}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan tanggal masehi saja">
-                                        {tanggal}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{waktu}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan waktu pelaksanaan kajian">
-                                        {waktu}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{tempat}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan lokasi tempat kajian">
-                                        {tempat}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{judul}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan judul / tema kajian">
-                                        {judul}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{masjid}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama masjid">
-                                        {masjid}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Khutbah Jumat Tab Editor -->
-                        <div x-show="jarkomSubTab === 'jumat'" class="w-full min-w-0 space-y-3">
-                            <div class="flex items-center justify-between pb-0.5">
-                                <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-gov-navy shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    <span>Format Template Teks Khutbah Jumat</span>
-                                </label>
-                                <button type="button" wire:click="resetJarkomToDefault('jumat')"
-                                        class="text-[11px] text-gov-navy hover:underline font-semibold cursor-pointer">
-                                    Reset ke Default
-                                </button>
-                            </div>
-                            <textarea id="jarkomJumatTextarea"
-                                      x-model="jarkom_jumat_template"
-                                      rows="11"
-                                      class="w-full min-w-0 font-mono text-xs p-3.5 rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition leading-relaxed text-slate-800 shadow-2xs resize-y"
-                                      style="min-height: 220px;"
-                                      placeholder="Tuliskan format jarkoman sholat jumat..."></textarea>
-                            @error('jarkom_jumat_template')
-                                <span class="text-xs font-semibold text-rose-600 block">{{ $message }}</span>
-                            @enderror
-
-                            <!-- Variable Tags (Minimalist Pill Buttons, No Excessive Badges) -->
-                            <div class="w-full min-w-0 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                                <span class="text-[11px] font-semibold text-slate-600 block">Sisipkan Variabel (klik untuk menyisipkan ke kursor):</span>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <button type="button" @click="insertJarkomTag('{khatib}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama khatib">
-                                        {khatib}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{muadzin}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama muadzin">
-                                        {muadzin}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{mc}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama MC">
-                                        {mc}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{waktu_dzuhur}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan waktu adzan dzuhur">
-                                        {waktu_dzuhur}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{tanggal_hijri}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan tanggal Hijriah">
-                                        {tanggal_hijri}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{tanggal_masehi}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan tanggal Masehi">
-                                        {tanggal_masehi}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{hari_tanggal}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan hari dan tanggal lengkap">
-                                        {hari_tanggal}
-                                    </button>
-                                    <button type="button" @click="insertJarkomTag('{masjid}')"
-                                            class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 border border-slate-300 shadow-2xs transition cursor-pointer shrink-0"
-                                            title="Sisipkan nama masjid">
-                                        {masjid}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Realtime WhatsApp Preview -->
-                    <div class="w-full min-w-0 flex flex-col space-y-2">
-                        <div class="flex items-center justify-between pb-0.5">
-                            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-                                <span>Pratinjau Pesan WhatsApp</span>
-                            </span>
-                            <span class="text-[11px] text-slate-500 font-medium">Simulasi Live</span>
-                        </div>
-
-                        <!-- WhatsApp Mockup Window Container -->
-                        <div class="w-full min-w-0 rounded-xl border border-slate-300 overflow-hidden shadow-2xs bg-[#efeae2] flex flex-col">
-                            <!-- WhatsApp Header Bar -->
-                            <div class="bg-[#075e54] text-white px-3.5 py-2.5 flex items-center justify-between shrink-0">
-                                <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="w-8 h-8 rounded-full bg-emerald-800 flex items-center justify-center text-white shrink-0 shadow-inner">
-                                        <svg class="w-4 h-4 text-emerald-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 8 4.5v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-12z"/><path d="M12 3v6"/><path d="M9 21v-5a3 3 0 0 1 6 0v5"/></svg>
-                                    </div>
-                                    <div class="leading-tight min-w-0">
-                                        <p class="text-xs font-bold text-white truncate" x-text="masjid_line2 || 'Masjid Salahuddin'"></p>
-                                        <p class="text-[10px] text-emerald-200">Info Broadcast DKM</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-700/60 text-emerald-100 font-medium border border-emerald-600/40">WhatsApp</span>
-                            </div>
-
-                            <!-- Chat Area -->
-                            <div class="p-3.5 sm:p-4 flex-1 overflow-y-auto max-h-[380px] space-y-2">
-                                <div class="w-full flex justify-start">
-                                    <div class="w-full bg-[#dcf8c6] text-slate-900 p-3.5 rounded-xl rounded-tl-xs shadow-xs border border-emerald-300/50 text-xs whitespace-pre-wrap font-sans leading-relaxed break-words">
-                                        <div x-text="jarkomSubTab === 'kajian' ? previewJarkomKajian : previewJarkomJumat"></div>
-                                        <div class="mt-2.5 flex items-center justify-end gap-1 text-[10px] text-slate-500 select-none">
-                                            <span>10:15</span>
-                                            <svg class="w-3.5 h-3.5 text-blue-500 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7m-5 0l4 4L19 7"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sticky Footer Actions -->
-            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 shrink-0 rounded-b-2xl"
-                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
-                <p class="text-[11px] text-slate-400">
-                    Tag di dalam kurung <span class="font-mono">{...}</span> akan digantikan data jadwal riil saat tombol Salin Jarkom diklik.
-                </p>
-                <div class="flex items-center justify-end gap-2.5 shrink-0">
-                    <button type="button" @click="closeJarkomModal()"
-                            class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition cursor-pointer border border-slate-300 text-xs">
-                        Batal
-                    </button>
-                    <button type="button" wire:click="saveJarkom" wire:loading.attr="disabled"
-                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
-                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
-                        <span wire:loading.remove wire:target="saveJarkom" style="color: #ffffff;">Simpan Format</span>
-                        <span wire:loading.inline-flex wire:target="saveJarkom" style="display: none; color: #ffffff;"
-                              class="inline-flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
-                        </span>
-                    </button>
-                </div>
-            </div>
-
             </div>
         </div>
     </div>
@@ -1031,10 +986,12 @@ function posterSettingStudio(params) {
         preview_speaker: params.preview_speaker || "Nama Ustad Nama Ustad\nNama Ustad",
         jarkom_kajian_template: params.jarkom_kajian_template || '',
         jarkom_jumat_template: params.jarkom_jumat_template || '',
+        studioMode: 'jarkom',
         showJarkomModal: false,
         jarkomSubTab: 'kajian',
 
         openJarkomModal() {
+            this.studioMode = 'jarkom';
             this.showJarkomModal = true;
         },
 
