@@ -961,11 +961,45 @@
         printPernyataanSearchEmp: '',
         printPernyataanSearchNewEmp: '',
         printPernyataanSelectedNewName: '',
+        isDownloadingPernyataanPdf: false,
         togglePrintDropdown(name) {
             this.printPernyataanOpenDropdown = (this.printPernyataanOpenDropdown === name ? null : name);
         },
         closePrintDropdowns() {
             this.printPernyataanOpenDropdown = null;
+        },
+        async downloadSuratPernyataanPdf() {
+            if (this.isDownloadingPernyataanPdf) return;
+            this.isDownloadingPernyataanPdf = true;
+            try {
+                const downloadUrl = '{{ route('admin.programs.download-pdf') }}?mode=' + this.printPernyataanMode + 
+                    '&year=' + this.printPernyataanYear + 
+                    '&employee_name=' + encodeURIComponent(this.printPernyataanEmployeeName || '') + 
+                    '&employee_id=' + (this.printPernyataanEmployeeId || '') + 
+                    '&date_letter=' + encodeURIComponent(this.printPernyataanDateLetter || '') + 
+                    '&effective_month=' + encodeURIComponent(this.printPernyataanEffectiveMonth || '') + 
+                    '&effective_year=' + encodeURIComponent(this.printPernyataanEffectiveYear || '') + 
+                    '&secretary_name=' + encodeURIComponent(this.printPernyataanSecretaryName || '') + 
+                    '&secretary_section=' + encodeURIComponent(this.printPernyataanSecretarySection || '');
+
+                const filename = 'Surat_Pernyataan_Pemotongan_Tukin_' + 
+                    (this.printPernyataanEmployeeName ? this.printPernyataanEmployeeName.replace(/\s+/g, '_') : (this.printPernyataanMode === 'blank' ? 'Blangko_Kosong' : 'Semua')) + '.pdf';
+
+                if (typeof window.downloadPdfDirect === 'function') {
+                    await window.downloadPdfDirect(downloadUrl, filename);
+                }
+            } catch (err) {
+                console.error('Download surat pernyataan PDF error:', err);
+                if (typeof window.dispatchEvent === 'function') {
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: {
+                            message: 'Gagal memproses berkas PDF surat pernyataan. Silakan coba kembali.'
+                        }
+                    }));
+                }
+            } finally {
+                this.isDownloadingPernyataanPdf = false;
+            }
         },
         openPrintPernyataanModal(tab = 'cetak') {
             const targetTab = (tab === 'upload' || tab === 'impor') ? 'impor' : 'cetak';

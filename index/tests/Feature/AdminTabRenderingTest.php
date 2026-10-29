@@ -165,4 +165,22 @@ class AdminTabRenderingTest extends TestCase
 
         $this->assertDatabaseMissing('ustadzs', ['id' => $ustadz->id]);
     }
+
+    public function test_surat_pernyataan_button_changes(): void
+    {
+        $component = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'programs']);
+
+        $html = $component->html();
+
+        // 1. Memastikan tombol "Pratinjau / Cetak" sudah dihapus
+        $this->assertStringNotContainsString('admin.programs.print-surat-pernyataan', $html);
+        $this->assertStringNotContainsString('Pratinjau / Cetak', $html);
+
+        // 2. Memastikan tombol "Unduh Surat (PDF)" ter-render dengan fungsi downloadSuratPernyataanPdf dan teks Memproses
+        $this->assertStringContainsString('downloadSuratPernyataanPdf()', $html);
+        $this->assertStringContainsString('isDownloadingPernyataanPdf', $html);
+        $this->assertStringContainsString('Unduh Surat (PDF)', $html);
+        $this->assertStringContainsString('Memproses...', $html);
+    }
 }

@@ -1092,17 +1092,27 @@
                                 <!-- Submit Action Bar -->
                                 <div class="pt-4 flex flex-wrap items-center justify-end gap-2.5 border-t border-slate-100">
                                     <button type="button"
-                                        @click="window.downloadPdfDirect('{{ route('admin.programs.download-pdf') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection), 'Surat_Pernyataan_Pemotongan_Tukin_' + (printPernyataanEmployeeName ? printPernyataanEmployeeName.replace(/\s+/g, '_') : (printPernyataanMode === 'blank' ? 'Blangko_Kosong' : 'Semua')) + '.pdf')"
-                                        class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                                        <i data-lucide="download" class="w-4 h-4 text-amber-400"></i>
-                                        <span>Unduh Surat (PDF)</span>
+                                        @click="downloadSuratPernyataanPdf()"
+                                        :disabled="isDownloadingPernyataanPdf"
+                                        class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 text-xs">
+                                        <!-- State Normal (Saat tidak sedang mengunduh) -->
+                                        <span x-show="!isDownloadingPernyataanPdf" class="inline-flex items-center justify-center gap-2">
+                                            <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                <polyline points="7 10 12 15 17 10"/>
+                                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                            </svg>
+                                            <span>Unduh Surat (PDF)</span>
+                                        </span>
+                                        <!-- State Memproses (Saat fetch / pembuatan file PDF sedang berjalan) -->
+                                        <span x-show="isDownloadingPernyataanPdf" x-cloak class="inline-flex items-center justify-center gap-2">
+                                            <svg class="w-4 h-4 animate-spin text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span class="whitespace-nowrap">Memproses...</span>
+                                        </span>
                                     </button>
-                                    <a :href="'{{ route('admin.programs.print-surat-pernyataan') }}?mode=' + printPernyataanMode + '&year=' + printPernyataanYear + '&employee_name=' + encodeURIComponent(printPernyataanEmployeeName) + '&employee_id=' + printPernyataanEmployeeId + '&date_letter=' + encodeURIComponent(printPernyataanDateLetter) + '&effective_month=' + encodeURIComponent(printPernyataanEffectiveMonth) + '&effective_year=' + encodeURIComponent(printPernyataanEffectiveYear) + '&secretary_name=' + encodeURIComponent(printPernyataanSecretaryName) + '&secretary_section=' + encodeURIComponent(printPernyataanSecretarySection)"
-                                        target="_blank"
-                                        class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold shadow-2xs transition cursor-pointer inline-flex items-center justify-center gap-2">
-                                        <i data-lucide="printer" class="w-4 h-4 text-slate-500"></i>
-                                        <span>Pratinjau / Cetak</span>
-                                    </a>
                                 </div>
                             </div>
 
