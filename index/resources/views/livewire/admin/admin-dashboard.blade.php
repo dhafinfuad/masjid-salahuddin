@@ -965,6 +965,7 @@
         pernyataanReadyShareDrawer: false,
         pernyataanPendingShareFile: null,
         pernyataanPendingShareTitle: '',
+        isExecutingShare: false,
         togglePrintDropdown(name) {
             this.printPernyataanOpenDropdown = (this.printPernyataanOpenDropdown === name ? null : name);
         },
@@ -1059,62 +1060,56 @@
             }
         },
         async executePernyataanShareFromDrawer() {
-            // Dapatkan objek berkas asli (unproxied native File)
-            const rawFile = window._rawPernyataanPdfFile || 
-                            (window.Alpine && typeof window.Alpine.raw === 'function' && this.pernyataanPendingShareFile ? window.Alpine.raw(this.pernyataanPendingShareFile) : this.pernyataanPendingShareFile);
-            const title = this.pernyataanPendingShareTitle || 'Surat_Pernyataan';
-            const filename = window._rawPernyataanPdfFilename || (title + '.pdf');
-
-            if (!rawFile) {
-                console.warn('[PDF Share] Berkas tidak ditemukan di memori, memicu unduh ulang...');
-                this.pernyataanReadyShareDrawer = false;
-                this.downloadSuratPernyataanPdf();
-                return;
-            }
-
-            // 1. Coba panggil navigator.share native iOS (Gambar 2: AirDrop, WhatsApp, Save to Files)
+            if (this.isExecutingShare) return;
+            this.isExecutingShare = true;
             try {
-                if (navigator.share) {
-                    await navigator.share({
-                        files: [rawFile],
-                        title: title
-                    });
-                    // Bila sukses memunculkan dan pengguna selesai memilih opsi simpan
+                // Dapatkan objek berkas asli (unproxied native File)
+                const rawFile = window._rawPernyataanPdfFile || 
+                                (window.Alpine && typeof window.Alpine.raw === 'function' && this.pernyataanPendingShareFile ? window.Alpine.raw(this.pernyataanPendingShareFile) : this.pernyataanPendingShareFile);
+                const title = this.pernyataanPendingShareTitle || 'Surat_Pernyataan';
+                const filename = window._rawPernyataanPdfFilename || (title + '.pdf');
+                const downloadUrl = window._rawPernyataanPdfUrl || '{{ route('admin.programs.download-pdf') }}';
+
+                if (!rawFile) {
+                    console.warn('[PDF Share] Berkas tidak ditemukan di memori, memicu unduh ulang...');
                     this.pernyataanReadyShareDrawer = false;
+                    this.downloadSuratPernyataanPdf();
                     return;
                 }
-            } catch (e) {
-                if (e.name === 'AbortError') {
-                    // Pengguna sengaja membatalkan/menutup menu share sheet
-                    return;
-                }
-                console.warn('[PDF Share] navigator.share dari drawer gagal/ditolak sistem, beralih ke fallback blob:', e);
-            }
 
-            // 2. Fallback tangguh: Unduh langsung via Blob Object URL agar tidak macet
-            try {
-                const blob = window._rawPernyataanPdfBlob || rawFile;
-                const blobUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename;
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(function() {
-                    if (link.parentNode) link.parentNode.removeChild(link);
-                    URL.revokeObjectURL(blobUrl);
-                }, 2500);
+                // 1. Panggil Web Share API native iOS (Gambar 2: AirDrop, WhatsApp, Save to Files)
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            files: [rawFile],
+                            title: title
+                        });
+                        this.pernyataanReadyShareDrawer = false;
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') {
+                            // Pengguna sengaja membatalkan/menutup menu share sheet
+                            return;
+                        }
+                        console.warn('[PDF Share] navigator.share error:', shareErr);
+                    }
+                }
+
+                // 2. Fallback tangguh iOS PWA: Buka URL dokumen asli agar iOS membuka penampil berkas resmi (Gambar 1)
                 this.pernyataanReadyShareDrawer = false;
-            } catch (fallbackErr) {
-                console.error('[PDF Share] Fallback download gagal:', fallbackErr);
+                window.location.href = downloadUrl;
+
+            } catch (err) {
+                console.error('[PDF Share] Global execution error:', err);
                 if (typeof window.dispatchEvent === 'function') {
                     window.dispatchEvent(new CustomEvent('toast', {
                         detail: {
-                            message: 'Gagal membuka berkas PDF. Silakan coba kembali.'
+                            message: 'Gagal membuka berkas. Silakan coba kembali.'
                         }
                     }));
                 }
+            } finally {
+                this.isExecutingShare = false;
             }
         },
         openPrintPernyataanModal(tab = 'cetak') {

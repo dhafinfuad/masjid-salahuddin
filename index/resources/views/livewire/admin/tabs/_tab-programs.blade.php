@@ -1696,10 +1696,10 @@
                         x-transition:leave="transition ease-in duration-200 transform"
                         x-transition:leave-start="translate-y-0"
                         x-transition:leave-end="translate-y-full"
-                        class="fixed bottom-0 inset-x-0 z-50 flex flex-col justify-end pointer-events-none"
+                        class="fixed bottom-0 inset-x-0 z-[60] flex flex-col justify-end"
                         style="display: none;">
 
-                        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-7 space-y-3.5 pointer-events-auto">
+                        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-7 space-y-3.5">
                             <!-- Center Drag Indicator Handle -->
                             <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
 
@@ -1710,18 +1710,32 @@
                             </div>
 
                             <!-- Tombol Utama: Buka Menu Simpan (Save to Files) -->
-                            <button type="button" @click="executePernyataanShareFromDrawer()"
-                                class="w-full py-3.5 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-                                    <polyline points="16 6 12 2 8 6"/>
-                                    <line x1="12" y1="2" x2="12" y2="15"/>
-                                </svg>
-                                <span>Buka Menu Simpan (Save to Files)</span>
+                            <button type="button" @click.stop="executePernyataanShareFromDrawer()"
+                                :disabled="isExecutingShare"
+                                class="w-full py-3.5 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75">
+                                <template x-if="!isExecutingShare">
+                                    <span class="inline-flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                            <polyline points="16 6 12 2 8 6"/>
+                                            <line x1="12" y1="2" x2="12" y2="15"/>
+                                        </svg>
+                                        <span>Buka Menu Simpan (Save to Files)</span>
+                                    </span>
+                                </template>
+                                <template x-if="isExecutingShare">
+                                    <span class="inline-flex items-center gap-2">
+                                        <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Membuka Menu...</span>
+                                    </span>
+                                </template>
                             </button>
 
                             <!-- Tombol Sekunder Ramping Sesuai Rule 3.4 GEMINI.md: Tutup -->
-                            <button type="button" @click="pernyataanReadyShareDrawer = false"
+                            <button type="button" @click.stop="pernyataanReadyShareDrawer = false"
                                 class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                                 <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
