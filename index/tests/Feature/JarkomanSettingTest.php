@@ -58,6 +58,22 @@ class JarkomanSettingTest extends TestCase
     }
 
     /** @test */
+    public function test_poster_setting_manager_renders_subtab_navigation_template_selector_and_can_switch_template()
+    {
+        $this->actingAs($this->adminUser);
+
+        Livewire::test(PosterSettingManager::class, ['isEmbedded' => true])
+            ->assertSee('1. Kajian Tematik')
+            ->assertSee('2. Rutin Pekanan')
+            ->assertDontSee('Pilihan Desain & Preset Baku')
+            ->assertDontSee('Desain Template Aktif (Rasio 1:1)')
+            ->call('selectTemplate', 2)
+            ->assertSet('template', 2)
+            ->call('selectTemplate', 1)
+            ->assertSet('template', 1);
+    }
+
+    /** @test */
     public function test_admin_can_update_jarkoman_templates()
     {
         $this->actingAs($this->adminUser);
