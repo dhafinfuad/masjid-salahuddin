@@ -854,74 +854,89 @@
     <!-- Modal: City Selector Kemenag RI (518 Kota) -->
     <div x-show="openCityModal" x-cloak
         @click="if (window.isBackdropClick($event, $el)) openCityModal = false"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="openCityModal = false">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl border border-gov-border relative max-h-[88vh] flex flex-col transition-all">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-amber-600"></i>
-                    </div>
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="city-modal-title"
+        @keydown.escape.window="openCityModal = false">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-lg w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 max-h-[88vh]"
+            style="z-index: 10000; background-color: #0b2b54; border: none; height: auto;">
+            
+            <!-- Modal Header - Solid Navy (#0b2b54) -->
+            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0 pr-2">
+                    <h3 id="city-modal-title" class="text-sm sm:text-base font-bold text-white truncate">Pilih Kota / Kabupaten</h3>
+                    <p class="text-[11px] text-slate-200 truncate">Jadwal sholat resmi hisab Kemenag RI</p>
+                </div>
+                <button type="button" @click="openCityModal = false"
+                    class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Modal Body Container (White Solid, Rounded Bottom) -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <div class="p-5 flex-1 overflow-y-auto space-y-3 min-h-0 notula-scrollable bg-white">
+                    <!-- Search City Input -->
                     <div>
-                        <h3 class="text-sm font-bold text-gov-textMain">Pilih Kota / Kabupaten</h3>
-                        <p class="text-[11px] text-slate-500">Jadwal sholat resmi hisab Kemenag RI</p>
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                            <input x-model="searchCity" 
+                                   type="text" 
+                                   placeholder="Ketik nama kota / kabupaten..." 
+                                   class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        </div>
+                    </div>
+
+                    <!-- Popular Cities Quick Select -->
+                    <div class="py-2 border-b border-slate-100">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">KOTA POPULER</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <template x-for="p in popularCities" :key="p.id">
+                                <button type="button" 
+                                        @click="selectCity(p.id, p.lokasi)" 
+                                        :class="selectedCityId == p.id ? 'bg-gov-navy text-white border-gov-navy font-bold' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-gov-border font-medium'"
+                                        class="px-2.5 py-1 rounded-lg border text-xs transition cursor-pointer">
+                                    <span x-text="formatCity(p.lokasi)"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Filtered Cities List (Instant in-memory filtering) -->
+                    <div class="py-1 space-y-1 max-h-60 sm:max-h-68 overflow-y-auto notula-scrollable">
+                        <template x-for="city in filteredCities" :key="city.id">
+                            <button type="button" 
+                                    @click="selectCity(city.id, city.lokasi)" 
+                                    :class="selectedCityId == city.id ? 'bg-blue-50 text-gov-navy border-blue-200 font-bold' : 'hover:bg-slate-50 text-slate-700 border-transparent font-medium'" 
+                                    class="w-full text-left px-3.5 py-2.5 rounded-lg border text-xs sm:text-sm flex items-center justify-between transition cursor-pointer">
+                                <span x-text="formatCity(city.lokasi)"></span>
+                                <span x-show="selectedCityId == city.id" class="inline-flex items-center px-2.5 h-5 rounded-full text-[11px] font-semibold bg-gov-navy text-white leading-none">
+                                    Aktif ✓
+                                </span>
+                            </button>
+                        </template>
+                        <div x-show="filteredCities.length === 0" class="py-8 text-center text-slate-400 text-xs" style="display: none;">
+                            Kota atau kabupaten "<span x-text="searchCity" class="font-semibold"></span>" tidak ditemukan.
+                        </div>
                     </div>
                 </div>
-                <button type="button" @click="openCityModal = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
 
-            <!-- Search City Input -->
-            <div class="pt-3 pb-2">
-                <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                    <input x-model="searchCity" 
-                           type="text" 
-                           placeholder="Ketik nama kota / kabupaten..." 
-                           class="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-gov-border rounded-lg text-gov-textMain focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
-                </div>
-            </div>
-
-            <!-- Popular Cities Quick Select -->
-            <div class="py-2 border-b border-slate-100">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">KOTA POPULER</span>
-                <div class="flex flex-wrap gap-1.5">
-                    <template x-for="p in popularCities" :key="p.id">
-                        <button type="button" 
-                                @click="selectCity(p.id, p.lokasi)" 
-                                :class="selectedCityId == p.id ? 'bg-gov-navy text-white border-gov-navy font-bold' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-gov-border font-medium'"
-                                class="px-2.5 py-1 rounded-lg border text-xs transition cursor-pointer">
-                            <span x-text="formatCity(p.lokasi)"></span>
-                        </button>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Filtered Cities List (Instant in-memory filtering) -->
-            <div class="flex-1 overflow-y-auto py-2 space-y-1 max-h-60 sm:max-h-68 scrollbar-thin">
-                <template x-for="city in filteredCities" :key="city.id">
-                    <button type="button" 
-                            @click="selectCity(city.id, city.lokasi)" 
-                            :class="selectedCityId == city.id ? 'bg-blue-50 text-gov-navy border-blue-200 font-bold' : 'hover:bg-slate-50 text-slate-700 border-transparent font-medium'" 
-                            class="w-full text-left px-3.5 py-2.5 rounded-lg border text-sm flex items-center justify-between transition cursor-pointer">
-                        <span x-text="formatCity(city.lokasi)"></span>
-                        <span x-show="selectedCityId == city.id" class="inline-flex items-center px-2.5 h-5 rounded-full text-[11px] font-semibold bg-gov-navy text-white leading-none">
-                            Aktif ✓
-                        </span>
+                <!-- Sticky Footer Actions -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <span class="text-[11px] text-slate-500 font-medium">518 Kota / Kab Kemenag RI</span>
+                    <button type="button" @click="openCityModal = false" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs border border-slate-300 transition cursor-pointer">
+                        Tutup
                     </button>
-                </template>
-                <div x-show="filteredCities.length === 0" class="py-8 text-center text-slate-400 text-xs" style="display: none;">
-                    Kota atau kabupaten "<span x-text="searchCity" class="font-semibold"></span>" tidak ditemukan.
                 </div>
-            </div>
 
-            <!-- Modal Footer -->
-            <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
-                <span>518 Kota / Kab Kemenag RI</span>
-                <button type="button" @click="openCityModal = false" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition cursor-pointer">
-                    Batal / Tutup
-                </button>
             </div>
         </div>
     </div>
@@ -929,99 +944,117 @@
     <!-- Modal: Daftar Komitmen Program Sosial -->
     <div x-show="$wire.showSocialRegisterModal" x-cloak
         @click="if (window.isBackdropClick($event, $el)) $wire.closeSocialRegisterModal()"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
-        style="display: none;" @keydown.escape.window="$wire.closeSocialRegisterModal()">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200 shrink-0">
-                        <i data-lucide="heart-handshake" class="w-4 h-4 text-amber-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-gov-textMain">Daftar Komitmen Jamaah</h3>
-                        <p class="text-[11px] text-slate-500">Masjid Salahuddin KPP Madya Malang</p>
-                    </div>
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="social-register-modal-title"
+        @keydown.escape.window="$wire.closeSocialRegisterModal()">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-md w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 max-h-[90vh]"
+            style="z-index: 10000; background-color: #0b2b54; border: none; height: auto;">
+            
+            <!-- Modal Header - Solid Navy (#0b2b54) -->
+            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0 pr-2">
+                    <h3 id="social-register-modal-title" class="text-sm sm:text-base font-bold text-white truncate">Daftar Komitmen Jamaah</h3>
+                    <p class="text-[11px] text-slate-200 truncate">Masjid Salahuddin KPP Madya Malang</p>
                 </div>
-                <button type="button" wire:click="closeSocialRegisterModal" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                <button type="button" wire:click="closeSocialRegisterModal"
+                    class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                 </button>
-            </div>
+            </header>
 
             @if($socialRegisterSuccess)
-                <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs space-y-2">
-                    <div class="flex items-center gap-2 font-bold text-emerald-900">
-                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-                        <span>Pendaftaran Berhasil!</span>
+                <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl p-6 space-y-4"
+                    style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-emerald-900">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+                            <span>Pendaftaran Berhasil!</span>
+                        </div>
+                        <p class="leading-relaxed">{{ $socialRegisterMessage }}</p>
                     </div>
-                    <p class="leading-relaxed">{{ $socialRegisterMessage }}</p>
                     <button type="button" wire:click="closeSocialRegisterModal"
-                        class="mt-2 w-full py-2 bg-gov-navy hover:bg-gov-navyHover text-white font-bold rounded-lg transition shadow-2xs cursor-pointer text-center">
+                        class="w-full py-2.5 bg-gov-navy text-white font-bold rounded-lg transition shadow-xs cursor-pointer text-center text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
                         Tutup
                     </button>
                 </div>
             @else
-                <form wire:submit.prevent="submitSocialRegistration" novalidate class="space-y-3.5 text-xs">
-                    <div x-data="{ err: '', touched: false }">
-                        <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
-                        <input type="text" wire:model="socialParticipantName"
-                            placeholder="Nama sesuai KTP / Pegawai"
-                            @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
-                            @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
-                            class="w-full p-2.5 border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain focus:ring-1 transition text-xs font-medium"
-                            :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:border-gov-navy'">
-                        <span x-show="err" x-text="err" class="text-rose-500 text-[11px] block mt-0.5" style="display: none;"></span>
-                        @error('socialParticipantName') <span x-show="!err" class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Program yang Diikuti <span class="text-rose-500">*</span></label>
-                        <x-custom-select 
-                            wire:model="socialParticipantProgram"
-                            :options="collect($socialPrograms)->map(fn($p) => ['value' => $p->name, 'label' => $p->name])->values()->all()"
-                            placeholder="Pilih Program Sosial"
-                            buttonClass="p-2.5 bg-slate-50/50"
-                        />
-                        @error('socialParticipantProgram') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Nominal Komitmen (Rp) <span class="text-rose-500">*</span></label>
-                            <input type="text" inputmode="numeric" wire:model="socialParticipantAmount" x-ribuan="$wire.socialParticipantAmount"
-                                placeholder="Contoh: 250.000"
-                                class="w-full p-2.5 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain font-bold focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition text-xs shadow-2xs">
-                            @error('socialParticipantAmount') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
+                <form wire:submit.prevent="submitSocialRegistration" novalidate class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                    style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    
+                    <!-- Scrollable Body -->
+                    <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-3.5 text-xs notula-scrollable bg-white">
+                        <div x-data="{ err: '', touched: false }">
+                            <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap <span class="text-rose-500">*</span></label>
+                            <input type="text" wire:model="socialParticipantName"
+                                placeholder="Nama sesuai KTP / Pegawai"
+                                @blur="touched = true; err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
+                                @input="if (touched) err = (!$el.value || !$el.value.trim()) ? 'Nama lengkap wajib diisi.' : ''"
+                                class="w-full p-2.5 border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain focus:ring-1 transition text-xs font-medium"
+                                :class="err ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-gov-border focus:border-gov-navy focus:border-gov-navy'">
+                            <span x-show="err" x-text="err" class="text-rose-500 text-[11px] block mt-0.5" style="display: none;"></span>
+                            @error('socialParticipantName') <span x-show="!err" class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
                         </div>
+
                         <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Periode Komitmen</label>
+                            <label class="block font-semibold text-slate-700 mb-1">Program yang Diikuti <span class="text-rose-500">*</span></label>
                             <x-custom-select 
-                                wire:model="socialParticipantPeriod"
-                                :options="['Bulanan' => 'Bulanan', 'Tahunan' => 'Tahunan', 'Satu Kali' => 'Satu Kali']"
-                                placeholder="Pilih Periode Komitmen"
+                                wire:model="socialParticipantProgram"
+                                :options="collect($socialPrograms)->map(fn($p) => ['value' => $p->name, 'label' => $p->name])->values()->all()"
+                                placeholder="Pilih Program Sosial"
                                 buttonClass="p-2.5 bg-slate-50/50"
                             />
+                            @error('socialParticipantProgram') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Nominal Komitmen (Rp) <span class="text-rose-500">*</span></label>
+                                <input type="text" inputmode="numeric" wire:model="socialParticipantAmount" x-ribuan="$wire.socialParticipantAmount"
+                                    placeholder="Contoh: 250.000"
+                                    class="w-full p-2.5 border border-gov-border rounded-lg bg-slate-50/50 focus:bg-white text-gov-textMain font-bold focus:ring-1 focus:ring-gov-navy focus:border-gov-navy outline-none transition text-xs shadow-2xs">
+                                @error('socialParticipantAmount') <span class="text-rose-500 text-[11px] block mt-0.5">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">Periode Komitmen</label>
+                                <x-custom-select 
+                                    wire:model="socialParticipantPeriod"
+                                    :options="['Bulanan' => 'Bulanan', 'Tahunan' => 'Tahunan', 'Satu Kali' => 'Satu Kali']"
+                                    placeholder="Pilih Periode Komitmen"
+                                    buttonClass="p-2.5 bg-slate-50/50"
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <!-- Sticky Footer Actions -->
+                    <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0 rounded-b-2xl"
+                        style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                         <button type="button" wire:click="closeSocialRegisterModal"
-                            class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition cursor-pointer">
+                            class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 rounded-xl border border-slate-300 transition cursor-pointer">
                             Batal
                         </button>
-                        <button type="submit"
-                            wire:loading.attr="disabled"
-                            class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center">
-                            <span wire:loading.remove wire:target="submitSocialRegistration">Kirim Komitmen</span>
-                            <span wire:loading.inline-flex wire:target="submitSocialRegistration" style="display: none;"
-                                class="inline-flex flex-row items-center justify-center gap-2 shrink-0 whitespace-nowrap">
-                                <svg class="w-4 h-4 animate-spin shrink-0 inline-block text-white" viewBox="0 0 24 24" fill="none">
+                        <button type="submit" wire:loading.attr="disabled"
+                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                            <span wire:loading.remove wire:target="submitSocialRegistration" style="color: #ffffff;">Kirim Komitmen</span>
+                            <span wire:loading.inline-flex wire:target="submitSocialRegistration" style="display: none; color: #ffffff;"
+                                class="inline-flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                <span class="whitespace-nowrap leading-none">Menyimpan...</span>
+                                <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                             </span>
                         </button>
                     </div>
+
                 </form>
             @endif
         </div>
@@ -1032,27 +1065,31 @@
     <!-- ======================================================== -->
     <div x-show="showPortalNotulaModal" x-cloak wire:ignore @keydown.escape.window="showPortalNotulaModal = false"
         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showPortalNotulaModal = false"
-        class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6"
-        style="display: none;">
-        <div class="w-full max-w-4xl bg-gov-950 rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
+        class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 md:p-6"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="portal-notula-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-4xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 h-[92vh] max-h-[92vh]"
+            style="z-index: 10000; background-color: #0b2b54; border: none;">
             <!-- Top Action Bar -->
-            <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-between gap-3 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
-                <div class="flex items-center gap-2 min-w-0 max-w-[60%]">
-                    <svg class="w-4 h-4 text-gov-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <header class="no-print bg-gov-navy text-white px-5 py-3.5 flex items-center justify-between gap-3 border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="flex items-center gap-2.5 min-w-0 max-w-[60%]">
+                    <svg class="w-4 h-4 text-slate-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                         <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
                     </svg>
-                    <span class="text-xs sm:text-sm font-bold text-white truncate" x-text="portalNotulaData.title || 'Notula Kajian'"></span>
+                    <span id="portal-notula-title" class="text-xs sm:text-sm font-bold text-white truncate" x-text="portalNotulaData.title || 'Notula Kajian'"></span>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                     <!-- Zoom Buttons -->
-                    <div class="flex items-center bg-gov-900 rounded-lg p-0.5 border border-slate-700/70 text-slate-300">
-                        <button type="button" @click="adjustPortalNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                    <div class="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/15 text-slate-200">
+                        <button type="button" @click="adjustPortalNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
-                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-300" x-text="['A-', 'A', 'A+', 'A++'][portalNotulaFontSizeIndex]"></span>
-                        <button type="button" @click="adjustPortalNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-200" x-text="['A-', 'A', 'A+', 'A++'][portalNotulaFontSizeIndex]"></span>
+                        <button type="button" @click="adjustPortalNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                     </div>
@@ -1060,7 +1097,7 @@
                     <!-- Print / PDF -->
                     <button type="button" 
                         @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(portalNotulaData.notula, portalNotulaData), portalNotulaData.title || 'Notula Kajian') : window.print()" 
-                        class="inline-flex items-center gap-1.5 bg-gov-700 hover:bg-gov-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-gov-600/60 shadow-xs transition cursor-pointer"
+                        class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/20 shadow-xs transition cursor-pointer"
                         title="Cetak / PDF">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                         <span class="hidden sm:inline">Cetak /</span><span>PDF</span>
@@ -1068,7 +1105,7 @@
 
                     <!-- Tutup -->
                     <button type="button" @click="showPortalNotulaModal = false"
-                        class="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer">
+                        class="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white text-xs font-medium px-2.5 py-1.5 rounded-lg border border-white/15 transition cursor-pointer">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         <span class="hidden sm:inline">Tutup</span>
                     </button>
@@ -1076,7 +1113,8 @@
             </header>
 
             <!-- Document Body -->
-            <div class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable">
+            <div class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable rounded-b-2xl"
+                style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                 <div class="w-full max-w-3xl sm:max-w-4xl bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200/80 overflow-hidden flex flex-col h-fit">
                     <main 
                         class="p-4 sm:p-6 md:p-8 space-y-2.5 sm:space-y-3 leading-relaxed text-slate-700"

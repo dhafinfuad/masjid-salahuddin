@@ -580,27 +580,31 @@
     <!-- ======================================================== -->
     <div x-show="showPortalNotulaModal" x-cloak wire:ignore @keydown.escape.window="showPortalNotulaModal = false"
         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showPortalNotulaModal = false"
-        class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6"
-        style="display: none;">
-        <div class="w-full max-w-4xl bg-gov-950 rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
+        class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 md:p-6"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="portal-notula-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-4xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 h-[92vh] max-h-[92vh]"
+            style="z-index: 10000; background-color: #0b2b54; border: none;">
             <!-- Top Action Bar -->
-            <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-between gap-3 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
-                <div class="flex items-center gap-2 min-w-0 max-w-[60%]">
-                    <svg class="w-4 h-4 text-gov-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <header class="no-print bg-gov-navy text-white px-5 py-3.5 flex items-center justify-between gap-3 border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="flex items-center gap-2.5 min-w-0 max-w-[60%]">
+                    <svg class="w-4 h-4 text-slate-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
                         <path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h6"/>
                     </svg>
-                    <span class="text-xs sm:text-sm font-bold text-white truncate" x-text="portalNotulaData.title || 'Notula Kajian'"></span>
+                    <span id="portal-notula-title" class="text-xs sm:text-sm font-bold text-white truncate" x-text="portalNotulaData.title || 'Notula Kajian'"></span>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2">
                     <!-- Zoom Buttons -->
-                    <div class="flex items-center bg-gov-900 rounded-lg p-0.5 border border-slate-700/70 text-slate-300">
-                        <button type="button" @click="adjustPortalNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                    <div class="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/15 text-slate-200">
+                        <button type="button" @click="adjustPortalNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
-                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-300" x-text="['A-', 'A', 'A+', 'A++'][portalNotulaFontSizeIndex]"></span>
-                        <button type="button" @click="adjustPortalNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-200" x-text="['A-', 'A', 'A+', 'A++'][portalNotulaFontSizeIndex]"></span>
+                        <button type="button" @click="adjustPortalNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                     </div>
@@ -608,7 +612,7 @@
                     <!-- Print / PDF -->
                     <button type="button" 
                         @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(portalNotulaData.notula, portalNotulaData), portalNotulaData.title || 'Notula Kajian') : window.print()" 
-                        class="inline-flex items-center gap-1.5 bg-gov-700 hover:bg-gov-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-gov-600/60 shadow-xs transition cursor-pointer"
+                        class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/20 shadow-xs transition cursor-pointer"
                         title="Cetak / PDF">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                         <span class="hidden sm:inline">Cetak /</span><span>PDF</span>
@@ -616,7 +620,7 @@
 
                     <!-- Tutup -->
                     <button type="button" @click="showPortalNotulaModal = false"
-                        class="inline-flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-700 transition cursor-pointer">
+                        class="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white text-xs font-medium px-2.5 py-1.5 rounded-lg border border-white/15 transition cursor-pointer">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         <span class="hidden sm:inline">Tutup</span>
                     </button>
@@ -624,7 +628,8 @@
             </header>
 
             <!-- Document Body -->
-            <div class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable">
+            <div class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-6 md:p-8 flex justify-center notula-scrollable rounded-b-2xl"
+                style="border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                 <div class="w-full max-w-3xl sm:max-w-4xl bg-white rounded-xl sm:rounded-2xl shadow-md border border-slate-200/80 overflow-hidden flex flex-col h-fit">
                     <main 
                         class="p-4 sm:p-6 md:p-8 space-y-2.5 sm:space-y-3 leading-relaxed text-slate-700"

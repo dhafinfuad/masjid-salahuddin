@@ -282,62 +282,78 @@
     <!-- MODAL KHUSUS IPHONE / IPAD & MOBILE PREVIEW -->
     <div x-show="showIosModal"
          x-cloak
-         class="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs"
-         @keydown.escape.window="closeModal()">
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 99999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="ios-modal-title"
+         @keydown.escape.window="closeModal()"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) closeModal()">
         
-        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-100 flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200"
-             @click.outside="closeModal()">
+        <div @click.stop
+             class="bg-[#0b2b54] rounded-2xl w-full max-w-sm shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 max-h-[92vh]"
+             style="z-index: 100000; background-color: #0b2b54; border: none; height: auto;">
             
-            <!-- Modal Header -->
-            <div class="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h3 class="font-bold text-slate-800 text-sm">Poster Berhasil Dibuat</h3>
+            <!-- Modal Header - Solid Navy (#0b2b54) -->
+            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0 pr-2">
+                    <h3 id="ios-modal-title" class="text-sm font-bold text-white truncate">Poster Berhasil Dibuat</h3>
+                    <p class="text-[11px] text-slate-200 truncate">Pratinjau & Simpan Gambar</p>
                 </div>
-                <button type="button" @click="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg transition cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button type="button" @click="closeModal()"
+                    class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                 </button>
-            </div>
-            
-            <!-- Modal Body (Preview & Petunjuk iPhone) -->
-            <div class="p-4 bg-slate-100/60 flex flex-col items-center justify-center overflow-y-auto">
-                <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-xl overflow-hidden shadow-lg border border-slate-200 bg-white">
-                    <img :src="currentBlobUrl" class="w-full h-full object-contain select-none" alt="Poster Kajian" />
-                </div>
-                
-                <!-- Box Petunjuk Galeri iOS -->
-                <div class="mt-3.5 w-full bg-emerald-50 border border-emerald-200/80 rounded-xl p-3 text-xs text-emerald-950 leading-relaxed shadow-xs">
-                    <div class="font-bold flex items-center gap-1.5 text-emerald-800 mb-1">
-                        <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Cara Simpan ke Galeri Foto (iPhone):</span>
-                    </div>
-                    <ul class="text-slate-700 list-disc list-inside space-y-1 pl-0.5">
-                        <li>Tekan tombol hijau <strong>"Simpan ke Galeri / Bagikan"</strong> di bawah, lalu pilih <strong>"Simpan Gambar"</strong> (Save Image).</li>
-                        <li>Atau <strong>tekan & tahan (tahan lama)</strong> gambar di atas, lalu pilih <strong>"Simpan ke Foto"</strong>.</li>
-                    </ul>
-                </div>
-            </div>
+            </header>
 
-            <!-- Action Buttons Footer -->
-            <div class="p-3.5 bg-white border-t border-slate-100 flex flex-col gap-2">
-                <button type="button"
-                        @click="sharePoster()"
-                        class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                    <span>Simpan ke Galeri / Bagikan</span>
-                </button>
-                <div class="flex items-center gap-2">
-                    <button type="button"
-                            @click="openInNewTab()"
-                            class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition text-center cursor-pointer">
-                        Buka Tab Baru
-                    </button>
-                    <button type="button"
-                            @click="closeModal()"
-                            class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition text-center cursor-pointer">
-                        Tutup
-                    </button>
+            <!-- Modal Body Container (White Solid, Rounded Bottom) -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Modal Body (Preview & Petunjuk iPhone) -->
+                <div class="p-4 sm:p-5 flex-1 overflow-y-auto flex flex-col items-center justify-center space-y-3.5 notula-scrollable bg-white">
+                    <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-50 flex items-center justify-center">
+                        <img :src="currentBlobUrl" class="w-full h-full object-contain select-none" alt="Poster Kajian" />
+                    </div>
+                    
+                    <!-- Box Petunjuk Galeri iOS -->
+                    <div class="w-full bg-emerald-50 border border-emerald-200/80 rounded-xl p-3 text-xs text-emerald-950 leading-relaxed shadow-xs">
+                        <div class="font-bold flex items-center gap-1.5 text-emerald-800 mb-1">
+                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Cara Simpan ke Galeri Foto (iPhone):</span>
+                        </div>
+                        <ul class="text-slate-700 list-disc list-inside space-y-1 pl-0.5 text-[11px]">
+                            <li>Tekan tombol hijau <strong>"Simpan ke Galeri / Bagikan"</strong> di bawah, lalu pilih <strong>"Simpan Gambar"</strong>.</li>
+                            <li>Atau <strong>tekan & tahan</strong> gambar di atas, lalu pilih <strong>"Simpan ke Foto"</strong>.</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- Sticky Action Buttons Footer -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col gap-2 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button"
+                            @click="sharePoster()"
+                            class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        <span>Simpan ke Galeri / Bagikan</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button"
+                                @click="openInNewTab()"
+                                class="flex-1 py-2 px-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 transition text-center cursor-pointer">
+                            Buka Tab Baru
+                        </button>
+                        <button type="button"
+                                @click="closeModal()"
+                                class="flex-1 py-2 px-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 transition text-center cursor-pointer">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

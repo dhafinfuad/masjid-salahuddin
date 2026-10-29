@@ -339,52 +339,59 @@
 
     <!-- Modal Dialog QR Code Jadwal Petugas Sholat -->
     <div x-show="showQrModal" x-cloak
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+         @keydown.escape.window="showQrModal = false"
+         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) showQrModal = false"
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
         
-        <div @click.away="showQrModal = false"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 text-center space-y-4">
+        <div @click.stop
+             class="bg-[#0b2b54] rounded-2xl w-full max-w-sm shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+             style="z-index: 10000; background-color: #0b2b54; border: none; height: auto;">
             
-            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-gov-50 text-gov-navy flex items-center justify-center font-bold">
-                        <i data-lucide="qr-code" class="w-4 h-4"></i>
-                    </div>
-                    <div class="text-left">
-                        <h3 class="text-sm font-bold text-gov-textMain leading-tight">QR Code Jadwal</h3>
-                        <p class="text-[11px] text-slate-500">{{ $months[$selectedMonth] }} {{ $selectedYear }}</p>
+            <!-- Modal Header - Solid Navy (#0b2b54) -->
+            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0 pr-2">
+                    <h3 id="qr-modal-title" class="text-sm font-bold text-white truncate">QR Code Jadwal</h3>
+                    <p class="text-[11px] text-slate-200 truncate">{{ $months[$selectedMonth] }} {{ $selectedYear }}</p>
+                </div>
+                <button type="button" @click="showQrModal = false"
+                    class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
+                    title="Tutup Modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </header>
+
+            <!-- Modal Body Container (White Solid, Rounded Bottom) -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- QR Code Body -->
+                <div class="p-5 flex flex-col items-center justify-center space-y-3 bg-white">
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center justify-center w-full">
+                        <div id="portalQrcodeContainer" class="w-48 h-48 flex items-center justify-center bg-white p-2 rounded-lg border border-slate-200 shadow-2xs"></div>
+                        <p class="text-[11px] text-slate-500 mt-2.5 text-center font-medium leading-relaxed">Scan menggunakan kamera HP untuk langsung membuka atau mencetak jadwal resmi ini</p>
                     </div>
                 </div>
-                <button type="button" @click="showQrModal = false" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
 
-            <!-- QR Code Container -->
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center justify-center">
-                <div id="portalQrcodeContainer" class="w-48 h-48 flex items-center justify-center bg-white p-2 rounded-lg border border-slate-200 shadow-2xs"></div>
-                <p class="text-[11px] text-slate-500 mt-2 font-medium">Scan menggunakan kamera HP untuk langsung membuka atau mencetak jadwal resmi ini</p>
-            </div>
+                <!-- Sticky Footer Actions -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2.5 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <a href="{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" target="_blank"
+                       class="flex-1 py-2 px-3 rounded-lg bg-gov-navy text-white text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                       style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        <span>Buka Jadwal</span>
+                    </a>
+                    <button type="button" @click="showQrModal = false"
+                            class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs border border-slate-300 transition cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-2 pt-1">
-                <a href="{{ route('portal.petugas-sholat.print', ['month' => $selectedMonth, 'year' => $selectedYear]) }}" target="_blank"
-                   class="flex-1 py-2 px-3 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition inline-flex items-center justify-center gap-1.5 shadow-2xs">
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                    <span>Buka Jadwal</span>
-                </a>
-                <button type="button" @click="showQrModal = false"
-                        class="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition cursor-pointer">
-                    Tutup
-                </button>
             </div>
         </div>
     </div>

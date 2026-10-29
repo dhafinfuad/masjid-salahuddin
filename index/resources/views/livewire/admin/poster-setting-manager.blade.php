@@ -727,54 +727,55 @@
     <div x-show="showJarkomModal" x-cloak wire:ignore.self
          @keydown.escape.window="closeJarkomModal()"
          @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { closeJarkomModal(); }"
-         class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
-         style="display: none;">
-        <div class="bg-white rounded-2xl max-w-5xl w-full p-5 sm:p-6 shadow-2xl border border-gov-border space-y-4 animate-in fade-in duration-200 max-h-[92vh] flex flex-col"
-             @click.stop>
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center border border-indigo-200 shrink-0">
-                        <svg class="w-5 h-5 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-gov-textMain">Format Jarkoman WhatsApp</h3>
-                        <p class="text-xs text-slate-500">Kustomisasi draf pesan broadcast WhatsApp untuk Kajian dan Khutbah Jumat.</p>
-                    </div>
+         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+         role="dialog" aria-modal="true" aria-labelledby="jarkom-modal-title">
+        <div @click.stop
+             class="bg-[#0b2b54] rounded-2xl w-full max-w-5xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 max-h-[92vh]"
+             style="z-index: 10000; background-color: #0b2b54; border: none; height: auto;">
+            
+            <!-- Modal Header - Solid Navy (#0b2b54) -->
+            <header class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0 pr-2">
+                    <h3 id="jarkom-modal-title" class="text-sm sm:text-base font-bold text-white truncate">Format Jarkoman WhatsApp</h3>
+                    <p class="text-[11px] text-slate-200 truncate">Kustomisasi draf pesan broadcast WhatsApp untuk Kajian dan Khutbah Jumat</p>
                 </div>
                 <button type="button" @click="closeJarkomModal()"
-                        class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                        class="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition cursor-pointer shrink-0"
                         title="Tutup Modal">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
-            </div>
+            </header>
 
-            <!-- Sub-tab Navigation (0ms Alpine Switching) -->
-            <div class="flex items-center gap-2 border-b border-slate-200 pb-2.5 shrink-0 w-full">
-                <button type="button" @click="jarkomSubTab = 'kajian'"
-                        :class="jarkomSubTab === 'kajian' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                        class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                    <span>Kajian</span>
-                </button>
-                <button type="button" @click="jarkomSubTab = 'jumat'"
-                        :class="jarkomSubTab === 'jumat' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                        class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    <span>Khutbah Jumat</span>
-                </button>
-            </div>
+            <!-- Modal Body Container (White Solid, Rounded Bottom) -->
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
 
-            <!-- Scrollable Content Area: 2 Column Editor + Preview -->
-            <div class="w-full flex-1 overflow-y-auto space-y-4 pr-1 min-w-0">
+                <!-- Sub-tab Navigation (0ms Alpine Switching) -->
+                <div class="px-5 sm:px-6 pt-4 pb-2.5 flex items-center gap-2 border-b border-slate-200 shrink-0 w-full bg-white">
+                    <button type="button" @click="jarkomSubTab = 'kajian'"
+                            :class="jarkomSubTab === 'kajian' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <span>Kajian</span>
+                    </button>
+                    <button type="button" @click="jarkomSubTab = 'jumat'"
+                            :class="jarkomSubTab === 'jumat' ? 'bg-gov-navy text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <span>Khutbah Jumat</span>
+                    </button>
+                </div>
+
+                <!-- Scrollable Content Area: 2 Column Editor + Preview -->
+                <div class="w-full flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 text-xs notula-scrollable bg-white">
                 <div class="w-full min-w-0 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                     <!-- Left Column: Template Editor -->
                     <div class="w-full min-w-0 flex flex-col space-y-3">
@@ -968,34 +969,33 @@
                 </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-200 pt-3 shrink-0">
+            <!-- Sticky Footer Actions -->
+            <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 shrink-0 rounded-b-2xl"
+                style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
                 <p class="text-[11px] text-slate-400">
                     Tag di dalam kurung <span class="font-mono">{...}</span> akan digantikan data jadwal riil saat tombol Salin Jarkom diklik.
                 </p>
-                <div class="flex items-center justify-end gap-2">
+                <div class="flex items-center justify-end gap-2.5 shrink-0">
                     <button type="button" @click="closeJarkomModal()"
-                            class="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs shadow-2xs transition cursor-pointer">
+                            class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition cursor-pointer border border-slate-300 text-xs">
                         Batal
                     </button>
                     <button type="button" wire:click="saveJarkom" wire:loading.attr="disabled"
-                            class="px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold text-xs shadow-2xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-1.5">
-                        <span wire:loading.remove wire:target="saveJarkom" class="inline-flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <span>Simpan Format</span>
-                        </span>
-                        <span wire:loading.inline-flex wire:target="saveJarkom" style="display: none;"
-                              class="inline-flex flex-row items-center gap-1.5 shrink-0 whitespace-nowrap">
-                            <svg class="w-3.5 h-3.5 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveJarkom" style="color: #ffffff;">Simpan Format</span>
+                        <span wire:loading.inline-flex wire:target="saveJarkom" style="display: none; color: #ffffff;"
+                              class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span class="whitespace-nowrap leading-none">Menyimpan...</span>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
                         </span>
                     </button>
                 </div>
+            </div>
+
             </div>
         </div>
     </div>

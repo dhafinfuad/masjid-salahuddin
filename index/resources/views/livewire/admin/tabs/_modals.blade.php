@@ -4,12 +4,16 @@
     @if(Auth::user()->isMaster())
     <div x-show="showNotulaModal" x-cloak wire:ignore @keydown.escape.window="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
         @click="if (window.isBackdropClick($event, $el)) { showNotulaModal = false; $wire.set('showNotulaModal', false, false); }"
-        class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6"
-        style="display: none;">
-        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col h-[92vh] max-h-[92vh] outline-none animate-in fade-in duration-200 transition-all">
+        class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 md:p-6"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="notula-modal-title">
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl w-full max-w-4xl shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200 h-[92vh] max-h-[92vh]"
+            style="z-index: 10000; background-color: #0b2b54; border: none;">
             
-            <!-- Top Action Bar (Header) - Clean Navy Gov -->
-            <header class="no-print bg-gov-950 text-white px-4 sm:px-6 py-3 flex items-center justify-between gap-3 border-b border-gov-900 sticky top-0 z-30 shadow-xs shrink-0">
+            <!-- Top Action Bar (Header) - Solid Navy (#0b2b54) -->
+            <header class="no-print bg-gov-navy text-white px-5 py-3.5 flex items-center justify-between gap-3 border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
                 <!-- Left: Title -->
                 <div class="flex items-center gap-2.5 text-white text-xs sm:text-sm font-semibold tracking-wide min-w-0 max-w-[70%]">
                     <svg class="w-4 h-4 text-slate-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -18,152 +22,161 @@
                         <line x1="16" y1="13" x2="8" y2="13"/>
                         <line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
-                    <span class="truncate text-slate-100 text-xs sm:text-sm font-semibold" x-text="notulaForm.title || 'Notula Kajian'"></span>
+                    <span id="notula-modal-title" class="truncate text-white text-xs sm:text-sm font-bold" x-text="notulaForm.title || 'Notula Kajian'"></span>
                 </div>
 
                 <!-- Right Quick Action Buttons -->
                 <div class="flex items-center gap-1.5 sm:gap-2">
                     <!-- Zoom Buttons (Only visible in Preview tab) -->
-                    <div x-show="notulaActiveTab === 'preview'" class="flex items-center bg-gov-900 rounded-lg p-0.5 border border-slate-700/70 text-slate-300 mr-0.5">
-                        <button type="button" @click="adjustNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                    <div x-show="notulaActiveTab === 'preview'" class="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/15 text-slate-200 mr-0.5">
+                        <button type="button" @click="adjustNotulaFontSize(-1)" title="Perkecil Teks (A-)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
-                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-300" x-text="['A-', 'A', 'A+', 'A++'][notulaFontSizeIndex]"></span>
-                        <button type="button" @click="adjustNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-gov-800 rounded-md transition-colors cursor-pointer">
+                        <span class="text-[11px] px-1.5 font-mono font-medium text-slate-200" x-text="['A-', 'A', 'A+', 'A++'][notulaFontSizeIndex]"></span>
+                        <button type="button" @click="adjustNotulaFontSize(1)" title="Perbesar Teks (A+)" class="p-1.5 hover:text-white hover:bg-white/10 rounded-md transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
                     </div>
 
                     <!-- Tombol X Tutup Modal -->
                     <button type="button" @click="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
-                        class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                        class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                        style="color: #ffffff;"
                         title="Tutup Modal">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
                     </button>
                 </div>
             </header>
 
-            <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit (Fixed di Atas Modal, Selalu Terlihat Saat Scroll) -->
-            <div class="no-print shrink-0 bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 z-20 shadow-2xs">
-                <div class="w-full max-w-4xl mx-auto flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200/90">
-                    <button type="button" @click="notulaActiveTab = 'preview'"
-                        class="flex-1 py-2 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
-                        :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-950 shadow-xs border border-slate-200/60' : 'text-slate-600 hover:text-gov-950'">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                        <span>Pratinjau</span>
-                    </button>
-                    <button type="button" @click="notulaActiveTab = 'editor'"
-                        class="flex-1 py-2 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
-                        :class="notulaActiveTab === 'editor' ? 'bg-white text-gov-950 shadow-xs border border-slate-200/60' : 'text-slate-600 hover:text-gov-950'">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                        <span>Tulis / Edit</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Main Body: Tab 1 Preview Eksekutif -->
-            <div x-show="notulaActiveTab === 'preview'" class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-5 md:p-6 flex justify-center notula-scrollable">
-                <div class="w-full max-w-4xl">
-                    <div class="w-full bg-white rounded-xl sm:rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden flex flex-col h-fit">
-                        <main id="notulaContentContainer" 
-                            class="p-4 sm:p-6 md:p-8 space-y-2.5 sm:space-y-3 leading-relaxed text-slate-700 transition-all"
-                            :class="['text-xs sm:text-sm', 'text-sm sm:text-base', 'text-base sm:text-lg', 'text-lg sm:text-xl'][notulaFontSizeIndex]"
-                            x-html="window.parseNotulaToHtml ? window.parseNotulaToHtml(notulaForm.raw_text, notulaForm) : notulaForm.raw_text">
-                        </main>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Body: Tab 2 Editor / Tulis Notula -->
-            <div x-show="notulaActiveTab === 'editor'" class="flex-1 min-h-0 flex flex-col p-4 sm:p-6 bg-white overflow-hidden">
-                <div class="w-full max-w-4xl mx-auto flex-1 min-h-0 flex flex-col gap-3">
-                    <!-- Petunjuk / Helper Banner dengan Tombol Aksi AI di Samping -->
-                    <div class="shrink-0 bg-gov-50/50 border border-slate-200/90 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                        <div class="flex items-start sm:items-center gap-3 min-w-0">
-                            <svg class="w-5 h-5 text-slate-700 shrink-0 mt-0.5 sm:mt-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="8" x2="12" y2="12"/>
-                                <line x1="12" y1="16" x2="12.01" y2="16"/>
-                            </svg>
-                            <div>
-                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Generator Notula Otomatis</h4>
-                                <p class="text-xs text-slate-500 sm:text-slate-600 mt-0.5 leading-relaxed">Tempelkan notula atau transkrip mentah YouTube, lalu klik tombol di samping.</p>
-                            </div>
-                        </div>
-
-                        <button type="button"
-                            @click="$wire.transformTranscriptToNotula(notulaForm.id, notulaForm.raw_text)"
-                            wire:loading.attr="disabled"
-                            wire:target="transformTranscriptToNotula"
-                            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gov-950 hover:bg-gov-900 active:bg-slate-900 text-white font-bold text-xs shadow-xs transition cursor-pointer shrink-0 disabled:opacity-50">
-                            <svg wire:loading.remove wire:target="transformTranscriptToNotula" class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                            </svg>
-                            <svg wire:loading wire:target="transformTranscriptToNotula" class="w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                            </svg>
-                            <span wire:loading.remove wire:target="transformTranscriptToNotula">Ubah Menjadi Notula AI</span>
-                            <span wire:loading wire:target="transformTranscriptToNotula">Memproses...</span>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Tab Selector di dalam Modal: Pratinjau vs Tulis / Edit (Fixed di Atas Modal, Selalu Terlihat Saat Scroll) -->
+                <div class="no-print shrink-0 bg-white border-b border-slate-200 px-4 sm:px-6 py-2.5 z-20">
+                    <div class="w-full max-w-4xl mx-auto flex items-center p-1 bg-slate-100 rounded-xl">
+                        <button type="button" @click="notulaActiveTab = 'preview'"
+                            class="flex-1 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
+                            :class="notulaActiveTab === 'preview' ? 'bg-white text-gov-navy shadow-xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Pratinjau</span>
+                        </button>
+                        <button type="button" @click="notulaActiveTab = 'editor'"
+                            class="flex-1 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2"
+                            :class="notulaActiveTab === 'editor' ? 'bg-white text-gov-navy shadow-xs' : 'text-slate-600 hover:text-gov-navy'">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>Tulis / Edit</span>
                         </button>
                     </div>
+                </div>
 
-                    <!-- Textarea Editor (Mengisi Sisa Tinggi Modal Secara Proporsional) -->
-                    <div class="flex-1 min-h-0 flex flex-col bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden focus-within:ring-2 focus-within:ring-gov-navy/20 focus-within:border-gov-navy transition">
-                        <div class="shrink-0 bg-white px-4 py-2 border-b border-slate-200/80 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
-                            <span class="font-medium flex items-center gap-1.5 text-slate-700">
-                                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                                Editor Naskah
-                            </span>
-                            <div class="flex items-center gap-4 text-slate-500">
-                                <span>Karakter: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').length">0</strong></span>
-                                <span>Kata: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').trim() ? (notulaForm.raw_text || '').trim().split(/\s+/).length : 0">0</strong></span>
-                            </div>
+                <!-- Main Body: Tab 1 Preview Eksekutif -->
+                <div x-show="notulaActiveTab === 'preview'" class="min-h-0 flex-1 overflow-y-auto bg-slate-100 p-3 sm:p-5 md:p-6 flex justify-center notula-scrollable">
+                    <div class="w-full max-w-4xl">
+                        <div class="w-full bg-white rounded-xl sm:rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden flex flex-col h-fit">
+                            <main id="notulaContentContainer" 
+                                class="p-4 sm:p-6 md:p-8 space-y-2.5 sm:space-y-3 leading-relaxed text-slate-700 transition-all"
+                                :class="['text-xs sm:text-sm', 'text-sm sm:text-base', 'text-base sm:text-lg', 'text-lg sm:text-xl'][notulaFontSizeIndex]"
+                                x-html="window.parseNotulaToHtml ? window.parseNotulaToHtml(notulaForm.raw_text, notulaForm) : notulaForm.raw_text">
+                            </main>
                         </div>
-                        <textarea 
-                            wire:ignore
-                            x-ref="notulaTextarea"
-                            x-model="notulaForm.raw_text"
-                            class="flex-1 min-h-0 w-full p-4 font-mono text-xs sm:text-sm text-slate-800 bg-white focus:outline-none resize-none leading-relaxed placeholder:text-slate-400 overflow-y-auto"
-                            placeholder="Salin atau ketik notula kajian di sini... (Mendukung Markdown, judul #, ayat Arab, dalil, dan catatan kaki [^1])"></textarea>
                     </div>
                 </div>
+
+                <!-- Main Body: Tab 2 Editor / Tulis Notula -->
+                <div x-show="notulaActiveTab === 'editor'" class="flex-1 min-h-0 flex flex-col p-4 sm:p-6 bg-white overflow-hidden">
+                    <div class="w-full max-w-4xl mx-auto flex-1 min-h-0 flex flex-col gap-3">
+                        <!-- Petunjuk / Helper Banner dengan Tombol Aksi AI di Samping -->
+                        <div class="shrink-0 bg-gov-50/50 border border-slate-200/90 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                            <div class="flex items-start sm:items-center gap-3 min-w-0">
+                                <svg class="w-5 h-5 text-slate-700 shrink-0 mt-0.5 sm:mt-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Generator Notula Otomatis</h4>
+                                    <p class="text-xs text-slate-500 sm:text-slate-600 mt-0.5 leading-relaxed">Tempelkan notula atau transkrip mentah YouTube, lalu klik tombol di samping.</p>
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                @click="$wire.transformTranscriptToNotula(notulaForm.id, notulaForm.raw_text)"
+                                wire:loading.attr="disabled"
+                                wire:target="transformTranscriptToNotula"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:bg-slate-900 text-white font-bold text-xs shadow-xs transition cursor-pointer shrink-0 disabled:opacity-50">
+                                <svg wire:loading.remove wire:target="transformTranscriptToNotula" class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                                </svg>
+                                <svg wire:loading wire:target="transformTranscriptToNotula" class="w-4 h-4 animate-spin text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                                </svg>
+                                <span wire:loading.remove wire:target="transformTranscriptToNotula">Ubah Menjadi Notula AI</span>
+                                <span wire:loading wire:target="transformTranscriptToNotula">Memproses...</span>
+                            </button>
+                        </div>
+
+                        <!-- Textarea Editor (Mengisi Sisa Tinggi Modal Secara Proporsional) -->
+                        <div class="flex-1 min-h-0 flex flex-col bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden focus-within:ring-2 focus-within:ring-gov-navy/20 focus-within:border-gov-navy transition">
+                            <div class="shrink-0 bg-white px-4 py-2 border-b border-slate-200/80 flex items-center justify-between text-xs text-slate-500 flex-wrap gap-2">
+                                <span class="font-medium flex items-center gap-1.5 text-slate-700">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                    Editor Naskah
+                                </span>
+                                <div class="flex items-center gap-4 text-slate-500">
+                                    <span>Karakter: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').length">0</strong></span>
+                                    <span>Kata: <strong class="text-slate-800" x-text="(notulaForm.raw_text || '').trim() ? (notulaForm.raw_text || '').trim().split(/\s+/).length : 0">0</strong></span>
+                                </div>
+                            </div>
+                            <textarea 
+                                wire:ignore
+                                x-ref="notulaTextarea"
+                                x-model="notulaForm.raw_text"
+                                class="flex-1 min-h-0 w-full p-4 font-mono text-xs sm:text-sm text-slate-800 bg-white focus:outline-none resize-none leading-relaxed placeholder:text-slate-400 overflow-y-auto"
+                                placeholder="Salin atau ketik notula kajian di sini... (Mendukung Markdown, judul #, ayat Arab, dalil, dan catatan kaki [^1])"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Action Buttons in Editor & Pratinjau (Right Aligned, Always Visible on Bottom) -->
+                <footer class="no-print shrink-0 bg-slate-50 border-t border-slate-200 px-5 py-3.5 z-20 flex items-center justify-end gap-2.5 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <button type="button" @click="notulaForm.raw_text = ''; if($refs.notulaTextarea) $refs.notulaTextarea.value = '';"
+                        x-show="notulaActiveTab === 'editor'"
+                        class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold transition cursor-pointer">
+                        Bersihkan Naskah
+                    </button>
+                    <button type="button"
+                        x-show="notulaActiveTab === 'preview'"
+                        @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(notulaForm.raw_text, notulaForm), notulaForm.title || 'Notula Kajian') : window.print()"
+                        class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold transition cursor-pointer inline-flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        <span>Cetak / PDF</span>
+                    </button>
+                    <button type="button"
+                        @click="$wire.saveNotula(notulaForm.id, notulaForm.raw_text)"
+                        wire:loading.attr="disabled"
+                        wire:target="saveNotula"
+                        class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2 text-xs"
+                        style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                        <span wire:loading.remove wire:target="saveNotula" style="color: #ffffff;">Simpan Notula</span>
+                        <span wire:loading.inline-flex wire:target="saveNotula" style="display: none; color: #ffffff;"
+                            class="inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4 animate-spin text-white inline-block shrink-0" viewBox="0 0 24 24" fill="none">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="whitespace-nowrap" style="color: #ffffff;">Menyimpan...</span>
+                        </span>
+                    </button>
+                </footer>
+
             </div>
-
-            <!-- Bottom Action Buttons in Editor & Pratinjau (Right Aligned, Always Visible on Bottom) -->
-            <footer class="no-print shrink-0 bg-white border-t border-slate-200 px-4 sm:px-6 py-2.5 z-20 shadow-xs flex items-center justify-end gap-3">
-                <button type="button" @click="notulaForm.raw_text = ''; if($refs.notulaTextarea) $refs.notulaTextarea.value = '';"
-                    x-show="notulaActiveTab === 'editor'"
-                    class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:bg-slate-100 text-xs font-semibold transition cursor-pointer shadow-2xs">
-                    Bersihkan Naskah
-                </button>
-                <button type="button"
-                    x-show="notulaActiveTab === 'preview'"
-                    @click="window.printNotulaDocument ? window.printNotulaDocument(window.parseNotulaToHtml(notulaForm.raw_text, notulaForm), notulaForm.title || 'Notula Kajian') : window.print()"
-                    class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 active:bg-slate-100 text-xs font-semibold transition cursor-pointer shadow-2xs inline-flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                    <span>Cetak / PDF</span>
-                </button>
-                <button type="button"
-                    @click="$wire.saveNotula(notulaForm.id, notulaForm.raw_text)"
-                    wire:loading.attr="disabled"
-                    wire:target="saveNotula"
-                    class="inline-flex items-center gap-2 bg-gov-950 hover:bg-gov-900 active:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition border border-gov-950 shadow-xs cursor-pointer disabled:opacity-50">
-                    <svg wire:loading.remove wire:target="saveNotula" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
-                    </svg>
-                    <svg wire:loading wire:target="saveNotula" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                    </svg>
-                    <span wire:loading.remove wire:target="saveNotula">Simpan Notula</span>
-                    <span wire:loading wire:target="saveNotula">Menyimpan...</span>
-                </button>
-            </footer>
-
         </div>
     </div>
     @endif
@@ -2607,7 +2620,7 @@
                 <span class="leading-relaxed" x-text="confirmDeleteModal.noticeText"></span>
             </div>
 
-            <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-slate-200">
+            <div class="pt-3 flex justify-end space-x-2 border-t border-slate-200 items-center">
                 <button type="button" @click="confirmDeleteModal.show = false" :disabled="confirmDeleteModal.loading"
                     class="px-3.5 py-2 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition cursor-pointer disabled:opacity-50">
                     Batal
@@ -2636,36 +2649,36 @@
     <!-- ======================================================== -->
     <div x-show="receiptPreviewModal.show" x-cloak wire:ignore.self
         @click="if (window.isBackdropClick($event, $el)) closeReceiptModal(false)"
-        class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
-        style="display: none; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
+        style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        role="dialog" aria-modal="true" aria-labelledby="receipt-preview-modal-title"
         @keydown.escape.window="if (receiptPreviewModal.show) closeReceiptModal(false)"
         @keydown.arrow-left.window="if (receiptPreviewModal.show) receiptPreviewModal.prev()"
         @keydown.arrow-right.window="if (receiptPreviewModal.show) receiptPreviewModal.next()">
-        <div class="bg-white rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200/80 space-y-3.5 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[92vh]">
-            <!-- Header -->
-            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-200/80">
-                <div class="flex items-start gap-3 min-w-0">
-                    <div class="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200/70 flex items-center justify-center shrink-0 text-sky-600 shadow-2xs">
-                        <svg class="w-5 h-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
+        <div @click.stop
+            class="bg-[#0b2b54] rounded-2xl max-w-3xl w-full shadow-2xl border-0 overflow-hidden flex flex-col my-auto relative animate-in fade-in zoom-in-95 duration-200"
+            style="z-index: 10000; background-color: #0b2b54; border: none; max-height: min(92vh, 90dvh); height: auto;">
+            
+            <!-- Modal Header: Solid Navy (#0b2b54) -->
+            <div class="px-5 py-3.5 bg-gov-navy text-white flex items-center justify-between border-b border-white/10 shrink-0 rounded-t-2xl"
+                style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h3 id="receipt-preview-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;">
+                            Bukti Transaksi Kas
+                        </h3>
+                        <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
+                            <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/20 text-white border border-white/30">
+                                Berkas <span x-text="receiptPreviewModal.currentIndex + 1"></span> dari <span x-text="receiptPreviewModal.items.length"></span>
+                            </span>
+                        </template>
                     </div>
-                    <div class="min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="text-base font-bold text-gov-textMain truncate">Bukti Transaksi Kas</h3>
-                            <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
-                                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100 text-sky-800 border border-sky-200">
-                                    Berkas <span x-text="receiptPreviewModal.currentIndex + 1"></span> dari <span x-text="receiptPreviewModal.items.length"></span>
-                                </span>
-                            </template>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-0.5 leading-relaxed line-clamp-1" x-text="receiptPreviewModal.description || 'Pratinjau berkas bukti transaksi'"></p>
-                    </div>
+                    <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;" x-text="receiptPreviewModal.description || 'Pratinjau berkas bukti transaksi'"></p>
                 </div>
                 <button type="button" @click="closeReceiptModal(false)"
-                    class="text-slate-400 hover:text-gov-textMain p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer shrink-0"
-                    title="Tutup">
+                    class="p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer shrink-0"
+                    style="color: #ffffff;"
+                    title="Tutup Modal">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -2673,118 +2686,127 @@
                 </button>
             </div>
 
-            <!-- Transaction Details Summary Card -->
-            <div class="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none"
-                          :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-rose-100 text-rose-800 border-rose-300'"
-                          x-text="receiptPreviewModal.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'"></span>
-                    <span class="text-slate-500 font-medium" x-text="receiptPreviewModal.date"></span>
-                </div>
-                <div class="font-bold text-sm tnum text-gov-textMain" x-text="receiptPreviewModal.amount"></div>
-            </div>
-
-            <!-- Preview Body Container / Carousel Viewport -->
-            <div class="flex-1 overflow-hidden min-h-65 max-h-[54vh] bg-slate-950/90 rounded-xl border border-slate-800 p-2 flex items-center justify-center relative select-none">
-                <!-- If Image -->
-                <template x-if="!receiptPreviewModal.isPdf && receiptPreviewModal.currentUrl">
-                    <img :src="receiptPreviewModal.currentUrl" :alt="'Bukti Transaksi ' + (receiptPreviewModal.currentIndex + 1)"
-                        class="max-h-[50vh] max-w-full rounded-lg object-contain shadow-xs select-none transition-all duration-200">
-                </template>
-
-                <!-- If PDF -->
-                <template x-if="receiptPreviewModal.isPdf && receiptPreviewModal.currentUrl">
-                    <iframe :src="receiptPreviewModal.currentUrl" class="w-full h-[50vh] rounded-lg border-0 shadow-xs bg-white"></iframe>
-                </template>
-
-                <!-- Fallback empty -->
-                <template x-if="!receiptPreviewModal.currentUrl">
-                    <div class="text-center p-8 text-slate-400">
-                        <svg class="w-10 h-10 mx-auto text-slate-500 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                            <circle cx="9" cy="9" r="2"/>
-                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                        </svg>
-                        <p class="text-xs font-medium text-slate-400">Berkas bukti tidak ditemukan atau tautan tidak valid.</p>
+            <div class="flex flex-col flex-1 min-h-0 bg-white rounded-b-2xl"
+                style="background-color: #ffffff; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                
+                <!-- Body Scrollable Area -->
+                <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3.5 notula-scrollable bg-white">
+                    <!-- Transaction Details Summary Card -->
+                    <div class="p-2.5 sm:p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center h-[20px] px-2.5 rounded-full text-[11px] font-semibold border leading-none"
+                                  :class="receiptPreviewModal.type === 'pemasukan' ? 'bg-emerald-50 text-emerald-700 border-emerald-400' : 'bg-rose-100 text-rose-800 border-rose-300'"
+                                  x-text="receiptPreviewModal.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'"></span>
+                            <span class="text-slate-500 font-medium" x-text="receiptPreviewModal.date"></span>
+                        </div>
+                        <div class="font-bold text-sm tnum text-gov-textMain" x-text="receiptPreviewModal.amount"></div>
                     </div>
-                </template>
 
-                <!-- Carousel Navigation Arrows (when multiple items) -->
-                <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
-                    <div class="contents">
-                        <!-- Prev Button -->
-                        <button type="button" @click.stop="receiptPreviewModal.prev()"
-                            class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 shadow-lg backdrop-blur-xs transition cursor-pointer z-10 hover:scale-105 active:scale-95"
-                            title="Foto Sebelumnya (Panah Kiri)">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"></polyline>
-                            </svg>
-                        </button>
-                        <!-- Next Button -->
-                        <button type="button" @click.stop="receiptPreviewModal.next()"
-                            class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 shadow-lg backdrop-blur-xs transition cursor-pointer z-10 hover:scale-105 active:scale-95"
-                            title="Foto Berikutnya (Panah Kanan)">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                </template>
-            </div>
+                    <!-- Preview Body Container / Carousel Viewport -->
+                    <div class="flex-1 overflow-hidden min-h-65 max-h-[50vh] bg-slate-950/90 rounded-xl border border-slate-800 p-2 flex items-center justify-center relative select-none">
+                        <!-- If Image -->
+                        <template x-if="!receiptPreviewModal.isPdf && receiptPreviewModal.currentUrl">
+                            <img :src="receiptPreviewModal.currentUrl" :alt="'Bukti Transaksi ' + (receiptPreviewModal.currentIndex + 1)"
+                                class="max-h-[46vh] max-w-full rounded-lg object-contain shadow-xs select-none transition-all duration-200">
+                        </template>
 
-            <!-- Carousel Thumbnails (when multiple items) -->
-            <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
-                <div class="flex items-center gap-2 overflow-x-auto py-1 px-0.5 max-w-full scrollbar-thin">
-                    <template x-for="(item, idx) in receiptPreviewModal.items" :key="idx">
-                        <button type="button" @click="receiptPreviewModal.setIndex(idx)"
-                            class="relative shrink-0 w-13 h-13 sm:w-14 sm:h-14 rounded-lg overflow-hidden border-2 transition cursor-pointer focus:outline-none"
-                            :class="receiptPreviewModal.currentIndex === idx ? 'border-sky-500 ring-2 ring-sky-300 opacity-100 scale-102' : 'border-slate-200 opacity-60 hover:opacity-100'">
-                            <template x-if="!item.is_pdf">
-                                <img :src="item.url" class="w-full h-full object-cover">
-                            </template>
-                            <template x-if="item.is_pdf">
-                                <div class="w-full h-full bg-slate-100 flex flex-col items-center justify-center text-rose-600">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
+                        <!-- If PDF -->
+                        <template x-if="receiptPreviewModal.isPdf && receiptPreviewModal.currentUrl">
+                            <iframe :src="receiptPreviewModal.currentUrl" class="w-full h-[46vh] rounded-lg border-0 shadow-xs bg-white"></iframe>
+                        </template>
+
+                        <!-- Fallback empty -->
+                        <template x-if="!receiptPreviewModal.currentUrl">
+                            <div class="text-center p-8 text-slate-400">
+                                <svg class="w-10 h-10 mx-auto text-slate-500 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                </svg>
+                                <p class="text-xs font-medium text-slate-400">Berkas bukti tidak ditemukan atau tautan tidak valid.</p>
+                            </div>
+                        </template>
+
+                        <!-- Carousel Navigation Arrows (when multiple items) -->
+                        <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
+                            <div class="contents">
+                                <!-- Prev Button -->
+                                <button type="button" @click.stop="receiptPreviewModal.prev()"
+                                    class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 shadow-lg backdrop-blur-xs transition cursor-pointer z-10 hover:scale-105 active:scale-95"
+                                    title="Foto Sebelumnya (Panah Kiri)">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 18 9 12 15 6"></polyline>
                                     </svg>
-                                    <span class="text-[8px] font-bold">PDF</span>
-                                </div>
-                            </template>
-                            <div class="absolute bottom-0 inset-x-0 bg-slate-900/70 text-[9px] text-white font-bold text-center leading-tight py-0.5"
-                                 x-text="'#' + (idx + 1)"></div>
-                        </button>
-                    </template>
-                </div>
-            </template>
+                                </button>
+                                <!-- Next Button -->
+                                <button type="button" @click.stop="receiptPreviewModal.next()"
+                                    class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white border border-white/20 shadow-lg backdrop-blur-xs transition cursor-pointer z-10 hover:scale-105 active:scale-95"
+                                    title="Foto Berikutnya (Panah Kanan)">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
 
-            <!-- Footer Actions -->
-            <div class="pt-3 flex items-center justify-between gap-2 border-t border-slate-100 text-xs">
-                <a :href="receiptPreviewModal.isPdf ? ('{{ route('document.viewer') }}?file=' + encodeURIComponent(receiptPreviewModal.currentUrl) + '&fallback=' + encodeURIComponent('{{ url('/admin/finance') }}')) : receiptPreviewModal.currentUrl"
-                    class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition inline-flex items-center gap-1.5 cursor-pointer shadow-2xs">
-                    <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                    <span>Buka File Asli</span>
-                </a>
-                <div class="flex items-center gap-2">
-                    <template x-if="receiptPreviewModal.fromFinanceModal">
-                        <button type="button" @click="closeReceiptModal(false)"
-                            class="px-3.5 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white font-bold shadow-2xs transition cursor-pointer inline-flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="m15 18-6-6 6-6"/>
-                            </svg>
-                            <span>Kembali ke Form Edit</span>
-                        </button>
+                    <!-- Carousel Thumbnails (when multiple items) -->
+                    <template x-if="receiptPreviewModal.items && receiptPreviewModal.items.length > 1">
+                        <div class="flex items-center gap-2 overflow-x-auto py-1 px-0.5 max-w-full scrollbar-thin">
+                            <template x-for="(item, idx) in receiptPreviewModal.items" :key="idx">
+                                <button type="button" @click="receiptPreviewModal.setIndex(idx)"
+                                    class="relative shrink-0 w-13 h-13 sm:w-14 sm:h-14 rounded-lg overflow-hidden border-2 transition cursor-pointer focus:outline-none"
+                                    :class="receiptPreviewModal.currentIndex === idx ? 'border-sky-500 ring-2 ring-sky-300 opacity-100 scale-102' : 'border-slate-200 opacity-60 hover:opacity-100'">
+                                    <template x-if="!item.is_pdf">
+                                        <img :src="item.url" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="item.is_pdf">
+                                        <div class="w-full h-full bg-slate-100 flex flex-col items-center justify-center text-rose-600">
+                                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                                <polyline points="14 2 14 8 20 8"/>
+                                            </svg>
+                                            <span class="text-[8px] font-bold">PDF</span>
+                                        </div>
+                                    </template>
+                                    <div class="absolute bottom-0 inset-x-0 bg-slate-900/70 text-[9px] text-white font-bold text-center leading-tight py-0.5"
+                                         x-text="'#' + (idx + 1)"></div>
+                                </button>
+                            </template>
+                        </div>
                     </template>
-                    <button type="button" @click="closeReceiptModal(true)"
-                        class="px-4 py-2 rounded-lg font-bold shadow-2xs transition cursor-pointer"
-                        :class="receiptPreviewModal.fromFinanceModal ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200' : 'bg-gov-navy hover:bg-gov-navyHover text-white'">
-                        Tutup
-                    </button>
                 </div>
+
+                <!-- Sticky Footer Actions -->
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0 rounded-b-2xl"
+                    style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem;">
+                    <a :href="receiptPreviewModal.isPdf ? ('{{ route('document.viewer') }}?file=' + encodeURIComponent(receiptPreviewModal.currentUrl) + '&fallback=' + encodeURIComponent('{{ url('/admin/finance') }}')) : receiptPreviewModal.currentUrl"
+                        class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition inline-flex items-center gap-1.5 cursor-pointer border border-slate-300 text-xs shadow-2xs">
+                        <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                        <span>Buka File Asli</span>
+                    </a>
+                    <div class="flex items-center gap-2">
+                        <template x-if="receiptPreviewModal.fromFinanceModal">
+                            <button type="button" @click="closeReceiptModal(false)"
+                                class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-semibold transition cursor-pointer border border-slate-300 inline-flex items-center gap-1.5 text-xs">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m15 18-6-6 6-6"/>
+                                </svg>
+                                <span>Kembali ke Form Edit</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="closeReceiptModal(true)"
+                            class="px-5 py-2 rounded-lg bg-gov-navy text-white font-bold shadow-xs transition cursor-pointer text-xs"
+                            style="background-color: #0b2b54; color: #ffffff; border: 1px solid #0b2b54;">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
