@@ -1002,6 +1002,12 @@
                 const blob = await res.blob();
                 const file = new File([blob], filename, { type: 'application/pdf' });
 
+                // Simpan berkas murni (raw/unproxied) ke window object agar tidak terpengaruh reactive proxy Alpine
+                window._rawPernyataanPdfFile = file;
+                window._rawPernyataanPdfBlob = blob;
+                window._rawPernyataanPdfFilename = filename;
+                window._rawPernyataanPdfUrl = downloadUrl;
+
                 // 2. Pada perangkat iOS / Mobile WebKit:
                 if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
@@ -1053,17 +1059,61 @@
             }
         },
         async executePernyataanShareFromDrawer() {
-            if (!this.pernyataanPendingShareFile) return;
+            // Dapatkan objek berkas asli (unproxied native File)
+            const rawFile = window._rawPernyataanPdfFile || 
+                            (window.Alpine && typeof window.Alpine.raw === 'function' && this.pernyataanPendingShareFile ? window.Alpine.raw(this.pernyataanPendingShareFile) : this.pernyataanPendingShareFile);
+            const title = this.pernyataanPendingShareTitle || 'Surat_Pernyataan';
+            const filename = window._rawPernyataanPdfFilename || (title + '.pdf');
+
+            if (!rawFile) {
+                console.warn('[PDF Share] Berkas tidak ditemukan di memori, memicu unduh ulang...');
+                this.pernyataanReadyShareDrawer = false;
+                this.downloadSuratPernyataanPdf();
+                return;
+            }
+
+            // 1. Coba panggil navigator.share native iOS (Gambar 2: AirDrop, WhatsApp, Save to Files)
             try {
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [this.pernyataanPendingShareFile] })) {
+                if (navigator.share) {
                     await navigator.share({
-                        files: [this.pernyataanPendingShareFile],
-                        title: this.pernyataanPendingShareTitle || 'Surat_Pernyataan'
+                        files: [rawFile],
+                        title: title
                     });
+                    // Bila sukses memunculkan dan pengguna selesai memilih opsi simpan
+                    this.pernyataanReadyShareDrawer = false;
+                    return;
                 }
             } catch (e) {
-                if (e.name !== 'AbortError') {
-                    console.error('Share from drawer failed:', e);
+                if (e.name === 'AbortError') {
+                    // Pengguna sengaja membatalkan/menutup menu share sheet
+                    return;
+                }
+                console.warn('[PDF Share] navigator.share dari drawer gagal/ditolak sistem, beralih ke fallback blob:', e);
+            }
+
+            // 2. Fallback tangguh: Unduh langsung via Blob Object URL agar user tidak pernah stuck "tidak terjadi apa-apa"
+            try {
+                const blob = window._rawPernyataanPdfBlob || rawFile;
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    if (link.parentNode) link.parentNode.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+                }, 2500);
+                this.pernyataanReadyShareDrawer = false;
+            } catch (fallbackErr) {
+                console.error('[PDF Share] Fallback download gagal:', fallbackErr);
+                if (typeof window.dispatchEvent === 'function') {
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: {
+                            message: 'Gagal membuka berkas PDF. Silakan coba kembali.'
+                        }
+                    }));
                 }
             }
         },

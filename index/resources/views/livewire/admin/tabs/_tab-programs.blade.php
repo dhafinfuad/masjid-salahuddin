@@ -1719,6 +1719,16 @@
                                 </svg>
                                 <span>Buka Menu Simpan (Save to Files)</span>
                             </button>
+
+                            <!-- Tombol Sekunder Ramping Sesuai Rule 3.4 GEMINI.md: Tutup -->
+                            <button type="button" @click="pernyataanReadyShareDrawer = false"
+                                class="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl border border-slate-400 hover:border-slate-500 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
+                                <svg class="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                <span class="text-xs font-semibold text-slate-800">Tutup</span>
+                            </button>
                         </div>
                     </div>
                 </div>
