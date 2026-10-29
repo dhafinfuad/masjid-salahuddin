@@ -962,6 +962,9 @@
         printPernyataanSearchNewEmp: '',
         printPernyataanSelectedNewName: '',
         isDownloadingPernyataanPdf: false,
+        pernyataanReadyShareDrawer: false,
+        pernyataanPendingShareFile: null,
+        pernyataanPendingShareTitle: '',
         togglePrintDropdown(name) {
             this.printPernyataanOpenDropdown = (this.printPernyataanOpenDropdown === name ? null : name);
         },
@@ -971,6 +974,8 @@
         async downloadSuratPernyataanPdf() {
             if (this.isDownloadingPernyataanPdf) return;
             this.isDownloadingPernyataanPdf = true;
+            this.pernyataanReadyShareDrawer = false;
+            this.pernyataanPendingShareFile = null;
             try {
                 const downloadUrl = '{{ route('admin.programs.download-pdf') }}?mode=' + this.printPernyataanMode + 
                     '&year=' + this.printPernyataanYear + 
@@ -985,9 +990,55 @@
                 const filename = 'Surat_Pernyataan_Pemotongan_Tukin_' + 
                     (this.printPernyataanEmployeeName ? this.printPernyataanEmployeeName.replace(/\s+/g, '_') : (this.printPernyataanMode === 'blank' ? 'Blangko_Kosong' : 'Semua')) + '.pdf';
 
-                if (typeof window.downloadPdfDirect === 'function') {
-                    await window.downloadPdfDirect(downloadUrl, filename);
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+                // 1. Fetch data berkas PDF ke dalam Blob
+                const res = await fetch(downloadUrl);
+                if (!res.ok) {
+                    throw new Error('Server returned HTTP ' + res.status);
                 }
+
+                const blob = await res.blob();
+                const file = new File([blob], filename, { type: 'application/pdf' });
+
+                // 2. Pada perangkat iOS / Mobile WebKit:
+                if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        // Coba panggil langsung (berhasil jika respon cepat / gesture belum kedaluwarsa)
+                        await navigator.share({
+                            files: [file],
+                            title: filename.replace('.pdf', '')
+                        });
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') {
+                            return;
+                        }
+                        // Jika WebKit menolak karena gesture kedaluwarsa saat fetch berkas besar (Semua Pegawai):
+                        // JANGAN alihkan ke link.click() yang memicu previewer browser (Gambar 1).
+                        // Munculkan Bottom Drawer penolong agar user mengetuk tombol untuk gesture baru.
+                        console.warn('[PDF Download] Direct share failed (gesture expired), opening bottom drawer helper:', shareErr);
+                        this.pernyataanPendingShareFile = file;
+                        this.pernyataanPendingShareTitle = filename.replace('.pdf', '');
+                        this.pernyataanReadyShareDrawer = true;
+                        return;
+                    }
+                }
+
+                // 3. Fallback Desktop / Browser umum via Blob URL
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    if (link.parentNode) link.parentNode.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+                }, 2500);
+
             } catch (err) {
                 console.error('Download surat pernyataan PDF error:', err);
                 if (typeof window.dispatchEvent === 'function') {
@@ -999,6 +1050,21 @@
                 }
             } finally {
                 this.isDownloadingPernyataanPdf = false;
+            }
+        },
+        async executePernyataanShareFromDrawer() {
+            if (!this.pernyataanPendingShareFile) return;
+            try {
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [this.pernyataanPendingShareFile] })) {
+                    await navigator.share({
+                        files: [this.pernyataanPendingShareFile],
+                        title: this.pernyataanPendingShareTitle || 'Surat_Pernyataan'
+                    });
+                }
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    console.error('Share from drawer failed:', e);
+                }
             }
         },
         openPrintPernyataanModal(tab = 'cetak') {

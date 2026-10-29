@@ -1671,6 +1671,56 @@
                             @endif
                         </div>
                     @endif
+
+                    <!-- ============================================== -->
+                    <!-- BOTTOM DRAWER HELPER: BERKAS SIAP (IOS WEBKIT) -->
+                    <!-- ============================================== -->
+                    <!-- 1. Dark Backdrop Overlay (Ketuk untuk menutup) -->
+                    <div x-show="pernyataanReadyShareDrawer" x-cloak
+                        @click="pernyataanReadyShareDrawer = false"
+                        x-transition:enter="transition-opacity ease-out duration-250"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="transition-opacity ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50"
+                        style="display: none;">
+                    </div>
+
+                    <!-- 2. Minimalist Ready Sheet Panel -->
+                    <div x-show="pernyataanReadyShareDrawer" x-cloak
+                        x-transition:enter="transition ease-out duration-300 transform"
+                        x-transition:enter-start="translate-y-full"
+                        x-transition:enter-end="translate-y-0"
+                        x-transition:leave="transition ease-in duration-200 transform"
+                        x-transition:leave-start="translate-y-0"
+                        x-transition:leave-end="translate-y-full"
+                        class="fixed bottom-0 inset-x-0 z-50 flex flex-col justify-end pointer-events-none"
+                        style="display: none;">
+
+                        <div class="w-full max-w-md mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-7 space-y-3.5 pointer-events-auto">
+                            <!-- Center Drag Indicator Handle -->
+                            <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
+
+                            <!-- Sheet Header Ringkas: "Berkas Siap" -->
+                            <div class="text-center">
+                                <h4 class="text-sm font-bold text-slate-900">Berkas Siap</h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5 truncate" x-text="pernyataanPendingShareTitle ? pernyataanPendingShareTitle + '.pdf' : 'Surat Pernyataan Pemotongan Tukin.pdf'"></p>
+                            </div>
+
+                            <!-- Tombol Utama: Buka Menu Simpan (Save to Files) -->
+                            <button type="button" @click="executePernyataanShareFromDrawer()"
+                                class="w-full py-3.5 px-4 rounded-xl bg-gov-navy hover:bg-gov-navyHover active:scale-[0.99] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                                    <polyline points="16 6 12 2 8 6"/>
+                                    <line x1="12" y1="2" x2="12" y2="15"/>
+                                </svg>
+                                <span>Buka Menu Simpan (Save to Files)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 @if(Auth::user()->canManage())

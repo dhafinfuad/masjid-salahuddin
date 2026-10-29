@@ -182,5 +182,11 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString('isDownloadingPernyataanPdf', $html);
         $this->assertStringContainsString('Unduh Surat (PDF)', $html);
         $this->assertStringContainsString('Memproses...', $html);
+
+        // 3. Memastikan bottom drawer penolong iOS WebKit ter-render untuk tab surat pernyataan
+        $this->assertStringContainsString('pernyataanReadyShareDrawer', $html);
+        $this->assertStringContainsString('executePernyataanShareFromDrawer()', $html);
+        $this->assertStringContainsString('Berkas Siap', $html);
+        $this->assertStringContainsString('Buka Menu Simpan (Save to Files)', $html);
     }
 }
