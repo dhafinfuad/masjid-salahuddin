@@ -196,7 +196,11 @@ class KajianTimeAndTitleSyncTest extends TestCase
             ->assertSee('• ' . $pekananTime);
 
         // 3. Kegiatan Masjid Page
+        $month = (string) Carbon::parse($fridayDate)->month;
+        $year = (int) Carbon::parse($fridayDate)->year;
         Livewire::test(KegiatanMasjidPage::class)
+            ->set('selectedMonth', $month)
+            ->set('selectedYear', $year)
             ->assertSee('Khatib Jumat Spesial')
             ->assertDontSee('• ' . $uniqueFridayTime)
             ->assertSee('Kajian Pekanan Spesial')

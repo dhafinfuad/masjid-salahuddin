@@ -2130,11 +2130,15 @@ class AdminDashboard extends Component
     // ==========================================
     public function openUstadzModal(): void
     {
+        $this->showUstadzModal = true;
+        $this->dispatch('open-ustadz-modal');
         $this->openCreateUstadzModal();
     }
 
     public function closeUstadzModal(): void
     {
+        $this->showUstadzModal = false;
+        $this->dispatch('close-ustadz-modal');
         $this->closeCreateUstadzModal();
         $this->closeEditUstadzModal();
     }

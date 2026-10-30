@@ -331,7 +331,7 @@
                                     <div class="flex flex-col items-center justify-center gap-1.5">
                                         @if($isJumat)
                                             <a href="{{ route('admin.kajian.teks-mc', ['id' => $item['id'], 'from' => 'portal']) }}" target="_blank"
-                                               class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               class="col-action-btn h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">
                                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
@@ -340,7 +340,7 @@
                                         @endif
                                         @if(!empty($item['youtube_url']))
                                             <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
-                                                class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="col-action-btn h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                 style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Tonton Siaran di YouTube">
                                                 <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -360,7 +360,7 @@
                                                     'time_display' => $item['time_display'] ?? '',
                                                     'notula' => $item['notula'],
                                                 ]) }})"
-                                                class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="col-action-btn h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                 style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Baca Risalah Notula Kajian">
                                                 <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -485,7 +485,7 @@
                                     <div>
                                         @if($isJumat)
                                             <a href="{{ route('admin.kajian.teks-mc', ['id' => $item['id'], 'from' => 'portal']) }}" target="_blank"
-                                               class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                               class="h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">
                                                 <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
@@ -496,7 +496,7 @@
                                     <div class="flex items-center gap-1.5">
                                         @if(!empty($item['youtube_url']))
                                             <a href="{{ $item['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
-                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                 style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Tonton Siaran di YouTube">
                                                 <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -516,7 +516,7 @@
                                                     'time_display' => $item['time_display'] ?? '',
                                                     'notula' => $item['notula'],
                                                 ]) }})"
-                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
+                                                class="h-8 w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0 leading-none"
                                                 style="width: 96px; min-width: 96px; max-width: 96px;"
                                                 title="Baca Risalah Notula Kajian">
                                                 <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

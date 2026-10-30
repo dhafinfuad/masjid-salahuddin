@@ -44,7 +44,7 @@ class YoutubeLinkTest extends TestCase
 
         $this->sampleKajian = Kajian::create([
             'type' => 'pekanan',
-            'date' => Carbon::now()->addDays(2)->format('Y-m-d'),
+            'date' => Carbon::now()->format('Y-m-d'),
             'time_display' => '09:00 - 11:30',
             'title' => 'Tafsir Surat Al-Kahfi',
             'speaker_name' => 'Ustadz Fulan',
