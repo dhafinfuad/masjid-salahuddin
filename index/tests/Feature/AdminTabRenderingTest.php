@@ -211,4 +211,33 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString('livewireProgressStream', $layoutContent);
         $this->assertStringContainsString('.livewire-progress-bar-stream', $layoutContent);
     }
+
+    public function test_dashboard_tab_renders_hybrid_command_hub_with_quick_status_and_menu_grid(): void
+    {
+        $response = $this->actingAs($this->admin)->get('/admin');
+        $response->assertOk();
+        $response->assertSee('Ahlan wa Sahlan');
+        $response->assertSee('Saldo Kas Utama');
+        $response->assertSee('Menu Manajemen Utama');
+        $response->assertSee('Jadwal Kegiatan');
+        $response->assertSee('Petugas Shalat');
+        $response->assertSee('Kas & Keuangan', false);
+        $response->assertSee('Program Sosial');
+        $response->assertSee('Galeri Foto');
+        $response->assertSee('Saran & Kritik', false);
+        $response->assertSee('Pengaturan');
+        $response->assertSee('Pengguna & DKM', false);
+        $response->assertSee('Statistik');
+        $response->assertSee('TV Display');
+        $response->assertSee('Portal Jamaah');
+
+        // Memastikan tidak ada badge "Hari Ini" atau badge counter terlarang
+        $response->assertDontSee('>Hari Ini<', false);
+
+        // Memastikan interaktivitas switchTabFast tersedia di kartu menu
+        $response->assertSee("switchTabFast('kegiatan')", false);
+        $response->assertSee("switchTabFast('finance')", false);
+        $response->assertSee("switchTabFast('petugas')", false);
+    }
 }
+

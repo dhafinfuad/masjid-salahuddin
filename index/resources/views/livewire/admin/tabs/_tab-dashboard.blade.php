@@ -1,277 +1,360 @@
-            <!-- ======================================================== -->
-            <!-- SUBTAB 1: DASHBOARD -->
-            <!-- ======================================================== -->
-            <div class="space-y-6">
-                <!-- Welcome Hero Banner (Navy with Pattern & Warm Gold Accents) -->
-                <div
-                    class="bg-gov-navy rounded-xl p-6 text-white relative overflow-hidden shadow-xs bg-gov-pattern border border-gov-border/30">
-                    <div
-                        class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 relative z-10">
-                        <div class="space-y-1.5 max-w-xl">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                                <span class="text-sm text-amber-300 font-medium">Ahlan wa Sahlan</span>
-                            </div>
-                            <h2 class="text-2xl py-1 font-bold text-white tracking-tight capitalize">
-                                {{ preg_replace('/\s*\(.*?\)/', '', Auth::user()->name ?? 'Pengurus') }}
-                            </h2>
-                            <p class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed">Menebar Manfaat, Meraih Berkah</p>
-                        </div>
-                    </div>
+<!-- ======================================================== -->
+<!-- SUBTAB 1: DASHBOARD (HYBRID COMMAND HUB / MODEL B) -->
+<!-- ======================================================== -->
+<div class="space-y-6">
+    <!-- Welcome Hero Banner (Navy with Pattern & Warm Gold Accents) -->
+    <div
+        class="bg-gov-navy rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden shadow-xs bg-gov-pattern border border-gov-border/30">
+        <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
+            <div class="space-y-1 max-w-xl">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span class="text-xs sm:text-sm text-amber-300 font-medium">Ahlan wa Sahlan</span>
                 </div>
+                <h2 class="text-xl sm:text-2xl py-0.5 font-bold text-white tracking-tight capitalize">
+                    {{ preg_replace('/\s*\(.*?\)/', '', Auth::user()->name ?? 'Pengurus') }}
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-200 font-normal leading-relaxed">Menebar Manfaat, Meraih Berkah &bull; {{ $settings->name }}</p>
+            </div>
+            <div class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-white/10 text-white border border-white/15 self-start sm:self-auto flex items-center gap-2 shrink-0">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span>{{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('l, d F Y') }}</span>
+            </div>
+        </div>
+    </div>
 
-                <!-- Two Columns Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Left 8 cols: Jadwal Kajian Terdekat & Agenda Akbar -->
-                    <div class="lg:col-span-8 space-y-6">
-                        <!-- Jadwal Kajian & Khutbah Terdekat -->
-                        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs space-y-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 pb-3">
-                                <div>
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Jadwal Kajian & Khutbah Terdekat</h3>
-                                    <p class="text-xs text-gov-textMuted mt-0.5">Jadwal khutbah Jumat dan kajian rutin pekanan terdekat di {{ $settings->name }}.</p>
-                                </div>
-                                <button type="button" @click="switchTabFast('kajian')"
-                                    class="text-xs font-semibold text-gov-navy hover:text-amber-600 inline-flex items-center gap-1 transition cursor-pointer shrink-0 self-start sm:self-auto">
-                                    <span>Kelola semua</span>
-                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-2.5">
-                                @forelse($upcomingKajians as $kj)
-                                    @php
-                                        $kjDate = \Carbon\Carbon::parse($kj->date);
-                                        $isJumat = $kj->type === 'jumat';
-                                        $speaker = $isJumat ? ($kj->khatib_name ?: 'Khatib Shalat Jumat') : ($kj->speaker_name ?: 'Pemateri Kajian');
-                                    @endphp
-                                    <div
-                                        class="p-3 sm:p-3.5 rounded-xl bg-slate-50/70 border border-gov-border hover:bg-slate-100/80 transition flex items-start gap-3 shadow-2xs">
-                                        <!-- Date Box -->
-                                        <div
-                                            class="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-white border border-gov-border text-gov-navy flex flex-col items-center justify-center font-mono shrink-0 shadow-2xs">
-                                            <span
-                                                class="text-xs sm:text-sm font-bold leading-none">{{ $kjDate->format('d') }}</span>
-                                            <span
-                                                class="text-[10px] uppercase font-bold text-amber-600 mt-0.5">{{ $kjDate->translatedFormat('M') }}</span>
-                                        </div>
-
-                                        <!-- Details & Actions -->
-                                        <div class="min-w-0 flex-1">
-                                            <!-- Top Row: Badge & Action -->
-                                            <div class="flex items-center justify-between gap-2">
-                                                <span
-                                                    class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none shrink-0 whitespace-nowrap {{ $isJumat ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-50 text-emerald-700 border-emerald-300' }}">
-                                                    {{ $isJumat ? 'Shalat Jumat' : 'Kajian Pekanan' }}
-                                                </span>
-
-                                                @if($isJumat)
-                                                    <a href="{{ route('admin.kajian.teks-mc', ['id' => $kj->id, 'from' => 'admin']) }}" target="_blank"
-                                                        class="inline-flex items-center justify-center p-1.5 rounded-lg bg-gov-50 hover:bg-gov-100 text-gov-navy border border-gov-border shadow-2xs transition cursor-pointer shrink-0 ml-auto"
-                                                        title="Buka & Cetak Teks MC Shalat Jumat">
-                                                        <i data-lucide="printer" class="w-3.5 h-3.5 text-gov-navy"></i>
-                                                    </a>
-                                                @endif
-                                            </div>
-
-                                            <!-- Title -->
-                                            <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-1.5">{{ $kj->title ?: ($isJumat ? 'Shalat Jumat & Khutbah' : 'Kajian') }}</h4>
-
-                                            <!-- Speaker -->
-                                            <p class="text-xs text-slate-700 font-medium truncate mt-0.5">{{ $speaker }}</p>
-
-                                            <!-- Time -->
-                                            @if(!$isJumat)
-                                                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1.5">
-                                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
-                                                    <span class="truncate">{{ $kj->time_display ?: '09:00 WIB' }}</span>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-xs text-slate-400 py-4 text-center">Belum ada jadwal kajian terdekat.</p>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <!-- Agenda & Perencanaan Masjid -->
-                        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs space-y-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 pb-3">
-                                <div>
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Agenda Akbar & Perencanaan</h3>
-                                    <p class="text-xs text-gov-textMuted mt-0.5">Rencana kegiatan besar, program hari besar Islam, dan monitoring LPJ.</p>
-                                </div>
-                                <button type="button" @click="switchTabFast('agenda')"
-                                    class="text-xs font-semibold text-gov-navy hover:text-amber-600 inline-flex items-center gap-1 transition cursor-pointer shrink-0 self-start sm:self-auto">
-                                    <span>Kelola agenda</span>
-                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                @forelse($allAgendas as $ag)
-                                    @php
-                                        $agDate = \Carbon\Carbon::parse($ag->event_date);
-                                        $agStatus = $ag->status ?: 'Direncanakan';
-                                        $isDone = strcasecmp($agStatus, 'SELESAI') === 0;
-                                        $isRunning = strcasecmp($agStatus, 'Berjalan') === 0;
-                                        $statusBadgeClass = $isDone 
-                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-400' 
-                                            : ($isRunning ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-sky-50 text-sky-700 border-sky-200');
-                                        $statusLabel = ucfirst(strtolower($agStatus));
-                                    @endphp
-                                    <div class="p-3.5 rounded-xl bg-slate-50/70 border border-gov-border hover:bg-slate-100/80 transition flex flex-col justify-between space-y-2.5 shadow-2xs">
-                                        <div class="flex items-start justify-between gap-2">
-                                            <div class="min-w-0 flex-1">
-                                                <h4 class="text-xs font-bold text-gov-textMain truncate leading-tight">{{ $ag->title }}</h4>
-                                                <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-                                                    <i data-lucide="calendar" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                                                    <span>{{ $agDate->translatedFormat('d F Y') }}</span>
-                                                </p>
-                                            </div>
-                                            <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold border leading-none shrink-0 whitespace-nowrap {{ $statusBadgeClass }}">
-                                                {{ $statusLabel }}
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center justify-between pt-2 border-t border-slate-200/80 text-xs">
-                                            <span class="text-slate-500 text-[11px]">Anggaran:</span>
-                                            <span class="font-bold text-gov-navy text-[11px] tnum">Rp {{ number_format($ag->budget, 0, ',', '.') }}</span>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="text-xs text-slate-400 py-4 text-center col-span-2">Belum ada agenda perencanaan aktif.</p>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right 4 cols: Transaksi Kas Terkini & Petugas Rawatib -->
-                    <div class="lg:col-span-4 space-y-6">
-                        <!-- Transaksi Kas Terkini -->
-                        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs space-y-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 pb-3">
-                                <div>
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Kas Terkini</h3>
-                                    <p class="text-xs text-gov-textMuted mt-0.5">Mutasi kas masuk & keluar</p>
-                                </div>
-                                <button type="button" @click="switchTabFast('finance')"
-                                    class="text-xs font-semibold text-gov-navy hover:text-amber-600 inline-flex items-center gap-1 transition cursor-pointer shrink-0 self-start sm:self-auto">
-                                    <span>Buku Kas</span>
-                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-2 text-xs">
-                                @forelse($recentFinances as $fin)
-                                    @php
-                                        $isMasuk = $fin->type === 'pemasukan';
-                                        $fDate = \Carbon\Carbon::parse($fin->transaction_date);
-                                    @endphp
-                                    <div class="p-2.5 rounded-lg bg-slate-50 border border-gov-border flex items-center justify-between">
-                                        <div class="space-y-0.5 overflow-hidden pr-2">
-                                            <div class="font-bold text-gov-textMain truncate text-xs">{{ $fin->description ?: ($fin->category->name ?? 'Kas') }}</div>
-                                            <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
-                                                <span>{{ $fDate->format('d M Y') }}</span>
-                                                <span>&bull;</span>
-                                                <span class="truncate max-w-25">{{ $fin->category->name ?? '-' }}</span>
-                                            </div>
-                                        </div>
-                                        <span class="inline-flex items-center font-bold text-xs tnum shrink-0 {{ $isMasuk ? 'text-emerald-700' : 'text-rose-700' }}">
-                                            {{ $isMasuk ? '+' : '-' }}Rp {{ number_format($fin->amount, 0, ',', '.') }}
-                                        </span>
-                                    </div>
-                                @empty
-                                    <p class="text-xs text-slate-400 py-3 text-center">Belum ada transaksi kas.</p>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <!-- Petugas Shalat Rawatib Pekan Ini -->
-                        <div class="bg-white p-5 rounded-xl border border-gov-border shadow-2xs space-y-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-200 pb-3">
-                                <div>
-                                    <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Petugas Shalat</h3>
-                                    <p class="text-xs text-gov-textMuted mt-0.5">Pekan ke-{{ $currentWeekNumber }}</p>
-                                </div>
-                                <button type="button" @click="switchTabFast('petugas')"
-                                    class="text-xs font-semibold text-gov-navy hover:text-amber-600 inline-flex items-center gap-1 transition cursor-pointer shrink-0 self-start sm:self-auto">
-                                    <span>Lihat Semua</span>
-                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-2 text-xs">
-                                @forelse($currentWeekDuties->take(5) as $duty)
-                                    @php
-                                        $isFridayDzuhurWidget = ($duty->day_name === 'Jumat' && $duty->prayer_time === 'dzuhur');
-                                        $fridayKajianWidget = ($isFridayDzuhurWidget && isset($fridayKajiansByWeek[$currentWeekNumber]))
-                                            ? $fridayKajiansByWeek[$currentWeekNumber]
-                                            : ($isFridayDzuhurWidget ? ($fridayKajians->first() ?? null) : null);
-
-                                        $isUstazKajianWidget = (stripos($duty->imam_name, 'kajian') !== false);
-                                        $pekananKeyWidget = "{$duty->day_name}_{$currentWeekNumber}";
-                                        $pekananKajianWidget = null;
-                                        if ($isUstazKajianWidget) {
-                                            if (isset($pekananKajiansByDayWeek[$pekananKeyWidget])) {
-                                                $pekananKajianWidget = $pekananKajiansByDayWeek[$pekananKeyWidget];
-                                            } elseif (isset($pekananKajiansByDay[$duty->day_name])) {
-                                                $pekananKajianWidget = $pekananKajiansByDay[$duty->day_name];
-                                            } elseif (isset($pekananKajiansByWeek[$currentWeekNumber])) {
-                                                $pekananKajianWidget = $pekananKajiansByWeek[$currentWeekNumber];
-                                            } else {
-                                                $pekananKajianWidget = $defaultPekananKajian ?? null;
-                                            }
-                                        }
-
-                                        $wImam = $duty->imam_name;
-                                        if ($isFridayDzuhurWidget && $fridayKajianWidget && !empty($fridayKajianWidget->khatib_name)) {
-                                            $wImam = $fridayKajianWidget->khatib_name;
-                                        } elseif ($isUstazKajianWidget && $pekananKajianWidget && (!empty($pekananKajianWidget->speaker_name) || !empty($pekananKajianWidget->khatib_name))) {
-                                            $wImam = $pekananKajianWidget->speaker_name ?: $pekananKajianWidget->khatib_name;
-                                        }
-
-                                        $wMuadzin = ($isFridayDzuhurWidget && $fridayKajianWidget && !empty($fridayKajianWidget->muadzin_name)) ? $fridayKajianWidget->muadzin_name : $duty->muadzin_name;
-                                        $wMc = ($isFridayDzuhurWidget && $fridayKajianWidget && !empty($fridayKajianWidget->mc_name)) ? $fridayKajianWidget->mc_name : null;
-                                    @endphp
-                                    <div class="p-2.5 rounded-lg bg-slate-50 border border-gov-border flex items-center justify-between">
-                                        <div>
-                                            <div class="flex items-center gap-2 mb-2 flex-wrap">
-                                                <span class="font-bold text-gov-textMain">{{ $duty->day_name }}</span>
-                                                <span class="inline-flex items-center h-4.5 px-1.5 rounded-md text-[10px] font-semibold bg-sky-50 text-sky-700 border border-sky-200 capitalize">{{ $duty->prayer_time }}</span>
-                                                @if($isFridayDzuhurWidget && $fridayKajianWidget)
-                                                    <span class="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-400">Kajian Jumat</span>
-                                                    <span class="inline-flex items-center text-[10px] font-semibold text-gov-navy bg-amber-100/80 px-1.5 py-0.5 rounded border border-amber-300">
-                                                        {{ \Carbon\Carbon::parse($fridayKajianWidget->date)->translatedFormat('d M Y') }}
-                                                    </span>
-                                                @elseif($isUstazKajianWidget && $pekananKajianWidget)
-                                                    <span class="inline-flex items-center text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">Kajian Pekanan</span>
-                                                @endif
-                                            </div>
-                                            <div class="text-[11px] text-slate-500 mt-0.5 flex flex-col items-start gap-1">
-                                                <span>{{ $isFridayDzuhurWidget ? 'Khatib:' : 'Imam:' }} <strong class="text-slate-700">{{ $wImam }}</strong></span>
-                                                @if($wMc)
-                                                    <span>MC: <strong class="text-slate-700">{{ $wMc }}</strong></span>
-                                                @endif
-                                                <span>{{ $isFridayDzuhurWidget ? 'Bilal:' : 'Muadzin:' }} <strong class="text-slate-700">{{ $wMuadzin }}</strong></span>
-                                            </div>
-                                        </div>
-                                        @if($isFridayDzuhurWidget && $fridayKajianWidget)
-                                            <div class="flex items-center gap-1.5 shrink-0 pl-2">
-                                                <a href="{{ route('admin.kajian.teks-mc', ['id' => $fridayKajianWidget->id, 'from' => 'admin']) }}" target="_blank"
-                                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
-                                                    title="Buka & Cetak Teks MC Shalat Jumat">
-                                                    <i data-lucide="printer" class="w-3.5 h-3.5 text-sky-600 shrink-0"></i>
-                                                    <span>Teks MC</span>
-                                                </a>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @empty
-                                    <p class="text-xs text-slate-400 py-3 text-center">Belum ada jadwal penugasan pekan ini.</p>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
+    <!-- Top Quick Status Cards (3 Kartu Ringkasan Cepat) -->
+    @php
+        $nextKajian = $upcomingKajians->first();
+        $isNextJumat = $nextKajian && $nextKajian->type === 'jumat';
+        $nextKajianDate = $nextKajian ? \Carbon\Carbon::parse($nextKajian->date) : null;
+        $nextSpeaker = $nextKajian ? ($isNextJumat ? ($nextKajian->khatib_name ?: 'Khatib Shalat Jumat') : ($nextKajian->speaker_name ?: 'Pemateri Kajian')) : null;
+        $nextTypeLabel = $isNextJumat ? 'Shalat Jumat' : 'Kajian Pekanan';
+    @endphp
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+        <!-- Status 1: Jadwal Ibadah / Kajian Terdekat -->
+        <div @click="switchTabFast('kegiatan')"
+            class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl {{ $isNextJumat ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-teal-50 text-teal-700 border-teal-200' }} border flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    {{ $isNextJumat ? 'JUM' : 'KAJ' }}
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider {{ $isNextJumat ? 'text-blue-700' : 'text-teal-700' }}">
+                        {{ $nextTypeLabel }} Terdekat
+                    </span>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
+                        {{ $nextSpeaker ?: 'Belum ada jadwal terdekat' }}
+                    </h4>
+                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                        @if($nextKajian)
+                            {{ $nextKajianDate ? $nextKajianDate->translatedFormat('d M') : '' }} &bull; {{ $nextKajian->time_display ?: ($isNextJumat ? '11:45 WIB' : '09:00 WIB') }}
+                            @if($nextKajian->muadzin_name)
+                                &bull; Bilal: {{ $nextKajian->muadzin_name }}
+                            @endif
+                        @else
+                            Jadwal kajian atau Jumat belum diatur
+                        @endif
+                    </p>
                 </div>
             </div>
+            <div class="flex items-center gap-2 shrink-0">
+                @if($isNextJumat && $nextKajian)
+                    <a href="{{ route('admin.kajian.teks-mc', ['id' => $nextKajian->id, 'from' => 'admin']) }}" target="_blank"
+                        @click.stop
+                        class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 text-xs font-semibold shadow-2xs transition"
+                        title="Buka & Cetak Teks MC Shalat Jumat">
+                        <svg class="w-3.5 h-3.5 text-blue-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        <span>Teks MC</span>
+                    </a>
+                @endif
+                <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center transition">
+                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status 2: Saldo Kas Utama -->
+        <div @click="switchTabFast('finance')"
+            class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700">Saldo Kas Utama</span>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5 tnum">
+                        Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}
+                    </h4>
+                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                        Penerimaan: <span class="text-emerald-700 font-semibold tnum">+Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
+                <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- Status 3: Status Operasional / DKM & Petugas -->
+        @php
+            $hasDuties = $currentWeekDuties->isNotEmpty();
+            $resolvedDutyImam = null;
+            $resolvedDutyLabel = null;
+            if ($hasDuties) {
+                $dutyFirst = $currentWeekDuties->first();
+                $isFri = ($dutyFirst->day_name === 'Jumat' && $dutyFirst->prayer_time === 'dzuhur');
+                $friKaj = ($isFri && isset($fridayKajiansByWeek[$currentWeekNumber])) ? $fridayKajiansByWeek[$currentWeekNumber] : ($isFri ? ($fridayKajians->first() ?? null) : null);
+                $isUst = (stripos($dutyFirst->imam_name, 'kajian') !== false);
+                $pekKey = "{$dutyFirst->day_name}_{$currentWeekNumber}";
+                $pekKaj = $isUst ? ($pekananKajiansByDayWeek[$pekKey] ?? ($pekananKajiansByDay[$dutyFirst->day_name] ?? ($pekananKajiansByWeek[$currentWeekNumber] ?? ($defaultPekananKajian ?? null)))) : null;
+                $resolvedDutyImam = $dutyFirst->imam_name;
+                if ($isFri && $friKaj && !empty($friKaj->khatib_name)) {
+                    $resolvedDutyImam = $friKaj->khatib_name;
+                } elseif ($isUst && $pekKaj && (!empty($pekKaj->speaker_name) || !empty($pekKaj->khatib_name))) {
+                    $resolvedDutyImam = $pekKaj->speaker_name ?: $pekKaj->khatib_name;
+                }
+                $resolvedDutyLabel = "{$dutyFirst->day_name} " . ucfirst($dutyFirst->prayer_time);
+            }
+        @endphp
+        <div @click="switchTabFast('{{ Auth::user()->isJamaah() ? 'petugas' : 'users' }}')"
+            class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
+                        {{ $hasDuties ? 'Petugas Shalat Pekan Ini' : 'Status Operasional DKM' }}
+                    </span>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
+                        @if($hasDuties)
+                            {{ $resolvedDutyLabel }}: {{ $resolvedDutyImam }}
+                        @else
+                            DKM Periode 2026-2029
+                        @endif
+                    </h4>
+                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                        Pekan ke-{{ $currentWeekNumber }} &bull; {{ $totalJamaah > 0 ? $totalJamaah . ' Jamaah' : 'Pengurus Aktif' }}
+                    </p>
+                </div>
+            </div>
+            <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
+                <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Title: Menu Manajemen Utama -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3 pt-2">
+        <div>
+            <h3 class="text-sm sm:text-base font-bold text-gov-textMain">Menu Manajemen Utama</h3>
+            <p class="text-xs text-gov-textMuted mt-0.5">Pilih modul untuk mengelola aktivitas dan administrasi masjid secara langsung.</p>
+        </div>
+        <span class="text-[11px] font-semibold text-slate-400 hidden sm:inline-block">1-Tap Quick Access</span>
+    </div>
+
+    <!-- Grid Menu Launcher Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
+        <!-- 1. Jadwal Kegiatan -->
+        <div @click="switchTabFast('kegiatan')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Jadwal Kegiatan</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Kajian Pekanan, Khutbah Jumat & Agenda Kegiatan Akbar</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-blue-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 2. Imam & Muadzin (Petugas Shalat) -->
+        <div @click="switchTabFast('petugas')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-teal-50 text-teal-700 border border-teal-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Petugas Shalat</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Imam Rawatib, Muadzin & Petugas Shalat Jumat</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-teal-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 3. Kas & Keuangan -->
+        <div @click="switchTabFast('finance')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Kas & Keuangan</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Buku Kas, Mutasi Masuk/Keluar & Rekapitulasi</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-emerald-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 4. Program Sosial -->
+        <div @click="switchTabFast('programs')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Program Sosial</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Infaq Tukin Pegawai, Santunan & Donasi Jamaah</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-amber-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 5. Galeri Kegiatan -->
+        <div @click="switchTabFast('galeri')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-rose-50 text-rose-700 border border-rose-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Galeri Foto</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Dokumentasi Acara & Arsip Kegiatan Masjid</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-rose-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        @unless(Auth::user()->isJamaah())
+        <!-- 6. Saran & Kritik -->
+        <div @click="switchTabFast('saran')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 text-purple-700 border border-purple-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Saran & Kritik</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Aspirasi, Kotak Saran & Evaluasi Jamaah</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-purple-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 7. Pengaturan -->
+        <div @click="switchTabFast('settings')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Pengaturan</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Profil Masjid, Poster Studio & Template Jarkoman</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 8. Pengguna & DKM -->
+        <div @click="switchTabFast('users')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Pengguna & DKM</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Anggota Jamaah, Pegawai & SK Takmir</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-indigo-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+
+        <!-- 9. Statistik Pengunjung -->
+        <div @click="switchTabFast('statistics')"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Statistik</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Kunjungan Portal Jamaah & Analisis Jam Sibuk</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-cyan-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Menu</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+        </div>
+        @endunless
+
+        <!-- 10. TV Display -->
+        <a href="{{ url('/display') }}" target="_blank"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="15" x="2" y="3" rx="2"/><polyline points="17 21 12 18 7 21"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">TV Display</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Layar Informasi Digital Masjid & Jam Sholat Digital</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-sky-700 group-hover:text-gov-navy transition-colors">
+                <span>Buka Layar</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+        </a>
+
+        <!-- 11. Portal Jamaah -->
+        <a href="{{ url('/') }}" target="_blank"
+            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
+            <div class="space-y-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-orange-50 text-orange-700 border border-orange-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">Portal Jamaah</h4>
+                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Halaman Muka Publik Terbuka untuk Seluruh Jamaah</p>
+                </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-orange-700 group-hover:text-gov-navy transition-colors">
+                <span>Kunjungi</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </div>
+        </a>
+    </div>
+</div>
