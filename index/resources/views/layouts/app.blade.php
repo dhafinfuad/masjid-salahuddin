@@ -117,26 +117,46 @@
                     return isPure;
                 };
 
-                window.downloadPdfDirect = async function(downloadUrl, filename) {
+                window.downloadFileDirect = async function(downloadUrl, filename, explicitMimeType) {
                     if (!downloadUrl) return;
-                    const defaultFilename = filename || 'dokumen.pdf';
+                    const defaultFilename = filename || 'dokumen';
+
+                    // Deteksi MIME Type otomatis berdasarkan ekstensi file
+                    let mimeType = explicitMimeType;
+                    if (!mimeType) {
+                        const lowerName = defaultFilename.toLowerCase();
+                        if (lowerName.endsWith('.csv')) {
+                            mimeType = 'text/csv;charset=utf-8';
+                        } else if (lowerName.endsWith('.xlsx')) {
+                            mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                        } else if (lowerName.endsWith('.xls')) {
+                            mimeType = 'application/vnd.ms-excel';
+                        } else if (lowerName.endsWith('.pdf')) {
+                            mimeType = 'application/pdf';
+                        } else {
+                            mimeType = 'application/octet-stream';
+                        }
+                    }
 
                     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
                                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
                     // 1. Pada perangkat iOS / Mobile (terutama iOS PWA Standalone):
                     // Web Share API Level 2 memunculkan native iOS Share Sheet ("Simpan ke File", AirDrop, WhatsApp)
-                    // Mencegah iOS PWA beralih layar / membuka PDF viewer bawaan "1 of 1"
+                    // Mencegah iOS PWA beralih layar / membuka QuickLook viewer layar hitam tanpa navigasi kembali
                     if (isMobile && navigator.canShare) {
                         try {
+                            if (typeof window.dispatchEvent === 'function') {
+                                window.dispatchEvent(new CustomEvent('toast', { detail: { message: 'Menyiapkan berkas ' + defaultFilename + '...' } }));
+                            }
                             const res = await fetch(downloadUrl);
                             if (res.ok) {
                                 const blob = await res.blob();
-                                const file = new File([blob], defaultFilename, { type: 'application/pdf' });
+                                const file = new File([blob], defaultFilename, { type: mimeType });
                                 if (navigator.canShare({ files: [file] })) {
                                     await navigator.share({
                                         files: [file],
-                                        title: defaultFilename.replace('.pdf', '')
+                                        title: defaultFilename
                                     });
                                     return;
                                 }
@@ -145,7 +165,7 @@
                             if (e.name === 'AbortError') {
                                 return;
                             }
-                            console.warn('[PDF Download] Web Share API tidak dapat memproses berkas, beralih ke blob link:', e);
+                            console.warn('[File Download] Web Share API tidak dapat memproses berkas, beralih ke blob link:', e);
                         }
                     }
 
@@ -169,7 +189,7 @@
                             return;
                         }
                     } catch (e) {
-                        console.warn('[PDF Download] Fetch blob gagal, memicu fallback link langsung:', e);
+                        console.warn('[File Download] Fetch blob gagal, memicu fallback link langsung:', e);
                     }
 
                     // 3. Fallback terakhir: tag <a> langsung
@@ -182,6 +202,11 @@
                     setTimeout(() => {
                         if (link.parentNode) link.parentNode.removeChild(link);
                     }, 1500);
+                };
+
+                // Alias kompatibilitas penuh agar downloadPdfDirect tetap bekerja 100%
+                window.downloadPdfDirect = function(downloadUrl, filename) {
+                    return window.downloadFileDirect(downloadUrl, filename || 'dokumen.pdf', 'application/pdf');
                 };
 
                 window.addEventListener('download-kep-pdf', (e) => {

@@ -91,14 +91,14 @@
                             </button>
                         @endif
 
-                        <a :href="'{{ route('admin.kajian.export-excel') }}?type=pekanan&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                            @click="closeMobileActionSheet()"
+                        <button type="button"
+                            @click="closeMobileActionSheet(); window.downloadFileDirect('{{ route('admin.kajian.export-excel') }}?type=pekanan&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, 'Jadwal_Kajian_Pekanan_' + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.xlsx')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             </div>
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Download Excel</span>
-                        </a>
+                        </button>
 
                         <button type="button" @click="closeMobileActionSheet(); activeTab = 'settings'; switchSettingsSubTab('ustadz')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
@@ -143,14 +143,14 @@
                             </button>
                         @endif
 
-                        <a :href="'{{ route('admin.kajian.export-excel') }}?type=jumat&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                            @click="closeMobileActionSheet()"
+                        <button type="button"
+                            @click="closeMobileActionSheet(); window.downloadFileDirect('{{ route('admin.kajian.export-excel') }}?type=jumat&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, 'Jadwal_Shalat_Jumat_' + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.xlsx')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
                             <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             </div>
                             <span class="text-xs font-semibold text-slate-800 leading-tight">Download Excel</span>
-                        </a>
+                        </button>
 
                         <button type="button" @click="closeMobileActionSheet(); activeTab = 'settings'; switchSettingsSubTab('ustadz')"
                             class="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-left">
@@ -195,13 +195,13 @@
                             </button>
                         @endif
 
-                        <a href="{{ route('admin.agenda.export-excel') }}" @click="closeMobileActionSheet()"
+                        <button type="button" @click="closeMobileActionSheet(); window.downloadFileDirect('{{ route('admin.agenda.export-excel') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.csv')"
                             class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 mb-1">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-800 leading-tight">Download Excel</span>
-                        </a>
+                        </button>
 
                         <button type="button"
                             @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.agenda.download-pdf') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.pdf')"
@@ -306,14 +306,14 @@
                         </button>
                     @endif
 
-                    <a :href="'{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
-                        @click="closeMobileActionSheet()"
+                    <button type="button"
+                        @click="closeMobileActionSheet(); window.downloadFileDirect('{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear, 'Roster_Petugas_Ibadah_' + ($wire.prayerDutyFilterWeek !== 'all' ? 'Pekan_' + $wire.prayerDutyFilterWeek + '_' : '') + $wire.prayerDutyFilterMonth + '_' + $wire.prayerDutyFilterYear + '.xlsx')"
                         class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 mb-1">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                         </div>
                         <span class="text-[11px] font-semibold text-slate-800 leading-tight">Download Excel</span>
-                    </a>
+                    </button>
 
                     <button type="button"
                         @click="closeMobileActionSheet(); window.downloadPdfDirect('{{ route('admin.petugas.download-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear, 'Roster_Petugas_Ibadah_' + ($wire.prayerDutyFilterWeek !== 'all' ? 'Pekan_' + $wire.prayerDutyFilterWeek + '_' : '') + $wire.prayerDutyFilterMonth + '_' + $wire.prayerDutyFilterYear + '.pdf')"
@@ -356,13 +356,13 @@
                             </button>
                         @endif
 
-                        <a href="{{ route('admin.finance.export-excel') }}" @click="closeMobileActionSheet()"
+                        <button type="button" @click="closeMobileActionSheet(); window.downloadFileDirect('{{ route('admin.finance.export-excel') }}', 'Laporan_Kas_Masjid_Salahuddin_' + (new Date().toISOString().slice(0,10)) + '.csv')"
                             class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">
                             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 mb-1">
                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                             </div>
                             <span class="text-[11px] font-semibold text-slate-800 leading-tight">Download Excel</span>
-                        </a>
+                        </button>
 
                         <button type="button" @click="closeMobileActionSheet(); showPrintFinanceModal = true; $wire.openPrintFinanceModal()"
                             class="flex flex-col items-center justify-center p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer text-center">

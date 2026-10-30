@@ -49,11 +49,12 @@
                                     </button>
                                     <div x-show="openExport" x-cloak
                                         class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                        <a :href="'{{ route('admin.kajian.export-excel') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter"
-                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                        <button type="button"
+                                            @click="openExport = false; window.downloadFileDirect('{{ route('admin.kajian.export-excel') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, (kegiatanSubTab === 'jumat' ? 'Jadwal_Shalat_Jumat_' : 'Jadwal_Kajian_Pekanan_') + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.xlsx')"
+                                            class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium text-left cursor-pointer">
                                             <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                             <span>Download Excel (.xlsx)</span>
-                                        </a>
+                                        </button>
                                         <button type="button"
                                             @click="openExport = false; window.downloadPdfDirect('{{ route('admin.kajian.download-pdf') }}?type=' + (kegiatanSubTab === 'jumat' ? 'jumat' : 'pekanan') + '&month=' + $wire.kajianMonthFilter + '&year=' + $wire.kajianYearFilter, (kegiatanSubTab === 'jumat' ? 'Jadwal_Shalat_Jumat_' : 'Jadwal_Kajian_Pekanan_') + $wire.kajianMonthFilter + '_' + $wire.kajianYearFilter + '.pdf')"
                                             class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
@@ -92,11 +93,12 @@
                                     </button>
                                     <div x-show="openExport" x-cloak
                                         class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                        <a href="{{ route('admin.agenda.export-excel') }}"
-                                            class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                        <button type="button"
+                                            @click="openExport = false; window.downloadFileDirect('{{ route('admin.agenda.export-excel') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.csv')"
+                                            class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium text-left cursor-pointer">
                                             <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                             <span>Download Format Excel (.csv)</span>
-                                        </a>
+                                        </button>
                                         <button type="button"
                                             @click="openExport = false; window.downloadPdfDirect('{{ route('admin.agenda.download-pdf') }}', 'Agenda_Kegiatan_Masjid_{{ date('Y-m-d') }}.pdf')"
                                             class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">

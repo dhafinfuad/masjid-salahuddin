@@ -74,3 +74,4 @@ class McTextBackButtonTest extends TestCase
         $response->assertSee('href="' . url('/admin/kegiatan') . '"', false);
     }
 }
+

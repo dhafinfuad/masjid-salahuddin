@@ -36,11 +36,12 @@
                                 </button>
                                 <div x-show="openDutyExport" x-cloak
                                     class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
-                                    <a :href="'{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                    <button type="button"
+                                        @click="openDutyExport = false; window.downloadFileDirect('{{ route('admin.petugas.export-excel') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear, 'Roster_Petugas_Ibadah_' + ($wire.prayerDutyFilterWeek !== 'all' ? 'Pekan_' + $wire.prayerDutyFilterWeek + '_' : '') + $wire.prayerDutyFilterMonth + '_' + $wire.prayerDutyFilterYear + '.xlsx')"
+                                        class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium text-left cursor-pointer">
                                         <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                         <span>Download Excel (.xlsx)</span>
-                                    </a>
+                                    </button>
                                     <button type="button"
                                         @click="openExport = false; window.downloadPdfDirect('{{ route('admin.petugas.download-pdf') }}?week=' + $wire.prayerDutyFilterWeek + '&month=' + $wire.prayerDutyFilterMonth + '&year=' + $wire.prayerDutyFilterYear, 'Roster_Petugas_Ibadah_' + ($wire.prayerDutyFilterWeek !== 'all' ? 'Pekan_' + $wire.prayerDutyFilterWeek + '_' : '') + $wire.prayerDutyFilterMonth + '_' + $wire.prayerDutyFilterYear + '.pdf')"
                                         class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">

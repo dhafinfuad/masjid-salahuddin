@@ -43,11 +43,12 @@
                                 </button>
                                 <div x-show="openFinanceExport" x-cloak
                                     class="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-xl border border-gov-border py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-50">
-                                    <a href="{{ route('admin.finance.export-excel') }}"
-                                        class="flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium">
+                                    <button type="button"
+                                        @click="openFinanceExport = false; window.downloadFileDirect('{{ route('admin.finance.export-excel') }}', 'Laporan_Kas_Masjid_Salahuddin_' + (new Date().toISOString().slice(0,10)) + '.csv')"
+                                        class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 transition font-medium text-left cursor-pointer">
                                         <i data-lucide="sheet" class="w-4 h-4 text-emerald-600"></i>
                                         <span>Download Excel (.csv)</span>
-                                    </a>
+                                    </button>
                                     <button type="button"
                                         @click="openFinanceExport = false; showPrintFinanceModal = true; $wire.openPrintFinanceModal()"
                                         class="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-rose-50 hover:text-rose-800 transition font-medium text-left cursor-pointer">
