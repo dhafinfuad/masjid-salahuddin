@@ -305,7 +305,7 @@
                 style="background-color: #0b2b54; color: #ffffff; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
                 <div class="min-w-0">
                     <h3 id="kajian-modal-title" class="text-sm sm:text-base font-bold text-white truncate" style="color: #ffffff;"
-                        x-text="isEditingKajian ? 'Edit Jadwal Kajian' : (kajianForm.type === 'jumat' ? 'Tambah Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Tambah Jadwal Kajian Tematik' : 'Tambah Jadwal Kajian Pekanan'))"></h3>
+                        x-text="isEditingKajian ? (kajianForm.type === 'jumat' ? 'Edit Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Edit Jadwal Kajian Tematik' : 'Edit Jadwal Kajian Pekanan')) : (kajianForm.type === 'jumat' ? 'Tambah Jadwal Khutbah Jumat' : (kajianForm.type === 'tematik' ? 'Tambah Jadwal Kajian Tematik' : 'Tambah Jadwal Kajian Pekanan'))"></h3>
                     <p class="text-[11px] text-slate-200 truncate" style="color: #cbd5e1;"
                         x-text="kajianForm.type === 'jumat' ? 'Jadwal Khatib, Muadzin, MC & Naskah Khutbah' : 'Pengaturan tanggal, waktu, dan narasumber'"></p>
                 </div>
@@ -349,6 +349,18 @@
                                 Khutbah Jumat
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Dropdown Select Option Jenis Jadwal pada Mode Edit -->
+                    <div x-show="isEditingKajian">
+                        <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
+                        <select x-model="kajianForm.type"
+                            @change="window._activeKajianType = kajianForm.type; if (window._activeKajianForm) { window._activeKajianForm.type = kajianForm.type; } if (kajianForm.type === 'jumat') { delete kajianErrors.title; delete kajianErrors.speaker_name; } if (!kajianForm.time_display) { updateKajianDefaultTime(); }"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
+                            <option value="pekanan">Kajian Pekanan</option>
+                            <option value="tematik">Kajian Tematik</option>
+                            <option value="jumat">Khutbah Jumat</option>
+                        </select>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">

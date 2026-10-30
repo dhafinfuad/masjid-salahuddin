@@ -41,6 +41,14 @@
                  if (window._activeShowKajianModal) {
                      window._activeKajianForm = Object.assign({}, val);
                  }
+             }, { deep: true });
+             this.$watch('kajianForm.type', (val) => {
+                 if (window._activeShowKajianModal) {
+                     window._activeKajianType = val;
+                     if (window._activeKajianForm) {
+                         window._activeKajianForm.type = val;
+                     }
+                 }
              });
              this.$watch('isEditingKajian', (val) => {
                  if (window._activeShowKajianModal) {
