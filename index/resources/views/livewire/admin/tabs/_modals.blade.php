@@ -290,7 +290,7 @@
     <!-- ======================================================== -->
     <!-- MODAL: BUAT / EDIT JADWAL KAJIAN (TERPADU & STABIL) -->
     <!-- ======================================================== -->
-    <div x-show="showKajianModal" x-cloak wire:ignore.self @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
+    <div x-show="showKajianModal" x-cloak wire:ignore @keydown.escape.window="if (!showUstadzModal) closeKajianModal()"
         @click="if (window.isBackdropClick ? window.isBackdropClick($event, $el) : $event.target === $el) { if (!showUstadzModal) closeKajianModal(); }"
         class="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
         style="display: none; z-index: 9999; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
@@ -355,7 +355,8 @@
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
                             <input x-model="kajianForm.date" 
-                                @change="updateKajianDefaultTime(); validateKajianField('date')" 
+                                @input="if (window._activeShowKajianModal && window._activeKajianForm) { window._activeKajianForm.date = kajianForm.date; }"
+                                @change="if (!isEditingKajian || !kajianForm.time_display) { updateKajianDefaultTime(); } if (window._activeShowKajianModal && window._activeKajianForm) { window._activeKajianForm.date = kajianForm.date; } validateKajianField('date')" 
                                 @blur="validateKajianField('date')"
                                 type="date"
                                 class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"

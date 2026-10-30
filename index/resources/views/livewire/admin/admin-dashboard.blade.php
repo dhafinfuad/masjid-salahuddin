@@ -22,7 +22,13 @@
          userSubTab: '{{ $userSubTab }}',
          settingsSubTab: '{{ $settingsSubTab }}',
          init() {
-             if (window._activeKajianType && this.showKajianModal) {
+             if (window._activeShowKajianModal) {
+                 this.showKajianModal = true;
+                 this.isEditingKajian = Boolean(window._activeIsEditingKajian);
+                 if (window._activeKajianForm) {
+                     this.kajianForm = Object.assign({}, window._activeKajianForm);
+                 }
+             } else if (window._activeKajianType && this.showKajianModal) {
                  this.kajianForm.type = window._activeKajianType;
              }
              this.updateDocumentTitle();
@@ -31,6 +37,23 @@
              };
              window.addEventListener('scroll', updateScroll, { passive: true });
              updateScroll();
+             this.$watch('kajianForm', (val) => {
+                 if (window._activeShowKajianModal) {
+                     window._activeKajianForm = Object.assign({}, val);
+                 }
+             });
+             this.$watch('isEditingKajian', (val) => {
+                 if (window._activeShowKajianModal) {
+                     window._activeIsEditingKajian = Boolean(val);
+                 }
+             });
+             this.$watch('showKajianModal', (val) => {
+                 window._activeShowKajianModal = Boolean(val);
+                 if (!val) {
+                     window._activeIsEditingKajian = false;
+                     window._activeKajianForm = null;
+                 }
+             });
              this.$watch('activeTab', () => this.updateDocumentTitle());
              this.$watch('kegiatanSubTab', () => this.updateDocumentTitle());
              this.$watch('financeSubTab', () => this.updateDocumentTitle());
@@ -228,19 +251,27 @@
          },
          async updateKajianDefaultTime(token = null) {
              const activeToken = token || this.currentActionToken;
+             if (this.isEditingKajian && this.kajianForm.time_display) {
+                 return;
+             }
              if (this.kajianForm.type === 'tematik') {
                  this.kajianForm.time_display = '';
+                 if (window._activeKajianForm) {
+                     window._activeKajianForm.time_display = '';
+                 }
                  return;
              }
              if (typeof $wire !== 'undefined' && typeof $wire.getDefaultKajianTime === 'function') {
                  try {
                      const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date, activeToken);
-                     // Action Token Guard: Abaikan jika token usang atau modal sudah ditutup/berganti aksi
                      if (activeToken && this.currentActionToken !== activeToken) {
                          return;
                      }
                      if (res) {
                          this.kajianForm.time_display = res;
+                         if (window._activeKajianForm) {
+                             window._activeKajianForm.time_display = res;
+                         }
                      }
                  } catch (e) {}
              }
@@ -268,6 +299,9 @@
                  speaker_photo: '',
                  youtube_url: '',
              };
+             window._activeShowKajianModal = true;
+             window._activeIsEditingKajian = false;
+             window._activeKajianForm = Object.assign({}, this.kajianForm);
              this.updateKajianDefaultTime(actionToken);
              if (typeof $wire !== 'undefined') {
                  $wire.set('isEditingKajian', false, false);
@@ -306,6 +340,9 @@
                  speaker_photo: data.speaker_photo || '',
                  youtube_url: data.youtube_url || '',
              };
+             window._activeShowKajianModal = true;
+             window._activeIsEditingKajian = true;
+             window._activeKajianForm = Object.assign({}, this.kajianForm);
              if (!this.kajianForm.time_display && this.kajianForm.type !== 'tematik') {
                  this.updateKajianDefaultTime(actionToken);
              }
@@ -325,6 +362,9 @@
          },
          closeKajianModal() {
              this.cancelAction();
+             window._activeShowKajianModal = false;
+             window._activeIsEditingKajian = false;
+             window._activeKajianForm = null;
              window._activeKajianType = null;
              window._activeActionToken = null;
              this.showKajianModal = false;

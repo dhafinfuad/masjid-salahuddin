@@ -206,4 +206,33 @@ class KajianModalStateTest extends TestCase
             'id' => $ustadz->id,
         ]);
     }
+
+    /** @test */
+    public function test_editing_kajian_state_and_view_preserves_edit_mode_and_data(): void
+    {
+        $kajian = Kajian::create([
+            'type' => 'jumat',
+            'date' => Carbon::now()->addDays(5)->format('Y-m-d'),
+            'time_display' => '11:45 - 12:45',
+            'title' => 'Khutbah Jumat Syiar Islam',
+            'khatib_name' => 'Prof. Dr. KH. Nasaruddin Umar',
+            'muadzin_name' => 'Ustadz Bilal Ramadhan',
+        ]);
+
+        $this->actingAs($this->adminUser);
+        $response = $this->get('/admin/kegiatan');
+        $response->assertOk();
+
+        // Verifikasi bahwa modal kajian dilindungi wire:ignore agar DOM morphing tidak mereset form state
+        $response->assertSee('x-show="showKajianModal" x-cloak wire:ignore', false);
+        $response->assertDontSee('x-show="showKajianModal" x-cloak wire:ignore.self', false);
+
+        // Verifikasi bahwa state window mirroring aktif di template
+        $response->assertSee('window._activeShowKajianModal', false);
+        $response->assertSee('window._activeIsEditingKajian', false);
+        $response->assertSee('window._activeKajianForm', false);
+
+        // Verifikasi guard pada updateKajianDefaultTime di template
+        $response->assertSee('if (this.isEditingKajian && this.kajianForm.time_display)', false);
+    }
 }
