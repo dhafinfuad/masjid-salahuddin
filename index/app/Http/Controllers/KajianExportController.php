@@ -223,6 +223,19 @@ class KajianExportController extends Controller
             $timeDisplay .= ' WIB';
         }
 
+        $from = request()->query('from');
+        $referer = request()->header('referer');
+
+        if ($from === 'admin') {
+            $backUrl = url('/admin/kegiatan');
+        } elseif ($from === 'portal' || !auth()->check() || (auth()->check() && !auth()->user()->canManage())) {
+            $backUrl = route('portal.kegiatan');
+        } elseif ($referer && (str_contains($referer, '/kegiatan') || str_contains($referer, '/portal') || $referer === url('/') || $referer === url('/kegiatan'))) {
+            $backUrl = $referer;
+        } else {
+            $backUrl = auth()->check() ? url('/admin/kegiatan') : route('portal.kegiatan');
+        }
+
         return view('admin.print.mc-text-jumat', [
             'kajian' => $kajian,
             'settings' => $settings,
@@ -231,7 +244,8 @@ class KajianExportController extends Controller
             'formattedJumatDate' => $formattedJumatDate,
             'formattedNextMondayDate' => $formattedNextMondayDate,
             'timeDisplay' => $timeDisplay ?: '11:30 WIB',
-            'formattedDate' => $jumatCarbon->locale('id')->translatedFormat('l, d F Y')
+            'formattedDate' => $jumatCarbon->locale('id')->translatedFormat('l, d F Y'),
+            'backUrl' => $backUrl
         ]);
     }
 }

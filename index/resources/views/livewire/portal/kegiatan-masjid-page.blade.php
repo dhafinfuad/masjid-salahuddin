@@ -330,7 +330,7 @@
                                 <td class="p-3 text-center whitespace-nowrap">
                                     <div class="flex flex-col items-center justify-center gap-1.5">
                                         @if($isJumat)
-                                            <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
+                                            <a href="{{ route('admin.kajian.teks-mc', ['id' => $item['id'], 'from' => 'portal']) }}" target="_blank"
                                                class="col-action-btn w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">
@@ -484,7 +484,7 @@
                                 <div class="pt-2.5 border-t border-slate-100 flex items-center justify-end mt-auto">
                                     <div>
                                         @if($isJumat)
-                                            <a href="{{ route('admin.kajian.teks-mc', $item['id']) }}" target="_blank"
+                                            <a href="{{ route('admin.kajian.teks-mc', ['id' => $item['id'], 'from' => 'portal']) }}" target="_blank"
                                                class="w-[96px] justify-center inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold text-xs shadow-2xs transition cursor-pointer shrink-0"
                                                style="width: 96px; min-width: 96px; max-width: 96px;"
                                                title="Download & Cetak Teks MC Sholat Jumat (PDF)">

@@ -95,9 +95,10 @@
     <header class="no-print bg-slate-900 text-white px-4 sm:px-6 py-2.5 flex items-center justify-between gap-2 border-b border-slate-800 sticky top-0 z-30 shadow-sm">
       <!-- Tombol Kembali -->
       <a 
-        href="{{ url('/admin/kajian') }}" 
+        href="{{ $backUrl ?? route('portal.kegiatan') }}" 
+        onclick="if (window.history.length > 1 && document.referrer && document.referrer.includes(window.location.host)) { window.history.back(); return false; }"
         class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-700 transition-colors shadow-2xs cursor-pointer" 
-        title="Kembali ke Manajemen Kegiatan">
+        title="Kembali ke Halaman Sebelumnya">
         <svg class="w-4 h-4 shrink-0 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
