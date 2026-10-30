@@ -321,14 +321,14 @@ class KajianTematikTest extends TestCase
     }
 
     /** @test */
-    public function test_kajian_month_filter_smart_rollover_when_all_current_month_kajians_have_passed()
+    public function test_kajian_month_filter_defaults_to_current_calendar_month()
     {
         $this->actingAs($this->adminUser);
 
-        // Simulasi hari ini: 29 September 2026 (semua kajian September telah selesai kemarin, 28 September)
+        // Simulasi hari ini: 29 September 2026
         Carbon::setTestNow(Carbon::parse('2026-09-29 10:00:00', 'Asia/Jakarta'));
 
-        // Buat kajian yang sudah lewat di bulan September 2026
+        // Buat kajian di bulan September 2026
         Kajian::create([
             'type' => 'pekanan',
             'title' => 'Kajian Sirah Nabawiyah',
@@ -343,16 +343,15 @@ class KajianTematikTest extends TestCase
             'speaker_name' => 'Ust Hasyim Azhari SpdI',
         ]);
 
-        // Karena tidak ada lagi jadwal di September pada/setelah 29 September,
-        // filter otomatis berganti (smart rollover) ke bulan Oktober (10)
+        // Filter selalu stabil konsisten pada bulan kalender aktif saat ini (September / 9)
         Livewire::test(AdminDashboard::class, ['tab' => 'kegiatan'])
-            ->assertSet('kajianMonthFilter', '10')
+            ->assertSet('kajianMonthFilter', '9')
             ->assertSet('kajianYearFilter', '2026');
 
-        // Uji jika hari ini masih ada jadwal yang akan datang (misal simulasi 20 September 2026)
+        // Uji jika hari ini 20 September 2026
         Carbon::setTestNow(Carbon::parse('2026-09-20 10:00:00', 'Asia/Jakarta'));
 
-        // Karena masih ada jadwal 28 September (akan datang), filter tetap di September (9)
+        // Filter tetap konsisten di September (9)
         Livewire::test(AdminDashboard::class, ['tab' => 'kegiatan'])
             ->assertSet('kajianMonthFilter', '9')
             ->assertSet('kajianYearFilter', '2026');

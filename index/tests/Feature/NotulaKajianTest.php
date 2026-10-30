@@ -39,7 +39,7 @@ class NotulaKajianTest extends TestCase
 
         $this->sampleKajian = Kajian::create([
             'type' => 'tematik',
-            'date' => Carbon::now()->addDays(2)->format('Y-m-d'),
+            'date' => Carbon::now()->format('Y-m-d'),
             'time_display' => '09:00 - 11:30',
             'title' => 'Karakteristik Keimanan yang Kokoh (Al-Mu\'minun)',
             'speaker_name' => 'Ustadz Pemateri Tematik',
@@ -61,7 +61,9 @@ class NotulaKajianTest extends TestCase
             ->assertDispatched('open-notula-modal')
             ->call('saveNotula', $this->sampleKajian->id, $notulaMarkdown)
             ->assertDispatched('toast')
-            ->assertDispatched('notula-saved');
+            ->assertDispatched('notula-saved')
+            ->assertDispatched('close-notula-modal')
+            ->assertSet('showNotulaModal', false);
 
         $this->assertDatabaseHas('kajians', [
             'id' => $this->sampleKajian->id,
@@ -73,6 +75,23 @@ class NotulaKajianTest extends TestCase
             ->call('saveNotula', $this->sampleKajian->id, $largeNotula);
 
         $this->assertEquals($largeNotula, $this->sampleKajian->fresh()->notula);
+    }
+
+    /** @test */
+    public function test_modal_notula_closes_automatically_after_successful_save()
+    {
+        $this->actingAs($this->masterUser);
+
+        Livewire::test(AdminDashboard::class)
+            ->call('openNotulaModal', $this->sampleKajian->id)
+            ->assertSet('showNotulaModal', true)
+            ->call('saveNotula', [
+                'id' => $this->sampleKajian->id,
+                'raw_text' => 'Ringkasan isi notula baru yang tersimpan.',
+            ])
+            ->assertSet('showNotulaModal', false)
+            ->assertDispatched('close-notula-modal')
+            ->assertDispatched('notula-saved');
     }
 
     /** @test */

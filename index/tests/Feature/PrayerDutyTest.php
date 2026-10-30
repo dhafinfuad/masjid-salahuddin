@@ -110,6 +110,8 @@ class PrayerDutyTest extends TestCase
     {
         $this->actingAs($this->admin);
 
+        Carbon::setTestNow(Carbon::parse('2026-10-15 10:00:00', 'Asia/Jakarta'));
+
         // Create Friday Kajian with Khatib and Muadzin
         $now = Carbon::now();
         $upcomingFriday = $now->isFriday() ? $now->format('Y-m-d') : $now->copy()->next(Carbon::FRIDAY)->format('Y-m-d');
@@ -136,6 +138,8 @@ class PrayerDutyTest extends TestCase
         $response->assertSee('Prof. Dr. KH. Nasaruddin Umar');
         $response->assertSee('Ustadz Bilal Ramadhan');
         $response->assertSee('Tersinkron Khatib Shalat Jumat');
+
+        Carbon::setTestNow();
     }
 
     public function test_export_endpoints_return_successful_response(): void

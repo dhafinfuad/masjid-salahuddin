@@ -1380,7 +1380,7 @@
     @close-import-kajian-modal.window="showImportKajianModal = false"
     @open-notula-modal.window="openNotulaModal($event.detail)"
     @close-notula-modal.window="showNotulaModal = false; $wire.set('showNotulaModal', false, false)"
-    @notula-saved.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (notulaForm && d && d.id == notulaForm.id) { notulaForm.raw_text = d.notula; if ($refs.notulaTextarea) { $refs.notulaTextarea.value = d.notula; } }"
+    @notula-saved.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (notulaForm && d && d.id == notulaForm.id) { notulaForm.raw_text = d.notula; if ($refs.notulaTextarea) { $refs.notulaTextarea.value = d.notula; } } showNotulaModal = false;"
     @notula-transformed.window="let d = Array.isArray($event.detail) ? $event.detail[0] : ($event.detail.data || $event.detail); if (notulaForm && d) { notulaForm.raw_text = d.notula; if ($refs.notulaTextarea) { $refs.notulaTextarea.value = d.notula; } notulaActiveTab = 'preview'; notulaTranscriptDismissed = false; }"
     @open-youtube-modal.window="openYoutubeModal($event.detail)"
     @close-youtube-modal.window="showYoutubeModal = false; $wire.set('showYoutubeModal', false, false)"

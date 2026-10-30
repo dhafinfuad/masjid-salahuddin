@@ -1927,9 +1927,10 @@ class AdminDashboard extends Component
 
         $this->notulaKajianId = $k->id;
         $this->notulaRawText = $content;
-        $this->showNotulaModal = true;
+        $this->showNotulaModal = false;
 
         $this->notify('Notula kajian berhasil disimpan.');
+        $this->dispatch('close-notula-modal');
         $this->dispatch('notula-saved', ['id' => $k->id, 'notula' => $content]);
     }
 
