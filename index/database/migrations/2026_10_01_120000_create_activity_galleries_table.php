@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activity_galleries', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->date('event_date');
-            $table->string('location')->default('Masjid Salahuddin, KPP Madya Malang');
-            $table->json('photos')->nullable();
-            $table->timestamps();
+        if (! Schema::hasTable('activity_galleries')) {
+            Schema::create('activity_galleries', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->date('event_date');
+                $table->string('location')->default('Masjid Salahuddin, KPP Madya Malang');
+                $table->json('photos')->nullable();
+                $table->timestamps();
 
-            $table->index('event_date');
-            $table->index('title');
-        });
+                $table->index('event_date');
+                $table->index('title');
+            });
+        }
     }
 
     /**
