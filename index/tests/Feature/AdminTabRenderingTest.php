@@ -218,6 +218,7 @@ class AdminTabRenderingTest extends TestCase
         $response->assertOk();
         $response->assertSee('Ahlan wa Sahlan');
         $response->assertSee('Saldo Kas Utama');
+        $response->assertSee('Petugas Shalat Hari Ini');
         $response->assertSee('Menu Manajemen Utama');
         $response->assertSee('Jadwal Kegiatan');
         $response->assertSee('Petugas Shalat');
@@ -228,8 +229,10 @@ class AdminTabRenderingTest extends TestCase
         $response->assertSee('Pengaturan');
         $response->assertSee('Pengguna & DKM', false);
         $response->assertSee('Statistik');
-        $response->assertSee('TV Display');
         $response->assertSee('Portal Jamaah');
+
+        // Memastikan card TV Display telah dihapus bersih
+        $response->assertDontSee('TV Display');
 
         // Memastikan tidak ada badge "Hari Ini" atau badge counter terlarang
         $response->assertDontSee('>Hari Ini<', false);

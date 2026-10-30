@@ -97,28 +97,34 @@
             </div>
         </div>
 
-        <!-- Status 3: Status Operasional / DKM & Petugas -->
+        <!-- Status 3: Petugas Shalat Hari Ini -->
         @php
-            $hasDuties = $currentWeekDuties->isNotEmpty();
+            $todayDuties = $currentWeekDuties->where('day_name', $todayDayName);
+            $hasTodayDuty = $todayDuties->isNotEmpty();
+            $dutyForCard = $hasTodayDuty ? $todayDuties->first() : $currentWeekDuties->first();
+            $hasAnyDuty = $currentWeekDuties->isNotEmpty();
+
             $resolvedDutyImam = null;
             $resolvedDutyLabel = null;
-            if ($hasDuties) {
-                $dutyFirst = $currentWeekDuties->first();
-                $isFri = ($dutyFirst->day_name === 'Jumat' && $dutyFirst->prayer_time === 'dzuhur');
+            $resolvedDutyMuadzin = null;
+
+            if ($dutyForCard) {
+                $isFri = ($dutyForCard->day_name === 'Jumat' && $dutyForCard->prayer_time === 'dzuhur');
                 $friKaj = ($isFri && isset($fridayKajiansByWeek[$currentWeekNumber])) ? $fridayKajiansByWeek[$currentWeekNumber] : ($isFri ? ($fridayKajians->first() ?? null) : null);
-                $isUst = (stripos($dutyFirst->imam_name, 'kajian') !== false);
-                $pekKey = "{$dutyFirst->day_name}_{$currentWeekNumber}";
-                $pekKaj = $isUst ? ($pekananKajiansByDayWeek[$pekKey] ?? ($pekananKajiansByDay[$dutyFirst->day_name] ?? ($pekananKajiansByWeek[$currentWeekNumber] ?? ($defaultPekananKajian ?? null)))) : null;
-                $resolvedDutyImam = $dutyFirst->imam_name;
+                $isUst = (stripos($dutyForCard->imam_name, 'kajian') !== false);
+                $pekKey = "{$dutyForCard->day_name}_{$currentWeekNumber}";
+                $pekKaj = $isUst ? ($pekananKajiansByDayWeek[$pekKey] ?? ($pekananKajiansByDay[$dutyForCard->day_name] ?? ($pekananKajiansByWeek[$currentWeekNumber] ?? ($defaultPekananKajian ?? null)))) : null;
+                $resolvedDutyImam = $dutyForCard->imam_name;
                 if ($isFri && $friKaj && !empty($friKaj->khatib_name)) {
                     $resolvedDutyImam = $friKaj->khatib_name;
                 } elseif ($isUst && $pekKaj && (!empty($pekKaj->speaker_name) || !empty($pekKaj->khatib_name))) {
                     $resolvedDutyImam = $pekKaj->speaker_name ?: $pekKaj->khatib_name;
                 }
-                $resolvedDutyLabel = "{$dutyFirst->day_name} " . ucfirst($dutyFirst->prayer_time);
+                $resolvedDutyMuadzin = ($isFri && $friKaj && !empty($friKaj->muadzin_name)) ? $friKaj->muadzin_name : $dutyForCard->muadzin_name;
+                $resolvedDutyLabel = "{$dutyForCard->day_name} " . ucfirst($dutyForCard->prayer_time);
             }
         @endphp
-        <div @click="switchTabFast('{{ Auth::user()->isJamaah() ? 'petugas' : 'users' }}')"
+        <div @click="switchTabFast('petugas')"
             class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
             <div class="flex items-center gap-3 min-w-0">
                 <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 font-bold text-xs shadow-2xs group-hover:bg-gov-navy group-hover:text-white transition-colors">
@@ -126,17 +132,22 @@
                 </div>
                 <div class="min-w-0">
                     <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
-                        {{ $hasDuties ? 'Petugas Shalat Pekan Ini' : 'Status Operasional DKM' }}
+                        Petugas Shalat Hari Ini
                     </span>
                     <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
-                        @if($hasDuties)
+                        @if($hasTodayDuty)
+                            {{ $resolvedDutyLabel }}: {{ $resolvedDutyImam }}
+                        @elseif($hasAnyDuty)
                             {{ $resolvedDutyLabel }}: {{ $resolvedDutyImam }}
                         @else
-                            DKM Periode 2026-2029
+                            {{ $todayDayName }}: Belum ada jadwal
                         @endif
                     </h4>
                     <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
-                        Pekan ke-{{ $currentWeekNumber }} &bull; {{ $totalJamaah > 0 ? $totalJamaah . ' Jamaah' : 'Pengurus Aktif' }}
+                        @if($resolvedDutyMuadzin)
+                            {{ ($dutyForCard && $dutyForCard->day_name === 'Jumat') ? 'Bilal' : 'Muadzin' }}: {{ $resolvedDutyMuadzin }} &bull;
+                        @endif
+                        Pekan ke-{{ $currentWeekNumber }} &bull; {{ $hasTodayDuty ? $todayDayName : ($hasAnyDuty ? 'Jadwal Terdekat' : 'Pengurus Aktif') }}
                     </p>
                 </div>
             </div>
@@ -155,8 +166,8 @@
         <span class="text-[11px] font-semibold text-slate-400 hidden sm:inline-block">1-Tap Quick Access</span>
     </div>
 
-    <!-- Grid Menu Launcher Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
+    <!-- Grid Menu Launcher Cards (10 Cards: 5 Baris di Mobile, 2 Baris di Desktop) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
         <!-- 1. Jadwal Kegiatan -->
         <div @click="switchTabFast('kegiatan')"
             class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
@@ -321,25 +332,7 @@
         </div>
         @endunless
 
-        <!-- 10. TV Display -->
-        <a href="{{ url('/display') }}" target="_blank"
-            class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
-            <div class="space-y-3">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-50 text-sky-700 border border-sky-100 flex items-center justify-center shrink-0 group-hover:bg-gov-navy group-hover:text-white transition-colors">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="15" x="2" y="3" rx="2"/><polyline points="17 21 12 18 7 21"/></svg>
-                </div>
-                <div>
-                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain group-hover:text-gov-navy transition-colors truncate">TV Display</h4>
-                    <p class="text-[11px] text-gov-textMuted mt-0.5 leading-snug line-clamp-2">Layar Informasi Digital Masjid & Jam Sholat Digital</p>
-                </div>
-            </div>
-            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-sky-700 group-hover:text-gov-navy transition-colors">
-                <span>Buka Layar</span>
-                <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-gov-navy transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-        </a>
-
-        <!-- 11. Portal Jamaah -->
+        <!-- 10. Portal Jamaah -->
         <a href="{{ url('/') }}" target="_blank"
             class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
             <div class="space-y-3">
