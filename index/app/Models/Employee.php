@@ -49,8 +49,7 @@ class Employee extends Model
                 if (! $value) {
                     return $value;
                 }
-                $stripped = \App\Services\EmployeeStatusSyncService::stripAcademicTitles($value);
-                return Str::title(strtolower(trim($stripped)));
+                return \App\Services\EmployeeStatusSyncService::cleanAndCapitalizeName($value);
             },
         );
     }

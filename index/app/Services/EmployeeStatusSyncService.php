@@ -252,6 +252,19 @@ class EmployeeStatusSyncService
     }
 
     /**
+     * Bersihkan seluruh gelar dan format string nama ke Capitalized (Title Case)
+     */
+    public static function cleanAndCapitalizeName(string $name): string
+    {
+        $stripped = self::stripAcademicTitles($name);
+        if (trim($stripped) === '') {
+            return '';
+        }
+
+        return Str::title(strtolower(trim($stripped)));
+    }
+
+    /**
      * Normalisasi string nama untuk pencocokan toleran
      */
     public static function normalizeName(string $name): string

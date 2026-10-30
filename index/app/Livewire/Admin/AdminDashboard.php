@@ -4821,7 +4821,7 @@ class AdminDashboard extends Component
 
             if ($emp) {
                 $updateData = ['status' => 'AKTIF'];
-                if ($name && (empty($emp->name) || strtolower($emp->name) === strtolower($name))) {
+                if ($name) {
                     $updateData['name'] = $name;
                 }
                 if ($nip9) $updateData['nip_pendek'] = $nip9;

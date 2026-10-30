@@ -122,6 +122,8 @@ class EmployeeImportService
     {
         $map = [];
         $lowers = array_map(fn ($c) => strtolower(trim((string) $c)), $cols);
+        $namePureIdx = null;
+        $nameFallbackIdx = null;
 
         foreach ($lowers as $idx => $header) {
             if ($header === '') {
@@ -136,15 +138,21 @@ class EmployeeImportService
             elseif (in_array($header, ['nip', 'nip panjang', 'nip 18', 'nip_panjang', 'nip18', 'nip bkn', 'nomor induk pegawai'])) {
                 $map['nip18'] = $idx;
             }
-            // Nama Pegawai
-            elseif (in_array($header, ['nama pegawai', 'nama lengkap', 'nama', 'nama_pegawai', 'name'])) {
-                $map['name'] = $idx;
+            // Nama Pegawai Murni (Prioritas Utama sesuai kolom 'NAMA PEGAWAI' tanpa gelar)
+            elseif (in_array($header, ['nama pegawai', 'nama_pegawai'])) {
+                $namePureIdx = $idx;
             }
-            // Gelar Prefix
+            // Nama Fallback jika kolom bukan 'NAMA PEGAWAI'
+            elseif (in_array($header, ['nama', 'name', 'nama lengkap', 'nama_lengkap', 'nama karyawan'])) {
+                if ($nameFallbackIdx === null) {
+                    $nameFallbackIdx = $idx;
+                }
+            }
+            // Gelar Prefix (dicatat untuk metadata tapi TIDAK digabung ke name)
             elseif (in_array($header, ['gelar prefix', 'gelar depan', 'prefix'])) {
                 $map['prefix'] = $idx;
             }
-            // Gelar Suffix
+            // Gelar Suffix (dicatat untuk metadata tapi TIDAK digabung ke name)
             elseif (in_array($header, ['gelar suffix', 'gelar belakang', 'suffix'])) {
                 $map['suffix'] = $idx;
             }
@@ -176,6 +184,13 @@ class EmployeeImportService
             elseif (in_array($header, ['posisi kelompok fungsional'])) {
                 $map['posisi_fungsional'] = $idx;
             }
+        }
+
+        // Tentukan kolom nama: utamakan 'NAMA PEGAWAI' murni
+        if ($namePureIdx !== null) {
+            $map['name'] = $namePureIdx;
+        } elseif ($nameFallbackIdx !== null) {
+            $map['name'] = $nameFallbackIdx;
         }
 
         // Header valid jika memiliki kolom nama atau minimal salah satu NIP
@@ -222,22 +237,16 @@ class EmployeeImportService
             }
         }
 
-        // 4. Ekstraksi Nama & Gelar
+        // 4. Ekstraksi Nama Pegawai (Wajib Capitalized & Bebas dari Segala Gelar)
         $nameRaw = isset($map['name']) ? trim((string) ($cols[$map['name']] ?? '')) : '';
-        $prefix = isset($map['prefix']) ? trim((string) ($cols[$map['prefix']] ?? '')) : '';
-        $suffix = isset($map['suffix']) ? trim((string) ($cols[$map['suffix']] ?? '')) : '';
-
-        // Hapus tanda petik satu atau karakter aneh yang kerap tertinggal
         $nameRaw = trim($nameRaw, "'\"");
-        $prefix = trim($prefix, "'\"");
-        $suffix = trim($suffix, "'\"");
 
         if ($nameRaw === '' && ! $nip9 && ! $nip18) {
             return null;
         }
 
-        // Hapus penambahan gelar prefix maupun suffix sesuai mandat: nama pegawai tanpa gelar
-        $fullName = EmployeeStatusSyncService::stripAcademicTitles($nameRaw);
+        // Hapus penambahan gelar prefix maupun suffix sesuai mandat: nama pegawai murni tanpa gelar, berformat Capitalized
+        $fullName = EmployeeStatusSyncService::cleanAndCapitalizeName($nameRaw);
 
         // 5. Gender
         $gender = null;
