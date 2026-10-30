@@ -37,6 +37,11 @@
              this.$watch('socialSubTab', () => this.updateDocumentTitle());
              this.$watch('userSubTab', () => this.updateDocumentTitle());
              this.$watch('settingsSubTab', () => this.updateDocumentTitle());
+             this.$watch('sidebarDrawerOpen', (val) => {
+                 if (val && window.innerWidth < 768) {
+                     window.dispatchEvent(new CustomEvent('close-toast'));
+                 }
+             });
              this.$watch('dutyForm.day_name', (val) => {
                  if (this.showPrayerDutyModal && val === 'Jumat' && this.dutyForm.prayer_time === 'dzuhur') {
                      this.redirectToFridayKajian();

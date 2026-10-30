@@ -59,4 +59,27 @@ class GlobalToastNotificationTest extends TestCase
         $toastCount = substr_count($html, '@toast.window');
         $this->assertSame(1, $toastCount, 'Halaman admin yang dirender hanya boleh memiliki tepat 1 elemen toast global.');
     }
+
+    /**
+     * Verifikasi Opsi A: Toast memiliki listener close-toast, isolasi z-index, dan auto-hide saat sidebar mobile dibuka.
+     */
+    public function test_toast_has_smart_auto_dismiss_and_z_index_isolation_for_mobile_sidebar(): void
+    {
+        $layoutContent = file_get_contents(resource_path('views/layouts/app.blade.php'));
+
+        // Harus memiliki listener @close-toast.window
+        $this->assertStringContainsString('@close-toast.window="show = false; clearTimeout(timer);"', $layoutContent);
+
+        // Harus memiliki isolasi z-index (z-30 pada mobile agar berada di bawah backdrop z-40 dan sidebar z-50, sm:z-50 di desktop)
+        $this->assertStringContainsString('z-30 sm:z-50', $layoutContent);
+
+        // Harus memeriksa apakah sidebar mobile terbuka sebelum memunculkan toast
+        $this->assertStringContainsString('isSidebarOpen', $layoutContent);
+
+        $dashboardContent = file_get_contents(resource_path('views/livewire/admin/admin-dashboard.blade.php'));
+
+        // Harus memantau pergerakan sidebarDrawerOpen dan men-dispatch close-toast di mobile
+        $this->assertStringContainsString("\$watch('sidebarDrawerOpen'", $dashboardContent);
+        $this->assertStringContainsString("close-toast", $dashboardContent);
+    }
 }

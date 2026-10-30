@@ -192,6 +192,10 @@
                 timer: null,
                 trigger(msg) {
                     if (!msg) return;
+                    const isMobile = window.innerWidth < 768;
+                    const sidebar = document.querySelector('.admin-sidebar');
+                    const isSidebarOpen = Boolean(isMobile && sidebar && !sidebar.classList.contains('sidebar-closed'));
+                    if (isSidebarOpen) return;
                     this.message = msg;
                     this.show = true;
                     clearTimeout(this.timer);
@@ -199,14 +203,17 @@
                         this.show = false;
                     }, 3500);
                 }
-             }" @toast.window="trigger($event.detail.message)" x-cloak x-show="show"
+             }" 
+             @toast.window="trigger($event.detail.message)" 
+             @close-toast.window="show = false; clearTimeout(timer);"
+             x-cloak x-show="show"
             x-transition:enter="transition ease-out duration-250 transform"
             x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
             x-transition:leave="transition ease-in duration-200 transform"
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
-            class="fixed top-16 inset-x-4 max-w-md mx-auto sm:top-6 sm:right-6 sm:inset-x-auto sm:mx-0 z-50 flex items-center justify-between sm:justify-start gap-3 bg-gov-navy text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700/60 text-xs font-semibold backdrop-blur-md"
+            class="fixed top-16 inset-x-4 max-w-md mx-auto sm:top-6 sm:right-6 sm:inset-x-auto sm:mx-0 z-30 sm:z-50 flex items-center justify-between sm:justify-start gap-3 bg-gov-navy text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700/60 text-xs font-semibold backdrop-blur-md"
             style="display: none;">
             <div class="flex items-center gap-2.5 min-w-0">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
