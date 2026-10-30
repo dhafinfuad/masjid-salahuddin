@@ -77,6 +77,20 @@
                 touch-action: manipulation;
                 -webkit-text-size-adjust: 100%;
             }
+
+            /* Livewire Background Sync Top Progress Bar Animation (Matches wire:navigate #2299dd) */
+            @keyframes livewireProgressStream {
+                0% {
+                    transform: translateX(-100%);
+                }
+                100% {
+                    transform: translateX(250%);
+                }
+            }
+            .livewire-progress-bar-stream {
+                width: 45%;
+                animation: livewireProgressStream 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            }
         </style>
 
         <!-- Anti-Zoom Gesture Guard: Prevent iOS Safari pinch-to-zoom -->

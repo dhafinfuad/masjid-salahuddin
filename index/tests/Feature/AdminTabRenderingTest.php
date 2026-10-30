@@ -189,4 +189,26 @@ class AdminTabRenderingTest extends TestCase
         $this->assertStringContainsString('Berkas Siap', $html);
         $this->assertStringContainsString('Buka Menu Simpan (Save to Files)', $html);
     }
+
+    public function test_top_screen_progress_bar_replaces_old_interstitial_reload_bar(): void
+    {
+        $component = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'users']);
+
+        $html = $component->html();
+
+        // 1. Memastikan reload bar lama yang berkedip di bawah sub-tab sudah dihapus bersih
+        $this->assertStringNotContainsString('bg-linear-to-r from-amber-400 via-gov-navy to-amber-400', $html);
+
+        // 2. Memastikan progress bar baru di layar paling atas (top-0) dengan warna #2299dd terpasang
+        $this->assertStringContainsString('fixed top-0 inset-x-0', $html);
+        $this->assertStringContainsString('livewire-progress-bar-stream', $html);
+        $this->assertStringContainsString('#2299dd', $html);
+        $this->assertStringContainsString('wire:target="switchTab, gotoPage, nextPage, previousPage"', $html);
+
+        // 3. Memastikan styling keyframes terdefinisi di layout app
+        $layoutContent = file_get_contents(resource_path('views/layouts/app.blade.php'));
+        $this->assertStringContainsString('livewireProgressStream', $layoutContent);
+        $this->assertStringContainsString('.livewire-progress-bar-stream', $layoutContent);
+    }
 }

@@ -1571,6 +1571,13 @@
     <!-- Admin Main Workspace -->
     <div class="admin-workspace flex-1 flex flex-col min-w-0 min-h-screen bg-gov-canvas"
         :class="sidebarDrawerOpen ? '' : 'sidebar-closed'">
+        <!-- Top Screen Background Sync Progress Bar (Matches Livewire wire:navigate #2299dd bar) -->
+        <div wire:loading wire:target="switchTab, gotoPage, nextPage, previousPage"
+            class="fixed top-0 inset-x-0 h-[2.5px] bg-transparent overflow-hidden pointer-events-none"
+            style="display: none; z-index: 100;">
+            <div class="livewire-progress-bar-stream h-full bg-[#2299dd] shadow-[0_0_8px_#2299dd]"></div>
+        </div>
+
 
         <!-- Top Workspace Bar with Drawer Trigger Button & Sticky Sub-Header -->
         <div class="sticky top-0 z-20 transition-shadow duration-200"
@@ -1782,11 +1789,6 @@
                     </div>
                 </div>
             @endif
-
-            <!-- Top Micro Progress Bar for Livewire Background Sync -->
-            <div wire:loading wire:target="switchTab, gotoPage, nextPage, previousPage" class="h-0.5 w-full bg-slate-100 overflow-hidden relative z-30">
-                <div class="h-full bg-linear-to-r from-amber-400 via-gov-navy to-amber-400 w-full animate-pulse"></div>
-            </div>
         </div>
 
 
