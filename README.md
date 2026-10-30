@@ -323,15 +323,22 @@ php artisan route:cache
 2. Konfigurasi `.env` production
 3. Jalankan: `composer install --no-dev && php artisan migrate --force`
 
-Untuk panduan deploy detail, lihat [DEPLOYMENT.md](./index/docs/DEPLOYMENT.md).
+Untuk panduan deploy detail, lihat [SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md](./index/docs/SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md).
 
 ---
 
 ## 📖 Dokumentasi
 
+Seluruh dokumentasi teknis dan panduan operasional dikelompokkan terpusat di folder [`index/docs/`](./index/docs/):
+
 - [📚 Setup Lokal & Development](./index/docs/SETUP.md)
 - [🏗️ Arsitektur Sistem](./index/docs/ARCHITECTURE.md)
+- [⚡ Panduan Arsitektur & Performa](./index/docs/PANDUAN_ARSITEKTUR_DAN_PERFORMA.md)
+- [🎨 Standar Desain Antarmuka & UI Guidelines](./index/docs/UI_GUIDELINES.md)
 - [🔄 Sinkronisasi Livewire & Alpine](./index/docs/LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md)
+- [🚀 Prosedur SOP Deployment 1Panel](./index/docs/SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md)
+- [🤖 Panduan Konvensi AI Assistant](./index/docs/AGENTS.md)
+- [📖 Indeks Lengkap Dokumentasi](./index/docs/README.md)
 
 ---
 

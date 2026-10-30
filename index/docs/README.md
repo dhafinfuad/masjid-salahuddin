@@ -1,71 +1,48 @@
-# 📚 Dokumentasi Teknis
+# 📚 Pusat Dokumentasi Teknis — Masjid Salahuddin
 
-Dokumentasi lengkap untuk pengembang dan pengguna sistem Masjid Salahuddin.
-
----
-
-## 📖 Daftar Dokumentasi
-
-### Untuk Developer
-
-1. **[SETUP.md](./SETUP.md)** - Setup & Installation Guide
-   - Panduan instalasi lokal
-   - Konfigurasi environment
-   - Dependency management
-
-2. **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Arsitektur Sistem
-   - Overview struktur aplikasi
-   - Diagram arsitektur
-   - Alur data & komunikasi
-
-3. **[DATABASE.md](./DATABASE.md)** - Database Schema
-   - Entity-Relationship Diagram (ERD)
-   - Daftar tabel & kolom
-   - Relasi antar tabel
-
-4. **[API.md](./API.md)** - API Documentation
-   - Endpoint list
-   - Request/Response format
-   - Authentication & Authorization
-   - Error handling
-
-5. **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment Guide
-   - Deploy ke production
-   - Server configuration
-   - Backup & recovery
-   - Monitoring & logging
-
-### Untuk User / Admin
-
-1. **[ADMIN_GUIDE.md](./ADMIN_GUIDE.md)** - Admin Dashboard Guide
-   - Cara login
-   - Mengelola konten
-   - Manajemen pengguna
-   - Konfigurasi sistem
-
-2. **[USER_GUIDE.md](./USER_GUIDE.md)** - User Portal Guide
-   - Fitur-fitur untuk jamaah
-   - Cara install PWA
-   - Notifikasi & reminder
+Dokumentasi lengkap untuk pengembang, administrator, dan agen kecerdasan buatan (AI) sistem informasi terpadu Masjid Salahuddin.
 
 ---
 
-## 🚀 Quick Links
+## 📖 Daftar Dokumen & Panduan
 
-- [GitHub Repository](https://github.com/dhafinfuad/masjid-salahuddin)
-- [Contributing Guidelines](../CONTRIBUTING.md)
-- [README](../README.md)
-- [Changelog](./CHANGELOG.md)
-
----
-
-## 💡 Mau Berkontribusi?
-
-Sebelum berkontribusi, baca:
-1. [CONTRIBUTING.md](../CONTRIBUTING.md) - Panduan kontribusi
-2. [SETUP.md](./SETUP.md) - Setup development environment
-3. [ARCHITECTURE.md](./ARCHITECTURE.md) - Pahami struktur project
+### 🛠️ 1. Pengembangan & Arsitektur Sistem
+1. **[SETUP.md](./SETUP.md)** — Panduan Instalasi & Konfigurasi Lokal
+   - Persyaratan lingkungan (PHP 8.2+, Composer, NPM, SQLite/MySQL).
+   - Pengaturan berkas `.env` dan migrasi awal database.
+2. **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Ikhtisar Arsitektur Aplikasi
+   - Struktur direktori Laravel 11 + Livewire 3 + Alpine.js.
+   - Pola modularisasi sub-tab dan alur komunikasi antar komponen.
+3. **[PANDUAN_ARSITEKTUR_DAN_PERFORMA.md](./PANDUAN_ARSITEKTUR_DAN_PERFORMA.md)** — Standar Performa & Optimasi
+   - Praktik terbaik penanganan caching, optimasi query Eloquent, dan *lazy loading*.
+4. **[LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md](./LIVEWIRE_ALPINE_STATE_SYNC_GUIDELINES.md)** — Sinkronisasi State Livewire & Alpine
+   - Pencegahan *DOM diffing glitch*, integrasi *morphdom*, serta penanganan *action token (nonce)*.
 
 ---
 
-**Terakhir diupdate**: 2026-10-06
+### 🎨 2. Standar Desain Antarmuka (UI/UX)
+1. **[UI_GUIDELINES.md](./UI_GUIDELINES.md)** — Buku Panduan Desain & Komponen UI
+   - Standar palet warna resmi (*Gov-Navy*, *Gov-Gold*, *Slate*).
+   - Tipografi, tata letak kartu, tombol aksi cepat, dan pencegahan *badge count number*.
+   - Aturan baku modal dialog dan drawer mobile PWA.
+
+---
+
+### 🚀 3. Deployment & Operasional Server
+1. **[SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md](./SOP_DEPLOY_1PANEL_CLOUDFLARE_NGROK.md)** — Prosedur Operasi Standar Deployment
+   - Konfigurasi server produksi 1Panel OpenResty (Nginx).
+   - Alur integrasi reverse proxy Cloudflare dan tunnel cadangan Ngrok.
+   - Langkah *zero-downtime cache clearing* dan reload Nginx.
+
+---
+
+### 🤖 4. Panduan Otomasi & AI Assistant
+1. **[AGENTS.md](./AGENTS.md)** — Panduan & Konvensi AI Assistant
+   - Aturan kepatuhan arsitektur, konvensi *commit*, dan protokol *zero-regression*.
+
+---
+
+## 🔗 Tautan Cepat
+- **[Halaman Utama Repositori (README)](../../README.md)**
+- **[Aturan Utama Proyek (GEMINI.md)](../../GEMINI.md)**
+- **[Repositori GitHub](https://github.com/dhafinfuad/masjid-salahuddin)**
