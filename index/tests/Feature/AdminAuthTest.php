@@ -389,7 +389,7 @@ class AdminAuthTest extends TestCase
         $response = $this->get('/admin');
         $response->assertStatus(200);
         $response->assertSee('Viewer (Read-Only)');
-        $response->assertSee('Mode Akses: Penasihat DKM (Viewer / Read-Only Protection)');
+        $response->assertDontSee('Mode Akses: Penasihat DKM (Viewer / Read-Only Protection)');
     }
 
     public function test_admin_and_operator_can_save_event_instantly_with_payload(): void
@@ -533,5 +533,48 @@ class AdminAuthTest extends TestCase
 
         putenv('ORIGIN_SECRET');
         $this->app['env'] = 'testing';
+    }
+
+    public function test_viewer_does_not_see_access_banner_and_hides_empty_agenda_action_menu(): void
+    {
+        $viewer = User::factory()->create(['name' => 'Pak Jamaah', 'email' => 'jamaah_test@masjidsalahuddin.id', 'role' => 'viewer', 'status' => 'AKTIF']);
+
+        $agendaNoLpj = \App\Models\Agenda::create([
+            'title' => 'Kajian Spesial Tanpa LPJ',
+            'event_date' => '2026-10-30',
+            'status' => 'Selesai',
+            'budget' => 1000000,
+            'report_pdf_path' => null,
+        ]);
+
+        $agendaWithLpj = \App\Models\Agenda::create([
+            'title' => 'Kajian Akbar Ada LPJ',
+            'event_date' => '2026-10-31',
+            'status' => 'Selesai',
+            'budget' => 2000000,
+            'report_pdf_path' => 'reports/sample_lpj.pdf',
+        ]);
+
+        // 1. Pastikan Viewer tidak melihat banner kuning mode akses
+        $this->actingAs($viewer);
+        $response = $this->get('/admin');
+        $response->assertStatus(200);
+        $response->assertDontSee('Mode Akses: Penasihat DKM (Viewer / Read-Only Protection)');
+
+        // 2. Render tab kegiatan subtab agenda untuk viewer
+        \Livewire\Livewire::test(\App\Livewire\Admin\AdminDashboard::class)
+            ->set('currentTab', 'kegiatan')
+            ->set('kegiatanSubTab', 'agenda')
+            ->assertSee('Kajian Spesial Tanpa LPJ')
+            ->assertSee('Kajian Akbar Ada LPJ')
+            ->assertSee('Unduh LPJ'); // LPJ yang ada tetap tampil opsinya
+
+        // 3. Admin tetap melihat tombol aksi pada agenda tanpa LPJ
+        $this->actingAs($this->admin);
+        \Livewire\Livewire::test(\App\Livewire\Admin\AdminDashboard::class)
+            ->set('currentTab', 'kegiatan')
+            ->set('kegiatanSubTab', 'agenda')
+            ->assertSee('Edit Agenda')
+            ->assertSee('Hapus Agenda');
     }
 }

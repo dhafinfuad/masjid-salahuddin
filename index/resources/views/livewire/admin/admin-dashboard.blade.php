@@ -1188,6 +1188,14 @@
             });
             $wire.switchTab(tab);
         },
+        hasMobileActionsForViewer() {
+            if (@json(Auth::user()->canManage())) return true;
+            if (this.activeTab === 'kegiatan') return ['pekanan', 'jumat', 'agenda'].includes(this.kegiatanSubTab);
+            if (this.activeTab === 'petugas') return true;
+            if (this.activeTab === 'finance') return ['kas', 'tukin'].includes(this.financeSubTab);
+            if (this.activeTab === 'programs') return ['program', 'infaq'].includes(this.socialSubTab);
+            return false;
+        },
         confirmDeleteModal: {
             show: false,
             title: '',
@@ -1795,21 +1803,7 @@
         <!-- Admin Workspace Body -->
         <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
 
-            @if(Auth::user()->isReadOnly())
-                <div
-                    class="bg-amber-50 border border-amber-300 rounded-xl p-3.5 flex items-center justify-between text-xs text-amber-900 shadow-2xs">
-                    <div class="flex items-center space-x-3">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-amber-200/70 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
-                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-800"></i>
-                        </div>
-                        <div>
-                            <span class="font-bold block">Mode Akses: Penasihat DKM (Viewer / Read-Only Protection)</span>
-                            <span class="text-amber-800 text-xs font-medium">Anda hanya dapat memantau seluruh data dan mengekspor CSV/PDF.</span>
-                        </div>
-                    </div>
-                </div>
-            @endif
+
 
             <!-- Modular Tab Rendering based on $currentTab -->
             @if($currentTab === 'dashboard')

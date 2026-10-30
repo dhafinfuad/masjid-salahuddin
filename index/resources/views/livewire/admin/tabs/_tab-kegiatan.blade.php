@@ -1329,6 +1329,7 @@
                                             @endif
                                         </td>
                                         <td class="p-3.5 text-center whitespace-nowrap relative" x-data="{ openMenu: false }">
+                                            @if(Auth::user()->canManage() || !empty($agenda->report_pdf_path))
                                             <div class="inline-flex items-center justify-center">
                                                 <!-- Tombol Titik Tiga Vertikal -->
                                                 <button type="button" 
@@ -1410,6 +1411,9 @@
                                                     @endif
                                                 </div>
                                             </div>
+                                            @else
+                                                <span class="text-slate-300">-</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -1452,6 +1456,7 @@
                                             </a>
                                         @endif
 
+                                        @if(Auth::user()->canManage() || !empty($agenda->report_pdf_path))
                                         <!-- Tombol Titik Tiga Vertikal Mobile -->
                                         <div class="relative">
                                             <button type="button" 
@@ -1533,6 +1538,7 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">

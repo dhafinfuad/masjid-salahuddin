@@ -70,7 +70,8 @@ class MobileActionSheetTest extends TestCase
         $rendered = view('livewire.admin.tabs._mobile-action-sheet')->render();
 
         // 1. Verifikasi FAB memiliki logika sembunyi untuk settings, statistics, dan saran
-        $this->assertStringContainsString("['dashboard', 'settings', 'statistics', 'statistik', 'saran'].includes(activeTab)", $rendered);
+        $this->assertStringContainsString("['dashboard', 'statistics', 'statistik', 'saran'].includes(activeTab)", $rendered);
+        $this->assertStringContainsString("!(activeTab === 'settings' && settingsSubTab !== 'ustadz')", $rendered);
 
         // 2. Verifikasi tombol Tambah Peserta tidak ada di action sheet programs
         $this->assertStringNotContainsString('openCreateParticipant()', $rendered);
