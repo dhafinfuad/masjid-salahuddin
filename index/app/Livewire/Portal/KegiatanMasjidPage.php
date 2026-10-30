@@ -26,9 +26,9 @@ class KegiatanMasjidPage extends Component
     public function mount(): void
     {
         $now = Carbon::now('Asia/Jakarta');
-        // Default to current month or 'all'
-        $this->selectedMonth = (string) $now->month;
-        $this->selectedYear = (int) $now->year;
+        // Default to current month or query string if present
+        $this->selectedMonth = request()->has('selectedMonth') ? (string) request()->query('selectedMonth') : (string) $now->month;
+        $this->selectedYear = request()->has('selectedYear') ? (int) request()->query('selectedYear') : (int) $now->year;
     }
 
     public function updatedSearch(): void

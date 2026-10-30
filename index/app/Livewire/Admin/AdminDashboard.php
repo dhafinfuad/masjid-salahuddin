@@ -5029,9 +5029,9 @@ class AdminDashboard extends Component
         $docs = $settings->getTakmirDocuments();
 
         $fileNames = [
-            'sk' => 'Surat_Keputusan_Takmir_KEP-48_KPP.1209_2026.pdf',
-            'lampiran1' => 'Lampiran_SK_Takmir_KEP-48_KPP.1209_2026.pdf',
-            'lampiran2' => 'Tupoksi_Takmir_KEP-48_KPP.1209_2026.pdf',
+            'sk' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
+            'lampiran1' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
+            'lampiran2' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
             'sk_lengkap' => 'Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf',
         ];
 
