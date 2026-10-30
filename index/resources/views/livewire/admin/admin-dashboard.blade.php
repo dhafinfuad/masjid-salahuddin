@@ -259,16 +259,6 @@
          },
          async updateKajianDefaultTime(token = null) {
              const activeToken = token || this.currentActionToken;
-             if (this.isEditingKajian && this.kajianForm.time_display) {
-                 return;
-             }
-             if (this.kajianForm.type === 'tematik') {
-                 this.kajianForm.time_display = '';
-                 if (window._activeKajianForm) {
-                     window._activeKajianForm.time_display = '';
-                 }
-                 return;
-             }
              if (typeof $wire !== 'undefined' && typeof $wire.getDefaultKajianTime === 'function') {
                  try {
                      const res = await $wire.getDefaultKajianTime(this.kajianForm.type, this.kajianForm.date, activeToken);

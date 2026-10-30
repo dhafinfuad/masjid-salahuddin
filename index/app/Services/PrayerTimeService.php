@@ -609,16 +609,11 @@ class PrayerTimeService
 
     /**
      * Menghitung waktu default kajian (Dzuhur/Ashar + offset menit) terformat "HH:MM WIB".
-     * - Pekanan: Waktu Ashar + 20 menit
+     * - Pekanan & Tematik: Waktu Ashar + 20 menit
      * - Jumat: Waktu Dzuhur + 20 menit
-     * - Tematik: null (ditentukan manual bila ada)
      */
     public function getDefaultKajianTime(string $type, mixed $date = null, int $extraMinutes = 20): ?string
     {
-        if ($type === 'tematik') {
-            return null;
-        }
-
         $dateCarbon = $date instanceof Carbon 
             ? $date->copy()->setTimezone('Asia/Jakarta') 
             : ($date ? Carbon::parse($date)->setTimezone('Asia/Jakarta') : Carbon::now('Asia/Jakarta'));

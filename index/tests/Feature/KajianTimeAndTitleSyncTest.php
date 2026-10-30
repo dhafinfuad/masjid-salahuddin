@@ -50,9 +50,10 @@ class KajianTimeAndTitleSyncTest extends TestCase
         $this->assertStringEndsWith('WIB', $pekananTime);
         $this->assertMatchesRegularExpression('/^\d{2}:\d{2} WIB$/', $pekananTime);
 
-        // 3. Tematik -> null
+        // 3. Tematik -> Ashar + 20 min (disamakan dengan Pekanan sesuai arahan pengguna)
         $tematikTime = $this->prayerService->getDefaultKajianTime('tematik', $testDate);
-        $this->assertNull($tematikTime);
+        $this->assertNotNull($tematikTime);
+        $this->assertEquals($pekananTime, $tematikTime);
 
         // Uji variasi antar bulan (memastikan waktu berbeda-beda tiap bulan dan minggu)
         $timeJan = $this->prayerService->getDefaultKajianTime('pekanan', '2026-01-15');
@@ -128,7 +129,7 @@ class KajianTimeAndTitleSyncTest extends TestCase
     }
 
     /** @test */
-    public function test_save_kajian_tematik_keeps_time_display_empty_when_not_provided(): void
+    public function test_save_kajian_tematik_syncs_time_display_when_not_provided(): void
     {
         $tematikDate = Carbon::now()->addDays(7)->format('Y-m-d');
 
@@ -147,11 +148,12 @@ class KajianTimeAndTitleSyncTest extends TestCase
             ->call('saveKajian', $payload)
             ->assertHasNoErrors();
 
+        $expectedAsharTime = $this->prayerService->getDefaultKajianTime('tematik', $tematikDate);
         $this->assertDatabaseHas('kajians', [
             'type' => 'tematik',
             'date' => $tematikDate . ' 00:00:00',
             'title' => 'Tabligh Akbar Menyambut Ramadhan 1448 H',
-            'time_display' => null,
+            'time_display' => $expectedAsharTime,
         ]);
     }
 

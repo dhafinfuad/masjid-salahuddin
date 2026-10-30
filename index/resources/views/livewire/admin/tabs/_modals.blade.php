@@ -355,7 +355,7 @@
                     <div x-show="isEditingKajian">
                         <label class="block font-semibold text-slate-700 mb-1">Jenis Jadwal *</label>
                         <select x-model="kajianForm.type"
-                            @change="window._activeKajianType = kajianForm.type; if (window._activeKajianForm) { window._activeKajianForm.type = kajianForm.type; } if (kajianForm.type === 'jumat') { delete kajianErrors.title; delete kajianErrors.speaker_name; } if (!kajianForm.time_display) { updateKajianDefaultTime(); }"
+                            @change="window._activeKajianType = kajianForm.type; if (window._activeKajianForm) { window._activeKajianForm.type = kajianForm.type; } if (kajianForm.type === 'jumat') { delete kajianErrors.title; delete kajianErrors.speaker_name; } updateKajianDefaultTime();"
                             class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
                             <option value="pekanan">Kajian Pekanan</option>
                             <option value="tematik">Kajian Tematik</option>
@@ -368,7 +368,7 @@
                             <label class="block font-semibold text-slate-700 mb-1">Hari & Tanggal *</label>
                             <input x-model="kajianForm.date" 
                                 @input="if (window._activeShowKajianModal && window._activeKajianForm) { window._activeKajianForm.date = kajianForm.date; }"
-                                @change="if (!isEditingKajian || !kajianForm.time_display) { updateKajianDefaultTime(); } if (window._activeShowKajianModal && window._activeKajianForm) { window._activeKajianForm.date = kajianForm.date; } validateKajianField('date')" 
+                                @change="updateKajianDefaultTime(); if (window._activeShowKajianModal && window._activeKajianForm) { window._activeKajianForm.date = kajianForm.date; } validateKajianField('date')" 
                                 @blur="validateKajianField('date')"
                                 type="date"
                                 class="w-full p-2.5 rounded-lg border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 transition font-medium text-xs text-gov-textMain cursor-pointer"

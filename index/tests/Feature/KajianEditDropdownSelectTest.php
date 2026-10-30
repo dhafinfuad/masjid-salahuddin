@@ -77,5 +77,46 @@ class KajianEditDropdownSelectTest extends TestCase
             'speaker_name' => 'Ustadz Dr. Muhammad',
         ]);
     }
+
+    /** @test */
+    public function test_get_default_kajian_time_returns_prayer_time_for_all_types(): void
+    {
+        $testDate = '2026-11-20';
+
+        $component = Livewire::actingAs($this->adminUser)
+            ->test(AdminDashboard::class, ['tab' => 'kegiatan']);
+
+        // 1. Khutbah Jumat -> Waktu Dzuhur
+        $jumatTime = $component->instance()->getDefaultKajianTime('jumat', $testDate);
+        $this->assertNotNull($jumatTime);
+        $this->assertStringEndsWith('WIB', $jumatTime);
+
+        // 2. Kajian Pekanan -> Waktu Ashar
+        $pekananTime = $component->instance()->getDefaultKajianTime('pekanan', $testDate);
+        $this->assertNotNull($pekananTime);
+        $this->assertStringEndsWith('WIB', $pekananTime);
+
+        // 3. Kajian Tematik -> Waktu Ashar (identik dengan Pekanan)
+        $tematikTime = $component->instance()->getDefaultKajianTime('tematik', $testDate);
+        $this->assertNotNull($tematikTime);
+        $this->assertEquals($pekananTime, $tematikTime);
+
+        // Pastikan Dzuhur dan Ashar memiliki jam yang berbeda
+        $this->assertNotEquals($jumatTime, $pekananTime);
+    }
+
+    /** @test */
+    public function test_modal_date_input_and_dropdown_trigger_update_kajian_default_time(): void
+    {
+        $this->actingAs($this->adminUser);
+        $response = $this->get('/admin/kegiatan');
+        $response->assertOk();
+
+        // Verifikasi input date pada modal memanggil updateKajianDefaultTime() secara unconditional saat @change
+        $response->assertSee('@change="updateKajianDefaultTime(); if (window._activeShowKajianModal && window._activeKajianForm)', false);
+
+        // Verifikasi dropdown select option memanggil updateKajianDefaultTime() saat jenis jadwal diubah
+        $response->assertSee('updateKajianDefaultTime();', false);
+    }
 }
 

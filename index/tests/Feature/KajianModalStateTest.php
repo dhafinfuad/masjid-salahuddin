@@ -232,7 +232,7 @@ class KajianModalStateTest extends TestCase
         $response->assertSee('window._activeIsEditingKajian', false);
         $response->assertSee('window._activeKajianForm', false);
 
-        // Verifikasi guard pada updateKajianDefaultTime di template
-        $response->assertSee('if (this.isEditingKajian && this.kajianForm.time_display)', false);
+        // Verifikasi pemanggilan updateKajianDefaultTime saat input tanggal berubah
+        $response->assertSee('updateKajianDefaultTime()', false);
     }
 }
