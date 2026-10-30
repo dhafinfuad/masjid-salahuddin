@@ -1441,41 +1441,15 @@ class AdminDashboard extends Component
     }
 
     /**
-     * Dapatkan periode default filter bulan dan tahun untuk kajian dengan Smart Rollover.
-     * Jika di bulan berjalan sudah tidak ada lagi jadwal kajian yang tersisa (semua kajian bulan ini telah terlaksana),
-     * filter otomatis berpindah ke bulan berikutnya (misal dari September ke Oktober).
+     * Dapatkan periode default filter bulan dan tahun untuk kajian.
+     * Konsisten dengan seluruh modul lainnya, default selalu mengacu pada bulan & tahun berjalan kalender saat ini.
      *
      * @return array{0: int, 1: int} [month, year]
      */
     public function getDefaultKajianFilterPeriod(?Carbon $now = null): array
     {
         $now = $now ? $now->copy()->timezone('Asia/Jakarta') : Carbon::now('Asia/Jakarta');
-        $currentMonth = (int) $now->month;
-        $currentYear = (int) $now->year;
-
-        // Cek apakah masih ada jadwal kajian di bulan berjalan pada atau setelah hari ini
-        $hasRemainingThisMonth = Kajian::query()->whereDate('date', '>=', $now->toDateString())
-            ->whereMonth('date', $currentMonth)
-            ->whereYear('date', $currentYear)
-            ->exists();
-
-        if (!$hasRemainingThisMonth) {
-            $hasPastKajianThisMonth = Kajian::whereMonth('date', $currentMonth)
-                ->whereYear('date', $currentYear)
-                ->exists();
-
-            $nextMonth = $now->copy()->addMonth();
-            $hasNextMonthKajian = Kajian::whereMonth('date', $nextMonth->month)
-                ->whereYear('date', $nextMonth->year)
-                ->exists();
-
-            // Jika semua kajian bulan ini telah selesai dilaksanakan, atau bulan depan telah memiliki jadwal
-            if ($hasPastKajianThisMonth || $hasNextMonthKajian) {
-                return [(int) $nextMonth->month, (int) $nextMonth->year];
-            }
-        }
-
-        return [$currentMonth, $currentYear];
+        return [(int) $now->month, (int) $now->year];
     }
 
     public function clearKajianSearch(string $type = 'jumat'): void

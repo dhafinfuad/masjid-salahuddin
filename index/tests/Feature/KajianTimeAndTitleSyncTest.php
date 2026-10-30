@@ -181,8 +181,12 @@ class KajianTimeAndTitleSyncTest extends TestCase
         ]);
 
         // 1. Admin Dashboard Kegiatan Tab
+        $month = (string) Carbon::parse($fridayDate)->month;
+        $year = (string) Carbon::parse($fridayDate)->year;
         Livewire::actingAs($this->adminUser)
             ->test(AdminDashboard::class, ['tab' => 'kegiatan'])
+            ->set('kajianMonthFilter', $month)
+            ->set('kajianYearFilter', $year)
             ->call('switchKegiatanSubTab', 'jumat')
             ->assertSee('Khatib Jumat Spesial')
             // Di tab jumat, waktu keterangan tidak boleh muncul di baris tabel
