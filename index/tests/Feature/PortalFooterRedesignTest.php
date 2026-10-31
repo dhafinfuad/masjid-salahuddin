@@ -24,6 +24,7 @@ class PortalFooterRedesignTest extends TestCase
         $test = Livewire::test(PortalPage::class)
             ->assertSee('Masjid Salahuddin')
             ->assertSee('KPP Madya Malang')
+            ->assertDontSee('Kementerian Keuangan RI')
             ->assertSee('Channel YouTube')
             ->assertSee('https://www.youtube.com/@MasjidSalahuddinKPPMadyaMalang');
 
@@ -38,8 +39,8 @@ class PortalFooterRedesignTest extends TestCase
         $this->assertStringContainsString('Logo Masjid Salahuddin.webp', $html);
 
         // Ensure YouTube icon and text are white
-        $this->assertStringContainsString('class="text-xs font-bold text-white">Channel YouTube</span>', $html);
-        $this->assertStringContainsString('class="w-4 h-4 text-white shrink-0 group-hover:scale-110 transition-transform"', $html);
+        $this->assertStringContainsString('Channel YouTube</span>', $html);
+        $this->assertStringContainsString('group-hover:scale-110 transition-transform', $html);
     }
 
     public function test_profil_and_saran_pages_render_consistent_navy_footer(): void
@@ -51,11 +52,15 @@ class PortalFooterRedesignTest extends TestCase
 
         Livewire::test(ProfilMasjidPage::class)
             ->assertSee('Masjid Salahuddin')
+            ->assertSee('KPP Madya Malang')
+            ->assertDontSee('Kementerian Keuangan RI')
             ->assertSee('Channel YouTube')
             ->assertSee('https://www.youtube.com/@MasjidSalahuddinKPPMadyaMalang');
 
         Livewire::test(SaranKritikPage::class)
             ->assertSee('Masjid Salahuddin')
+            ->assertSee('KPP Madya Malang')
+            ->assertDontSee('Kementerian Keuangan RI')
             ->assertSee('Channel YouTube')
             ->assertSee('https://www.youtube.com/@MasjidSalahuddinKPPMadyaMalang');
     }

@@ -847,9 +847,9 @@
         </div>
 
         <!-- Footer -->
-        <footer class="bg-gov-navy text-white rounded-xl shadow-xs p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left border border-gov-navyDark relative overflow-hidden bg-gov-pattern">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-2xs">
+        <footer class="bg-gov-navy text-white rounded-xl shadow-xs p-3 sm:p-5 flex items-center justify-between gap-2.5 sm:gap-4 text-left border border-gov-navyDark relative overflow-hidden bg-gov-pattern">
+            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-2xs">
                     <img 
                         src="{{ asset('resources/Logo Masjid Salahuddin.webp') }}" 
                         alt="Logo {{ $settings->name ?? 'Masjid Salahuddin' }}" 
@@ -857,18 +857,18 @@
                         onerror="this.onerror=null; this.src='/masjid-salahuddin/resources/Logo%20Masjid%20Salahuddin.webp';"
                     >
                 </div>
-                <div>
-                    <div class="font-bold text-xs sm:text-sm text-white tracking-wide">{{ $settings->name ?? 'Masjid Salahuddin' }}</div>
-                    <p class="text-[11px] text-slate-300 mt-0.5">KPP Madya Malang · Kementerian Keuangan RI</p>
+                <div class="min-w-0">
+                    <div class="font-bold text-xs sm:text-sm text-white tracking-wide truncate">{{ $settings->name ?? 'Masjid Salahuddin' }}</div>
+                    <p class="text-[11px] text-slate-300 mt-0.5 truncate">KPP Madya Malang</p>
                 </div>
             </div>
             <a href="https://www.youtube.com/@MasjidSalahuddinKPPMadyaMalang" target="_blank" rel="noopener noreferrer"
-               class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white transition shadow-2xs group cursor-pointer shrink-0"
+               class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg bg-white/10 hover:bg-white/20 active:bg-white/25 border border-white/20 text-white transition shadow-2xs group cursor-pointer shrink-0"
                title="Kunjungi Channel YouTube Resmi Masjid Salahuddin">
-                <svg class="w-4 h-4 text-white shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
-                <span class="text-xs font-bold text-white">Channel YouTube</span>
+                <span class="text-xs font-bold text-white whitespace-nowrap">Channel YouTube</span>
             </a>
         </footer>
 
