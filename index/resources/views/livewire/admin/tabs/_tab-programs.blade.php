@@ -1686,7 +1686,7 @@
                             style="z-index: 10000; background-color: #ffffff;">
 
                             <!-- Center Drag Indicator Handle -->
-                            <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1 sm:hidden"></div>
+                            <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4 sm:hidden"></div>
 
                             <!-- Sheet Header Ringkas: 'Berkas Siap' -->
                             <div class="text-center pt-1">

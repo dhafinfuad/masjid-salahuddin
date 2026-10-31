@@ -44,7 +44,7 @@
 
     <div class="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-8 space-y-4 max-h-[85vh] overflow-y-auto">
         <!-- Center Drag Indicator Handle -->
-        <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
+        <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
 
         <!-- Sheet Header with Title & Dismiss Button -->
         <div class="flex items-center justify-between pb-1">
