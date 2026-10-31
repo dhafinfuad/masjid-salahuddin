@@ -24,7 +24,7 @@
         style="z-index: 10000; background-color: #ffffff;">
 
         <!-- Drag Indicator Bar -->
-        <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1"></div>
+        <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
 
         <!-- Sheet Header -->
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">

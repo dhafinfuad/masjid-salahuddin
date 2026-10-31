@@ -384,7 +384,7 @@
         @endforelse
 
         @if(method_exists($employeesList, 'hasPages') && $employeesList->hasPages())
-            <div class="p-3 bg-white rounded-xl border border-gov-border">
+            <div class="p-3 bg-white rounded-xl border border-gov-border overflow-x-auto">
                 {{ $employeesList->links(data: ['scrollTo' => false]) }}
             </div>
         @endif

@@ -1829,8 +1829,12 @@
         </div>
 
 
-        <!-- Admin Workspace Body -->
-        <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-4 sm:p-6 pb-28 sm:pb-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
+        <!-- Admin Workspace Body with Guaranteed Mobile Clearance for Bottom Bar & iOS Safe Area -->
+        <div @scroll.passive="isScrolled = $event.target.scrollTop > 0"
+            class="admin-workspace-body p-4 sm:p-6 sm:pb-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150"
+            style="padding-bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));"
+            wire:loading.class="opacity-60 pointer-events-none"
+            wire:target="switchTab, gotoPage, nextPage, previousPage">
 
 
 

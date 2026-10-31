@@ -230,6 +230,17 @@ code, kbd, samp, pre, .font-mono {
     }
 }
 
+/* Guaranteed Mobile Content Clearance for Bottom Bar & iOS Safe Area */
+.admin-workspace-body {
+    padding-bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 640px) {
+    .admin-workspace-body {
+        padding-bottom: 1.5rem !important; /* sm:pb-6 */
+    }
+}
+
 /* Guaranteed Select Option Reset & Modern Chevron Styling Across All Browsers & iOS WebKit */
 /* Guaranteed Select Option Reset & Modern Chevron Styling Across All Browsers & iOS WebKit */
 select:not(.sr-only) {
