@@ -716,25 +716,25 @@
                                         <!-- Rekening Bank (BSI) -->
                                         @if(!empty($settings->bank_accounts))
                                             @foreach(array_slice($settings->bank_accounts, 0, 1) as $bank)
-                                                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3" x-data="{ copied: false }">
+                                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5" x-data="{ copied: false }">
                                                     <div class="min-w-0">
                                                         <span class="text-xs font-bold uppercase text-slate-500 block">{{ $bank['bank'] }}</span>
-                                                        <span class="text-sm sm:text-base font-bold text-gov-textMain block">{{ $bank['account_number'] }}</span>
-                                                        <span class="text-xs text-slate-500 truncate block">a.n. {{ $bank['holder'] }}</span>
+                                                        <span class="text-sm sm:text-base font-bold text-gov-textMain block tracking-wide">{{ $bank['account_number'] }}</span>
+                                                        <span class="text-xs text-slate-500 block truncate" title="{{ $bank['holder'] }}">a.n. {{ $bank['holder'] }}</span>
                                                     </div>
                                                     <button 
                                                         type="button"
                                                         @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)" 
-                                                        class="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-gov-border hover:bg-slate-50 text-slate-700 text-xs inline-flex items-center justify-center gap-1.5 font-semibold transition shadow-2xs cursor-pointer select-none whitespace-nowrap min-w-20.5"
-                                                        title="Salin Rekening"
+                                                        class="w-full py-2 px-3 rounded-lg bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs inline-flex items-center justify-center gap-1.5 font-semibold transition shadow-2xs cursor-pointer select-none"
+                                                        title="Salin Nomor Rekening"
                                                     >
-                                                        <span x-show="!copied" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+                                                        <span x-show="!copied" class="inline-flex items-center justify-center gap-1.5">
                                                             <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400 shrink-0 inline-block"></i>
-                                                            <span class="text-xs font-medium whitespace-nowrap">Salin</span>
+                                                            <span class="text-xs font-medium whitespace-nowrap">Salin Nomor Rekening</span>
                                                         </span>
-                                                        <span x-show="copied" x-cloak class="inline-flex items-center gap-1.5 text-emerald-700 font-bold shrink-0 whitespace-nowrap" style="display: none;">
+                                                        <span x-show="copied" x-cloak class="inline-flex items-center justify-center gap-1.5 text-emerald-700 font-bold" style="display: none;">
                                                             <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
-                                                            <span class="text-xs font-semibold whitespace-nowrap">Tersalin</span>
+                                                            <span class="text-xs font-semibold whitespace-nowrap">Nomor Rekening Tersalin</span>
                                                         </span>
                                                     </button>
                                                 </div>
