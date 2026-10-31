@@ -248,8 +248,10 @@ class AdminTabRenderingTest extends TestCase
         $response->assertSee('kpiTotal: 4', false);
         $response->assertSee('x-ref="kpiTrack"', false);
 
-        // Memastikan menu manajemen utama tampil dalam 5 grid column di layar non-mobile (sm+)
-        $response->assertSee('sm:grid-cols-5', false);
+        // Memastikan menu manajemen utama responsif: 4 kolom di mode tablet (sm) dan 5 kolom di desktop (lg)
+        $response->assertSee('sm:grid-cols-4', false);
+        $response->assertSee('lg:grid-cols-5', false);
+        $response->assertSee('dashboard-menu-grid', false);
 
         // Memastikan hover pada kotak ikon tidak memutihkan ikon (warna aksen tetap utuh)
         $html = $response->getContent();

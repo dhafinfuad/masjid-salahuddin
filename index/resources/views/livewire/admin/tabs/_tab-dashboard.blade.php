@@ -324,7 +324,13 @@
     </div>
 
     <style>
-        @media (min-width: 640px) {
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .dashboard-menu-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+        }
+        @media (min-width: 1024px) {
             .dashboard-menu-grid {
                 display: grid !important;
                 grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
@@ -332,8 +338,8 @@
         }
     </style>
 
-    <!-- Grid Menu Launcher Cards (10 Cards: 5 Kolom di Layar Selain Mobile / Desktop) -->
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5 sm:gap-4 dashboard-menu-grid">
+    <!-- Grid Menu Launcher Cards (10 Cards: 2 Kolom Mobile, 4 Kolom Tablet, 5 Kolom Desktop) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 dashboard-menu-grid">
         <!-- 1. Jadwal Kegiatan -->
         <div @click="switchTabFast('kegiatan')"
             class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
