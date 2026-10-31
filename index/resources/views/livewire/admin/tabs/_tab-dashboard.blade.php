@@ -218,19 +218,14 @@
         <!-- Card 1: Saldo Tersisa -->
         <div @click="switchTabFast('finance')"
             class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-emerald-100 group-hover:border-emerald-300 transition-colors">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700">Saldo Tersisa</span>
-                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5 tnum">
-                        Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}
-                    </h4>
-                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
-                        Penerimaan: <span class="text-emerald-700 font-semibold tnum">+Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</span>
-                    </p>
-                </div>
+            <div class="min-w-0">
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700">Saldo Tersisa</span>
+                <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5 tnum">
+                    Rp {{ number_format($saldoSaatIni, 0, ',', '.') }}
+                </h4>
+                <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                    Penerimaan: <span class="text-emerald-700 font-semibold tnum">+Rp {{ number_format($totalKasMasuk, 0, ',', '.') }}</span>
+                </p>
             </div>
             <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
                 <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -240,21 +235,16 @@
         <!-- Card 2: Petugas Dzuhur -->
         <div @click="switchTabFast('petugas')"
             class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-amber-100 group-hover:border-amber-300 transition-colors">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
-                        {{ $tagDzuhur }}
-                    </span>
-                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
-                        Imam : {{ $imamDzuhur }}
-                    </h4>
-                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
-                        Muadzin : {{ $muadzinDzuhur }}@if($mcDzuhur) • MC : {{ $mcDzuhur }}@endif
-                    </p>
-                </div>
+            <div class="min-w-0">
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
+                    {{ $tagDzuhur }}
+                </span>
+                <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
+                    Imam : {{ $imamDzuhur }}
+                </h4>
+                <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                    Muadzin : {{ $muadzinDzuhur }}@if($mcDzuhur) • MC : {{ $mcDzuhur }}@endif
+                </p>
             </div>
             <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
                 <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -264,21 +254,16 @@
         <!-- Card 3: Petugas Ashar -->
         <div @click="switchTabFast('petugas')"
             class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-amber-100 group-hover:border-amber-300 transition-colors">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
-                        {{ $tagAshar }}
-                    </span>
-                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
-                        Imam : {{ $imamAshar }}
-                    </h4>
-                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
-                        Muadzin : {{ $muadzinAshar }}
-                    </p>
-                </div>
+            <div class="min-w-0">
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700">
+                    {{ $tagAshar }}
+                </span>
+                <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
+                    Imam : {{ $imamAshar }}
+                </h4>
+                <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                    Muadzin : {{ $muadzinAshar }}
+                </p>
             </div>
             <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
                 <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -288,25 +273,20 @@
         <!-- Card 4: Khutbah Jumat Terdekat -->
         <div @click="switchTabFast('kegiatan')"
             class="bg-white p-4 sm:p-4.5 rounded-2xl border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer flex items-center justify-between gap-3 group">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-blue-100 group-hover:border-blue-300 transition-colors">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                </div>
-                <div class="min-w-0">
-                    <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-700">
-                        Khutbah Jumat Terdekat
-                    </span>
-                    <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
-                        {{ $nextKhatib }}
-                    </h4>
-                    <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
-                        @if($nextFridayKajian)
-                            {{ $nextKajianDate ? $nextKajianDate->translatedFormat('d M') : '' }} • {{ $nextFridayKajian->time_display ?: '11:45 WIB' }}
-                        @else
-                            Belum ada jadwal terdekat
-                        @endif
-                    </p>
-                </div>
+            <div class="min-w-0">
+                <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-700">
+                    Khutbah Jumat Terdekat
+                </span>
+                <h4 class="text-xs sm:text-sm font-bold text-gov-textMain truncate leading-tight mt-0.5">
+                    {{ $nextKhatib }}
+                </h4>
+                <p class="text-[11px] text-gov-textMuted truncate mt-0.5">
+                    @if($nextFridayKajian)
+                        {{ $nextKajianDate ? $nextKajianDate->translatedFormat('d M') : '' }} • {{ $nextFridayKajian->time_display ?: '11:45 WIB' }}
+                    @else
+                        Belum ada jadwal terdekat
+                    @endif
+                </p>
             </div>
             <div class="w-7 h-7 rounded-lg bg-slate-50 group-hover:bg-gov-50 text-slate-400 group-hover:text-gov-navy flex items-center justify-center shrink-0 transition">
                 <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
