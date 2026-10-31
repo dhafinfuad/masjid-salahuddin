@@ -323,8 +323,17 @@
         <span class="text-[11px] font-semibold text-slate-400 hidden sm:inline-block">1-Tap Quick Access</span>
     </div>
 
+    <style>
+        @media (min-width: 640px) {
+            .dashboard-menu-grid {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+            }
+        }
+    </style>
+
     <!-- Grid Menu Launcher Cards (10 Cards: 5 Kolom di Layar Selain Mobile / Desktop) -->
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5 sm:gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5 sm:gap-4 dashboard-menu-grid">
         <!-- 1. Jadwal Kegiatan -->
         <div @click="switchTabFast('kegiatan')"
             class="bg-white rounded-2xl p-4 sm:p-5 border border-gov-border shadow-2xs hover:shadow-md hover:border-gov-navy/40 transition-all cursor-pointer group flex flex-col justify-between">
