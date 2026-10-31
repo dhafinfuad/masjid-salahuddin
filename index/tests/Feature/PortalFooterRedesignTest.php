@@ -33,6 +33,13 @@ class PortalFooterRedesignTest extends TestCase
         $this->assertStringContainsString('class="bg-gov-navy text-white rounded-xl shadow-xs', $html);
         $this->assertStringContainsString('bg-gov-pattern', $html);
         $this->assertStringContainsString('href="https://www.youtube.com/@MasjidSalahuddinKPPMadyaMalang"', $html);
+
+        // Ensure official mosque logo is rendered
+        $this->assertStringContainsString('Logo Masjid Salahuddin.webp', $html);
+
+        // Ensure YouTube icon and text are white
+        $this->assertStringContainsString('class="text-xs font-bold text-white">Channel YouTube</span>', $html);
+        $this->assertStringContainsString('class="w-4 h-4 text-white shrink-0 group-hover:scale-110 transition-transform"', $html);
     }
 
     public function test_profil_and_saran_pages_render_consistent_navy_footer(): void
