@@ -716,28 +716,27 @@
                                         <!-- Rekening Bank (BSI) -->
                                         @if(!empty($settings->bank_accounts))
                                             @foreach(array_slice($settings->bank_accounts, 0, 1) as $bank)
-                                                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5" x-data="{ copied: false }">
-                                                    <div class="min-w-0">
+                                                <div 
+                                                    class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/80 hover:border-slate-300 transition cursor-pointer select-none group relative"
+                                                    x-data="{ copied: false }"
+                                                    @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)"
+                                                    @keydown.enter="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)"
+                                                    @keydown.space.prevent="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)"
+                                                    role="button"
+                                                    tabindex="0"
+                                                    title="Salin Nomor Rekening"
+                                                    aria-label="Salin nomor rekening {{ $bank['account_number'] }}"
+                                                >
+                                                    <div class="min-w-0 space-y-1">
                                                         <span class="text-xs font-bold uppercase text-slate-500 block">{{ $bank['bank'] }}</span>
-                                                        <span class="text-sm sm:text-base font-bold text-gov-textMain block tracking-wide">{{ $bank['account_number'] }}</span>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-sm sm:text-base font-bold text-gov-textMain tracking-wide group-hover:text-gov-navy transition">{{ $bank['account_number'] }}</span>
+                                                            <span class="inline-flex items-center justify-center">
+                                                                <i x-show="!copied" data-lucide="copy" class="w-4 h-4 text-slate-400 group-hover:text-gov-navy transition shrink-0"></i>
+                                                                <i x-show="copied" x-cloak data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0" style="display: none;"></i>
+                                                            </span>
+                                                        </div>
                                                         <span class="text-xs text-slate-500 block truncate" title="{{ $bank['holder'] }}">a.n. {{ $bank['holder'] }}</span>
-                                                    </div>
-                                                    <div class="pt-2.5 border-t border-slate-200/60 flex justify-end">
-                                                        <button 
-                                                            type="button"
-                                                            @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)" 
-                                                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 select-none"
-                                                            title="Salin Nomor Rekening"
-                                                        >
-                                                            <span x-show="!copied" class="inline-flex items-center justify-center gap-1.5">
-                                                                <span class="text-xs font-bold whitespace-nowrap text-white">Salin Nomor Rekening</span>
-                                                                <i data-lucide="copy" class="w-3.5 h-3.5 text-white shrink-0 inline-block"></i>
-                                                            </span>
-                                                            <span x-show="copied" x-cloak class="inline-flex items-center justify-center gap-1.5 text-white" style="display: none;">
-                                                                <span class="text-xs font-bold whitespace-nowrap text-white">Tersalin</span>
-                                                                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0 inline-block"></i>
-                                                            </span>
-                                                        </button>
                                                     </div>
                                                 </div>
                                             @endforeach
