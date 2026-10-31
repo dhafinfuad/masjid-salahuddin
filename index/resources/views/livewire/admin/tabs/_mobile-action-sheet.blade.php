@@ -2,16 +2,17 @@
 <!-- FLOATING ACTION BUTTON (FAB) & BOTTOM ACTION SHEET (MOBILE) -->
 <!-- ======================================================== -->
 
-<!-- 1. Circular (+) Floating Action Button (Mobile Only) -->
-<div class="fixed bottom-6 right-5 z-40 sm:hidden"
-    x-show="hasMobileActionsForViewer() && (!['dashboard', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'settings' && settingsSubTab !== 'ustadz') && !(activeTab === 'programs' && socialSubTab === 'pernyataan') && !showKajianModal && !showUstadzModal && !showCreateUstadzModal && !showEditUstadzModal && !showNotulaModal && !showPrayerDutyModal && !showAgendaModal && !showEmployeeModal)"
+<!-- 1. Circular (+) Floating Action Button (Mobile Only) - Elevated above Mobile Bottom Bar -->
+<div class="fixed bottom-20 right-4 z-40 sm:hidden"
+    style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px));"
+    x-show="hasMobileActionsForViewer() && (!['dashboard', 'statistics', 'statistik', 'saran'].includes(activeTab) && !(activeTab === 'settings' && settingsSubTab !== 'ustadz') && !(activeTab === 'programs' && socialSubTab === 'pernyataan') && !showKajianModal && !showUstadzModal && !showCreateUstadzModal && !showEditUstadzModal && !showNotulaModal && !showPrayerDutyModal && !showAgendaModal && !showEmployeeModal && !mobileNavDrawerOpen)"
     x-cloak>
     <button type="button"
         @click="openMobileActionSheet()"
-        class="w-14 h-14 rounded-full bg-gov-navy text-white flex items-center justify-center shadow-xl shadow-slate-900/35 hover:bg-gov-navyHover active:scale-95 transition-all duration-200 cursor-pointer"
+        class="w-13 h-13 rounded-full bg-gov-navy text-white flex items-center justify-center shadow-xl shadow-slate-900/40 border-2 border-white/20 hover:bg-gov-navyHover active:scale-95 transition-all duration-200 cursor-pointer"
         title="Menu Tindakan Cepat"
         aria-label="Menu Tindakan Cepat">
-        <svg class="w-7 h-7 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-6 h-6 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>

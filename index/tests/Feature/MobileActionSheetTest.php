@@ -36,7 +36,9 @@ class MobileActionSheetTest extends TestCase
 
         // 1. Verifikasi tombol Circular FAB (+) mobile ada di HTML
         $component->assertSeeHtml('openMobileActionSheet()');
-        $component->assertSeeHtml('fixed bottom-6 right-5 z-40 sm:hidden');
+        $component->assertSeeHtml('fixed bottom-20 right-4 z-40 sm:hidden');
+        $component->assertSeeHtml('mobileNavDrawerOpen = true');
+        $component->assertSeeHtml('Menu Navigasi Modul');
 
         // 2. Verifikasi Bottom Sheet drawer panel ada di HTML
         $component->assertSeeHtml('Menu Tindakan Cepat');

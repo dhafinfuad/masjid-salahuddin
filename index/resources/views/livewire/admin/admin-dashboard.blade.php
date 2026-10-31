@@ -3,6 +3,7 @@
     @scroll.window.passive="isScrolled = (window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0) > 0"
     x-data="{
          sidebarDrawerOpen: window.innerWidth >= 768,
+         mobileNavDrawerOpen: false,
          isScrolled: false,
          currentActionToken: null,
          startAction(scope) {
@@ -70,6 +71,11 @@
              this.$watch('settingsSubTab', () => this.updateDocumentTitle());
              this.$watch('sidebarDrawerOpen', (val) => {
                  if (val && window.innerWidth < 768) {
+                     window.dispatchEvent(new CustomEvent('close-toast'));
+                 }
+             });
+             this.$watch('mobileNavDrawerOpen', (val) => {
+                 if (val) {
                      window.dispatchEvent(new CustomEvent('close-toast'));
                  }
              });
@@ -1631,10 +1637,10 @@
             <header
                 class="bg-white border-b border-gov-border px-6 py-3 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center space-x-3">
-                    <!-- Drawer Toggle Trigger Button (Mobile, or Desktop when sidebar closed) -->
+                    <!-- Drawer Toggle Trigger Button (Desktop Only when sidebar closed; on mobile, triggered by bottom bar center button) -->
                     <button type="button" @click="sidebarDrawerOpen = !sidebarDrawerOpen"
-                        class="items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
-                        :class="sidebarDrawerOpen ? 'md:opacity-0 md:w-0 md:p-0 md:pointer-events-none md:overflow-hidden flex' : 'opacity-100 w-8 flex'"
+                        class="hidden md:flex items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
+                        :class="sidebarDrawerOpen ? 'md:opacity-0 md:w-0 md:p-0 md:pointer-events-none md:overflow-hidden md:hidden' : 'opacity-100 w-8 flex'"
                         title="Buka/Tutup Menu Drawer">
                         <i data-lucide="menu" class="w-4 h-4 text-gov-navyHover shrink-0"></i>
                     </button>
@@ -1839,7 +1845,7 @@
 
 
         <!-- Admin Workspace Body -->
-        <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
+        <div @scroll.passive="isScrolled = $event.target.scrollTop > 0" class="p-4 sm:p-6 pb-28 sm:pb-6 overflow-y-auto space-y-6 flex-1 transition-opacity duration-150" wire:loading.class="opacity-60 pointer-events-none" wire:target="switchTab, gotoPage, nextPage, previousPage">
 
 
 
@@ -1888,6 +1894,12 @@
         </div>
     </div>
 
+
+    <!-- Mobile Bottom Navigation Bar (5 Slots) -->
+    @include('livewire.admin.tabs._mobile-bottom-bar')
+
+    <!-- Mobile Full Module Navigation Drawer (Triggered by Center Button) -->
+    @include('livewire.admin.tabs._mobile-nav-drawer')
 
     <!-- Mobile Floating Action Button (FAB) & Bottom Action Sheet -->
     @include('livewire.admin.tabs._mobile-action-sheet')
