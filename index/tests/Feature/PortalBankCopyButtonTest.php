@@ -12,7 +12,7 @@ class PortalBankCopyButtonTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_bank_account_renders_full_width_copy_button_below_details(): void
+    public function test_bank_account_and_saran_buttons_match_profil_masjid_style(): void
     {
         MasjidSetting::updateOrCreate(
             ['id' => 1],
@@ -32,12 +32,17 @@ class PortalBankCopyButtonTest extends TestCase
             ->assertSee('BSI (BANK SYARIAH INDONESIA)')
             ->assertSee('7885858885')
             ->assertSee('MASJID SALAHUDDIN KPP MADYA MALANG')
-            ->assertSee('Salin Nomor Rekening');
+            ->assertSee('Salin Nomor Rekening')
+            ->assertSee('Saran & Kritik')
+            ->assertDontSee('Sampaikan Saran & Kritik');
 
         $html = $test->html();
 
-        // Ensure the button has w-full class
-        $this->assertStringContainsString('class="w-full py-2 px-3 rounded-lg', $html);
+        // Ensure the bank copy button has matching styling with profil masjid button
+        $this->assertStringContainsString('class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 select-none"', $html);
         $this->assertStringContainsString("copyRekening('7885858885'", $html);
+
+        // Ensure saran & kritik button has matching styling with profil masjid button
+        $this->assertStringContainsString('class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"', $html);
     }
 }

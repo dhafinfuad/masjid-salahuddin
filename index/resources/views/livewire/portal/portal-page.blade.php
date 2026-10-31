@@ -716,27 +716,29 @@
                                         <!-- Rekening Bank (BSI) -->
                                         @if(!empty($settings->bank_accounts))
                                             @foreach(array_slice($settings->bank_accounts, 0, 1) as $bank)
-                                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5" x-data="{ copied: false }">
+                                                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5" x-data="{ copied: false }">
                                                     <div class="min-w-0">
                                                         <span class="text-xs font-bold uppercase text-slate-500 block">{{ $bank['bank'] }}</span>
                                                         <span class="text-sm sm:text-base font-bold text-gov-textMain block tracking-wide">{{ $bank['account_number'] }}</span>
                                                         <span class="text-xs text-slate-500 block truncate" title="{{ $bank['holder'] }}">a.n. {{ $bank['holder'] }}</span>
                                                     </div>
-                                                    <button 
-                                                        type="button"
-                                                        @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)" 
-                                                        class="w-full py-2 px-3 rounded-lg bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-xs inline-flex items-center justify-center gap-1.5 font-semibold transition shadow-2xs cursor-pointer select-none"
-                                                        title="Salin Nomor Rekening"
-                                                    >
-                                                        <span x-show="!copied" class="inline-flex items-center justify-center gap-1.5">
-                                                            <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400 shrink-0 inline-block"></i>
-                                                            <span class="text-xs font-medium whitespace-nowrap">Salin Nomor Rekening</span>
-                                                        </span>
-                                                        <span x-show="copied" x-cloak class="inline-flex items-center justify-center gap-1.5 text-emerald-700 font-bold" style="display: none;">
-                                                            <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0 inline-block"></i>
-                                                            <span class="text-xs font-semibold whitespace-nowrap">Nomor Rekening Tersalin</span>
-                                                        </span>
-                                                    </button>
+                                                    <div class="pt-2.5 border-t border-slate-200/60 flex justify-end">
+                                                        <button 
+                                                            type="button"
+                                                            @click="copyRekening('{{ $bank['account_number'] }}', $el); copied = true; setTimeout(() => copied = false, 2500)" 
+                                                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 select-none"
+                                                            title="Salin Nomor Rekening"
+                                                        >
+                                                            <span x-show="!copied" class="inline-flex items-center justify-center gap-1.5">
+                                                                <span class="text-xs font-bold whitespace-nowrap text-white">Salin Nomor Rekening</span>
+                                                                <i data-lucide="copy" class="w-3.5 h-3.5 text-white shrink-0 inline-block"></i>
+                                                            </span>
+                                                            <span x-show="copied" x-cloak class="inline-flex items-center justify-center gap-1.5 text-white" style="display: none;">
+                                                                <span class="text-xs font-bold whitespace-nowrap text-white">Tersalin</span>
+                                                                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 shrink-0 inline-block"></i>
+                                                            </span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         @endif
@@ -759,11 +761,13 @@
                         Punya kritik membangun, pengaduan fasilitas/kebersihan, atau usulan kajian untuk kemakmuran bersama? Sampaikan langsung kepada Pengurus Takmir DKM.
                     </p>
 
-                    <div class="pt-1">
+                    <!-- Footer Action: Saran & Kritik -->
+                    <div class="pt-3 border-t border-slate-100 flex justify-end">
                         <a href="{{ route('portal.saran') }}" wire:navigate 
-                           class="w-full py-2 px-3 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer">
-                            <span>Sampaikan Saran & Kritik</span>
-                            <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                           class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                           title="Buka Halaman Kotak Saran & Aspirasi">
+                            <span>Saran &amp; Kritik</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </a>
                     </div>
                 </section>

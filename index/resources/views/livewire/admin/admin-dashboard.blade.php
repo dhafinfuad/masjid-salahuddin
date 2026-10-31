@@ -1571,7 +1571,7 @@
                 @endunless
 
                 <a href="{{ url('/') }}" target="_blank"
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-none font-normal text-slate-300 hover:text-white hover:bg-white/5 transition">
+                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 border-transparent">
                     <div class="flex items-center space-x-3">
                         <i data-lucide="external-link" class="w-4 h-4 text-slate-400"></i>
                         <span class="text-xs font-medium">Portal Jamaah</span>
