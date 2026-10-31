@@ -51,5 +51,9 @@ class PortalBankCopyButtonTest extends TestCase
 
         // Ensure saran & kritik button has matching styling with profil masjid button
         $this->assertStringContainsString('class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"', $html);
+
+        // Ensure action button icons have text-amber-300 class
+        $this->assertStringContainsString('data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"', $html);
+        $this->assertStringContainsString('data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-300"', $html);
     }
 }

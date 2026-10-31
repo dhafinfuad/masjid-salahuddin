@@ -158,7 +158,7 @@
                 
                                             <a href="{{ route('portal.jadwal-sholat') }}" wire:navigate class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold transition shadow-2xs cursor-pointer">
                                                 <span>Selengkapnya</span>
-                                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                                <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -492,7 +492,7 @@
                                            class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition cursor-pointer shrink-0"
                                            title="Buka Halaman Kegiatan Masjid">
                                             <span>Selengkapnya</span>
-                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"></i>
                                         </a>
                                     </div>
                                 </section>
@@ -571,7 +571,7 @@
                                         <button type="button" 
                                             @click="window.location.href = '{{ url('/admin/programs?subtab=pernyataan') }}'"
                                             class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
-                                            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                                            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-amber-300"></i>
                                             <span>Daftar Sekarang</span>
                                         </button>
                                     </div>
@@ -672,7 +672,7 @@
                                     <div class="pt-3 border-t border-white/15 flex justify-end">
                                         <a href="{{ route('portal.petugas-sholat') }}" wire:navigate class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition shadow-2xs cursor-pointer">
                                             <span>Selengkapnya</span>
-                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"></i>
                                         </a>
                                     </div>
                                 </section>
@@ -766,7 +766,7 @@
                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                            title="Buka Halaman Kotak Saran & Aspirasi">
                             <span>Saran &amp; Kritik</span>
-                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"></i>
                         </a>
                     </div>
                 </section>
@@ -838,7 +838,7 @@
                                            class="w-full sm:w-auto px-4 py-2 rounded-lg bg-gov-navy hover:bg-gov-navyHover text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0
                                            title="Buka Halaman Profil Masjid & Susunan Pengurus">
                                             <span>Selengkapnya</span>
-                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-300"></i>
                                         </a>
                                     </div>
                                 </section>
