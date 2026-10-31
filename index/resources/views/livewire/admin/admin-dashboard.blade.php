@@ -4,6 +4,7 @@
     x-data="{
          sidebarDrawerOpen: window.innerWidth >= 768,
          mobileNavDrawerOpen: false,
+         userProfileDrawerOpen: false,
          isScrolled: false,
          currentActionToken: null,
          startAction(scope) {
@@ -76,6 +77,11 @@
              });
              this.$watch('mobileNavDrawerOpen', (val) => {
                  if (val) {
+                     window.dispatchEvent(new CustomEvent('close-toast'));
+                 }
+             });
+             this.$watch('userProfileDrawerOpen', (val) => {
+                 if (val && window.innerWidth < 768) {
                      window.dispatchEvent(new CustomEvent('close-toast'));
                  }
              });
@@ -1620,8 +1626,8 @@
         <div class="sticky top-0 z-20 transition-shadow duration-200"
             :class="isScrolled ? 'shadow-lg' : 'shadow-2xs'">
             <header
-                class="bg-white border-b border-gov-border px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center space-x-3">
+                class="bg-white border-b border-gov-border px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2.5 sm:gap-3">
+                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
                     <!-- Drawer Toggle Trigger Button (Desktop Only when sidebar closed; on mobile, triggered by bottom bar center button) -->
                     <button type="button" @click="sidebarDrawerOpen = !sidebarDrawerOpen"
                         class="hidden md:flex items-center justify-center p-1.5 bg-transparent border-0 border-none shadow-none text-xs font-semibold rounded-lg cursor-pointer transition-all duration-300 ease-out"
@@ -1630,15 +1636,80 @@
                         <i data-lucide="menu" class="w-4 h-4 text-gov-navyHover shrink-0"></i>
                     </button>
 
-                    <div class="flex items-center text-xs text-gov-textMuted font-medium">
-                        <span class="font-semibold text-gov-textMain flex items-center gap-3">
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500 ring-4 ring-amber-500/15"></span>
-                            <span x-text="getBreadcrumb()">{{ $this->getBreadcrumbTitle() }}</span>
+                    <div class="flex items-center text-xs text-gov-textMuted font-medium truncate">
+                        <span class="font-semibold text-gov-textMain flex items-center gap-2 sm:gap-3 truncate">
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500 ring-4 ring-amber-500/15 shrink-0"></span>
+                            <span x-text="getBreadcrumb()" class="truncate">{{ $this->getBreadcrumbTitle() }}</span>
                         </span>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <!-- Tombol Portal Jamaah -->
+                    <a href="{{ url('/') }}" target="_blank"
+                        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition shadow-2xs group cursor-pointer"
+                        title="Kunjungi Portal Publik Jamaah">
+                        <svg class="w-3.5 h-3.5 text-slate-500 group-hover:text-gov-navy transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                        <span class="whitespace-nowrap">Portal<span class="hidden sm:inline"> Jamaah</span></span>
+                    </a>
+
+                    <!-- Avatar Pengguna & Menu Profil Popover/Drawer -->
+                    <div class="relative" @click.outside="if (window.innerWidth >= 768) userProfileDrawerOpen = false">
+                        <button type="button" @click="userProfileDrawerOpen = !userProfileDrawerOpen"
+                            class="flex items-center gap-2 p-0.5 sm:p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
+                            title="Profil Pengguna & Keluar"
+                            aria-label="Profil Pengguna">
+                            <div class="w-8 h-8 rounded-lg bg-amber-400 text-gov-navy font-black flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0">
+                                {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
+                            </div>
+                            <span class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-700">
+                                <span class="max-w-[130px] truncate">{{ preg_replace('/\s*\(.*?\)/', '', Auth::user()->name ?? 'Pengurus') }}</span>
+                                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
+                        </button>
+
+                        <!-- Desktop Dropdown Popover (md:block) -->
+                        <div x-show="userProfileDrawerOpen && window.innerWidth >= 768" x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 scale-95"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-95"
+                            class="hidden md:block absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-4 space-y-3 z-50 text-left"
+                            style="display: none;">
+                            
+                            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                                <div class="w-10 h-10 rounded-xl bg-amber-400 text-gov-navy font-black flex items-center justify-center text-sm shadow-2xs shrink-0">
+                                    {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
+                                </div>
+                                <div class="overflow-hidden min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 truncate" title="{{ Auth::user()->name ?? 'Pengurus' }}">
+                                        {{ Auth::user()->name ?? 'Pengurus' }}
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+                                        {{ Auth::user()->employee->jabatan ?? (Auth::user()->isReadOnly() ? 'Viewer (Read-Only)' : ucfirst(Auth::user()->role ?? 'Admin')) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" wire:click="logout" wire:loading.attr="disabled"
+                                class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-rose-200 hover:border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition cursor-pointer disabled:opacity-50">
+                                <svg class="w-3.5 h-3.5 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                <span>Keluar</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -1889,6 +1960,9 @@
 
     <!-- Mobile Full Module Navigation Drawer (Triggered by Center Button) -->
     @include('livewire.admin.tabs._mobile-nav-drawer')
+
+    <!-- Mobile User Profile & Logout Drawer (Triggered by Top Avatar) -->
+    @include('livewire.admin.tabs._mobile-user-drawer')
 
     <!-- Mobile Floating Action Button (FAB) & Bottom Action Sheet -->
     @include('livewire.admin.tabs._mobile-action-sheet')

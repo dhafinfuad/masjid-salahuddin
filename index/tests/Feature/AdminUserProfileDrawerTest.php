@@ -1,0 +1,91 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Livewire\Admin\AdminDashboard;
+use App\Models\Employee;
+use App\Models\MasjidSetting;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class AdminUserProfileDrawerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected User $admin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        MasjidSetting::getActive();
+        $this->admin = User::factory()->create([
+            'name' => 'Dhafin Fuad Mahathir',
+            'email' => 'dhafin@pajak.go.id',
+            'role' => 'Master',
+            'status' => 'AKTIF',
+        ]);
+    }
+
+    public function test_top_header_renders_portal_link_and_user_avatar(): void
+    {
+        $component = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'dashboard']);
+
+        $component->assertOk();
+
+        // 1. Verifikasi tombol Portal Jamaah di Top Header Bar
+        $component->assertSeeHtml('Portal<span class="hidden sm:inline"> Jamaah</span>');
+        $component->assertSeeHtml('href="' . url('/') . '"');
+
+        // 2. Verifikasi Avatar inisial dan Nama di Top Header
+        $component->assertSeeHtml('userProfileDrawerOpen = !userProfileDrawerOpen');
+        $component->assertSeeHtml('DF'); // Inisial Dhafin Fuad
+        $component->assertSee('Dhafin Fuad Mahathir');
+
+        // 3. Verifikasi Mobile Profile Drawer ter-render
+        $component->assertSeeHtml('userProfileDrawerOpen && window.innerWidth < 768');
+        $component->assertSeeHtml('Profil Pengguna');
+        $component->assertSeeHtml('Keluar dari Akun');
+
+        // 4. Verifikasi Desktop Dropdown Popover ter-render
+        $component->assertSeeHtml('userProfileDrawerOpen && window.innerWidth >= 768');
+    }
+
+    public function test_mobile_module_nav_drawer_is_clean_without_logout_button(): void
+    {
+        $component = Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'dashboard']);
+
+        $component->assertOk();
+
+        // Verifikasi 10 modul tetap ada di menu navigasi
+        $component->assertSeeHtml('Menu Navigasi Modul');
+        $component->assertSeeHtml('Dashboard');
+        $component->assertSeeHtml('Jadwal Kegiatan');
+        $component->assertSeeHtml('Petugas Shalat');
+        $component->assertSeeHtml('Kas & Keuangan');
+        $component->assertSeeHtml('Program Sosial');
+        $component->assertSeeHtml('Galeri Kegiatan');
+        $component->assertSeeHtml('Saran & Kritik');
+        $component->assertSeeHtml('Pengaturan');
+        $component->assertSeeHtml('Pengguna & SK');
+        $component->assertSeeHtml('Statistik');
+
+        // Verifikasi file _mobile-nav-drawer.blade.php bersih tanpa tombol logout maupun portal jamaah
+        $drawerBlade = file_get_contents(resource_path('views/livewire/admin/tabs/_mobile-nav-drawer.blade.php'));
+        $this->assertStringNotContainsString('wire:click="logout"', $drawerBlade);
+        $this->assertStringNotContainsString('Portal Jamaah', $drawerBlade);
+    }
+
+    public function test_logout_action_clears_session_and_redirects(): void
+    {
+        Livewire::actingAs($this->admin)
+            ->test(AdminDashboard::class, ['tab' => 'dashboard'])
+            ->call('logout')
+            ->assertRedirect(route('login'));
+
+        $this->assertGuest();
+    }
+}
