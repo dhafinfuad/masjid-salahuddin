@@ -36,16 +36,23 @@
             <span class="text-[10px] leading-tight tracking-tight">Petugas</span>
         </a>
 
-        <!-- 3. Slot: Elevated Center Button (Pure Bulb without label) -->
-        <div class="relative -top-5 flex flex-col items-center justify-center px-1 shrink-0 z-10">
+        <!-- 3. Slot: Flush Minimalist Menu Hub (Tanpa Tonjolan, Single Focal Point FAB) -->
+        <div class="flex-1 flex items-center justify-center px-1">
             <button type="button" @click="mobileNavDrawerOpen = true"
-                class="w-14 h-14 rounded-full bg-gov-navy text-white flex items-center justify-center shadow-xl shadow-slate-900/40 border-4 border-white active:scale-95 transition-all duration-150 cursor-pointer group"
+                class="w-11 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-gov-navy flex items-center justify-center transition-all duration-150 cursor-pointer border border-slate-200/80 shadow-2xs group"
                 title="Buka Menu Lengkap Seluruh Modul"
                 aria-label="Buka Menu Lengkap Seluruh Modul">
-                <svg class="w-7 h-7 text-amber-400 group-hover:scale-105 transition-transform duration-150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="8" x2="20" y2="8"></line>
-                    <line x1="4" y1="12" x2="20" y2="12"></line>
-                    <line x1="4" y1="16" x2="20" y2="16"></line>
+                <!-- 9-Dot Bento App Drawer Grid Icon -->
+                <svg class="w-5 h-5 text-gov-navy group-hover:scale-105 transition-transform duration-150" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="5" cy="5" r="2"></circle>
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <circle cx="19" cy="5" r="2"></circle>
+                    <circle cx="5" cy="12" r="2"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <circle cx="19" cy="12" r="2"></circle>
+                    <circle cx="5" cy="19" r="2"></circle>
+                    <circle cx="12" cy="19" r="2"></circle>
+                    <circle cx="19" cy="19" r="2"></circle>
                 </svg>
             </button>
         </div>
