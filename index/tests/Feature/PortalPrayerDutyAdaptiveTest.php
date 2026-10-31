@@ -114,7 +114,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
 
         Livewire::test(PortalPage::class)
             ->assertSee('Petugas Sholat')
-            ->assertSee('Senin, 28 September 2026')
+            ->assertSee('Senin, 28 Sep 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('Ust. Farhan Dzuhur')
             ->assertSee('SHOLAT ASHAR')
@@ -131,7 +131,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
 
         Livewire::test(PortalPage::class)
             ->assertSee('Petugas Sholat Jumat')
-            ->assertSee('Jumat, 25 September 2026')
+            ->assertSee('Jumat, 25 Sep 2026')
             ->assertSee('KHATIB & IMAM')
             ->assertSee('Ust. M. Yasak Lc MA')
             ->assertSee('MC / PROTOKOL')
@@ -149,7 +149,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
 
         Livewire::test(PortalPage::class)
             ->assertSee('Petugas Sholat')
-            ->assertSee('Senin, 28 September 2026')
+            ->assertSee('Senin, 28 Sep 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('SHOLAT ASHAR');
 
@@ -180,7 +180,7 @@ class PortalPrayerDutyAdaptiveTest extends TestCase
 
         Livewire::test(PortalPage::class)
             ->assertSee('Petugas Sholat')
-            ->assertSee('Selasa, 29 September 2026')
+            ->assertSee('Selasa, 29 Sep 2026')
             ->assertSee('SHOLAT DZUHUR')
             ->assertSee('Ust. Selasa Dzuhur')
             ->assertSee('SHOLAT ASHAR')

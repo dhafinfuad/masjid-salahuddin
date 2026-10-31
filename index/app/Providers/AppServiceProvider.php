@@ -16,6 +16,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Carbon\Carbon::setLocale('id');
+        \Carbon\Carbon::getTranslator()->setTranslations([
+            'months_short' => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        ]);
+
         if (! app()->isLocal()) {
             URL::forceScheme('https');
         }

@@ -589,7 +589,7 @@
                                             <h3 class="text-xs font-bold uppercase tracking-wider text-white leading-snug">{{ $dutyTitle }}</h3>
                                         </div>
                                         <span class="inline-flex items-center h-5 px-2.5 rounded-full text-[11px] font-semibold bg-white/10 text-amber-300 border border-white/20 leading-none whitespace-nowrap">
-                                            {{ $dutyDate->translatedFormat('l, d F Y') }}
+                                            {{ format_date_id_short($dutyDate) }}
                                         </span>
                                     </div>
                 

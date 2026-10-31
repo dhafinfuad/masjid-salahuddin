@@ -53,3 +53,48 @@ if (!function_exists('wa_link')) {
         return $url;
     }
 }
+
+if (!function_exists('format_short_month_id')) {
+    /**
+     * Dapatkan singkatan 3 huruf nama bulan dalam Bahasa Indonesia (standar EYD/KBBI).
+     * Contoh: Jan, Feb, Mar, Apr, Mei, Jun, Jul, Agu, Sep, Okt, Nov, Des.
+     *
+     * @param int|\Carbon\CarbonInterface $month
+     * @return string
+     */
+    function format_short_month_id($month): string
+    {
+        $m = $month instanceof \Carbon\CarbonInterface ? (int) $month->format('n') : (int) $month;
+        $months = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr',
+            5 => 'Mei', 6 => 'Jun', 7 => 'Jul', 8 => 'Agu',
+            9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
+        return $months[$m] ?? '';
+    }
+}
+
+if (!function_exists('format_date_id_short')) {
+    /**
+     * Format tanggal lengkap dengan hari, tanggal 2 digit, singkatan bulan 3 huruf Indonesia, dan tahun.
+     * Contoh: "Senin, 02 Nov 2026"
+     *
+     * @param \Carbon\CarbonInterface|string|null $date
+     * @return string
+     */
+    function format_date_id_short($date): string
+    {
+        if (empty($date)) {
+            return '';
+        }
+        if (!$date instanceof \Carbon\CarbonInterface) {
+            $date = \Carbon\Carbon::parse($date);
+        }
+        $dayName = $date->locale('id')->translatedFormat('l');
+        $dayNum = $date->format('d');
+        $monthShort = format_short_month_id($date);
+        $year = $date->format('Y');
+
+        return "{$dayName}, {$dayNum} {$monthShort} {$year}";
+    }
+}
