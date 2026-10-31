@@ -1475,17 +1475,9 @@
     @open-gallery-lightbox.window="openGalleryLightbox($event.detail.data || $event.detail, $event.detail.index || 0)"
     @close-gallery-lightbox.window="closeGalleryLightbox()">
 
-    <!-- Admin Drawer Backdrop Overlay (Mobile Only) -->
-    <div x-show="sidebarDrawerOpen && window.innerWidth < 768" @click="sidebarDrawerOpen = false" x-cloak
-        wire:ignore.self x-transition:enter="transition-opacity ease-out duration-300"
-        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-opacity ease-in duration-200" x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/50 z-40 md:hidden" style="display: none;">
-    </div>
-
-    <!-- Admin Sidebar Drawer with Square Menu Items -->
+    <!-- Admin Sidebar Drawer with Square Menu Items (Desktop Only) -->
     <aside wire:ignore.self
-        class="admin-sidebar bg-gov-navyDark text-white flex flex-col justify-between border-r border-[#0D284C] shadow-2xl md:shadow-none"
+        class="admin-sidebar hidden md:flex bg-gov-navyDark text-white flex-col justify-between border-r border-[#0D284C] shadow-2xl md:shadow-none"
         :class="sidebarDrawerOpen ? '' : 'sidebar-closed'">
         <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
             <!-- Drawer Header with Close and Desktop Menu Button -->
@@ -1495,18 +1487,11 @@
                     <span>Masjid Salahuddin</span>
                 </span>
 
-                <!-- Desktop: Menu Toggle Button moved here -->
+                <!-- Desktop: Menu Toggle Button -->
                 <button type="button" @click="sidebarDrawerOpen = !sidebarDrawerOpen"
                     class="hidden md:flex items-center justify-center p-1.5 bg-transparent text-white text-xs font-semibold rounded-lg transition border-0 border-none shadow-none cursor-pointer"
                     title="Tutup Menu Drawer">
                     <i data-lucide="x" class="w-4 h-4 text-amber-400"></i>
-                </button>
-
-                <!-- Mobile: Close X Button -->
-                <button type="button" @click="sidebarDrawerOpen = false"
-                    class="p-1 text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer md:hidden"
-                    title="Tutup Drawer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 

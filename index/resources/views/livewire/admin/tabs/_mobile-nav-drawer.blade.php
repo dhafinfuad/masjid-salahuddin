@@ -28,14 +28,9 @@
 
         <!-- Sheet Header -->
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-gov-navy text-amber-400 font-extrabold flex items-center justify-center text-xs shadow-xs shrink-0">
-                    MS
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold text-slate-900 leading-tight">Menu Navigasi Modul</h3>
-                    <p class="text-[11px] text-slate-500">Masjid Salahuddin DJP</p>
-                </div>
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 leading-tight">Menu Navigasi Modul</h3>
+                <p class="text-[11px] text-slate-500">Masjid Salahuddin DJP</p>
             </div>
             <button type="button" @click="mobileNavDrawerOpen = false"
                 class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition cursor-pointer"

@@ -223,8 +223,7 @@ code, kbd, samp, pre, .font-mono {
 
 @media (max-width: 767px) {
     .admin-sidebar {
-        z-index: 50;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: none !important;
     }
     .admin-workspace {
         margin-left: 0 !important;
