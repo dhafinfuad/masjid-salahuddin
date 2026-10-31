@@ -217,8 +217,11 @@ class AdminTabRenderingTest extends TestCase
         $response = $this->actingAs($this->admin)->get('/admin');
         $response->assertOk();
         $response->assertSee('Ahlan wa Sahlan');
-        $response->assertSee('Saldo Kas Utama');
-        $response->assertSee('Petugas Shalat Hari Ini');
+        $response->assertSee('Saldo Tersisa');
+        $response->assertSee('Petugas', false);
+        $response->assertSee('Dzuhur', false);
+        $response->assertSee('Ashar', false);
+        $response->assertSee('Khutbah Jumat Terdekat');
         $response->assertSee('Menu Manajemen Utama');
         $response->assertSee('Jadwal Kegiatan');
         $response->assertSee('Petugas Shalat');
@@ -231,11 +234,26 @@ class AdminTabRenderingTest extends TestCase
         $response->assertSee('Statistik');
         $response->assertSee('Portal Jamaah');
 
+        // Memastikan tombol Teks MC telah dihapus pada kartu Khutbah Jumat Terdekat di dashboard
+        $dashboardView = file_get_contents(resource_path('views/livewire/admin/tabs/_tab-dashboard.blade.php'));
+        $this->assertStringNotContainsString('Teks MC', $dashboardView);
+
         // Memastikan card TV Display telah dihapus bersih
         $response->assertDontSee('TV Display');
 
         // Memastikan tidak ada badge "Hari Ini" atau badge counter terlarang
         $response->assertDontSee('>Hari Ini<', false);
+
+        // Memastikan mobile carousel dengan kpiTotal: 4 dan snap track
+        $response->assertSee('kpiTotal: 4', false);
+        $response->assertSee('x-ref="kpiTrack"', false);
+
+        // Memastikan menu manajemen utama tampil dalam 5 grid column di layar non-mobile (sm+)
+        $response->assertSee('sm:grid-cols-5', false);
+
+        // Memastikan hover pada kotak ikon tidak memutihkan ikon (warna aksen tetap utuh)
+        $html = $response->getContent();
+        $this->assertStringNotContainsString('group-hover:text-white', $html);
 
         // Memastikan interaktivitas switchTabFast tersedia di kartu menu
         $response->assertSee("switchTabFast('kegiatan')", false);
