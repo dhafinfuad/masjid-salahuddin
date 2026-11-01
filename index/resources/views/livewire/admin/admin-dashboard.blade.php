@@ -1575,6 +1575,14 @@
                     <span class="text-xs font-medium">Statistik Pengunjung</span>
                 </a>
                 @endunless
+
+                <a href="{{ url('/') }}" target="_blank"
+                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="external-link" class="w-4 h-4 text-slate-400"></i>
+                        <span class="text-xs font-medium">Portal</span>
+                    </div>
+                </a>
             </div>
         </div>
     </aside>
@@ -1613,9 +1621,9 @@
                 </div>
 
                 <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                    <!-- Tombol Portal Jamaah -->
+                    <!-- Tombol Portal (Mobile Only; di Desktop menu Portal sudah ada di sidebar kiri) -->
                     <a href="{{ url('/') }}" target="_blank"
-                        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition shadow-2xs group cursor-pointer"
+                        class="md:hidden inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition shadow-2xs group cursor-pointer"
                         title="Kunjungi Portal Publik Jamaah">
                         <svg class="w-3.5 h-3.5 text-slate-500 group-hover:text-gov-navy transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
