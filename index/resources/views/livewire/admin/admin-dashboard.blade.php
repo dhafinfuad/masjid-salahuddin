@@ -1663,8 +1663,8 @@
                             class="flex items-center gap-2 p-0.5 sm:p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
                             title="Profil Pengguna & Keluar"
                             aria-label="Profil Pengguna">
-                            <div class="w-8 h-8 rounded-lg bg-amber-400 text-gov-navy font-black flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0">
-                                {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
+                            <div class="w-8 h-8 rounded-xl bg-gov-navy text-white font-bold flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0">
+                                {{ strtoupper(substr(Auth::user()->name ?? 'DKM', 0, 2)) }}
                             </div>
                             <span class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-700">
                                 <span class="max-w-[130px] truncate">{{ preg_replace('/\s*\(.*?\)/', '', Auth::user()->name ?? 'Pengurus') }}</span>
@@ -1686,8 +1686,8 @@
                             style="display: none;">
                             
                             <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                                <div class="w-10 h-10 rounded-xl bg-amber-400 text-gov-navy font-black flex items-center justify-center text-sm shadow-2xs shrink-0">
-                                    {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
+                                <div class="w-10 h-10 rounded-xl bg-gov-navy text-white font-bold flex items-center justify-center text-sm shadow-2xs shrink-0">
+                                    {{ strtoupper(substr(Auth::user()->name ?? 'DKM', 0, 2)) }}
                                 </div>
                                 <div class="overflow-hidden min-w-0">
                                     <div class="text-xs font-bold text-slate-900 truncate" title="{{ Auth::user()->name ?? 'Pengurus' }}">

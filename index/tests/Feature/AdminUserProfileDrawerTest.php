@@ -39,13 +39,15 @@ class AdminUserProfileDrawerTest extends TestCase
         $component->assertSeeHtml('Portal<span class="hidden sm:inline"> Jamaah</span>');
         $component->assertSeeHtml('href="' . url('/') . '"');
 
-        // 2. Verifikasi Avatar inisial dan Nama di Top Header
+        // 2. Verifikasi Avatar inisial dan Nama di Top Header berformat bg-gov-navy dan text-white
         $component->assertSeeHtml('userProfileDrawerOpen = !userProfileDrawerOpen');
-        $component->assertSeeHtml('DF'); // Inisial Dhafin Fuad
+        $component->assertSeeHtml('class="w-8 h-8 rounded-xl bg-gov-navy text-white font-bold flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0"');
+        $component->assertSeeHtml('DF'); // Inisial kapital Dhafin Fuad
         $component->assertSee('Dhafin Fuad Mahathir');
 
-        // 3. Verifikasi Mobile Profile Drawer ter-render
+        // 3. Verifikasi Mobile Profile Drawer ter-render dengan avatar navy
         $component->assertSeeHtml('userProfileDrawerOpen && window.innerWidth < 768');
+        $component->assertSeeHtml('w-12 h-12 rounded-xl bg-gov-navy text-white font-bold text-lg flex items-center justify-center shadow-xs ring-4 ring-slate-200/60 shrink-0');
         $component->assertSeeHtml('Profil Pengguna');
         $component->assertSeeHtml('Keluar dari Akun');
 

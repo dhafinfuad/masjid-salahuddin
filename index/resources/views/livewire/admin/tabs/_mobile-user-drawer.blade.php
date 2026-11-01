@@ -44,8 +44,8 @@
 
         <!-- User Identity Block (Nama & Jabatan Saja) -->
         <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-xl bg-amber-400 text-gov-navy font-black text-lg flex items-center justify-center shadow-xs ring-4 ring-amber-100 shrink-0">
-                {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
+            <div class="w-12 h-12 rounded-xl bg-gov-navy text-white font-bold text-lg flex items-center justify-center shadow-xs ring-4 ring-slate-200/60 shrink-0">
+                {{ strtoupper(substr(Auth::user()->name ?? 'DKM', 0, 2)) }}
             </div>
             <div class="overflow-hidden min-w-0">
                 <div class="text-sm font-bold text-slate-900 truncate" title="{{ Auth::user()->name ?? 'Pengurus' }}">
