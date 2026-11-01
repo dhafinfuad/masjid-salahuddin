@@ -35,15 +35,20 @@ class AdminUserProfileDrawerTest extends TestCase
 
         $component->assertOk();
 
-        // 1. Verifikasi tombol Portal Jamaah di Top Header Bar
-        $component->assertSeeHtml('Portal<span class="hidden sm:inline"> Jamaah</span>');
+        // 1. Verifikasi tombol Portal di Top Header Bar dan Sidebar (kata 'Portal' tanpa 'Jamaah')
+        $component->assertSeeHtml('<span class="whitespace-nowrap">Portal</span>');
+        $component->assertSeeHtml('<span class="text-xs font-medium">Portal</span>');
         $component->assertSeeHtml('href="' . url('/') . '"');
 
-        // 2. Verifikasi Avatar inisial dan Nama di Top Header berformat bg-gov-navy dan text-white
+        // 2. Verifikasi Avatar inisial di Top Header berformat bg-gov-navy dan text-white (hanya avatar ikon tanpa teks nama)
         $component->assertSeeHtml('userProfileDrawerOpen = !userProfileDrawerOpen');
         $component->assertSeeHtml('class="w-8 h-8 rounded-xl bg-gov-navy text-white font-bold flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0"');
         $component->assertSeeHtml('DF'); // Inisial kapital Dhafin Fuad
-        $component->assertSee('Dhafin Fuad Mahathir');
+
+        // 3. Verifikasi sidebar kiri tidak memuat avatar footer section lagi
+        $html = $component->html();
+        $this->assertStringNotContainsString('Sidebar User Footer', $html);
+        $this->assertStringNotContainsString('border-t border-[#0F2F59] bg-[#06172E]', $html);
 
         // 3. Verifikasi Mobile Profile Drawer ter-render dengan avatar navy
         $component->assertSeeHtml('userProfileDrawerOpen && window.innerWidth < 768');

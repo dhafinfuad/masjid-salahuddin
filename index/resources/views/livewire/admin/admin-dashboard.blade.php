@@ -1580,34 +1580,10 @@
                     class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 border-transparent">
                     <div class="flex items-center space-x-3">
                         <i data-lucide="external-link" class="w-4 h-4 text-slate-400"></i>
-                        <span class="text-xs font-medium">Portal Jamaah</span>
+                        <span class="text-xs font-medium">Portal</span>
                     </div>
                 </a>
             </div>
-        </div>
-
-        <!-- Sidebar User Footer -->
-        <div class="p-3.5 border-t border-[#0F2F59] bg-[#06172E] flex items-center justify-between">
-            <div class="flex items-center space-x-3 overflow-hidden">
-                <div
-                    class="w-8 h-8 rounded-lg bg-amber-400 text-gov-navy font-extrabold flex items-center justify-center text-xs shadow-2xs shrink-0">
-                    {{ substr(Auth::user()->name ?? 'DKM', 0, 2) }}
-                </div>
-                <div class="overflow-hidden">
-                    <div class="text-xs font-semibold text-white truncate">{{ Auth::user()->name ?? 'Pengurus' }}</div>
-                    <div class="text-[10px] text-slate-400">
-                        @if(Auth::user()->isReadOnly())
-                            Viewer (Read-Only)
-                        @else
-                            {{ ucfirst(Auth::user()->role ?? 'Admin') }}
-                        @endif
-                    </div>
-                </div>
-            </div>
-            <button wire:click="logout" wire:loading.attr="disabled" title="Keluar"
-                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-white/10 transition cursor-pointer disabled:opacity-50">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-            </button>
         </div>
     </aside>
 
@@ -1654,24 +1630,18 @@
                             <line x1="2" y1="12" x2="22" y2="12"></line>
                             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                         </svg>
-                        <span class="whitespace-nowrap">Portal<span class="hidden sm:inline"> Jamaah</span></span>
+                        <span class="whitespace-nowrap">Portal</span>
                     </a>
 
                     <!-- Avatar Pengguna & Menu Profil Popover/Drawer -->
                     <div class="relative" @click.outside="if (window.innerWidth >= 768) userProfileDrawerOpen = false">
                         <button type="button" @click="userProfileDrawerOpen = !userProfileDrawerOpen"
-                            class="flex items-center gap-2 p-0.5 sm:p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
+                            class="flex items-center p-0.5 sm:p-1 rounded-xl hover:bg-slate-100 transition cursor-pointer select-none"
                             title="Profil Pengguna & Keluar"
                             aria-label="Profil Pengguna">
                             <div class="w-8 h-8 rounded-xl bg-gov-navy text-white font-bold flex items-center justify-center text-xs shadow-2xs ring-2 ring-slate-100 shrink-0">
                                 {{ strtoupper(substr(Auth::user()->name ?? 'DKM', 0, 2)) }}
                             </div>
-                            <span class="hidden md:flex items-center gap-1 text-xs font-semibold text-slate-700">
-                                <span class="max-w-[130px] truncate">{{ preg_replace('/\s*\(.*?\)/', '', Auth::user()->name ?? 'Pengurus') }}</span>
-                                <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="m6 9 6 6 6-6"/>
-                                </svg>
-                            </span>
                         </button>
 
                         <!-- Desktop Dropdown Popover (md:block) -->
