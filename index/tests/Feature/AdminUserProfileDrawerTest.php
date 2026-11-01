@@ -81,10 +81,18 @@ class AdminUserProfileDrawerTest extends TestCase
         $component->assertSeeHtml('Pengguna & SK');
         $component->assertSeeHtml('Statistik');
 
-        // Verifikasi file _mobile-nav-drawer.blade.php bersih tanpa tombol logout maupun portal jamaah
+        // Verifikasi file _mobile-nav-drawer.blade.php bersih tanpa tombol logout maupun portal jamaah serta memiliki pb-12
         $drawerBlade = file_get_contents(resource_path('views/livewire/admin/tabs/_mobile-nav-drawer.blade.php'));
         $this->assertStringNotContainsString('wire:click="logout"', $drawerBlade);
         $this->assertStringNotContainsString('Portal Jamaah', $drawerBlade);
+        $this->assertStringContainsString('pb-12', $drawerBlade);
+        $this->assertStringContainsString('padding-bottom: 3rem;', $drawerBlade);
+
+        // Verifikasi bottom nav active style menggunakan font-medium dan stroke-[1.8]
+        $bottomBarBlade = file_get_contents(resource_path('views/livewire/admin/tabs/_mobile-bottom-bar.blade.php'));
+        $this->assertStringContainsString('border-t-2 border-amber-500 text-gov-navy', $bottomBarBlade);
+        $this->assertStringContainsString('font-medium', $bottomBarBlade);
+        $this->assertStringContainsString('stroke-[1.8]', $bottomBarBlade);
     }
 
     public function test_logout_action_clears_session_and_redirects(): void

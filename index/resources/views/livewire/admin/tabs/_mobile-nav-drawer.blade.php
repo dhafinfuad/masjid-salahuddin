@@ -20,8 +20,8 @@
         x-transition:leave="transition ease-in duration-200 transform"
         x-transition:leave-start="translate-y-0"
         x-transition:leave-end="translate-y-full"
-        class="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-8 space-y-4 max-h-[85vh] overflow-y-auto notula-scrollable relative"
-        style="z-index: 10000; background-color: #ffffff;">
+        class="w-full max-w-lg mx-auto bg-white rounded-t-3xl shadow-2xl border-t border-slate-200 p-5 pb-12 space-y-4 max-h-[85vh] overflow-y-auto notula-scrollable relative"
+        style="z-index: 10000; background-color: #ffffff; padding-bottom: 3rem;">
 
         <!-- Drag Indicator Bar -->
         <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-4"></div>
