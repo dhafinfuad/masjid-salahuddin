@@ -1575,14 +1575,6 @@
                     <span class="text-xs font-medium">Statistik Pengunjung</span>
                 </a>
                 @endunless
-
-                <a href="{{ url('/') }}" target="_blank"
-                    class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-none font-normal transition border-l-[3px] cursor-pointer text-slate-300 hover:text-white hover:bg-white/5 border-transparent">
-                    <div class="flex items-center space-x-3">
-                        <i data-lucide="external-link" class="w-4 h-4 text-slate-400"></i>
-                        <span class="text-xs font-medium">Portal</span>
-                    </div>
-                </a>
             </div>
         </div>
     </aside>
@@ -1621,18 +1613,6 @@
                 </div>
 
                 <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                    <!-- Tombol Portal (Mobile Only; di Desktop menu Portal sudah ada di sidebar kiri) -->
-                    <a href="{{ url('/') }}" target="_blank"
-                        class="md:hidden inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition shadow-2xs group cursor-pointer"
-                        title="Kunjungi Portal Publik Jamaah">
-                        <svg class="w-3.5 h-3.5 text-slate-500 group-hover:text-gov-navy transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
-                        <span class="whitespace-nowrap">Portal</span>
-                    </a>
-
                     <!-- Avatar Pengguna & Menu Profil Popover/Drawer -->
                     <div class="relative" @click.outside="if (window.innerWidth >= 768) userProfileDrawerOpen = false">
                         <button type="button" @click="userProfileDrawerOpen = !userProfileDrawerOpen"
@@ -1668,6 +1648,17 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Tombol Portal Jamaah -->
+                            <a href="{{ url('/') }}" target="_blank"
+                                class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition cursor-pointer shadow-2xs group">
+                                <svg class="w-3.5 h-3.5 text-slate-500 group-hover:text-gov-navy transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                                <span>Portal Jamaah</span>
+                            </a>
 
                             <button type="button" wire:click="logout" wire:loading.attr="disabled"
                                 class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-rose-200 hover:border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition cursor-pointer disabled:opacity-50">

@@ -57,8 +57,20 @@
             </div>
         </div>
 
-        <!-- Tombol Keluar (Langsung Keluar 1-Klik) -->
-        <div class="pt-1">
+        <!-- Tombol Aksi: Portal Jamaah & Keluar -->
+        <div class="space-y-2.5 pt-1">
+            <!-- Tombol Kunjungi Portal Jamaah -->
+            <a href="{{ url('/') }}" target="_blank"
+                class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-slate-50 hover:bg-slate-100 active:bg-slate-200 transition cursor-pointer text-center shadow-2xs group">
+                <svg class="w-4 h-4 text-slate-500 group-hover:text-gov-navy transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                <span class="text-xs font-bold text-slate-800">Portal Jamaah</span>
+            </a>
+
+            <!-- Tombol Keluar (Langsung Keluar 1-Klik) -->
             <button type="button" wire:click="logout" wire:loading.attr="disabled"
                 class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-rose-300 hover:border-rose-400 bg-rose-50 hover:bg-rose-100 active:bg-rose-200 transition cursor-pointer text-center disabled:opacity-50 shadow-2xs">
                 <svg class="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

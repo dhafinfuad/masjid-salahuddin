@@ -35,10 +35,10 @@ class AdminUserProfileDrawerTest extends TestCase
 
         $component->assertOk();
 
-        // 1. Verifikasi tombol Portal di Top Header Bar khusus mobile (md:hidden) dan di Sidebar untuk desktop
-        $component->assertSeeHtml('md:hidden inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200');
-        $component->assertSeeHtml('<span class="whitespace-nowrap">Portal</span>');
-        $component->assertSeeHtml('<span class="text-xs font-medium">Portal</span>');
+        // 1. Verifikasi tombol Portal telah dipindahkan dari Top Header Bar dan Sidebar ke Popover & Drawer
+        $component->assertDontSeeHtml('<span class="whitespace-nowrap">Portal</span>');
+        $component->assertDontSeeHtml('<span class="text-xs font-medium">Portal</span>');
+        $component->assertSeeHtml('Portal Jamaah');
         $component->assertSeeHtml('href="' . url('/') . '"');
 
         // 2. Verifikasi Avatar inisial di Top Header berformat bg-gov-navy dan text-white (hanya avatar ikon tanpa teks nama)
@@ -57,8 +57,17 @@ class AdminUserProfileDrawerTest extends TestCase
         $component->assertSeeHtml('Profil Pengguna');
         $component->assertSeeHtml('Keluar dari Akun');
 
-        // 4. Verifikasi Desktop Dropdown Popover ter-render
+        // 4. Verifikasi Desktop Dropdown Popover ter-render dan memuat tombol Portal Jamaah & Keluar
         $component->assertSeeHtml('userProfileDrawerOpen && window.innerWidth >= 768');
+        
+        // 5. Verifikasi file blade popover dan drawer secara eksplisit memuat tombol Portal Jamaah di atas Keluar
+        $dashboardBlade = file_get_contents(resource_path('views/livewire/admin/admin-dashboard.blade.php'));
+        $this->assertStringContainsString('Portal Jamaah', $dashboardBlade);
+        $this->assertStringNotContainsString('title="Kunjungi Portal Publik Jamaah"', $dashboardBlade);
+
+        $userDrawerBlade = file_get_contents(resource_path('views/livewire/admin/tabs/_mobile-user-drawer.blade.php'));
+        $this->assertStringContainsString('Portal Jamaah', $userDrawerBlade);
+        $this->assertStringContainsString('Keluar dari Akun', $userDrawerBlade);
     }
 
     public function test_mobile_module_nav_drawer_is_clean_without_logout_button(): void
