@@ -578,13 +578,29 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">MC / Protokol Shalat Jumat</label>
-                                <input x-model="kajianForm.mc_name" type="text" placeholder="H. Bambang Sugiarto"
-                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                <select x-model="kajianForm.mc_name"
+                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
+                                    <option value="">-- Pilih Pegawai --</option>
+                                    <template x-if="kajianForm.mc_name && !{{ Js::from($distinctParticipantNames->values()) }}.includes(kajianForm.mc_name)">
+                                        <option :value="kajianForm.mc_name" x-text="kajianForm.mc_name"></option>
+                                    </template>
+                                    @foreach($distinctParticipantNames as $empName)
+                                        <option value="{{ $empName }}">{{ $empName }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Muadzin & Bilal</label>
-                                <input x-model="kajianForm.muadzin_name" type="text" placeholder="Ustadz Bilal Ramadhan"
-                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain">
+                                <select x-model="kajianForm.muadzin_name"
+                                    class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition font-medium text-xs text-gov-textMain cursor-pointer">
+                                    <option value="">-- Pilih Pegawai --</option>
+                                    <template x-if="kajianForm.muadzin_name && !{{ Js::from($distinctParticipantNames->values()) }}.includes(kajianForm.muadzin_name)">
+                                        <option :value="kajianForm.muadzin_name" x-text="kajianForm.muadzin_name"></option>
+                                    </template>
+                                    @foreach($distinctParticipantNames as $empName)
+                                        <option value="{{ $empName }}">{{ $empName }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -961,16 +977,32 @@
                 <div x-show="!isDutyFridayDzuhur()" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Petugas Imam</label>
-                        <input x-model="dutyForm.imam_name" type="text" placeholder="Contoh: Ust. Pujo Santoso"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <select x-model="dutyForm.imam_name"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer">
+                            <option value="">-- Pilih Pegawai --</option>
+                            <template x-if="dutyForm.imam_name && !{{ Js::from($distinctParticipantNames->values()) }}.includes(dutyForm.imam_name)">
+                                <option :value="dutyForm.imam_name" x-text="dutyForm.imam_name"></option>
+                            </template>
+                            @foreach($distinctParticipantNames as $empName)
+                                <option value="{{ $empName }}">{{ $empName }}</option>
+                            @endforeach
+                        </select>
                         @error('dutyImamName') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Petugas Muadzin</label>
-                        <input x-model="dutyForm.muadzin_name" type="text" placeholder="Contoh: Mas Zulhaq"
-                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition">
+                        <select x-model="dutyForm.muadzin_name"
+                            class="w-full p-2.5 rounded-lg border border-gov-border bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-gov-navy focus:border-gov-navy transition cursor-pointer">
+                            <option value="">-- Pilih Pegawai --</option>
+                            <template x-if="dutyForm.muadzin_name && !{{ Js::from($distinctParticipantNames->values()) }}.includes(dutyForm.muadzin_name)">
+                                <option :value="dutyForm.muadzin_name" x-text="dutyForm.muadzin_name"></option>
+                            </template>
+                            @foreach($distinctParticipantNames as $empName)
+                                <option value="{{ $empName }}">{{ $empName }}</option>
+                            @endforeach
+                        </select>
                         @error('dutyMuadzinName') <span
                         class="text-xs text-rose-600 font-semibold">{{ $message }}</span> @enderror
                     </div>
