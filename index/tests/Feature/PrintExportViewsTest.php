@@ -87,7 +87,7 @@ class PrintExportViewsTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        $response = $this->get('/admin/kepengurusan/unduh-sk-pdf');
+        $response = $this->get('/admin/kepengurusan/unduh-sk-pdf?fresh=1');
         $response->assertStatus(200);
         $response->assertHeader('content-type', 'application/pdf');
         $this->assertStringContainsString('Dokumen_Resmi_SK_Takmir_2026-2029.pdf', str_replace('"', '', $response->headers->get('content-disposition')));

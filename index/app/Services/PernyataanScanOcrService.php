@@ -54,7 +54,7 @@ class PernyataanScanOcrService
             Log::warning('Ekstraksi Google Gemini Vision mengembalikan hasil kosong, beralih ke alur lokal.');
         }
 
-        $hash = md5_file($pdfPath) ?: Str::random(16);
+        $hash = (File::exists($pdfPath) ? md5_file($pdfPath) : false) ?: Str::random(16);
         $tempDir = storage_path("app/public/temp_scans/{$hash}");
 
         $imageFiles = $this->renderPdfToImages($pdfPath, $tempDir);
@@ -618,6 +618,10 @@ class PernyataanScanOcrService
      */
     public function getSmartPdfProfiles(string $pdfPath): array
     {
+        if (!File::exists($pdfPath)) {
+            return [];
+        }
+
         $data = @File::get($pdfPath);
         if (!$data) {
             return [];
