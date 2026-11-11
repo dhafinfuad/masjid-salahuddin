@@ -208,32 +208,39 @@ class AdminTakmirKepTest extends TestCase
     {
         $this->actingAs($this->master);
 
-        $file = UploadedFile::fake()->create('dokumen_sk.pdf', 100, 'application/pdf');
+        // saveUploadDoc() overwrites the real tracked document in public/resources,
+        // so back it up and restore it afterwards instead of deleting it.
+        $targetPath = public_path('resources/Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf');
+        $originalContents = file_exists($targetPath) ? file_get_contents($targetPath) : null;
 
-        Livewire::test(AdminDashboard::class)
-            ->call('openUploadDoc', 'sk_lengkap')
-            ->set('uploadDocFile', $file)
-            ->set('uploadDocNumber', 'KEP-777/TEST/2026')
-            ->set('uploadDocDate', '2026-08-17')
-            ->call('saveUploadDoc')
-            ->assertHasNoErrors()
-            ->assertSet('showUploadDocModal', false)
-            ->assertSet('docSkNumber', 'KEP-777/TEST/2026')
-            ->assertSet('docSkDate', '17 Agustus 2026');
+        try {
+            $file = UploadedFile::fake()->create('dokumen_sk.pdf', 100, 'application/pdf');
 
-        $settings = MasjidSetting::getActive();
-        $docs = $settings->getTakmirDocuments();
+            Livewire::test(AdminDashboard::class)
+                ->call('openUploadDoc', 'sk_lengkap')
+                ->set('uploadDocFile', $file)
+                ->set('uploadDocNumber', 'KEP-777/TEST/2026')
+                ->set('uploadDocDate', '2026-08-17')
+                ->call('saveUploadDoc')
+                ->assertHasNoErrors()
+                ->assertSet('showUploadDocModal', false)
+                ->assertSet('docSkNumber', 'KEP-777/TEST/2026')
+                ->assertSet('docSkDate', '17 Agustus 2026');
 
-        $this->assertEquals('KEP-777/TEST/2026', $docs['sk_lengkap']['number'] ?? '');
-        $this->assertEquals('KEP-777/TEST/2026', $docs['sk']['number'] ?? '');
-        $this->assertEquals('17 Agustus 2026', $docs['sk_lengkap']['date'] ?? '');
-        $this->assertEquals('17 Agustus 2026', $docs['sk']['date'] ?? '');
-        $this->assertNotEmpty($docs['sk_lengkap']['file'] ?? '');
+            $settings = MasjidSetting::getActive();
+            $docs = $settings->getTakmirDocuments();
 
-        // Cleanup fake test file
-        $testFilePath = public_path('resources/' . ($docs['sk_lengkap']['file'] ?? ''));
-        if (file_exists($testFilePath)) {
-            @unlink($testFilePath);
+            $this->assertEquals('KEP-777/TEST/2026', $docs['sk_lengkap']['number'] ?? '');
+            $this->assertEquals('KEP-777/TEST/2026', $docs['sk']['number'] ?? '');
+            $this->assertEquals('17 Agustus 2026', $docs['sk_lengkap']['date'] ?? '');
+            $this->assertEquals('17 Agustus 2026', $docs['sk']['date'] ?? '');
+            $this->assertNotEmpty($docs['sk_lengkap']['file'] ?? '');
+        } finally {
+            if ($originalContents !== null) {
+                file_put_contents($targetPath, $originalContents);
+            } elseif (file_exists($targetPath)) {
+                @unlink($targetPath);
+            }
         }
     }
 
