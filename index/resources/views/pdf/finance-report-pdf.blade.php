@@ -17,7 +17,7 @@
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             color: #0f172a;
-            font-size: 9px;
+            font-size: 12pt;
             line-height: 1.35;
             background: #ffffff;
             margin: 0;
@@ -39,7 +39,7 @@
             text-align: center;
         }
         .kop-title {
-            font-size: 14px;
+            font-size: 18pt;
             font-weight: bold;
             color: #06172e;
             letter-spacing: 0.5px;
@@ -47,7 +47,7 @@
             text-transform: uppercase;
         }
         .kop-subtitle {
-            font-size: 10px;
+            font-size: 12pt;
             color: #475569;
             margin: 2px 0 0 0;
             font-weight: 600;
@@ -68,7 +68,7 @@
             margin-bottom: 10px;
         }
         .doc-title {
-            font-size: 11.5px;
+            font-size: 14pt;
             font-weight: bold;
             color: #06172e;
             text-transform: uppercase;
@@ -79,7 +79,7 @@
             border-bottom: 1.5px solid #06172e;
         }
         .doc-subtitle {
-            font-size: 9px;
+            font-size: 12pt;
             color: #475569;
             margin: 3px 0 0 0;
             font-weight: 500;
@@ -99,14 +99,14 @@
             width: 25%;
         }
         .metrics-label {
-            font-size: 7.5px;
+            font-size: 12pt;
             text-transform: uppercase;
             color: #64748b;
             font-weight: 600;
             display: block;
         }
         .metrics-value {
-            font-size: 9.5px;
+            font-size: 12pt;
             font-weight: bold;
             color: #0f172a;
             margin-top: 1px;
@@ -121,7 +121,7 @@
         .data-table th {
             background-color: #06172e;
             color: #ffffff;
-            font-size: 8px;
+            font-size: 12pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -138,7 +138,7 @@
         .data-table td {
             padding: 4px 5px;
             border: 0.5px solid #cbd5e1;
-            font-size: 8px;
+            font-size: 12pt;
             vertical-align: top;
         }
         .data-table tr.even {
@@ -151,7 +151,7 @@
             background-color: #f1f5f9;
             color: #0f172a;
             font-weight: bold;
-            font-size: 8.5px;
+            font-size: 12pt;
             text-transform: uppercase;
             letter-spacing: 0.3px;
             padding: 4px 5px;
@@ -175,7 +175,7 @@
             background-color: #06172e;
             color: #ffffff;
             font-weight: bold;
-            font-size: 8.5px;
+            font-size: 12pt;
             padding: 5px 6px;
             border: 1px solid #06172e;
         }
@@ -199,26 +199,26 @@
             text-align: center;
         }
         .sig-city-date {
-            font-size: 8px;
+            font-size: 12pt;
             color: #475569;
             margin-bottom: 2px;
         }
         .sig-role {
-            font-size: 8.5px;
+            font-size: 12pt;
             font-weight: bold;
             color: #06172e;
             text-transform: uppercase;
             margin-bottom: 2px;
         }
         .sig-name {
-            font-size: 8.5px;
+            font-size: 12pt;
             font-weight: bold;
             color: #0f172a;
             text-decoration: underline;
             margin-bottom: 1px;
         }
         .sig-meta {
-            font-size: 7px;
+            font-size: 12pt;
             color: #64748b;
         }
         .sig-qr-box {
@@ -237,7 +237,7 @@
             margin: 0 auto;
         }
         .sig-qr-label {
-            font-size: 6px;
+            font-size: 8pt;
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
             color: #475569;
@@ -268,7 +268,7 @@
         <div class="doc-title-box">
             <div class="doc-title">LAPORAN PERTANGGUNGJAWABAN (LPJ) KEUANGAN KEGIATAN</div>
             <div class="doc-subtitle">{{ strtoupper($agenda->title ?? 'PROGRAM KEGIATAN') }}</div>
-            <div style="font-size: 8px; color: #64748b; margin-top: 1px;">Waktu Pelaksanaan: {{ $agenda->formatted_date ?? '-' }}</div>
+            <div style="font-size: 12pt; color: #64748b; margin-top: 1px;">Waktu Pelaksanaan: {{ $agenda->formatted_date ?? '-' }}</div>
         </div>
 
         <!-- Info Box Metrik Anggaran Agenda -->
@@ -297,12 +297,12 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="center" style="width: 24px;">NO</th>
-                    <th class="center" style="width: 55px;">TANGGAL</th>
+                    <th class="center" style="width: 34px;">NO</th>
+                    <th class="center" style="width: 80px;">TANGGAL</th>
                     <th style="width: 110px;">POS / KATEGORI</th>
                     <th>URAIAN / KETERANGAN BELANJA</th>
-                    <th class="right" style="width: 80px;">PENERIMAAN (RP)</th>
-                    <th class="right" style="width: 80px;">PENGELUARAN (RP)</th>
+                    <th class="right" style="width: 135px;">PENERIMAAN (RP)</th>
+                    <th class="right" style="width: 135px;">PENGELUARAN (RP)</th>
                 </tr>
             </thead>
             <tbody>
@@ -444,10 +444,10 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="center" style="width: 30px;">NO</th>
+                    <th class="center" style="width: 40px;">NO</th>
                     <th>POS ANGGARAN</th>
-                    <th class="right" style="width: 100px;">PENERIMAAN (RP)</th>
-                    <th class="right" style="width: 100px;">PENGELUARAN (RP)</th>
+                    <th class="right" style="width: 170px;">PENERIMAAN (RP)</th>
+                    <th class="right" style="width: 170px;">PENGELUARAN (RP)</th>
                 </tr>
             </thead>
             <tbody>
