@@ -141,6 +141,12 @@
             font-size: 10pt;
             vertical-align: top;
         }
+        .data-table td.right {
+            text-align: right;
+        }
+        .data-table td.center {
+            text-align: center;
+        }
         .data-table tr.even {
             background-color: #f8fafc;
         }
@@ -317,7 +323,7 @@
                         <td class="center">{{ $item->transaction_date ? $item->transaction_date->format('d/m/Y') : '-' }}</td>
                         <td style="font-weight: 600;">{{ $item->category?->name ?? 'Penerimaan Kas' }}</td>
                         <td>{{ $item->description }}</td>
-                        <td class="right" style="font-weight: 600;">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                        <td class="right" style="font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                         <td class="right" style="color: #94a3b8;">-</td>
                     </tr>
                 @empty
@@ -345,7 +351,7 @@
                         <td style="font-weight: 600;">{{ $item->category?->name ?? 'Belanja Kegiatan' }}</td>
                         <td>{{ $item->description }}</td>
                         <td class="right" style="color: #94a3b8;">-</td>
-                        <td class="right" style="font-weight: 600;">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                        <td class="right" style="font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -365,7 +371,7 @@
                     <td colspan="4" class="right" style="text-transform: uppercase; letter-spacing: 0.3px;">
                         SISA ANGGARAN KEGIATAN (SILPA):
                     </td>
-                    <td colspan="2" class="center">
+                    <td colspan="2" class="right">
                         Rp {{ number_format($silpa, 0, ',', '.') }}
                     </td>
                 </tr>
@@ -458,7 +464,7 @@
                 <tr class="odd">
                     <td class="center" style="color: #64748b;">-</td>
                     <td style="font-weight: 600;">Saldo Awal Bulan</td>
-                    <td class="right" style="font-weight: 600;">{{ number_format($saldoAwal, 0, ',', '.') }}</td>
+                    <td class="right" style="font-weight: 600;">Rp {{ number_format($saldoAwal, 0, ',', '.') }}</td>
                     <td class="right" style="color: #94a3b8;">-</td>
                 </tr>
                 @php $noIn = 1; @endphp
@@ -466,7 +472,7 @@
                     <tr class="{{ $loop->even ? 'even' : 'odd' }}">
                         <td class="center" style="color: #64748b;">{{ $noIn++ }}</td>
                         <td>{{ $item->name }}</td>
-                        <td class="right" style="font-weight: 600;">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                        <td class="right" style="font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                         <td class="right" style="color: #94a3b8;">-</td>
                     </tr>
                 @empty
@@ -497,7 +503,7 @@
                         <td class="center" style="color: #64748b;">{{ $noRutin++ }}</td>
                         <td>{{ $item->name }}</td>
                         <td class="right" style="color: #94a3b8;">-</td>
-                        <td class="right" style="font-weight: 600;">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                        <td class="right" style="font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -522,7 +528,7 @@
                         <td class="center" style="color: #64748b;">{{ $noNonRutin++ }}</td>
                         <td>{{ $item->name }}</td>
                         <td class="right" style="color: #94a3b8;">-</td>
-                        <td class="right" style="font-weight: 600;">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                        <td class="right" style="font-weight: 600;">Rp {{ number_format($item->amount, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -549,7 +555,7 @@
                     <td colspan="2" class="right" style="text-transform: uppercase; letter-spacing: 0.3px;">
                         SALDO KAS AKHIR:
                     </td>
-                    <td colspan="2" class="center">
+                    <td colspan="2" class="right">
                         Rp {{ number_format($saldoAkhir, 0, ',', '.') }}
                     </td>
                 </tr>
