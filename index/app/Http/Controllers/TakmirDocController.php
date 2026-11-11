@@ -74,8 +74,8 @@ class TakmirDocController extends Controller
         // Jika pengurus telah mengunggah berkas PDF resmi lengkap manual, utamakan berkas tersebut
         // KECUALI jika diminta unduhan dinamis segar dari hasil formulir template SK (fresh=1)
         if (! $isFreshRequested && !empty($docs['sk_lengkap']['file'])) {
-            $filePath = public_path('resources/' . $docs['sk_lengkap']['file']);
-            if (file_exists($filePath)) {
+            $filePath = MasjidSetting::resolveTakmirDocPath($docs['sk_lengkap']['file']);
+            if ($filePath !== null) {
                 $cleanFilename = $docs['sk_lengkap']['file'];
                 return response()->streamDownload(function () use ($filePath) {
                     readfile($filePath);
