@@ -249,7 +249,7 @@ class AdminDashboard extends Component
     public bool $showBatchReplaceDutyModal = false;
     public string $replaceOldOfficerName = '';
     public string $replaceNewOfficerName = '';
-    public string $replaceRoleScope = 'both'; // 'imam' | 'muadzin' | 'both'
+    public string $replaceRoleScope = 'both'; // 'imam' | 'muadzin' | 'mc' | 'both'
     public string $replaceYearScope = 'current'; // 'current' | 'all'
     public int $replaceTargetYear = 2026;
 
@@ -3130,6 +3130,19 @@ class AdminDashboard extends Component
         }
     }
 
+    /**
+     * Query Kajian (MC Jumat) mengikuti cakupan tahun pada modal ganti petugas massal.
+     */
+    private function kajianMcQuery()
+    {
+        $query = Kajian::query();
+        if ($this->replaceYearScope === 'current') {
+            $query->whereYear('date', $this->replaceTargetYear);
+        }
+
+        return $query;
+    }
+
     public function getExistingOfficerNamesProperty(): array
     {
         if (! $this->showBatchReplaceDutyModal) {
@@ -3154,6 +3167,12 @@ class AdminDashboard extends Component
                 ->distinct()
                 ->pluck('muadzin_name')
                 ->toArray();
+        } elseif ($scope === 'mc') {
+            $names = $this->kajianMcQuery()->whereNotNull('mc_name')
+                ->where('mc_name', '!=', '')
+                ->distinct()
+                ->pluck('mc_name')
+                ->toArray();
         } else {
             $imams = (clone $query)->whereNotNull('imam_name')
                 ->where('imam_name', '!=', '')
@@ -3167,7 +3186,13 @@ class AdminDashboard extends Component
                 ->pluck('muadzin_name')
                 ->toArray();
 
-            $names = array_merge($imams, $muadzins);
+            $mcs = $this->kajianMcQuery()->whereNotNull('mc_name')
+                ->where('mc_name', '!=', '')
+                ->distinct()
+                ->pluck('mc_name')
+                ->toArray();
+
+            $names = array_merge($imams, $muadzins, $mcs);
         }
 
         $names = array_values(array_unique(array_filter($names)));
@@ -3203,6 +3228,7 @@ class AdminDashboard extends Component
                 'total' => 0,
                 'as_imam' => 0,
                 'as_muadzin' => 0,
+                'as_mc' => 0,
                 'sample_duties' => [],
                 'items' => [],
             ];
@@ -3214,7 +3240,9 @@ class AdminDashboard extends Component
         }
 
         $scope = $this->replaceRoleScope;
-        if ($scope === 'imam') {
+        if ($scope === 'mc') {
+            $query->whereRaw('1 = 0');
+        } elseif ($scope === 'imam') {
             $query->where('imam_name', $old);
         } elseif ($scope === 'muadzin') {
             $query->where('muadzin_name', $old);
@@ -3267,11 +3295,30 @@ class AdminDashboard extends Component
             ];
         }
 
+        $asMc = 0;
+        if (in_array($scope, ['mc', 'both'], true)) {
+            $mcRecords = $this->kajianMcQuery()->where('mc_name', $old)->orderBy('date')->get(['id', 'date']);
+            foreach ($mcRecords as $k) {
+                $asMc++;
+                $label = 'Kajian ' . $k->date->format('d/m/Y') . ' (MC)';
+                $sampleDuties[] = $label;
+                $items[] = [
+                    'id' => $k->id,
+                    'day_name' => $k->date->format('d/m/Y'),
+                    'prayer_time' => 'Kajian',
+                    'week_pattern' => '-',
+                    'tahun' => (int) $k->date->format('Y'),
+                    'roles' => 'MC',
+                ];
+            }
+        }
+
         return [
-            'count' => count($records),
-            'total' => count($records),
+            'count' => count($records) + $asMc,
+            'total' => count($records) + $asMc,
             'as_imam' => $asImam,
             'as_muadzin' => $asMuadzin,
+            'as_mc' => $asMc,
             'sample_duties' => $sampleDuties,
             'items' => $items,
         ];
@@ -3287,7 +3334,7 @@ class AdminDashboard extends Component
         $this->validate([
             'replaceOldOfficerName' => 'required|string|min:2|max:255',
             'replaceNewOfficerName' => 'required|string|min:2|max:255',
-            'replaceRoleScope' => 'required|in:both,imam,muadzin',
+            'replaceRoleScope' => 'required|in:both,imam,muadzin,mc',
             'replaceYearScope' => 'required|in:current,all',
         ], [
             'replaceOldOfficerName.required' => 'Pilih nama petugas lama yang akan digantikan.',
@@ -3319,6 +3366,11 @@ class AdminDashboard extends Component
             if ($scope === 'muadzin' || $scope === 'both') {
                 $muadzinUpdated = (clone $query)->where('muadzin_name', $oldName)->update(['muadzin_name' => $newName]);
                 $updatedCount += $muadzinUpdated;
+            }
+
+            if ($scope === 'mc' || $scope === 'both') {
+                $mcUpdated = $this->kajianMcQuery()->where('mc_name', $oldName)->update(['mc_name' => $newName]);
+                $updatedCount += $mcUpdated;
             }
         });
 

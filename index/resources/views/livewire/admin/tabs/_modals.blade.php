@@ -1309,7 +1309,7 @@
                 <!-- Filter Scope 1: Cakupan Peran -->
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1.5">Cakupan Peran Petugas *</label>
-                    <div wire:ignore class="grid grid-cols-3 gap-2">
+                    <div wire:ignore class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <button type="button"
                             wire:key="btn-role-scope-both"
                             @click="replaceRoleScope = 'both'; $wire.set('replaceRoleScope', 'both')"
@@ -1330,6 +1330,13 @@
                             :class="replaceRoleScope === 'muadzin' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
                             class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
                             <span>Muadzin</span>
+                        </button>
+                        <button type="button"
+                            wire:key="btn-role-scope-mc"
+                            @click="replaceRoleScope = 'mc'; $wire.set('replaceRoleScope', 'mc')"
+                            :class="replaceRoleScope === 'mc' ? 'border-gov-navy bg-gov-navy text-white shadow-2xs' : 'bg-white text-slate-700 border-gov-border hover:bg-slate-50'"
+                            class="py-2 px-2.5 rounded-lg border text-center text-xs font-semibold cursor-pointer transition-none flex items-center justify-center gap-1.5">
+                            <span>MC</span>
                         </button>
                     </div>
                 </div>
@@ -1395,6 +1402,7 @@
                     $previewCount = $preview['count'] ?? 0;
                     $previewImam = $preview['as_imam'] ?? 0;
                     $previewMuadzin = $preview['as_muadzin'] ?? 0;
+                    $previewMc = $preview['as_mc'] ?? 0;
                     $previewSamples = $preview['sample_duties'] ?? [];
                 @endphp
                 @if(!empty($replaceOldOfficerName))
@@ -1408,7 +1416,7 @@
                                 @if($previewCount > 0)
                                     <p class="text-xs text-amber-800">
                                         Ditemukan <strong>{{ $previewCount }} jadwal</strong> penugasan yang cocok:
-                                        <span class="inline-block ml-1">({{ $previewImam }} sebagai Imam, {{ $previewMuadzin }} sebagai Muadzin)</span>
+                                        <span class="inline-block ml-1">({{ $previewImam }} sebagai Imam, {{ $previewMuadzin }} sebagai Muadzin, {{ $previewMc }} sebagai MC)</span>
                                     </p>
                                     @if(count($previewSamples) > 0)
                                         <div class="flex flex-wrap gap-1.5 pt-1.5">

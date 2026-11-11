@@ -947,6 +947,34 @@ class PrayerDutyTest extends TestCase
         ]);
     }
 
+    public function test_batch_replace_duty_can_replace_mc_name_on_friday_kajian(): void
+    {
+        $this->actingAs($this->admin);
+
+        $kajian = \App\Models\Kajian::create([
+            'type' => 'jumat',
+            'date' => Carbon::now('Asia/Jakarta')->toDateString(),
+            'title' => 'Kajian Jumat',
+            'mc_name' => 'MC Lama',
+            'muadzin_name' => 'MC Lama',
+        ]);
+
+        Livewire::test(AdminDashboard::class, ['tab' => 'petugas'])
+            ->call('openBatchReplaceDutyModal')
+            ->set('replaceOldOfficerName', 'MC Lama')
+            ->set('replaceNewOfficerName', 'MC Baru')
+            ->set('replaceRoleScope', 'mc')
+            ->set('replaceYearScope', 'current')
+            ->call('executeBatchReplaceDuty')
+            ->assertDispatched('close-batch-replace-duty-modal');
+
+        $this->assertDatabaseHas('kajians', [
+            'id' => $kajian->id,
+            'mc_name' => 'MC Baru',
+            'muadzin_name' => 'MC Lama',
+        ]);
+    }
+
     public function test_petugas_view_contains_redirection_handlers_for_friday_dzuhur(): void
     {
         $this->actingAs($this->admin);
