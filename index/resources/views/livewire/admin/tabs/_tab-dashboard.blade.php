@@ -68,14 +68,20 @@
         $tagDzuhur = $isFriDzuhur ? 'Khutbah Jumat' : ('Petugas ' . ($dutyDzuhur ? $dutyDzuhur->day_name : 'Senin') . ' Dzuhur');
         $tagAshar = 'Petugas ' . ($dutyAshar ? $dutyAshar->day_name : 'Senin') . ' Ashar';
         $imamAshar = $dutyAshar ? $dutyAshar->imam_name : 'Belum diatur';
-        if ($dutyAshar && stripos($dutyAshar->imam_name, 'kajian') !== false) {
+        $muadzinAshar = $dutyAshar ? $dutyAshar->muadzin_name : 'Belum diatur';
+        if ($todayAshar && !empty($todayKajianUmum?->speaker_name)) {
+            // Ada kajian pekanan/tematik hari ini: narasumber kajian menjadi imam Ashar.
+            $imamAshar = $todayKajianUmum->speaker_name;
+            if (!empty($todayKajianUmum->muadzin_name)) {
+                $muadzinAshar = $todayKajianUmum->muadzin_name;
+            }
+        } elseif ($dutyAshar && stripos($dutyAshar->imam_name, 'kajian') !== false) {
             $pekKey = "{$dutyAshar->day_name}_{$currentWeekNumber}";
             $pekKaj = $pekananKajiansByDayWeek[$pekKey] ?? ($pekananKajiansByDay[$dutyAshar->day_name] ?? ($pekananKajiansByWeek[$currentWeekNumber] ?? ($defaultPekananKajian ?? null)));
             if ($pekKaj && (!empty($pekKaj->speaker_name) || !empty($pekKaj->khatib_name))) {
                 $imamAshar = $pekKaj->speaker_name ?: $pekKaj->khatib_name;
             }
         }
-        $muadzinAshar = $dutyAshar ? $dutyAshar->muadzin_name : 'Belum diatur';
     @endphp
 
     <!-- Mobile: scroll-snap carousel (sm:hidden) -->

@@ -1783,14 +1783,29 @@ class AdminDashboard extends Component
                 }
             } else {
                 // If user didn't upload a new photo:
-                if ($this->kajianExistingPhoto) {
+                // Foto yang sudah ada hanya dipertahankan bila pembicaranya tidak diganti.
+                // Jika pembicara diganti, foto pembicara lama tidak boleh terbawa.
+                $speakerChanged = false;
+                if ($this->isEditingKajian && $this->editingKajianId) {
+                    $existingKajian = Kajian::find($this->editingKajianId);
+                    $speakerChanged = $existingKajian
+                        && trim((string) $existingKajian->speaker_name) !== $speakerName;
+                }
+
+                // Foto lama juga tidak dipertahankan bila ternyata milik ustadz lain
+                // (data lama yang tersimpan sebelum perbaikan ini).
+                $photoBelongsToOtherUstadz = $this->kajianExistingPhoto
+                    && Ustadz::where('photo', $this->kajianExistingPhoto)
+                        ->where('name', '!=', $speakerName)
+                        ->exists();
+
+                if ($this->kajianExistingPhoto && ! $speakerChanged && ! $photoBelongsToOtherUstadz) {
                     $payload['speaker_photo'] = $this->kajianExistingPhoto;
-                } elseif ($speakerName !== '') {
-                    // Check if Ustadz database has a photo for this speaker
-                    $u = Ustadz::where('name', $speakerName)->first();
-                    if ($u && $u->photo) {
-                        $payload['speaker_photo'] = $u->photo;
-                    }
+                } else {
+                    // Gunakan foto dari direktori Ustadz untuk pembicara ini, atau kosongkan bila belum ada.
+                    $u = $speakerName !== '' ? Ustadz::where('name', $speakerName)->first() : null;
+                    $payload['speaker_photo'] = $u?->photo ?: null;
+                    $this->kajianExistingPhoto = $payload['speaker_photo'];
                 }
 
                 // If ustadz exists without phone and kajian provides phone, save phone
@@ -6416,7 +6431,9 @@ class AdminDashboard extends Component
         $today = Carbon::today();
         $now = Carbon::now('Asia/Jakarta');
         $currentWeekNumber = PrayerDuty::getWeekOfMonth($now);
-        $todayDayName = $now->translatedFormat('l');
+        // Nama hari selalu dalam bahasa Indonesia agar cocok dengan kolom day_name di prayer_duties,
+        // apa pun APP_LOCALE yang dipakai.
+        $todayDayName = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 7 => 'Minggu'][$now->dayOfWeekIso];
 
         // Safe defaults for all variables across all tabs (avoids "Undefined variable" in Blade)
         $categories = collect([]);
@@ -6433,6 +6450,7 @@ class AdminDashboard extends Component
         $upcomingKajians = collect([]);
         $recentFinances = collect([]);
         $currentWeekDuties = collect([]);
+        $todayKajianUmum = null;
         $allKajianPekanan = collect([]);
         $allKajianJumat = collect([]);
         $totalKajianCount = 0;
@@ -6644,6 +6662,15 @@ class AdminDashboard extends Component
             $totalKasMasuk = Finance::pemasukan()->sum('amount');
             $totalKasKeluar = Finance::pengeluaran()->sum('amount');
             $saldoSaatIni = $totalKasMasuk - $totalKasKeluar;
+
+            // Kajian pekanan/tematik pada tanggal hari ini: narasumbernya menjadi imam Ashar,
+            // sama seperti di portal, tab Petugas, dan ekspor PDF.
+            $todayKajianUmum = Kajian::kajianUmum()
+                ->whereNotNull('speaker_name')
+                ->where('speaker_name', '!=', '')
+                ->whereDate('date', $now->format('Y-m-d'))
+                ->orderBy('id')
+                ->first();
 
             $currentWeekDuties = PrayerDuty::forWeek($currentWeekNumber)
                 ->orderByRaw("CASE day_name WHEN 'Senin' THEN 1 WHEN 'Selasa' THEN 2 WHEN 'Rabu' THEN 3 WHEN 'Kamis' THEN 4 WHEN 'Jumat' THEN 5 ELSE 6 END")
@@ -7602,6 +7629,7 @@ class AdminDashboard extends Component
             'odojWhatsappText' => ($tab === 'kegiatan' || $tab === 'agenda') ? $this->getOdojWhatsappText() : '',
             'currentWeekNumber' => $currentWeekNumber,
             'todayDayName' => $todayDayName,
+            'todayKajianUmum' => $todayKajianUmum,
             'fridayKajians' => $fridayKajians,
             'fridayKajiansByWeek' => $fridayKajiansByWeek,
             'fridayKajiansByDate' => $fridayKajiansByDate,

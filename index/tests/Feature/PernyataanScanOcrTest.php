@@ -222,12 +222,23 @@ No  Program                 Nominal per Bulan
     {
         $this->actingAs($this->admin);
 
-        $response = $this->get(route('admin.programs.preview-scan-pernyataan', ['p' => 4]));
+        // Don't depend on a scan PDF that only exists on a developer's machine.
+        $tempBase = tempnam(sys_get_temp_dir(), 'scan_');
+        $scanPath = $tempBase . '.pdf';
+        file_put_contents($scanPath, '%PDF-1.4 dummy scan file');
 
-        $response->assertStatus(200);
-        $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
-        $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
-        $this->assertStringContainsString('max-age=86400', $response->headers->get('Cache-Control'));
+        try {
+            $response = $this->withSession(['temp_scan_pdf_path' => $scanPath])
+                ->get(route('admin.programs.preview-scan-pernyataan', ['p' => 4]));
+
+            $response->assertStatus(200);
+            $this->assertStringContainsString('application/pdf', $response->headers->get('Content-Type'));
+            $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+            $this->assertStringContainsString('max-age=86400', $response->headers->get('Cache-Control'));
+        } finally {
+            @unlink($scanPath);
+            @unlink($tempBase);
+        }
     }
 
     public function test_modal_pindaian_renders_with_locked_height_and_continuous_scroll_container(): void
