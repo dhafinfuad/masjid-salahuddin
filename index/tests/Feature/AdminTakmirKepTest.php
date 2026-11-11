@@ -208,10 +208,9 @@ class AdminTakmirKepTest extends TestCase
     {
         $this->actingAs($this->master);
 
-        // saveUploadDoc() overwrites the real tracked document in public/resources,
-        // so back it up and restore it afterwards instead of deleting it.
-        $targetPath = public_path('resources/Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf');
-        $originalContents = file_exists($targetPath) ? file_get_contents($targetPath) : null;
+        $trackedPath = public_path('resources/Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf');
+        $trackedHash = file_exists($trackedPath) ? md5_file($trackedPath) : null;
+        $uploadedPath = MasjidSetting::takmirUploadPath('Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf');
 
         try {
             $file = UploadedFile::fake()->create('dokumen_sk.pdf', 100, 'application/pdf');
@@ -235,12 +234,18 @@ class AdminTakmirKepTest extends TestCase
             $this->assertEquals('17 Agustus 2026', $docs['sk_lengkap']['date'] ?? '');
             $this->assertEquals('17 Agustus 2026', $docs['sk']['date'] ?? '');
             $this->assertNotEmpty($docs['sk_lengkap']['file'] ?? '');
+
+            // Unggahan disimpan di storage, sedangkan berkas bawaan yang dilacak Git tidak tersentuh
+            // (berkas itu ditimpa oleh `git reset --hard` saat deploy bila ikut berubah).
+            $this->assertFileExists($uploadedPath);
+            $this->assertSame($trackedHash, file_exists($trackedPath) ? md5_file($trackedPath) : null);
+
+            // Unduhan memakai hasil unggahan
+            $this->get(route('admin.kepengurusan.download-sk-pdf'))
+                ->assertStatus(200)
+                ->assertDownload('Surat_Keputusan_Takmir_Lengkap_KEP-48.pdf');
         } finally {
-            if ($originalContents !== null) {
-                file_put_contents($targetPath, $originalContents);
-            } elseif (file_exists($targetPath)) {
-                @unlink($targetPath);
-            }
+            @unlink($uploadedPath);
         }
     }
 

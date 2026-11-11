@@ -5082,12 +5082,14 @@ class AdminDashboard extends Component
         ];
 
         $targetFileName = $fileNames[$this->uploadDocTarget] ?? ($this->uploadDocTarget . '.pdf');
-        $destinationDir = public_path('resources');
+        // Simpan di storage (bukan public/resources) agar berkas bawaan yang dilacak Git
+        // tidak tertimpa, dan unggahan tidak hilang saat server melakukan `git reset --hard`.
+        $destinationDir = MasjidSetting::takmirUploadPath();
         if (! is_dir($destinationDir)) {
             mkdir($destinationDir, 0755, true);
         }
 
-        $targetPath = $destinationDir . DIRECTORY_SEPARATOR . $targetFileName;
+        $targetPath = MasjidSetting::takmirUploadPath($targetFileName);
         if (! @copy($this->uploadDocFile->getRealPath(), $targetPath)) {
             file_put_contents($targetPath, file_get_contents($this->uploadDocFile->getRealPath()));
         }

@@ -166,6 +166,39 @@ class MasjidSetting extends Model
     /**
      * Get Takmir Documents (with fallback)
      */
+    /**
+     * Folder penyimpanan dokumen SK Takmir yang diunggah lewat halaman admin.
+     * Berada di storage (tidak dilacak Git) agar tidak tertimpa saat deploy
+     * (`git reset --hard`) dan tidak menimpa berkas bawaan di public/resources.
+     */
+    public static function takmirUploadPath(string $file = ''): string
+    {
+        $dir = storage_path('app/private/takmir-docs');
+
+        return $file === '' ? $dir : $dir . DIRECTORY_SEPARATOR . basename($file);
+    }
+
+    /**
+     * Cari berkas dokumen SK Takmir: utamakan hasil unggahan admin di storage,
+     * lalu berkas bawaan di public/resources. Mengembalikan null bila tidak ada.
+     */
+    public static function resolveTakmirDocPath(?string $file): ?string
+    {
+        if (empty($file)) {
+            return null;
+        }
+
+        $file = basename($file);
+
+        foreach ([self::takmirUploadPath($file), public_path('resources/' . $file)] as $path) {
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
+
     public function getTakmirDocuments(): array
     {
         $defaults = self::getDefaultTakmirDocuments();
